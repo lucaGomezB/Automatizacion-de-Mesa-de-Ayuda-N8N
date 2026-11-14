@@ -367,28 +367,193 @@ fiabilidad entre etiquetadores, distinto del kappa del clasificador contra la re
 ### Requirement: OOS-018 — Resultado sobre los 150 casos arbitrados y métricas por clase estimables
 
 Cuando la referencia del corpus independiente quede arbitrada por el tercer etiquetador
-(`discordant-arbitration`), el bloque fuera de muestra SHALL reportarse sobre los `150`
-casos (n efectivo `150`), sin exclusión por discordancia, y SHALL declarar que el sesgo de
-exclusión de la etapa previa (n efectivo `103`) quedó removido. Las métricas por clase de
-`Sistemas` y `Bases de Datos` SHALL reportarse como estimables con el soporte ampliado, y
-la matriz de confusión `5x5` SHALL recalcularse sobre los `150` casos. El resultado
-anterior sobre `103` SHALL conservarse rotulado como estimación con exclusión, sin
-reemplazarse silenciosamente.
+(`discordant-arbitration`), el bloque fuera de muestra SHALL reportarse sobre el corpus arbitrado
+completo, formado por los `150` casos del diseño original más los casos de refuerzo de clases
+chicas (`206` casos en total: `I001`..`I150` e `I151`..`I206`), sin exclusión por discordancia, y
+SHALL declarar que el sesgo de exclusión de la etapa previa (n efectivo `103`) quedó removido. La
+exactitud estricta cruda sobre el corpus arbitrado completo SHALL ser la cifra primaria. El
+resultado sobre los `150` casos del diseño original (`I001`..`I150`) con referencia arbitrada, sin
+exclusión por discordancia (n efectivo `150`), SHALL informarse con su intervalo de Wilson como
+lectura complementaria (OOS-020). Las
+métricas por clase de `Sistemas` y `Bases de Datos` SHALL reportarse como estimables con el
+soporte ampliado, y la matriz de confusión `5x5` con precisión, sensibilidad, F1 y soporte por
+clase SHALL recalcularse sobre el corpus arbitrado completo. El resultado anterior sobre `103`
+SHALL conservarse rotulado como estimación con exclusión, sin reemplazarse silenciosamente.
 
 #### Scenario: Resultado sobre los 150 casos
 
 - **WHEN** se lee el bloque fuera de muestra tras el arbitraje
-- **THEN** figura el n efectivo `150` sin exclusión por discordancia
+- **THEN** figura la exactitud estricta sobre los `150` casos del diseño original con referencia arbitrada, sin exclusión por discordancia (n efectivo `150`), con su intervalo de Wilson
+- **AND** esa lectura se rotula como complementaria y no reemplaza a la cifra primaria sobre el corpus arbitrado completo
 - **AND** se declara que el sesgo de exclusión de la etapa previa quedó removido
+
+#### Scenario: Resultado sobre el corpus arbitrado completo
+
+- **WHEN** se lee el bloque fuera de muestra tras el arbitraje
+- **THEN** figura el n efectivo del corpus arbitrado completo, sin exclusión por discordancia, con la cantidad de casos originales y de refuerzo
+- **AND** se declara que el sesgo de exclusión de la etapa previa quedó removido
+- **AND** la exactitud estricta cruda sobre ese corpus figura como cifra primaria
 
 #### Scenario: Clases chicas estimables
 
 - **WHEN** se leen las métricas por clase del corpus arbitrado
 - **THEN** `Sistemas` y `Bases de Datos` figuran como estimables con su soporte ampliado
-- **AND** la matriz de confusión `5x5` está calculada sobre los `150` casos
+- **AND** la matriz de confusión `5x5` está calculada sobre el corpus arbitrado completo
 
 #### Scenario: Estimación previa conservada
 
 - **WHEN** se compara con el resultado de c-191
 - **THEN** la estimación sobre los `103` casos con exclusión se conserva rotulada como tal
 - **AND** no se elimina ni se presenta como si fuera la del corpus arbitrado
+
+### Requirement: OOS-020 — Tres lecturas rotuladas de la exactitud fuera de muestra
+
+El análisis de c-221 (`evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py`)
+SHALL calcular sobre `predicciones_arbitrado.json` y `corpus_independiente_arbitrado.json` tres
+lecturas de la exactitud estricta: (i) la cruda sobre el corpus arbitrado completo, con intervalo
+de Wilson, rotulada como primaria; (ii) la ponderada por la composición por sector del corpus de
+ajuste de `200` casos (suma de la sensibilidad de cada clase por su peso; los pesos SHALL leerse
+del campo `sector_asignado` de `data/corpus_evaluacion_pseudonimizado.json` y MUST NOT fijarse como
+constante sin procedencia, y el conteo leído SHALL coincidir con el vector esperado `Sistemas` 16,
+`Soporte Tecnico Hardware` 85, `Soporte Tecnico Software` 67, `Seguridad Informatica` 31 y
+`Bases de Datos` 1, suma 200, que funciona como anclaje), con intervalo bootstrap
+percentil por caso de `2000` remuestreos y semilla `20261021`, que informe cuántas réplicas se
+descartaron por falta de alguna clase; y (iii) la de los casos del diseño original (`I001`..`I150`)
+con referencia arbitrada, con intervalo de Wilson. La ponderada y la de `150` SHALL rotularse como
+complementarias y SHALL citar como antecedente de la ponderación el diseño de c-191 y el de c-206.
+Para cada lectura el análisis SHALL informar si el límite superior del intervalo queda por debajo
+de `0,85`. Antes de escribir salidas, el análisis SHALL verificar que la función de ponderación
+reproduce el valor vigente `0,8146` sobre los `103` casos con consenso y que la cruda reproduce
+`142/206`; si un anclaje no coincide, MUST terminar con error sin escribir archivos. Las cifras que
+figuran en el design como recomputo exploratorio MUST NOT copiarse a la tesis sin que el script las
+produzca.
+
+#### Scenario: Tres lecturas con su rótulo
+
+- **WHEN** se ejecuta el análisis
+- **THEN** el JSON contiene la lectura cruda primaria, la ponderada con su intervalo bootstrap y la de los casos originales con su intervalo de Wilson
+- **AND** cada lectura declara si su límite superior queda por debajo de `0,85`
+
+#### Scenario: Ponderación validada contra un valor vigente
+
+- **WHEN** la función de ponderación se aplica a los `103` casos con consenso
+- **THEN** reproduce `0,8146`
+- **AND** si no lo reproduce, el análisis termina con error y no escribe salidas
+
+#### Scenario: Pesos leídos del corpus de ajuste
+
+- **WHEN** el análisis lee la composición por sector de `data/corpus_evaluacion_pseudonimizado.json`
+- **THEN** obtiene `Sistemas` 16, `Soporte Tecnico Hardware` 85, `Soporte Tecnico Software` 67, `Seguridad Informatica` 31 y `Bases de Datos` 1 (suma 200) y usa ese conteo como pesos
+- **AND** si el conteo leído difiere del vector esperado, termina con error sin escribir salidas
+
+### Requirement: OOS-021 — Desglose por origen de la referencia, por bloque y por etapa
+
+El análisis SHALL informar aciertos, n, exactitud e intervalo de Wilson por origen de la
+referencia según `arbitraje_tres_vias.json` (consenso de `E3` y `E4` frente a arbitraje de `E5`),
+por bloque (discordantes del diseño original, casos de refuerzo, casos con consenso del diseño
+original), por etapa de la cascada (determinística y Gemini) y por canal. SHALL informar además,
+para `Sistemas`, la sensibilidad, la precisión, la F1 y el destino de cada error, en total y
+separado entre casos originales y de refuerzo, y la composición por sector y por canal de los
+casos originales y de los de refuerzo. Los conjuntos SHALL derivarse de los archivos, y el
+análisis SHALL verificar que los arbitrados son `64`, los discordantes originales `47`, los casos
+de refuerzo `56` (ninguno presente en `predicciones_independiente.json`) y los de tres vías `6`.
+
+El desglose por origen de la referencia (consenso de `E3` y `E4`, `n = 142`, frente a arbitraje de
+`E5`, `n = 64`) también lo produce c-219 en
+`evaluation/data/campana/analisis/analisis_sesgo_corpus_referencia_c219.json` (claves
+`subconjuntos.consenso` y `subconjuntos.arbitrado`). El análisis de c-221 SHALL conservar ese
+cálculo, porque lo usa como anclaje y como base de las lecturas que c-219 no cubre (discordantes
+originales, refuerzo, etapa y canal). Si el artefacto de c-219 está presente en el árbol, el
+análisis SHALL comparar sus aciertos y su n por origen con los propios y MUST terminar con error
+sin escribir salidas si difieren; en ese caso la cifra por origen no es una cifra nueva de c-221:
+el memo y la tesis SHALL citarla desde la sección de c-219 y MUST NOT registrarla de nuevo como
+valor propio de la sección de c-221. Si el artefacto no está presente al aplicar, la sección de
+c-221 SHALL registrarla con la nota de que c-219 la produce también y de que se concilia cuando
+c-219 entre a `main`.
+
+#### Scenario: Discordantes originales medidos
+
+- **WHEN** se lee el desglose por bloque
+- **THEN** figura la cantidad de aciertos del clasificador sobre los `47` discordantes originales arbitrados
+
+#### Scenario: Desglose por origen anclado en c-219
+
+- **WHEN** `analisis_sesgo_corpus_referencia_c219.json` está presente y el análisis calcula la exactitud por origen de la referencia
+- **THEN** compara los aciertos y el n de `subconjuntos.consenso` y `subconjuntos.arbitrado` con los propios
+- **AND** si difieren, termina con error y no escribe salidas
+
+#### Scenario: Cifra por origen sin doble registro
+
+- **WHEN** la sección de c-219 figura en el memo canónico y se lee la sección de c-221
+- **THEN** la exactitud por origen de la referencia figura como remisión a la sección de c-219 y no como valor propio de c-221
+
+#### Scenario: Conjuntos inconsistentes
+
+- **WHEN** alguna cardinalidad derivada de los archivos difiere de las declaradas
+- **THEN** el análisis termina con error y no escribe salidas
+
+### Requirement: OOS-022 — Sensibilidad del balance neto con la tasa fuera de muestra
+
+El análisis SHALL calcular el balance neto trimestral
+`B = (N/3600)·[Δt − (e_aut − e_man)·c]` con `N = 2.646`, `Δt = 43,82` s, `e_man = 26/151` y `c` de
+5, 10 y 15 minutos, usando como `e_aut` la tasa de error complementaria de la lectura ponderada y
+la tasa cruda sobre el corpus arbitrado. La rejilla de `c` es propia de c-221 y no depende de
+c-220: si al aplicar el memo canónico ya registra un costo por derivación errónea fijado por c-220
+con su procedencia, el análisis SHALL agregarlo como escenario adicional (o usarlo como central,
+con la rejilla como sensibilidad); si no, corre solo con la rejilla. Antes de calcular, SHALL reproducir con la misma función
+la celda `+6,9` de `tab:balance-neto` y los valores `+25,4`, `+18,7` y `+11,9` de la referencia
+común. El resultado SHALL rotularse como sensibilidad que mezcla corpus y referencias, y MUST NOT
+reemplazar el balance con referencia común.
+
+#### Scenario: Balance de sensibilidad rotulado
+
+- **WHEN** se leen las salidas del balance neto de c-221
+- **THEN** figuran los tres costos para la tasa ponderada y para la cruda
+- **AND** el rótulo dice que es una sensibilidad y no una medición con referencia común
+
+### Requirement: OOS-023 — Controles de reproducibilidad entre corridas
+
+El análisis SHALL comparar `predicciones_independiente.json` con `predicciones_arbitrado.json` en
+los casos comunes e informar cuántos difieren en sector, en etapa y en confianza, con sus
+identificadores. SHALL registrar el `commit` declarado por cada archivo y si es alcanzable desde
+`origin/main`, determinado con `git merge-base --is-ancestor <commit> origin/main`: código `0`,
+alcanzable; código `1`, no alcanzable; cualquier otro código (por ejemplo `128`, cuando el objeto
+no está en el clon), también no alcanzable, con la indicación de que el objeto no está presente en
+el clon donde se ejecutó. Cuando no sea alcanzable, SHALL registrar el commit que versionó el
+archivo según `git log --diff-filter=A --format=%h -- <archivo>`. MUST NOT usar la presencia local
+del objeto (`git cat-file -t`) como prueba de pertenencia al historial: un commit colgante puede
+existir como objeto en el clon donde se hizo la corrida y faltar en otro, porque no viaja con
+`fetch` ni con `clone`. Para que las salidas sean idénticas entre clones, el JSON SHALL registrar
+la alcanzabilidad y el commit que versionó el archivo, y la presencia local del objeto SHALL
+informarse solo en la salida de consola. El análisis MUST NOT modificar ninguno de los dos
+archivos.
+
+#### Scenario: Variación de la confianza declarada
+
+- **WHEN** se ejecuta el control sobre los casos comunes
+- **THEN** el JSON lista los casos de la etapa Gemini cuya confianza difiere entre corridas y confirma si el sector y la etapa coinciden
+
+#### Scenario: Commit no alcanzable desde main documentado
+
+- **WHEN** `git merge-base --is-ancestor` devuelve un código distinto de `0` para el `commit` declarado en un archivo de predicciones
+- **THEN** la salida declara que ese commit no es alcanzable desde `main` y nombra el commit que versionó el archivo, sin reescribir el archivo
+
+#### Scenario: Objeto ausente del clon
+
+- **WHEN** el código de `git merge-base --is-ancestor` no es `0` ni `1`
+- **THEN** el commit se registra como no alcanzable desde `main`
+- **AND** la consola indica que el objeto no está presente en este clon, sin que eso cambie el JSON
+
+### Requirement: OOS-024 — Script de c-221 de solo lectura y determinista
+
+El script de c-221 SHALL ejecutarse sin red ni Gemini, SHALL escribir solo
+`analisis_propagacion_arbitraje_c221.json`, `.md` y `.SHA256SUMS.txt` en
+`evaluation/data/campana/analisis/` (UTF-8 sin BOM, LF), SHALL registrar el SHA-256 de cada entrada
+y SHALL producir salidas idénticas byte a byte en dos corridas. Sus funciones puras SHALL tener
+pruebas que ejerciten comportamiento con casos sintéticos, escritas antes de la implementación.
+
+#### Scenario: Determinismo
+
+- **WHEN** el script se ejecuta dos veces sobre las mismas entradas
+- **THEN** las tres salidas tienen el mismo SHA-256
+- **AND** `git status` no muestra cambios fuera de la carpeta de análisis

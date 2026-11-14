@@ -5,29 +5,6 @@ TBD - created by archiving change c-207-atender-el-dictamen-coneau-v1-3-0. Updat
 
 ## Requirements
 
-### Requirement: Tabla de la validación fuera de muestra y estado del arbitraje
-
-`07-resultados.tex` SHALL presentar una tabla de la validación fuera de muestra con el n
-primario, los casos discordantes excluidos, el n efectivo, el acuerdo y el kappa entre los
-etiquetadores `E3` y `E4`, la exactitud estricta y laxa con su IC de Wilson, la exactitud
-ponderada, la macro-F1, la *balanced accuracy*, el kappa del clasificador contra la
-referencia y los escenarios de peor caso, mejor caso y cota de la exclusión. Los valores
-SHALL tomarse del memo canónico. El texto SHALL declarar que el arbitraje de los casos
-discordantes por un tercer etiquetador no se ejecutó en esta versión y que queda diferido, y
-MUST NOT anticipar su resultado ni presentar el n efectivo como cobertura del corpus primario.
-
-#### Scenario: Tabla presente con el peor caso
-
-- **WHEN** se lee la subsección de resultados de la campaña en `07-resultados.tex`
-- **THEN** figura la tabla de la validación fuera de muestra con el peor caso, la macro-F1 y el acuerdo `E3`/`E4`
-- **AND** cada valor coincide con el memo canónico
-
-#### Scenario: Arbitraje declarado como diferido
-
-- **WHEN** se lee el tratamiento de los casos discordantes en `07-resultados.tex`
-- **THEN** el texto dice que el arbitraje no se ejecutó y queda diferido
-- **AND** no se informa ningún resultado del arbitraje
-
 ### Requirement: Conclusiones y resumen acotados a la evidencia
 
 `09-conclusiones.tex` MUST NOT afirmar que el marco permite operar sin barreras legales ni
@@ -63,14 +40,17 @@ neto SHALL ser la misma en el resumen, la discusión y las conclusiones.
 ### Requirement: Validación fuera de muestra en las conclusiones
 
 `09-conclusiones.tex` SHALL incorporar la validación fuera de muestra en la prosa y en la fila
-del segundo objetivo de `tab:cumplimiento-objetivos`, con el n efectivo, el peor caso y el
-estado del arbitraje. MUST NOT presentarla como acreditación del umbral de `0,85` ni cambiar
-el estado del segundo objetivo.
+del segundo objetivo de `tab:cumplimiento-objetivos`, con la cifra primaria del corpus arbitrado y
+sus lecturas complementarias. La estimación con exclusión sobre `103` casos SHALL figurar en esa
+fila rotulada como etapa previa, y la prosa SHALL remitir a ella sin repetir la cifra, según la
+regla de «Repetición de cifras acotada y remisión a la tabla fuera de muestra». MUST NOT
+presentarla como acreditación del umbral de `0,85` ni cambiar el estado del segundo objetivo.
 
 #### Scenario: Resultado con su límite
 
 - **WHEN** se leen las conclusiones sobre el segundo objetivo
-- **THEN** figura la exactitud fuera de muestra con el n efectivo y el peor caso
+- **THEN** figura la exactitud fuera de muestra del corpus arbitrado con sus lecturas complementarias
+- **AND** la estimación sobre `103` casos figura solo en la fila del segundo objetivo, rotulada como etapa previa
 - **AND** el objetivo sigue como no alcanzado
 
 ### Requirement: Consentimiento de E3 y E4 según el registro
@@ -175,3 +155,29 @@ autores, y MUST NOT darse por hechas.
 - **WHEN** se lee la introducción
 - **THEN** el enunciado de la hipótesis no incorpora su veredicto
 - **AND** el veredicto figura en los resultados y las conclusiones
+
+### Requirement: Tabla de la validación fuera de muestra y arbitraje ejecutado
+
+`07-resultados.tex` SHALL presentar una tabla de la validación fuera de muestra con el n
+primario, los casos discordantes excluidos, el n efectivo, el acuerdo y el kappa entre los
+etiquetadores `E3` y `E4`, la exactitud estricta y laxa con su IC de Wilson, la exactitud
+ponderada, la macro-F1, la *balanced accuracy*, el kappa del clasificador contra la
+referencia y los escenarios de peor caso, mejor caso y cota de la exclusión, rotulados como
+etapa previa. La tabla SHALL incluir además el bloque del corpus arbitrado, con la exactitud
+estricta cruda como cifra primaria y las lecturas complementarias ponderada y sobre los casos del
+diseño original. Los valores SHALL tomarse del memo canónico. El texto SHALL declarar que el
+arbitraje de los casos discordantes por un tercer etiquetador se ejecutó, SHALL informar su
+resultado y MUST NOT presentar el arbitraje como pendiente ni el n efectivo de la etapa previa
+como cobertura del corpus.
+
+#### Scenario: Tabla presente con el peor caso
+
+- **WHEN** se lee la subsección de la validación fuera de muestra en `07-resultados.tex`
+- **THEN** figura la tabla de la validación fuera de muestra con el peor caso, la macro-F1 y el acuerdo `E3`/`E4` rotulados como etapa previa
+- **AND** cada valor coincide con el memo canónico
+
+#### Scenario: Arbitraje declarado como ejecutado
+
+- **WHEN** se lee el tratamiento de los casos discordantes en `07-resultados.tex`
+- **THEN** el texto dice que el arbitraje se ejecutó e informa la cifra primaria del corpus arbitrado y sus lecturas complementarias
+- **AND** no se describe el arbitraje como diferido
