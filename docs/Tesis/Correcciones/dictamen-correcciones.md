@@ -5965,3 +5965,52 @@ tarea.
 | C22/u | Recomendaciones: el registro refina, no condiciona | c-222 | `10-recomendaciones.tex:22` | `-` | `que el balance neto ya estima con la medición de la campaña` | cerrada |
 | C22/v | Recomendaciones: cronometraje como refinamiento del tramo largo | c-222 | `10-recomendaciones.tex:34` | `-` | `no es condición para cerrarlo` | cerrada |
 | C22/w | Anexos: sin mención del balance; sin cambios (3.9) | c-222 | `12-anexos.tex:96` | `-` | `despliegue local en menos de 15 minutos` | cerrada (sin cambio) |
+
+### c-223: preservación del commit de la corrida fuera de muestra por tag de archivo (grupos 0 a 4)
+
+- **Change**: `c-223-preservar-el-commit-de-la-corrida-fuera-de-muestra` (árbol de trabajo; sin commit
+  ni push de `main`).
+- **Fecha de registro**: 2026-11-15.
+- **Observación atendida** (dictamen CONEAU post-`v1.3.0`,
+  `auditorias/Dictamen_Tesis_v10_post-v1.3.0_5734ea8_CONEAU_2026-11-13.md:72`): «el commit que registra
+  la primera corrida fuera de muestra (`561b3c4`) no es alcanzable desde ninguna rama ni tag del
+  repositorio: quedó como objeto colgante». **Cerrada** con el tag anotado de archivo publicado.
+- **Autorización (tarea 0.4)**: acción HIGH autorizada expresamente por los autores para crear y
+  publicar el tag.
+- **Bloque A**: tag anotado `archivo/corrida-fuera-de-muestra-561b3c4` sobre
+  `561b3c480da718b5d681a126b7597170aa7986c0` (objeto `tag` remoto `532a9888…`), publicado en `origin`
+  con `git push origin refs/tags/archivo/corrida-fuera-de-muestra-561b3c4`. Solo el ref del tag:
+  nunca se pusheó `main` ni una rama.
+- **Bloque B**: la nota de vigencia del `commit` `561b3c4` de `evaluation/data/campana/README.md` se
+  extiende con el tag, el SHA completo, el árbol preservado, los comandos de verificación (D4) y la
+  frontera de D3. No se agregó una línea `- sha256:` nueva ni una tabla `| Archivo | SHA-256 |` nueva:
+  los dos SHA-256 se citan en prosa.
+- **Bloque C**: sección aditiva `3.34` de `numeros-canonicos.md`, la declaración metodológica del
+  diseño fuera de muestra en `04-marco-metodologico.tex:100` y esta entrada.
+- **Decisiones registradas**:
+  - `07-resultados.tex` (remisión condicional, tarea 3.3): **omitida**. Se prefiere no arriesgar la
+    neutralidad de páginas; el requisito del spec lo cubre la declaración metodológica de `04`
+    (el spec exige el apartado metodológico, no la remisión en resultados).
+  - `08-discusion.tex` (limitación condicional, tarea 3.4): **no aplicada**. El tag se publicó, de
+    modo que la falta de preservación deja de ser una limitación (D6). No se agrega una limitación
+    nueva.
+  - Topología: `git merge-base --is-ancestor 561b3c4 origin/main` sigue devolviendo `1`; se registra
+    como topología esperada, **no** como falla.
+- **Archivos afectados**: `evaluation/data/campana/README.md`,
+  `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex`,
+  `docs/Tesis/Correcciones/numeros-canonicos.md` (Sección 3.34) y este registro. Sin cambios en
+  `App/`, `n8n/`, el clasificador, la configuración, el corpus ni las predicciones.
+
+#### Matriz de trazabilidad (C23/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C23/a | Tag anotado de archivo publicado nombrado en el README | c-223 | `evaluation/data/campana/README.md:153` | `-` | `archivo/corrida-fuera-de-muestra-561b3c4` | cerrada |
+| C23/b | README con el SHA completo y los comandos de verificación (D4) | c-223 | `evaluation/data/campana/README.md:154` | `-` | `561b3c480da718b5d681a126b7597170aa7986c0` | cerrada |
+| C23/c | README: frontera de D3 (árbol de fuentes sí, artefactos no) | c-223 | `evaluation/data/campana/README.md:157` | `-` | `forman parte del árbol` | cerrada |
+| C23/d | README conserva la no-alcanzabilidad desde `main` y el versionado por `1b17e55` | c-223 | `evaluation/data/campana/README.md:145` | `-` | `no es alcanzable desde` | cerrada |
+| C23/e | Memo: Sección 3.34 aditiva | c-223 | `docs/Tesis/Correcciones/numeros-canonicos.md:2554` | `-` | `3.34 Preservación del commit de la corrida fuera de muestra` | vigente (nuevo) |
+| C23/f | Memo: topología esperada `merge-base` → `1` | c-223 | `docs/Tesis/Correcciones/numeros-canonicos.md:2572` | `-` | `git merge-base --is-ancestor 561b3c4 origin/main` | cerrada |
+| C23/g | Tesis: declaración metodológica del tag y los SHA-256 | c-223 | `04-marco-metodologico.tex:100` | `subsec:analisis-estadistico` | `se preserva por el tag anotado de archivo` | cerrada |
+| C23/h | Resultados: sin cambios (3.3 omitida por neutralidad de páginas) | c-223 | `07-resultados.tex:360` | `subsec:validacion-fuera-muestra` | `Validación fuera de muestra` | cerrada (sin cambio) |
+| C23/i | Discusión: sin limitación nueva (3.4 no aplicada; tag publicado) | c-223 | `08-discusion.tex:44` | `subsec:limitaciones-estudio` | `nueve limitaciones` | cerrada (sin cambio) |

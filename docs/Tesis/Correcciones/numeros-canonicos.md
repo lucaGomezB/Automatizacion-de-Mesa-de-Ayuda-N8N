@@ -2551,6 +2551,43 @@ La lectura del balance con el `c` medido quedó **confirmada por los autores el 
 `10-recomendaciones.tex` se alinea con esta sección; `12-anexos.tex` no contiene una mención del
 balance y queda sin cambios (ver `dictamen-correcciones.md`, c-222).
 
+### 3.34 Preservación del commit de la corrida fuera de muestra por tag de archivo (c-223)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.33. Registra la preservación del commit de la primera corrida fuera de muestra mediante un
+tag anotado de archivo, publicado en `origin`, para que el objeto viaje con `clone` y `fetch`. No
+reescribe la historia, no mueve ningún tag de release `v*` y no toca `App/`, `n8n/`, el clasificador,
+la configuración, el corpus ni las predicciones. Cero llamadas a Gemini.
+
+*Numeración.* El memo terminaba en la Sección `3.33` (c-222); esta sección es la `3.34`, la primera
+libre (releída al aplicar).
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Commit de la corrida preservado: `561b3c480da718b5d681a126b7597170aa7986c0` | `cache_meta` de `predicciones_independiente.json`; `git rev-parse archivo/corrida-fuera-de-muestra-561b3c4^{commit}` | vigente |
+| Tag anotado de archivo: `archivo/corrida-fuera-de-muestra-561b3c4` (publicado en `origin`) | `git ls-remote --tags origin 'archivo/*'`; `git cat-file -t` → `tag` | vigente |
+| SHA-256 de `predicciones_independiente.json`: `d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4` | `sha256sum evaluation/data/campana/predicciones_independiente.json` | vigente |
+| SHA-256 de `reporte_independiente.md`: `304dffcf4afdf1655c4ff7d9a6906d2ba8e134b6926281d65ca0465c629fbf92` | `sha256sum evaluation/data/campana/reporte_independiente.md` | vigente |
+| Commit que versionó los artefactos: `1b17e55a3cd64b19f7677d49d96f6f369c44f7a4` | `git log --diff-filter=A --format=%h -- evaluation/data/campana/predicciones_independiente.json` | vigente |
+| Topología esperada: `git merge-base --is-ancestor 561b3c4 origin/main` → `1` | comando directo | vigente (no es falla) |
+
+La preservación es por **ref publicado**, no por ancestría: el tag ancla el objeto y lo hace viajar
+con `clone` y `fetch`, pero `561b3c4` **no** se vuelve ancestro de `main`. La comprobación
+`git merge-base --is-ancestor 561b3c4 origin/main` seguirá devolviendo `1` y se registra como
+topología esperada, no como incumplimiento. El tag preserva el **árbol de fuentes** de la corrida
+(clasificador, prompt, `settings.py`, `constants.py` y datos de la campaña); `predicciones_independiente.json`
+y `reporte_independiente.md` **no** forman parte del árbol de `561b3c4` y se versionaron después, en
+`1b17e55`, con los SHA-256 de la tabla. El tag **no es una release** de la tesis y no reescribe la
+historia.
+
+Verificación reproducible (local y en un clon limpio): `git rev-parse archivo/corrida-fuera-de-muestra-561b3c4^{commit}`
+devuelve el SHA de la corrida; `git ls-tree -r <tag> -- App/Backend/app/classifiers docs/prompt_gemini.txt App/Backend/app/config/settings.py App/Backend/app/constants.py`
+muestra el árbol de fuentes; `git ls-remote --tags origin 'archivo/*'` devuelve el tag y su línea
+`^{}`; `git fetch origin 'refs/tags/archivo/*:refs/tags/archivo/*'` lo trae a un clon existente;
+`git cat-file -e <tag>:evaluation/data/campana/predicciones_independiente.json` falla con `128`
+(el tag no contiene el artefacto). La declaración de la tesis vive en el apartado metodológico del
+diseño fuera de muestra (`04-marco-metodologico.tex`); el README de la campaña conserva su nota.
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con

@@ -19,6 +19,31 @@
 
 \refsection{0}
   \datalist[entry]{nyt/apasortcite//global/global/global}
+    \entry{AAIP2023_resolucion198}{misc}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=635e05928ddf6052f3c65f97a36becbb}{%
+           family={{Agencia de Acceso a la Información Pública}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{fullhash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{fullhashraw}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{bibnamehash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{authorbibnamehash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{authornamehash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{authorfullhash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{authorfullhashraw}{635e05928ddf6052f3c65f97a36becbb}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Complementa la Disposición 60-E/2016 de la Dirección Nacional de Protección de Datos Personales}
+      \field{title}{Resolución 198/2023: Cláusulas contractuales modelo para la transferencia internacional de datos personales}
+      \field{year}{2023}
+    \endentry
     \entry{ahuja2023mega}{article}{}{}
       \name{author}{12}{}{%
         {{un=0,uniquepart=base,hash=8c344d53804874bcf78ef39da56729a5}{%
@@ -3651,7 +3676,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentación oficial de la plataforma}
+      \field{note}{Documentación oficial de la plataforma. La página de producto no respondió a la verificación automatizada; se consultó esta documentación oficial el 14 de noviembre de 2026}
       \field{title}{{ServiceNow} {ITSM}}
       \field{urlday}{14}
       \field{urlmonth}{11}
@@ -5559,6 +5584,31 @@
     \endentry
   \enddatalist
   \datalist[entry]{nyt/global//global/global/global}
+    \entry{AAIP2023_resolucion198}{misc}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=635e05928ddf6052f3c65f97a36becbb}{%
+           family={{Agencia de Acceso a la Información Pública}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{fullhash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{fullhashraw}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{bibnamehash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{authorbibnamehash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{authornamehash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{authorfullhash}{635e05928ddf6052f3c65f97a36becbb}
+      \strng{authorfullhashraw}{635e05928ddf6052f3c65f97a36becbb}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Complementa la Disposición 60-E/2016 de la Dirección Nacional de Protección de Datos Personales}
+      \field{title}{Resolución 198/2023: Cláusulas contractuales modelo para la transferencia internacional de datos personales}
+      \field{year}{2023}
+    \endentry
     \entry{ahuja2023mega}{article}{}{}
       \name{author}{12}{}{%
         {{un=0,uniquepart=base,hash=8c344d53804874bcf78ef39da56729a5}{%
@@ -9191,7 +9241,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentación oficial de la plataforma}
+      \field{note}{Documentación oficial de la plataforma. La página de producto no respondió a la verificación automatizada; se consultó esta documentación oficial el 14 de noviembre de 2026}
       \field{title}{{ServiceNow} {ITSM}}
       \field{urlday}{14}
       \field{urlmonth}{11}

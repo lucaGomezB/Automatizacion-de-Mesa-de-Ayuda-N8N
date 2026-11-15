@@ -141,15 +141,32 @@ referencia in-sample y el `modelo` de `pines` coincide exactamente (`gemini-3.6-
 versión instalada de `google-genai` (`2.34.0`) cumple el rango declarado del in-sample
 (`>=2.20.0`). No hubo recalibración posterior (sección 6 del runbook).
 
-**Nota de vigencia del `commit` `561b3c4` (c-221).** El `commit` declarado en el `cache_meta` de
-`predicciones_independiente.json` (`561b3c4`) **no es alcanzable desde `main`** ni desde ninguna
-rama publicada (`git merge-base --is-ancestor 561b3c4 origin/main` devuelve `1`). El archivo lo
-versionó el commit `1b17e55` (`git log --diff-filter=A --format=%h -- evaluation/data/campana/predicciones_independiente.json`).
-El objeto puede existir como commit colgante en el clon donde se hizo la corrida, pero no viaja
-con `fetch` ni con `clone`; por eso la presencia local del objeto (`git cat-file -t`) no prueba
-pertenencia al historial y no se usa como control. No se afirma que el commit no exista y el
-JSON no se reescribe: el análisis de c-221 lo registra por alcanzabilidad desde `main` y por el
-commit que versionó el archivo, de modo que sus salidas no dependen del clon.
+**Nota de vigencia del `commit` `561b3c4` (c-221, actualizada por c-223).** El `commit` declarado en
+el `cache_meta` de `predicciones_independiente.json` (`561b3c4`) **no es alcanzable desde `main`**
+ni desde ninguna rama publicada (`git merge-base --is-ancestor 561b3c4 origin/main` devuelve `1`;
+es la topología esperada, no una falla). El archivo lo versionó el commit `1b17e55`
+(`git log --diff-filter=A --format=%h -- evaluation/data/campana/predicciones_independiente.json`).
+Sin un ref que lo ancle, el objeto no viaja con `fetch` ni con `clone`: por eso la presencia local
+del objeto (`git cat-file -t`) no prueba pertenencia al historial y no se usa como control.
+
+Desde c-223 el commit se **preserva** con el tag anotado de archivo
+`archivo/corrida-fuera-de-muestra-561b3c4`, publicado en `origin`, que apunta al commit completo
+`561b3c480da718b5d681a126b7597170aa7986c0`, de modo que el objeto sí viaja con `clone` y con
+`fetch`. El tag conserva el **árbol de fuentes** de la corrida (el clasificador, el prompt,
+`settings.py`, `constants.py` y los datos de la campaña). `predicciones_independiente.json` y
+`reporte_independiente.md` **no** forman parte del árbol de `561b3c4`: se versionaron después, en
+`1b17e55`, y se identifican por sus SHA-256 (predicciones `d5ee19f7…`; reporte `304dffcf…`), no
+por `git show <tag>:<archivo>`. El tag no reescribe la historia y no convierte al commit en
+ancestro de `main`. No se afirma que el commit no exista y el JSON no se reescribe. Comandos de
+verificación:
+
+```
+git rev-parse archivo/corrida-fuera-de-muestra-561b3c4^{commit}   # 561b3c480da718b5d681a126b7597170aa7986c0
+git ls-tree -r archivo/corrida-fuera-de-muestra-561b3c4 -- App/Backend/app/classifiers docs/prompt_gemini.txt App/Backend/app/config/settings.py App/Backend/app/constants.py
+git ls-remote --tags origin 'archivo/*'                           # devuelve el tag y su línea ^{}
+git fetch origin 'refs/tags/archivo/*:refs/tags/archivo/*'        # en un clon existente
+git merge-base --is-ancestor 561b3c4 origin/main                  # 1: topología esperada, no una falla
+```
 
 **Re-ejecución con el stack entregado (2026-11-12).** El entorno se actualizó de `google-genai`
 `2.32.0` a **`2.34.0`** para satisfacer el pin entregado (`openspec/config.yaml`,
