@@ -35,6 +35,7 @@ from typing import TYPE_CHECKING
 from app.classifiers.base import BaseClassifier
 from app.classifiers.deterministic import DeterministicClassifier
 from app.classifiers.gemini_classifier import GeminiClassifier
+from app.classifiers.provider import InferenceProvider, resolver_proveedor
 from app.config.settings import get_settings
 from app.constants import HYBRID_CACHE_VERSION
 from app.core.exceptions import (
@@ -80,6 +81,7 @@ class HybridClassifier(BaseClassifier):
         gemini: GeminiClassifier | None = None,
         cost_guard: "CostGuard | None" = None,
         degradation_policy: str | None = None,
+        provider: InferenceProvider | None = None,
     ) -> None:
         """
         Inicializa el pipeline con las instancias de cada etapa.
@@ -90,7 +92,8 @@ class HybridClassifier(BaseClassifier):
 
         Args:
             deterministic: Instancia del clasificador determinístico (opcional).
-            gemini:        Instancia del clasificador Gemini (opcional).
+            gemini:        Instancia del clasificador Gemini (opcional). Si no se
+                           inyecta, se construye a partir de `provider`.
             cost_guard:    Guarda de costo en runtime (opcional). Se evalua
                            ANTES de invocar a Gemini; si deniega, no se invoca
                            al proveedor pago y se degrada de forma segura.
@@ -98,9 +101,25 @@ class HybridClassifier(BaseClassifier):
                            (default) degrada a deterministico + revision humana;
                            `hard_block` propaga `CostGuardTrippedError` como senal
                            explicita. En NINGUN caso se invoca al proveedor pago.
+            provider:      Implementacion de la interfaz del proveedor de inferencia
+                           (c-227, D1). Si se inyecta, la etapa semantica la usa sin
+                           construir el SDK. Si no, se resuelve el proveedor por
+                           configuracion (`Settings.inference_provider`).
         """
         self._deterministic = deterministic or DeterministicClassifier()
-        self._gemini = gemini or GeminiClassifier()
+        if gemini is not None:
+            self._gemini = gemini
+        else:
+            # c-227 (D2): la etapa semantica depende de la INTERFAZ del proveedor,
+            # resuelta por el registro segun la configuracion. El registro arranca
+            # con Gemini; un nombre desconocido falla de forma explicita.
+            settings = get_settings()
+            proveedor = (
+                provider
+                if provider is not None
+                else resolver_proveedor(settings.inference_provider)
+            )
+            self._gemini = GeminiClassifier(provider=proveedor)
         self._cost_guard = cost_guard
         self._degradation_policy = (
             degradation_policy

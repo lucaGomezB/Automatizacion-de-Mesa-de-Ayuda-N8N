@@ -47,6 +47,16 @@ CANAL_CORREO: Final[str] = "correo electrónico"
 #: predicciones de la corrida previa (hybrid-v2).
 HYBRID_CACHE_VERSION: Final[str] = "hybrid-v3"
 
+#: Identidad por defecto del proveedor de inferencia (c-227, D2). Vive en este
+#: modulo liviano para que la logica de identidad de la cache de evaluacion
+#: (`evaluation/run_evaluation.py`) la lea sin importar `app.config.settings`
+#: (que arrastra `get_settings` y exige credenciales). El proveedor y el modelo
+#: por defecto coinciden con los vigentes, de modo que la abstraccion es neutral
+#: y no altera ningun numero canonico. `Settings.inference_provider` e
+#: `Settings.inference_model` derivan de estas constantes.
+INFERENCE_PROVIDER_DEFAULT: Final[str] = "gemini"
+INFERENCE_MODEL_DEFAULT: Final[str] = "gemini-3.6-flash"
+
 #: Vocabulario cerrado del ORIGEN de una intervencion humana sobre un log de
 #: clasificacion (c-165, ASG-005). Lo deriva SIEMPRE el backend; el cliente nunca
 #: lo declara. Se valida en la capa de aplicacion (la base no tiene CHECK).
@@ -93,6 +103,8 @@ def es_canal_correo(nombre: object) -> bool:
 __all__ = [
     "SECTORES_CANONICOS",
     "HYBRID_CACHE_VERSION",
+    "INFERENCE_PROVIDER_DEFAULT",
+    "INFERENCE_MODEL_DEFAULT",
     "ORIGEN_GATE",
     "ORIGEN_MUESTREO",
     "ORIGEN_REDERIVACION",

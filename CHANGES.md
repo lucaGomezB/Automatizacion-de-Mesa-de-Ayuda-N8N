@@ -2907,11 +2907,11 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ## Cambios propuestos — mejoras estructurales (c-227 a c-231, sin aplicar)
 
-> Cinco changes propuestos el 2026-11-15 para atacar las limitaciones estructurales que pesan sobre el criterio 4 (metodologia) y el criterio 8 (redaccion) del ultimo dictamen. Todos validan con `openspec validate --strict` y quedan sin aplicar. Los numeros de seccion del memo son los esperados; el primero libre real es el `3.38` (la ultima vigente es la `3.37`, de c-226).
+> Cinco changes para atacar las limitaciones estructurales que pesan sobre el criterio 4 (metodologia) y el criterio 8 (redaccion) del ultimo dictamen. **c-231 y c-227 quedaron aplicados (2026-11-15); c-228, c-229 y c-230 quedan propuestos**, a la espera de la organizacion, los etiquetadores y el consentimiento. Los numeros de seccion del memo son los esperados (c-231 tomo la `3.38`; c-230/c-229/c-228 esperan `3.39`/`3.40`/`3.41`).
 
-### [C-227] `monitorear-el-servicio-de-inferencia-y-la-deriva-del-modelo` — PROPUESTO (2026-11-15, MEDIUM)
+### [C-227] `monitorear-el-servicio-de-inferencia-y-la-deriva-del-modelo` — APLICADO (2026-11-15, MEDIUM)
 
-- **Estado**: propuesto (proposal/design/tasks/specs); `openspec validate --strict` valido. Sin aplicar.
+- **Estado**: aplicado (grupos 0-5, 0 tareas pendientes). Interfaz del proveedor `App/Backend/app/classifiers/provider.py` + `GeminiProvider` + registro + `Settings` (`inference_provider`/`inference_model`) + identidad de la cache; canario `evaluation/data/canario/` (103 casos, tomado del corpus independiente) + `evaluation/monitoreo/monitor_deriva.py` con pisos δ=0.05 (exactitud estricta + F1 macro); `docs/operational-guide.md` §12 (procedimiento + fallback). Neutralidad: los 200 casos canonicos reproducidos caso por caso (0 diferencias). Tests: backend 1826 OK, evaluation 1419 OK; `evaluation/evidence/` byte-identica; `openspec validate --strict` valido. Sin archivar.
 - **Objetivo**: gestionar el riesgo operativo de la dependencia del servicio externo de inferencia (Gemini) y de la version del modelo (limitaciones 3 y 4): capa de abstraccion del proveedor, canary set fijo + job de reevaluacion periodica offline, deteccion de deriva, umbrales de alerta y fallback documentado. No cambia ningun numero canonico.
 - **Specs**: `inference-provider-abstraction`, `model-drift-monitoring`.
 - **Memo**: no toca el memo.

@@ -1,0 +1,25 @@
+{
+  "canario_count": 103,
+  "canario_hash": "535b55d2c866a143db548725844b18b4a0894542c0854550fd5799edc53e894e",
+  "clasificador_version": "hybrid-v3",
+  "metricas": {
+    "exactitud_estricta": 0.8446601941747572,
+    "f1_macro": 0.7446560846560847
+  },
+  "f1_por_sector": {
+    "Seguridad Informatica": 0.8333333333333333,
+    "Soporte Tecnico Hardware": 0.9047619047619048,
+    "Soporte Tecnico Software": 0.8,
+    "Bases de Datos": 0.962962962962963,
+    "Sistemas": 0.22222222222222224
+  },
+  "identidad": {
+    "provider": "gemini",
+    "model": "gemini-3.6-flash"
+  },
+  "tolerancia": 0.05,
+  "pisos": {
+    "exactitud_estricta": 0.7946601941747572,
+    "f1_macro": 0.6946560846560846
+  }
+}
