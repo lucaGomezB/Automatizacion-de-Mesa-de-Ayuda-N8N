@@ -55,11 +55,11 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.4.1}, que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, un commit inmediatamente posterior consigna en este anexo ese hash: \texttt{\small 2d8b0d5c4b872140caf9348ae0f7ac3ecbe7ba59}, que constituye la referencia verificable de la versión entregada.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.5.0}, que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior consigna en este anexo ese hash, que constituye la referencia verificable de la versión entregada.
 
 La verificación de la compilación se conserva en \path{paper/compilacion.md}, que registra las páginas, los errores y el SHA-256 del PDF, y la de la matriz de trazabilidad de las correcciones, en \path{docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py}; ambos artefactos corresponden a este anexo de repositorio.
 
-La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{bf5e099} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.3.0}. La \emph{configuración de la campaña complementaria} no es un único commit. El brazo automatizado de correo y formulario web corrió desde \texttt{cda7712} (5-11-2026), y el de telefonía desde el 6-11-2026, tras ajustar el bloqueo de la llamada siguiente en el softphone y el aviso de voz. Las intervenciones se validaron entre el 7 y el 8-11-2026 (ajustes de la interfaz y de la codificación del correo), todas con \texttt{hybrid-v3}, la instrumentación de intervención y la derivación por reportante activas (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
+La \emph{versión entregada} designa el tag del manuscrito de tesis (\texttt{v1.5.0}), distinto de la \emph{configuración entregada}, que designa el tag del software desplegado (\texttt{v1.3.0}). La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{bf5e099} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.3.0}. La \emph{configuración de la campaña complementaria} no es un único commit. El brazo automatizado de correo y formulario web corrió desde \texttt{cda7712} (5-11-2026), y el de telefonía desde el 6-11-2026, tras ajustar el bloqueo de la llamada siguiente en el softphone y el aviso de voz. Las intervenciones se validaron entre el 7 y el 8-11-2026 (ajustes de la interfaz y de la codificación del correo), todas con \texttt{hybrid-v3}, la instrumentación de intervención y la derivación por reportante activas (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
 
 \begin{table}[htbp]
 \footnotesize
@@ -239,4 +239,96 @@ La versión del 3 de julio de 2026 informó una reducción del tiempo medio de r
 Las correcciones de la tesis responden a la auditoría integral del tribunal del 4 de agosto de 2026, a una serie de autoevaluaciones internas frente a criterios de la CONEAU y a la devolución de segunda instancia del tribunal del 11 de noviembre de 2026. El detalle de cada observación, el cambio responsable y la sección donde se atendió se conserva como trazabilidad operativa del proyecto y no se reproduce en este anexo.
 
 La redacción de esta tesis contó con asistencia de un modelo de lenguaje para la corrección de estilo y la edición del texto, y para la generación de diagramas de flujo a partir de la estructura planteada previamente. El diseño metodológico, la recolección y verificación de datos, las decisiones de contenido y la responsabilidad final del texto son de los autores.
+
+\section{Números canónicos citados}\label{sec:anexo-numeros-canonicos}
+
+Este anexo reúne, condensados, los números canónicos que el cuerpo cita de las secciones 3.31, 3.33, 3.35 y 3.36 del memo interno de números canónicos del proyecto. Cada valor conserva su cifra, su procedencia verificable y su estado; el memo sigue siendo la fuente interna de verdad y este anexo no introduce valores ausentes de él ni modifica ningún valor ni estado. Las cifras se transcriben con la convención de redondeo de la tesis.
+
+\paragraph{Costo de la derivación errónea \(c\) (memo, sección 3.31).}
+
+El costo medido se compone de la corrección en la compuerta de revisión y de la re-decisión de sector tomada como proxy del rediagnóstico; el tramo de reanudación tras la interrupción no se mide y queda sin cota disponible. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_costo_derivacion_c220.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py}.
+
+\begin{table}[htbp]
+\small
+\centering
+\begin{tabular}{@{}p{4.4cm} p{7.2cm} p{2.2cm}@{}}
+\toprule
+Valor & Procedencia & Estado \\
+\midrule
+Costo \(c = 69{,}51\)~s; IC 95~\% \([33{,}42; 106{,}56]\)~s & \path{...c220.json} (\texttt{composicion.escenarios.bajo}) & vigente (nuevo) \\
+Corrección en la compuerta: \(24{,}01\)~s; IC bootstrap \([3{,}42; 50{,}06]\)~s & idem (\texttt{diferencia\_de\_medias}) & vigente (nuevo) \\
+Re-decisión de sector (mediana del brazo manual): \(45{,}50\)~s & idem (\texttt{brazo\_manual}) & vigente (nuevo) \\
+Paridad con la tasa manual medida: \(1 - e_{\mathrm{man}} = 0{,}8278\) & idem (\texttt{justificacion\_umbral.paridad\_manual}) & vigente (nuevo) \\
+Costo marginal por punto de exactitud: \(0{,}51\)~h-persona por trimestre & idem (\texttt{costo\_marginal\_por\_punto\_horas\_trimestre}) & vigente (nuevo) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Balance neto y umbral de equilibrio (memo, sección 3.33).}
+
+La lectura central usa el costo medido y las tasas de error medidas contra la referencia común. La rejilla de 5, 10 y 15 minutos se conserva como sensibilidad del supuesto superado y no es insumo vigente. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_balance_neto_c222.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_balance_neto_c222.py}.
+
+\begin{table}[htbp]
+\small
+\centering
+\begin{tabular}{@{}p{4.4cm} p{7.2cm} p{2.2cm}@{}}
+\toprule
+Valor & Procedencia & Estado \\
+\midrule
+\(B = +30{,}6\)~h-persona por trimestre; IC condicional \([+26{,}7; +34{,}6]\); cota combinada \([+23{,}8; +35{,}8]\) & \path{...c222.json} (\texttt{escenario\_central}) & vigente (nuevo) \\
+\(a^{*} = 19{,}7\)~\%; IC condicional \([13{,}4; 25{,}8]\)~\% & idem & vigente (nuevo) \\
+\(N = 2.646\) incidentes por trimestre & \path{analisis_dictamen_c207.json} (\texttt{...insumos.n\_trimestral}); memo 3.11 & vigente \\
+\(\Delta t = 43{,}82\)~s & idem (\texttt{...insumos.delta\_t\_s}); memo 3.1 y 3.4 & vigente \\
+\(e_{\mathrm{aut}} = 28/138 = 0{,}2029\) & idem (\texttt{...referencia\_consenso.e\_aut}); memo 3.21 (c) & vigente \\
+\(e_{\mathrm{man}} = 26/151 = 0{,}1722\) & idem (\texttt{...referencia\_consenso.e\_man}) & vigente \\
+\(e_{\mathrm{aut}} - e_{\mathrm{man}} = +0{,}0307\); IC 95~\% \([-0{,}0460; +0{,}1070]\) & idem (\texttt{...diferencia}, \texttt{...diferencia\_ic}) & vigente \\
+Rejilla 5, 10 y 15 min: \(B = +25{,}4 / +18{,}7 / +11{,}9\); IC \( [+8{,}6; +42{,}4]\), \([-15{,}0; +52{,}5]\), \([-38{,}6; +62{,}7]\) & idem (\texttt{grilla\_minutos}) & condicional \\
+Rejilla 5, 10 y 15 min: \(a^{*} = 68{,}2 / 75{,}5 / 77{,}9\)~\% & idem (\texttt{grilla\_minutos}) & condicional \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Acotación del arbitraje por mayoría (memo, sección 3.35).}
+
+La regla vigente de arbitraje coincide con la mayoría de los tres etiquetadores en 200 de 206 casos; los 6 casos sin mayoría acotan la exactitud estricta. El rango es una cota de sensibilidad y no reemplaza la cifra primaria. La fuente única es \path{evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py}.
+
+\begin{table}[htbp]
+\small
+\centering
+\begin{tabular}{@{}p{4.4cm} p{7.2cm} p{2.2cm}@{}}
+\toprule
+Valor & Procedencia & Estado \\
+\midrule
+Coincidencia de la regla vigente con la mayoría de \(\{\texttt{E3}, \texttt{E4}, \texttt{E5}\}\): \(200\) de \(206\) & \path{...c224.json} (\texttt{coincidencia}) & vigente (nuevo) \\
+Identidad estructural: \(142\) de consenso \(+ 58\) arbitrados con mayoría \(= 200\) & idem (\texttt{identidad}) & vigente (nuevo) \\
+Casos sin mayoría: \texttt{I033}, \texttt{I042}, \texttt{I056}, \texttt{I130}, \texttt{I194}, \texttt{I198} & idem (\texttt{sin\_mayoria}) & vigente (nuevo) \\
+Exactitud estricta vigente: \(142/206 = 0{,}6893\) & idem (\texttt{exactitud.aciertos}) & vigente (sin cambio) \\
+Extremo máximo de la exactitud estricta: \(147/206 = 0{,}7136\), \(k = 5\) reasignables & idem (\texttt{exactitud.max}) & cota de sensibilidad (nuevo) \\
+Macro-F1 vigente: \(0{,}7024\); extremo máximo: \(0{,}7249\) & idem (\texttt{metricas}) & vigente y cota de sensibilidad \\
+Exactitud laxa: \(162/206 = 0{,}7864\) & \path{07-resultados.tex}; sin cambio & vigente (sin cambio) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Robustez de la brecha híbrido menos línea de base (memo, sección 3.36).}
+
+Las seis brechas son positivas y sus intervalos excluyen el cero en los tres subconjuntos y en las dos variantes; la lectura no cambia la cifra primaria ni el veredicto del umbral. La fuente única es \path{evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py}.
+
+\begin{table}[htbp]
+\small
+\centering
+\begin{tabular}{@{}p{4.4cm} p{7.2cm} p{2.2cm}@{}}
+\toprule
+Valor & Procedencia & Estado \\
+\midrule
+Brecha balanceada, consenso \(\texttt{E3}/\texttt{E4}\) (\(n = 142\)): \(+0{,}2324\); IC 95~\% \([0{,}1408; 0{,}3239]\) & \path{...c225.json} (\texttt{subconjuntos.consenso\_e3\_e4}) & vigente (nuevo) \\
+Brecha balanceada, 150 originales (\(n = 150\)): \(+0{,}1667\); IC 95~\% \([0{,}0733; 0{,}2600]\) & idem (\texttt{...original\_150}) & vigente (nuevo) \\
+Brecha balanceada, corpus arbitrado (\(n = 206\)): \(+0{,}1990\); IC 95~\% \([0{,}1165; 0{,}2767]\) & idem (\texttt{...arbitrado\_completo}) & vigente (nuevo) \\
+Brecha sin re-ponderación, consenso (\(n = 142\)): \(+0{,}3239\); IC 95~\% \([0{,}2324; 0{,}4085]\) & idem (\texttt{...sin\_repoderacion}) & vigente (nuevo) \\
+Brecha sin re-ponderación, 150 originales (\(n = 150\)): \(+0{,}2133\); IC 95~\% \([0{,}1267; 0{,}3000]\) & idem (\texttt{...sin\_repoderacion}) & vigente (nuevo) \\
+Brecha sin re-ponderación, corpus arbitrado (\(n = 206\)): \(+0{,}2621\); IC 95~\% \([0{,}1845; 0{,}3398]\) & idem (\texttt{...sin\_repoderacion}) & vigente (nuevo) \\
+Cifra primaria \(0{,}6893\), macro-F1 \(0{,}7024\) y veredicto del umbral \(0{,}85\) & \path{07-resultados.tex}; memo 3.1 a 3.35; sin cambio & vigente (sin cambio) \\
+\bottomrule
+\end{tabular}
+\end{table}
 

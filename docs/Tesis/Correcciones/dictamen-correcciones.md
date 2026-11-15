@@ -1036,6 +1036,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-219` (`change/c-218-c-219-carga-multicanal-y-sesgo-de-referencia`) | sin commit (lo crea el orquestador) | 156 | 131 | 25 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{156}`; `Anexos` en p. 132; delta frente a la compilacion de c-218 (154 / 129 / 25): +2 total, +2 cuerpo, 0 anexos; subseccion de resultados con dos tablas mas parrafos en 04 y 08 (una primera version sumaba +3 y se recorto) |
 | `+c-221` (`change/c-221-propagar-el-arbitraje-y-atender-el-dictamen-post-v1-3-0`) | sin commit (lo crea el orquestador) | 155 | 138 | 17 | -1 | +7 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change; presupuesto de D13: <= 0 con el Anexo J retirado (cumple) | Medido: `abspage@last{155}`; `Anexos` en p. 139; delta frente a la compilacion de c-219 (156 / 131 / 25): -1 total, +7 cuerpo, -8 anexos. El retiro del Anexo J (material de defensa: `docs/defensa/respuestas-tribunal.md`), que aporta las 8 paginas de anexos menos, compensa el crecimiento del cuerpo (dos subsecciones nuevas en resultados, la tabla de matriz y metricas por clase, el apartado metodologico del corpus independiente, las amenazas septima y octava, el complemento descriptivo de calibracion y los parrafos de discusion, conclusiones y recomendaciones). El bloque incluye la prosa no compilada de c-220 (una fila de `tab:variables` y un parrafo en `04`), que no tuvo fila propia porque c-220 no compila; el delta neto total (-1) cumple el presupuesto <= 0 de D13. |
 | `+c-225` + `+c-226` (compilación conjunta) | sin commit (lo crea el orquestador) | 157 | 140 | 17 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{157}`; `Anexos` en p. 141; delta frente a la compilación de c-221 (155 / 138 / 17): +2 total, +2 cuerpo, 0 anexos. c-225 agrega un párrafo y la tabla `tab:robustez-linea-base` en resultados más un pasaje en la limitación 5; c-226 agrega la tabla `tab:rango-robustez-tiempos` y su prosa en resultados, discusión y método. Ambas se compilaron en una sola corrida (batcheada); el delta no se desagrega por change. |
+| `+c-231` (`change/c-231-cerrar-version-referencias-internas-y-matriz`) | sin commit (lo crea el orquestador) | 159 | 140 | 19 | +2 | 0 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{159}`; `Anexos` en p. 141; delta frente a la compilación conjunta de c-225 + c-226 (157 / 140 / 17): +2 total, 0 cuerpo, +2 anexos. El delta proviene del anexo nuevo de números canónicos citados (`12-anexos.tex`, `sec:anexo-numeros-canonicos`), que suma 2 páginas al bloque de anexos sin tocar el cuerpo. |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -4519,10 +4520,10 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | Rec | Observación | Corrección | Archivo | Estado |
 |---|---|---|---|---|
 | N-01 | Kappa 0,87 sin respaldo | Retirado como evidencia; kappa vigente 0,5569 (E1/E2) | `00-resumen.tex`, `01-introduccion.tex`, `04-marco-metodologico.tex`, `07-resultados.tex`, `08-discusion.tex` | cerrada (respuesta del autor, ver Decisiones) |
-| N-02 | Versión de julio y auditoría del 4-8 sin declarar | Nota de versiones y fila de la auditoría en el Anexo I | `12-anexos.tex` | parcial: PENDIENTE (fecha exacta de la versión de julio y declaración del uso de modelos de lenguaje) |
+| N-02 | Versión de julio y auditoría del 4-8 sin declarar | Nota de versiones y fila de la auditoría en el Anexo I | `12-anexos.tex` | cerrada (c5b2fb9, 2026-11-11) |
 | N-03 | Tiempos manuales de la campaña complementaria sin definir | Definición de la tarea y tabla por operador | `04-marco-metodologico.tex`, `07-resultados.tex`, `08-discusion.tex` | cerrada |
-| N-04 | Selección de los 200 casos contradictoria | Muestreo no probabilístico por conveniencia; sesgo de selección | `00-resumen.tex`, `04-marco-metodologico.tex`, `08-discusion.tex` | parcial: PENDIENTE (período y criterio de selección) |
-| N-05 | 119 tiempos automatizados sin registro primario | Declarado en 4.5, 8.1 y el Anexo F | `04-marco-metodologico.tex`, `07-resultados.tex`, `12-anexos.tex` | parcial: PENDIENTE (de qué registro se transcribieron) |
+| N-04 | Selección de los 200 casos contradictoria | Muestreo no probabilístico por conveniencia; sesgo de selección | `00-resumen.tex`, `04-marco-metodologico.tex`, `08-discusion.tex` | cerrada (c5b2fb9, 2026-11-11) |
+| N-05 | 119 tiempos automatizados sin registro primario | Declarado en 4.5, 8.1 y el Anexo F | `04-marco-metodologico.tex`, `07-resultados.tex`, `12-anexos.tex` | cerrada (c5b2fb9, 2026-11-11) |
 | N-06 | Llamadas recitadas por un autor | Amenaza a la validez y explicación rival | `04-marco-metodologico.tex`, `08-discusion.tex` | cerrada |
 | N-07 | Concisión e identificadores de cambio | Oraciones partidas; identificadores fuera del cuerpo | todos los capítulos | cerrada |
 | N-08 | Exactitud solo contra el original | Dos filas en la Tabla 12 y lectura contra el consenso | `07-resultados.tex`, `08-discusion.tex` | cerrada |
@@ -4541,16 +4542,16 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 |---|---|---|---|---|---|---|
 | N-01/1a | 4.4: el 0,87 no puede respaldarse y no es evidencia | c-196 | `04-marco-metodologico.tex:56` | `subsec:poblacion-muestra-corpus` | `no puede respaldarse con registros` | cerrada |
 | N-01/1b | Resumen: kappa 0,5569 de E1/E2 | c-196 | `00-resumen.tex:11` | `-` | `kappa de 0,5569` | cerrada |
-| N-02/2a | Nota de versiones del Anexo I | c-196 | `12-anexos.tex:233` | `subsec:nota-versiones` | `label{subsec:nota-versiones}` | PENDIENTE (dato de los autores: fecha exacta de la versión de julio) |
+| N-02/2a | Nota de versiones del Anexo I | c-196 | `12-anexos.tex:235` | `subsec:nota-versiones` | `La versión del 3 de julio de 2026` | cerrada (c5b2fb9, 2026-11-11) |
 | N-02/2b | Auditoría del 4-8-2026: 105 hallazgos, 28 críticos, 3,9/10 | c-196 | `12-anexos.tex:239` | `sec:anexo-trazabilidad` | `la auditoría integral del tribunal del 4 de agosto de 2026` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; los guarismos de la auditoría ya no se consignan) |
-| N-02/2c | Declaración del uso de modelos de lenguaje en la redacción | c-196 | `12-anexos.tex:240` | `sec:anexo-trazabilidad` | `PENDIENTE-AUTORES(P16)` | PENDIENTE (dato de los autores: P16) |
+| N-02/2c (P16) | Declaración del uso de modelos de lenguaje en la redacción | c-196 | `12-anexos.tex:241` | `sec:anexo-trazabilidad` | `contó con asistencia de un modelo de lenguaje` | cerrada (c5b2fb9, 2026-11-11) |
 | N-03/3a | Tabla de tiempos manuales por operador | c-196 | `07-resultados.tex:261` | `tab:tiempos-manual-complementaria` | `label{tab:tiempos-manual-complementaria}` | cerrada |
 | N-03/3b | 4.5: definición de la tarea manual de la campaña complementaria | c-196 | `04-marco-metodologico.tex:67` | `subsec:protocolo-pruebas` | `tab:tiempos-manual-complementaria` | cerrada |
 | N-03/3c | 9.1: dependencia del operador como explicación rival | c-196 | `08-discusion.tex:24` | `subsec:interpretacion-resultados` | `Quinto, la dependencia del operador` | cerrada |
-| N-04/4a | 4.4: muestreo no probabilístico por conveniencia | c-196 | `04-marco-metodologico.tex:46` | `subsec:poblacion-muestra-corpus` | `muestreo no probabilístico por conveniencia` | PENDIENTE (dato de los autores: período y criterio de selección) |
+| N-04/4a | 4.4: muestreo no probabilístico por conveniencia | c-196 | `04-marco-metodologico.tex:46` | `subsec:poblacion-muestra-corpus` | `muestreo no probabilístico por conveniencia` | cerrada (c5b2fb9, 2026-11-11) |
 | N-04/4b | 4.8: sesgo de selección como amenaza a la validez externa | c-196 | `04-marco-metodologico.tex:97` | `subsec:amenazas-validez` | `sesgo de selección` | cerrada |
 | N-04/4c | Abstract: convenience sample | c-196 | `00-resumen.tex:27` | `-` | `convenience sample` | cerrada |
-| N-05/5a | 4.5: 119 valores sin registro primario conservado | c-196 | `04-marco-metodologico.tex:65` | `subsec:protocolo-pruebas` | `no tienen registro primario conservado` | PENDIENTE (dato de los autores: registro de los 119 tiempos) |
+| N-05/5a | 4.5: 119 valores sin registro primario conservado | c-196 | `04-marco-metodologico.tex:66` | `subsec:protocolo-pruebas` | `registro primario pseudonimizado se versiona` | cerrada (c5b2fb9, 2026-11-11) |
 | N-05/5b | 8.1: 81 con registro primario y 119 sin él | c-196 | `07-resultados.tex:12` | `subsec:comparacion-tiempos` | `registro primario` | cerrada |
 | N-06/6a | 4.8: las 81 llamadas recitadas por un autor | c-196 | `04-marco-metodologico.tex:99` | `subsec:amenazas-validez` | `recitó las 81 llamadas` | cerrada |
 | N-07/7a | Oración de 85 palabras de 10.1 partida | c-196 | `09-conclusiones.tex:47` | `sec:conclusiones` | `Ese filtro absorbe los casos triviales y reduce el costo de inferencia.` | SUPERADA por c-207 |
@@ -4626,11 +4627,9 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 
 | Marcador | Archivo:línea | Qué falta |
 |---|---|---|
-| N-04 | `04-marco-metodologico.tex:45` | Fechas exactas del período relevado y criterio con que se tomaron los 200 casos entre los 2.646 aproximados |
-| N-05 | `04-marco-metodologico.tex:64` | De qué registro se transcribieron los 119 tiempos del 2-10-2026; si existe, versionarlo |
-| N-02 | `12-anexos.tex:235` | Fecha exacta de la versión de julio |
-| P16 | `12-anexos.tex:240` | Declarar el uso de modelos de lenguaje en la redacción de la tesis |
 | N-16 | `Bibliography_base.bib:334` y `:368` | Ninguna: la copia del artículo de Paket et al. se obtuvo el 2026-11-14 y se depositó en la carpeta de fuentes del proyecto; el DOI sigue verificable y Mayor-Rocher et al. se confirma en su versión de revista (DOI verificado; publicación anticipada del 10-09-2026, sin volumen ni páginas; preliminar arXiv:2409.15334) |
+
+No quedan pendientes de autores: N-02, N-04, N-05 y P16 se cerraron en `c5b2fb9` (2026-11-11), con el fragmento verificable del texto vigente en las filas correspondientes de la matriz.
 
 Resueltos con respuesta del autor: N-01 y N-13. Resuelto con el valor entregado: N-10.
 
@@ -6163,3 +6162,59 @@ tarea.
 | C26/l | Método: amenaza 1 acotada | c-226 | `04-marco-metodologico.tex:106` | `-` | `pero no estima el efecto de orden` | cerrada |
 | C26/m | README: entrada del script y sus salidas | c-226 | `evaluation/data/campana/analisis/README.md:577` | `-` | `Rango de robustez de los tiempos (c-226)` | vigente (nuevo) |
 | C26/n | Cifras primarias sin cambio | c-226 | `07-resultados.tex:65` | `-` | `no cambia la cifra primaria` | cerrada (sin cambio) |
+
+### c-231: cierre de versión, referencias internas y matriz (grupos 0 a 4)
+
+- **Change**: `c-231-cerrar-version-referencias-internas-y-matriz` (árbol de trabajo; sin commit ni
+  push).
+- **Fecha de registro**: 2026-11-15.
+- **Observación atendida** (segunda instancia de la devolución de la auditoría v1.2.18, c-196): la
+  matriz de trazabilidad había quedado **stale** ---`N-02`, `N-04`, `N-05` y `P16` (`N-02/2c`)
+  seguían marcados como pendientes contra el texto vigente y el commit `c5b2fb9`---; además, la
+  versión del documento y del repositorio no se había cerrado (portada, Anexo B y entrada
+  bibliográfica seguían en la versión previa), el cuerpo remitía a secciones del memo por número
+  (`Sección~3.xx`) y no existía un anexo que transcribiera los números canónicos citados. El change
+  cierra los tres frentes: corrige la matriz, corta la versión `v1.5.0` y agrega el anexo con su
+  repunte. Es corrección de referencias y cierre de versión, no medición nueva. **Cerrada**.
+- **Resultado**: matriz stale corregida (los cuatro marcadores pasan a `cerrada (c5b2fb9,
+  2026-11-11)` y no quedan pendientes de autores); versión `v1.5.0` repuntada en la portada
+  (`00-portada.tex:31`), el Anexo B (`12-anexos.tex:58`, tag anotado) y la entrada bibliográfica
+  (`Bibliography_base.bib:917`); anexo nuevo «Números canónicos citados»
+  (`12-anexos.tex:243`, etiqueta `sec:anexo-numeros-canonicos`, que transcribe los valores citados de
+  las secciones `3.31`, `3.33`, `3.35` y `3.36` del memo sin cambiar ninguna cifra); las **12**
+  referencias del cuerpo a `Sección~3.xx` repuntadas a `\autoref{sec:anexo-numeros-canonicos}`; memo
+  sección aditiva `3.38`. La cifra primaria y el umbral no cambian.
+- **Tag**: el tag anotado `v1.5.0` se corta sobre el commit de contenido (tarea 3.5, autorización
+  expresa OQ3). El hash de ninguna release previa se imprime en el PDF: el Anexo B consigna la
+  oración de reemplazo, y el hash de C1 se consigna en el commit posterior al tag (C2).
+- **Archivos afectados**: `docs/Tesis/Correcciones/dictamen-correcciones.md` (esta entrada y la
+  matriz del dictamen c-196); `docs/Tesis/v10 (IA)/paper/sections/00-portada.tex`, `12-anexos.tex`,
+  `01-introduccion.tex`, `04-marco-metodologico.tex`, `07-resultados.tex`, `08-discusion.tex` y
+  `10-recomendaciones.tex`; `docs/Tesis/v10 (IA)/Bibliography_base.bib`;
+  `docs/Tesis/Correcciones/numeros-canonicos.md` (Sección `3.38`);
+  `docs/Tesis/v10 (IA)/paper/compilacion.md`.
+- **Sin cambios**: `App/`, `n8n/`, el clasificador, la configuración, el corpus, las predicciones ni
+  los artefactos congelados. El anexo transcribe el memo; no lo reemplaza ni introduce valores
+  ausentes de él. Cero llamadas a Gemini.
+- **Compilación (tarea 2.7 / 4.2, hecha)**: **159** páginas (`abspage@last{159}`), `Anexos` en
+  p. 141, 0 referencias indefinidas, 0 citas indefinidas, 0 etiquetas duplicadas. Delta frente a la
+  compilación conjunta de c-225 + c-226 (157 / 140 / 17): +2 total, 0 cuerpo, +2 anexos. El delta
+  proviene del anexo nuevo. `compilacion.md` regenerado (fuente «árbol de trabajo sobre c-231»,
+  SHA-256 `73e8cc5aaa14bf327e68df15c41b57675fd814fb97115e5d446a137f55711747`).
+- **Verificación ejecutada**: `python3 -I docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py`
+  con `0` fallas; `rg "Sección[~ ]3\.[0-9]{2}"` sobre los capítulos del cuerpo con 0 coincidencias;
+  `rg "1\.4\.1"` solo sobre menciones históricas; `openspec validate c-231-... --strict` válido.
+
+#### Matriz de trazabilidad (C27/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C27/a | Matriz stale de c-196: los cuatro pendientes de autores cerrados | c-231 | `docs/Tesis/Correcciones/dictamen-correcciones.md:4632` | `-` | `No quedan pendientes de autores` | corregida (c5b2fb9) |
+| C27/b | Fragmento de N-04 resuelto en el texto vigente | c-231 | `04-marco-metodologico.tex:46` | `subsec:poblacion-muestra-corpus` | `muestreo no probabilístico por conveniencia` | cerrada (c5b2fb9) |
+| C27/c | Portada: versión del documento `1.5.0` | c-231 | `00-portada.tex:31` | `-` | `Versión 1.5.0` | vigente (nuevo) |
+| C27/d | Anexo B: tag anotado `v1.5.0` | c-231 | `12-anexos.tex:58` | `sec:anexo-repositorio` | `tag anotado \texttt{v1.5.0}` | vigente (nuevo) |
+| C27/e | Entrada bibliográfica del repositorio en `1.5.0` | c-231 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:917` | `-` | `Versi{\'o}n 1.5.0` | vigente (nuevo) |
+| C27/f | Anexo nuevo «Números canónicos citados» | c-231 | `12-anexos.tex:243` | `sec:anexo-numeros-canonicos` | `Números canónicos citados` | vigente (nuevo) |
+| C27/g | Repunte de las refs del cuerpo (la de introducción) | c-231 | `01-introduccion.tex:48` | `-` | `\autoref{sec:anexo-numeros-canonicos}` | cerrada |
+| C27/h | Repunte de las refs del cuerpo (la de discusión) | c-231 | `08-discusion.tex:56` | `-` | `\autoref{sec:anexo-numeros-canonicos}` | cerrada |
+| C27/i | Memo: Sección `3.38` aditiva | c-231 | `docs/Tesis/Correcciones/numeros-canonicos.md:2784` | `-` | `3.38 Anexo de números canónicos citados` | vigente (nuevo) |

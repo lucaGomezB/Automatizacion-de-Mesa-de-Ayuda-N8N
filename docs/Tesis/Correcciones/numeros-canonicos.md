@@ -2781,6 +2781,40 @@ el efecto de orden ni elimina la asimetría de instrumentos ni el orden fijo de 
 en `07-resultados.tex`, `08-discusion.tex` y `04-marco-metodologico.tex` se redacta según la decisión
 del autor sobre el encuadre (tarea 0.5 / OQ1 del change).
 
+### 3.38 Anexo de números canónicos citados: registro y repunte de las referencias del cuerpo (c-231)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones 3.1 a
+3.37. Registra el anexo nuevo de la tesis (`docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex`, Anexo J,
+etiqueta `sec:anexo-numeros-canonicos`, rótulo «Números canónicos citados») y el repunte de las
+referencias internas del cuerpo.
+
+**Naturaleza.** El anexo es una **transcripción condensada** de este memo, recortada a los valores que
+el cuerpo cita de las secciones `3.31`, `3.33`, `3.35` y `3.36`. Este memo sigue siendo la **fuente
+interna de verdad**; el anexo no introduce valores ausentes de él ni modifica ningún valor ni estado
+previo. La trazabilidad por valor es la siguiente (cada fila del anexo resuelve a la fila indicada de
+este memo):
+
+| Sección del memo | Valores transcriptos al anexo | Estado |
+|---|---|---|
+| `3.31` (costo de la derivación errónea) | `c = 69,51 s` e IC `[33,42; 106,56] s`; corrección en la compuerta `24,01 s` e IC `[3,42; 50,06] s`; re-decisión `45,50 s`; paridad manual `0,8278`; costo marginal `0,51` h-persona/trimestre por punto | vigente (nuevo) |
+| `3.33` (balance neto con el costo medido) | `B = +30,6` h-persona/trimestre e IC condicional `[+26,7; +34,6]`, cota combinada `[+23,8; +35,8]`; `a* = 19,7 %` e IC `[13,4; 25,8] %`; insumos `N = 2.646`, `Δt = 43,82 s`, `e_aut = 28/138 = 0,2029`, `e_man = 26/151 = 0,1722` y diferencia `+0,0307` IC `[-0,0460; +0,1070]`; rejilla 5/10/15 min (`B = +25,4 / +18,7 / +11,9`; `a* = 68,2 / 75,5 / 77,9 %`; IC `[+8,6; +42,4]`, `[-15,0; +52,5]`, `[-38,6; +62,7]`) | vigente (nuevo) y, la rejilla, condicional (superada) |
+| `3.35` (acotación por mayoría) | coincidencia `200 de 206`; identidad `142 + 58 = 200`; casos sin mayoría `I033, I042, I056, I130, I194, I198`; exactitud `142/206 = 0,6893` y extremo `147/206 = 0,7136` (`k = 5`); macro-F1 `0,7024` y extremo `0,7249`; exactitud laxa `162/206 = 0,7864` | vigente (nuevo) y, el extremo, sensibilidad; la cifra primaria y la laxa, sin cambio |
+| `3.36` (robustez de la brecha) | brecha balanceada `+0,2324` IC `[0,1408; 0,3239]` (`n = 142`), `+0,1667` IC `[0,0733; 0,2600]` (`n = 150`), `+0,1990` IC `[0,1165; 0,2767]` (`n = 206`); sin re-ponderación `+0,3239`, `+0,2133` y `+0,2621` con sus IC; cifra primaria `0,6893`, macro-F1 `0,7024` y umbral `0,85` | vigente (nuevo); la cifra primaria y el umbral, sin cambio |
+
+Cada valor del anexo declara además su procedencia (el `.json` versionado y su clave, o el `.tex`
+citado), y los comandos reproducibles constan en la prosa del anexo.
+
+**Repunte de las referencias del cuerpo.** Las referencias del cuerpo al memo por número de sección se
+reemplazaron por la remisión al anexo (`\autoref{sec:anexo-numeros-canonicos}`). Se repuntaron **12
+ocurrencias** en **11 líneas**: `01-introduccion.tex:48`, `04-marco-metodologico.tex:78`,
+`07-resultados.tex:393`, `08-discusion.tex:56`, `:62`, `:84` (dos: `Sección~3.31` y `Sección~3.33`),
+`:114`, `:117`, `:121`, `:125` y `10-recomendaciones.tex:34`. La verificación de cierre
+`rg "Sección[~ ]3\.[0-9]{2}"` sobre los capítulos del cuerpo devuelve 0 coincidencias. El memo no se
+retira del repositorio y conserva las secciones `3.31`, `3.33`, `3.35` y `3.36` intactas.
+
+**Valores previos intactos.** Ningún valor ni estado de las secciones 3.1 a 3.37 cambia; esta sección
+solo agrega el registro del anexo y del repunte.
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con

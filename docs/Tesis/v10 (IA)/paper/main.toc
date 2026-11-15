@@ -140,3 +140,8 @@
 \contentsline {section}{\numberline {I}Trazabilidad de las correcciones de los dictámenes}{156}{section.1.I}%
 \contentsline {subsection}{\numberline {I.1}Nota de versiones}{156}{subsection.1.I.1}%
 \contentsline {subsection}{\numberline {I.2}Revisiones que originaron las correcciones}{157}{subsection.1.I.2}%
+\contentsline {section}{\numberline {J}Números canónicos citados}{157}{section.1.J}%
+\contentsline {paragraph}{Costo de la derivación errónea \(c\) (memo, sección 3.31).}{157}{paragraph*.72}%
+\contentsline {paragraph}{Balance neto y umbral de equilibrio (memo, sección 3.33).}{158}{paragraph*.74}%
+\contentsline {paragraph}{Acotación del arbitraje por mayoría (memo, sección 3.35).}{158}{paragraph*.76}%
+\contentsline {paragraph}{Robustez de la brecha híbrido menos línea de base (memo, sección 3.36).}{158}{paragraph*.78}%

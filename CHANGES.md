@@ -2941,9 +2941,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Memo**: seccion aditiva esperada `3.39`.
 - **Governance**: HIGH (sujetos humanos + consentimiento).
 
-### [C-231] `cerrar-version-referencias-internas-y-matriz` — PROPUESTO (2026-11-15, HIGH para el tag)
+### [C-231] `cerrar-version-referencias-internas-y-matriz` — APLICADO (2026-11-15, HIGH para el tag)
 
-- **Estado**: propuesto; valido. Sin aplicar. Es el mismo barrido que cierra C8.
+- **Estado**: aplicado (todos los grupos). Compilación de cierre de **159 páginas** limpia (0 referencias/citas indefinidas, 0 etiquetas duplicadas; `Anexos` en p. 141); cadenas de versión `v1.5.0` repuntadas en la portada (`00-portada.tex:31`), el Anexo B (`12-anexos.tex:58`) y la entrada bibliográfica (`.bib`); anexo nuevo de números canónicos citados (`sec:anexo-numeros-canonicos`) y las 12 refs del cuerpo repuntadas a él; memo sección aditiva `3.38`. El tag anotado `v1.5.0` se está cortando (autorización expresa OQ3). Archivado: no.
 - **Objetivo**: (1) corregir la matriz **stale** de c-196 (segunda instancia: `N-02`/`N-04`/`N-05`/`P16` marcados `PENDIENTE` contra el texto actual y el commit `c5b2fb9`); (2) cortar un tag **`v1.5.0`** que incluya c-223 a c-226 y repuntar portada (`00-portada.tex:31`) y Anexo B (`12-anexos.tex:58`), desambiguando `version entregada` (tesis) vs `configuracion entregada` (software `v1.3.0`); (3) agregar un **anexo de numeros canonicos** y repuntar las **12** refs `Seccion[~ ]3.xx`.
 - **Specs**: `tesis-document`, `tesis-numeros-canonicos`.
 - **Memo**: seccion aditiva esperada `3.38`.
