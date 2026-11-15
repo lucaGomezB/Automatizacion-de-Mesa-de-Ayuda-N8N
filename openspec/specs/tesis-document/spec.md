@@ -456,7 +456,19 @@ reduccion SHALL apoyarse en la mediana y en estadisticos de rango, no solo en la
 media. La prueba de Wilcoxon SHALL reportar el valor real con correccion por
 empates (W=363, T+=19737, T−=363, p=3,08e-32, r=0,9639) y SHALL declarar el
 numero real de pares en que el flujo automatizado no fue mas rapido (12 de 200),
-sin afirmar "W=0" ni "sin excepcion".
+sin afirmar "W=0" ni "sin excepcion". La tesis SHALL presentar, en una sola tabla o
+parrafo, la sintesis del rango de robustez de los tiempos con los escenarios ya
+calculados: descuentos de `5 s` y `10 s`, desagregado por canal, tiempos por
+operador, efecto de posicion y cota inferior del instrumento. La sintesis SHALL
+declarar el rango completo del estimando primario (reduccion de la media global de
+la campana 2026-10) y el escenario que lo minimiza, y SHALL informar las lecturas
+por canal y por operador como cotas de alcance rotuladas, sin presentarlas como el
+minimo global. La sintesis SHALL rotularse como sensibilidad o reinterpretacion y
+MUST NOT presentarse como medicion nueva. La cifra primaria `71,2 %` y su intervalo
+`[67,2 %; 74,6 %]` SHALL conservarse sin cambios. La discusion SHALL remitir desde
+las seis explicaciones rivales a la sintesis, y la limitacion correspondiente y la
+amenaza 1 de la metodologia SHALL precisar que el rango acota la magnitud pero no
+estima el efecto de orden ni elimina la asimetria de instrumentos.
 
 #### Scenario: Redondeo declarado y sensibilidad reportada
 
@@ -474,6 +486,25 @@ sin afirmar "W=0" ni "sin excepcion".
 
 - **WHEN** se leen los resultados de tiempos
 - **THEN** se declara que en 12 de 200 pares el flujo automatizado no fue mas rapido que el manual
+
+#### Scenario: Rango de robustez consolidado
+
+- **WHEN** se lee la sintesis de tiempos en resultados
+- **THEN** una sola tabla o parrafo reune los descuentos de 5 s y 10 s, el desagregado por canal, los tiempos por operador, el efecto de posicion y la cota inferior del instrumento
+- **AND** declara el rango del estimando primario y el escenario que lo minimiza
+- **AND** la sintesis esta rotulada como sensibilidad o reinterpretacion
+
+#### Scenario: Cotas de alcance rotuladas
+
+- **WHEN** se leen las lecturas por canal y por operador
+- **THEN** se informan como cotas de alcance con su ambito, sin presentar el valor por operador mas adverso como minimo global
+- **AND** la cifra primaria 71,2 % y su intervalo [67,2 %; 74,6 %] no cambian
+
+#### Scenario: Remision desde la discusion y la limitacion
+
+- **WHEN** se leen las seis explicaciones rivales y la limitacion de tiempos
+- **THEN** remiten a la sintesis del rango de robustez
+- **AND** precisan que el rango acota la magnitud pero no estima el efecto de orden ni elimina la asimetria de instrumentos
 
 ### Requirement: Consistencia de anexos, documentacion de soporte y PDF
 
@@ -9924,3 +9955,34 @@ sección del memo canónico que lo registra, sin cambiar las cifras vigentes del
 - **WHEN** se busca «147/206» en `07-resultados.tex`
 - **THEN** la línea del párrafo del arbitraje contiene el rango rotulado como sensibilidad
 - **AND** las cifras vigentes del párrafo (`0,6893`, `0,7864`, `0,7489`, `0,7467`, `31/61`) no cambian
+
+### Requirement: Robustez de la brecha frente a la referencia en resultados y discusión
+
+`07-resultados.tex` SHALL incluir, junto a `tab:linea-base-clasica`, una tabla o párrafo que informe
+la brecha híbrido menos línea de base clásica con su IC 95 % sobre los tres subconjuntos de
+referencia: consenso `E3`/`E4` (`n = 142`), `150` originales sin exclusión (`n = 150`) y corpus
+arbitrado completo (`n = 206`), con la fuente (`analisis_robustez_linea_de_base_c225.json`). El
+bloque SHALL rotularse como sensibilidad o robustez y MUST NOT presentarse como una medición nueva.
+`08-discusion.tex` SHALL leer el resultado en la limitación sobre la comparación con clasificadores
+alternativos y SHALL declarar que la conclusión sobre la línea de base no depende de una sola
+elección de referencia. La incorporación MUST NOT cambiar `0,6893/206`, `0,7024`, el veredicto del
+umbral `0,85` ni ningún otro valor canónico, y su crecimiento neto de páginas SHALL registrarse en el
+libro mayor de `dictamen-correcciones.md`.
+
+#### Scenario: Brecha por subconjunto presente en resultados
+
+- **WHEN** se lee `07-resultados.tex` junto a `tab:linea-base-clasica`
+- **THEN** figura la brecha con su IC en los tres subconjuntos
+- **AND** el bloque se rotula como sensibilidad o robustez y remite a su fuente
+
+#### Scenario: Lectura acotada en la discusión
+
+- **WHEN** se lee la limitación sobre la comparación con clasificadores alternativos en `08-discusion.tex`
+- **THEN** el texto declara que la conclusión sobre la línea de base no depende de una sola referencia
+- **AND** no presenta la lectura múltiple como una medición nueva
+
+#### Scenario: Cifras canónicas intactas
+
+- **WHEN** se comparan las cifras del bloque con el memo canónico
+- **THEN** `0,6893/206`, `0,7024` y el veredicto del umbral `0,85` no cambian
+- **AND** el crecimiento de páginas queda registrado en el libro mayor

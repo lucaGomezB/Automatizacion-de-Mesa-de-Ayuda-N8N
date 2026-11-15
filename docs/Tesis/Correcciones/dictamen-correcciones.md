@@ -1035,6 +1035,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-216` (L2, L3, L4, L5) | sin commit (lo crea el orquestador) | 149 | 124 | 25 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27); exceso +49 declarado y honrado** | Medido: `abspage@last{149}`; `Anexos` en p. 125; delta frente a la release v1.3.0 de partida (147 / 122 / 25): +2 total, +2 cuerpo, 0 anexos. L2 aporta +1 pagina en el capitulo 4 y +1 en la discusion; L5 (repeticiones y cortes del capitulo 11) no agrega paginas. El exceso sobre el tope de 100 es +49 y queda declarado y honrado. |
 | `+c-219` (`change/c-218-c-219-carga-multicanal-y-sesgo-de-referencia`) | sin commit (lo crea el orquestador) | 156 | 131 | 25 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{156}`; `Anexos` en p. 132; delta frente a la compilacion de c-218 (154 / 129 / 25): +2 total, +2 cuerpo, 0 anexos; subseccion de resultados con dos tablas mas parrafos en 04 y 08 (una primera version sumaba +3 y se recorto) |
 | `+c-221` (`change/c-221-propagar-el-arbitraje-y-atender-el-dictamen-post-v1-3-0`) | sin commit (lo crea el orquestador) | 155 | 138 | 17 | -1 | +7 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change; presupuesto de D13: <= 0 con el Anexo J retirado (cumple) | Medido: `abspage@last{155}`; `Anexos` en p. 139; delta frente a la compilacion de c-219 (156 / 131 / 25): -1 total, +7 cuerpo, -8 anexos. El retiro del Anexo J (material de defensa: `docs/defensa/respuestas-tribunal.md`), que aporta las 8 paginas de anexos menos, compensa el crecimiento del cuerpo (dos subsecciones nuevas en resultados, la tabla de matriz y metricas por clase, el apartado metodologico del corpus independiente, las amenazas septima y octava, el complemento descriptivo de calibracion y los parrafos de discusion, conclusiones y recomendaciones). El bloque incluye la prosa no compilada de c-220 (una fila de `tab:variables` y un parrafo en `04`), que no tuvo fila propia porque c-220 no compila; el delta neto total (-1) cumple el presupuesto <= 0 de D13. |
+| `+c-225` + `+c-226` (compilación conjunta) | sin commit (lo crea el orquestador) | 157 | 140 | 17 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{157}`; `Anexos` en p. 141; delta frente a la compilación de c-221 (155 / 138 / 17): +2 total, +2 cuerpo, 0 anexos. c-225 agrega un párrafo y la tabla `tab:robustez-linea-base` en resultados más un pasaje en la limitación 5; c-226 agrega la tabla `tab:rango-robustez-tiempos` y su prosa en resultados, discusión y método. Ambas se compilaron en una sola corrida (batcheada); el delta no se desagrega por change. |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -6038,3 +6039,127 @@ tarea.
 | C24/h | Recomendaciones: trabajo futuro reformulado | c-224 | `10-recomendaciones.tex:26` | `subsec:corpus-independiente` | `más etiquetadores independientes` | cerrada |
 | C24/i | Memo: detalle de las tres etiquetas de los 6 casos sin mayoría | c-224 | `docs/Tesis/Correcciones/numeros-canonicos.md:2615` | `-` | `Casos sin mayoría: detalle de las tres etiquetas` | vigente (nuevo) |
 | C24/j | Memo: métricas por clase en ambos extremos | c-224 | `docs/Tesis/Correcciones/numeros-canonicos.md:2628` | `-` | `Métricas por clase en ambos extremos` | vigente (nuevo) |
+
+### c-225: robustez de la línea de base frente a la referencia (grupos 0 a 5)
+
+- **Change**: `c-225-robustez-de-la-linea-de-base-frente-a-la-referencia` (árbol de trabajo; sin
+  commit ni push).
+- **Fecha de registro**: 2026-11-15.
+- **Observación atendida** (análisis de limitaciones estructurales v1.4.1, limitación 2, P2): el
+  contraste del híbrido frente a la línea de base clásica se informaba solo sobre la referencia
+  arbitrada completa (`206` casos). El change repite el contraste pareado, con IC bootstrap, sobre
+  los tres subconjuntos alineados con las lecturas de la tesis: consenso `E3`/`E4` (`142`), `150`
+  originales sin exclusión (`150`) y corpus arbitrado completo (`206`). **Cerrada**.
+- **Resultado**: la superioridad del híbrido se mantiene en las tres lecturas y en las dos variantes
+  de la línea de base; los seis intervalos del 95~\% excluyen el cero. En la variante balanceada la
+  brecha va de `0,1667` (`[0,0733; 0,2600]`, `150` originales) a `0,2324`
+  (`[0,1408; 0,3239]`, consenso); el corpus completo reproduce `0,1990` (`[0,1165; 0,2767]`). La
+  magnitud es dependiente de la referencia; la significación no se pierde en ningún subconjunto.
+- **Decisiones del autor (checkpoint D8)**: OQ1 = **cualificación/robustez** (no pérdida de
+  significación; se declara que la magnitud depende de la referencia y que el subconjunto de `150`
+  originales es el más conservador). OQ2 = **tabla compacta** de seis columnas en
+  `07-resultados.tex`, junto a `tab:linea-base-clasica`. La limitación séptima **no** se toca: el
+  resultado es sobre la elección de referencia de la comparación con la línea de base, no sobre el
+  sesgo de ajuste y evaluación sobre el mismo corpus.
+- **Archivos afectados**: `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py`
+  (+ test TDD, `19` pruebas; salidas JSON/MD/SHA256SUMS);
+  `evaluation/data/campana/analisis/README.md`;
+  `docs/Tesis/Correcciones/numeros-canonicos.md` (Sección `3.36`);
+  `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex` y `08-discusion.tex`; esta entrada.
+- **Sin cambios**: `App/`, `n8n/`, el clasificador, la configuración, el corpus, las predicciones ni
+  los artefactos congelados. La cifra primaria `0,6893/206`, el macro-F1 `0,7024` y el veredicto del
+  umbral `0,85` no cambian. Cero llamadas a Gemini.
+- **Compilación (tarea 4.3, hecha)**: compilación conjunta con c-226 en `texlive-thesis`
+  (`docker run --rm -v "$PWD/docs/Tesis/v10 (IA)":/work -w /work/paper texlive-thesis latexmk main.tex`):
+  157 páginas (`abspage@last{157}`, `Anexos` en p. 141), 0 errores, 0 referencias indefinidas,
+  0 etiquetas duplicadas. Delta de páginas medido y registrado en el libro mayor (`+2` total / `+2`
+  cuerpo frente a c-221; exceso heredado, sin compensación).
+- **Verificación ejecutada**: `python3 -m pytest
+  evaluation/data/campana/analisis/test_analisis_robustez_linea_de_base_c225.py -q` (`19` pruebas
+  aprobadas); `ruff check` sin hallazgos; dos corridas del script con SHA-256 idénticos;
+  `openspec validate c-225-... --strict` válido; `python3 -I
+  docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py` con `0` fallas; `verify_citations.py`
+  en `PASS` (`94` entradas, `0` huérfanas, `0` sin usar). El `git diff` del memo es `+50/-0` y el
+  párrafo de la limitación quinta conserva su texto previo como prefijo exacto.
+
+#### Matriz de trazabilidad (C25/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C25/a | Script del análisis de robustez | c-225 | `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py:2` | `-` | `Robustez de la brecha hibrido menos linea de base frente a la referencia` | vigente (nuevo) |
+| C25/b | Pruebas TDD del script (19) | c-225 | `evaluation/data/campana/analisis/test_analisis_robustez_linea_de_base_c225.py:1` | `-` | `Pruebas del analisis offline de robustez` | vigente (nuevo) |
+| C25/c | Brecha balanceada sobre consenso E3/E4 | c-225 | `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.json:347` | `-` | `"valor": 0.2323943661971831` | vigente (nuevo) |
+| C25/d | Brecha balanceada sobre 150 originales | c-225 | `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.json:568` | `-` | `"valor": 0.16666666666666666` | vigente (nuevo) |
+| C25/e | Brecha balanceada sobre arbitrado completo | c-225 | `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.json:62` | `-` | `"valor": 0.19902912621359223` | vigente (nuevo) |
+| C25/f | Anclas verificadas antes de escribir | c-225 | `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.json:7` | `-` | `"anclas_verificadas"` | vigente (nuevo) |
+| C25/g | Memo: Sección 3.36 aditiva | c-225 | `docs/Tesis/Correcciones/numeros-canonicos.md:2662` | `-` | `3.36 Robustez de la brecha híbrido menos línea de base` | vigente (nuevo) |
+| C25/h | Resultados: tabla de robustez | c-225 | `07-resultados.tex:456` | `tab:robustez-linea-base` | `label{tab:robustez-linea-base}` | cerrada |
+| C25/i | Resultados: lectura de cualificación | c-225 | `07-resultados.tex:451` | `-` | `los seis intervalos de confianza del 95` | cerrada |
+| C25/j | Discusión: limitación quinta acotada | c-225 | `08-discusion.tex:56` | `subsec:limitaciones-estudio` | `La comparación no depende de una sola elección de referencia` | cerrada |
+| C25/k | README: entrada del script y sus salidas | c-225 | `evaluation/data/campana/analisis/README.md:535` | `-` | `Robustez de la linea de base frente a la referencia` | vigente (nuevo) |
+| C25/l | Cifras primarias sin cambio | c-225 | `07-resultados.tex:451` | `-` | `el macro-F1 0,7024 y el veredicto del umbral de 0,85 no cambian` | cerrada (sin cambio) |
+
+### c-226: consolidación del rango de robustez de los tiempos (grupos 0 a 5)
+
+- **Change**: `c-226-consolidar-el-rango-de-robustez-de-tiempos` (árbol de trabajo; sin commit ni
+  push).
+- **Fecha de registro**: 2026-11-15.
+- **Observación atendida** (análisis de limitaciones estructurales v1.4.1, limitación 4, P4): las
+  sensibilidades de tiempos ---descuentos de `5 s` y `10 s`, desagregado por canal, tiempos por
+  operador, efecto de posición y cota inferior del instrumento--- estaban dispersas entre resultados
+  y discusión; el lector no veía un único rango y cada explicación rival citaba una cifra aislada.
+  El change las consolida en una tabla única y una sección aditiva del memo. Es síntesis y
+  redacción, no medición nueva. **Cerrada**.
+- **Resultado**: rango del estimando primario `[65,57 %; 71,16 %]`; el escenario que lo minimiza es
+  el descuento de `10 s` (`65,57 %`). Cotas de alcance rotuladas: por canal, el mínimo intra-canal es
+  correo `51,07 %`; por operador de la campaña complementaria, `O1 33,8 %`, `O2 79,7 %` y agregado
+  `69,3 %`; efecto de posición significativo para `O2` (`rho = -0,3604`, `p = 0,00011`) y no para
+  `O1`, con MDE `rho = 0,276`; granularidad del redondeo manual `199/200` (`5 s`) y `180/200`
+  (`10 s`). La cifra primaria `71,2 %` y su intervalo `[67,2 %; 74,6 %]` no cambian.
+- **Decisiones del autor (checkpoint 0.5 / D1 y OQ1)**: el «escenario que minimiza» es el descuento
+  de `10 s` (`65,6 %`) para el estimando primario; `33,8 %` (operador) y `51,1 %` (canal) se
+  informan como **cotas de alcance**, no como mínimos globales (la alternativa descartada es un único
+  mínimo de `33,8 %`, que mezcla estimandos). OQ2: tabla `tab:rango-robustez-tiempos` en
+  `07-resultados.tex` (coherente con el enfoque de c-225).
+- **Corrección del design (aplicada)**: el design ubicaba las reducciones por operador en
+  `resultados.json`; ese artefacto solo contiene el efecto de posición. Las cifras canónicas
+  proceden de `brazo_manual.csv` × `corpus_campana.json` (como en c-196, Sección `3.17`); el design
+  se corrigió y la prosa es consistente con ello.
+- **Archivos afectados**:
+  `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py` (+ test TDD, `31`
+  pruebas; salidas JSON/MD/SHA256SUMS); `evaluation/data/campana/analisis/README.md`;
+  `docs/Tesis/Correcciones/numeros-canonicos.md` (Sección `3.37`);
+  `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex`, `08-discusion.tex` y
+  `04-marco-metodologico.tex`; esta entrada.
+- **Sin cambios**: `App/`, `n8n/`, el clasificador, la configuración, el corpus, las predicciones ni
+  los artefactos congelados. La cifra primaria `71,2 %`, su intervalo `[67,2 %; 74,6 %]`, el `p` de
+  Wilcoxon, `r` y `d_z` no cambian. Cero llamadas a Gemini.
+- **Compilación (tarea 3.6, hecha)**: compilación conjunta con c-225 en `texlive-thesis`: 157
+  páginas (`abspage@last{157}`), 0 referencias indefinidas, 0 etiquetas duplicadas. Delta de
+  páginas registrado en el libro mayor (`+2`; exceso heredado, sin compensación).
+- **Verificación ejecutada**: `python3 -m pytest
+  evaluation/data/campana/analisis/test_analisis_rango_robustez_tiempos_c226.py -q` (`31` pruebas
+  aprobadas); `ruff check` sin hallazgos; dos corridas del script con SHA-256 idénticos;
+  `cd evaluation && pytest -q` (`1392 passed, 1 skipped`, sin regresiones);
+  `openspec validate c-226-... --strict` válido; `python3 -I
+  docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py` con `0` fallas. El `git diff` del memo
+  es aditivo (`+122/-0` en total, sin tocar las secciones `3.1` a `3.36`).
+
+#### Matriz de trazabilidad (C26/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C26/a | Script del consolidado (TDD) | c-226 | `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py:2` | `-` | `Rango de robustez de los tiempos` | vigente (nuevo) |
+| C26/b | Pruebas TDD del script (31) | c-226 | `evaluation/data/campana/analisis/test_analisis_rango_robustez_tiempos_c226.py:1` | `-` | `Pruebas del analisis offline del rango de robustez` | vigente (nuevo) |
+| C26/c | Anclajes que abortan antes de escribir | c-226 | `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py:34` | `-` | `Anclajes que abortan antes de escribir` | vigente (nuevo) |
+| C26/d | Rango primario: escenario mínimo (10 s) | c-226 | `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.json:153` | `-` | `"escenario_minimo"` | vigente (nuevo) |
+| C26/e | Reducción primaria 71,16 % en el JSON | c-226 | `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.json:162` | `-` | `"reduccion_media": 0.7116083461881952` | vigente (nuevo) |
+| C26/f | Reducción por operador O2 79,7 % en el JSON | c-226 | `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.json:147` | `-` | `"reduccion_media": 0.7974641670621737` | vigente (nuevo) |
+| C26/g | Memo: Sección 3.37 aditiva | c-226 | `docs/Tesis/Correcciones/numeros-canonicos.md:2712` | `-` | `3.37 Rango de robustez de los tiempos` | vigente (nuevo) |
+| C26/h | Resultados: tabla de rango de robustez | c-226 | `07-resultados.tex:70` | `tab:rango-robustez-tiempos` | `label{tab:rango-robustez-tiempos}` | cerrada |
+| C26/i | Resultados: lectura de sensibilidad del rango | c-226 | `07-resultados.tex:65` | `-` | `Rango de robustez consolidado` | cerrada |
+| C26/j | Discusión: remisión desde las seis rivales | c-226 | `08-discusion.tex:24` | `-` | `la lectura más adversa por operador` | cerrada |
+| C26/k | Discusión: limitación de tiempos acotada | c-226 | `08-discusion.tex:66` | `-` | `tampoco elimina la asimetría de instrumentos` | cerrada |
+| C26/l | Método: amenaza 1 acotada | c-226 | `04-marco-metodologico.tex:106` | `-` | `pero no estima el efecto de orden` | cerrada |
+| C26/m | README: entrada del script y sus salidas | c-226 | `evaluation/data/campana/analisis/README.md:577` | `-` | `Rango de robustez de los tiempos (c-226)` | vigente (nuevo) |
+| C26/n | Cifras primarias sin cambio | c-226 | `07-resultados.tex:65` | `-` | `no cambia la cifra primaria` | cerrada (sin cambio) |

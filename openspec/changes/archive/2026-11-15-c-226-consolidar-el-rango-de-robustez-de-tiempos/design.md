@@ -5,7 +5,7 @@
 La limitación 4 (instrumentos asimétricos, orden fijo, llamadas recitadas) se acota hoy con
 sensibilidades dispersas: los descuentos de `5 s` y `10 s` viven en `07-resultados.tex:63` y en
 la Sección 3.8 del memo; el desagregado por canal en `tab:tiempos-canal` y en la Sección 3.8; los
-tiempos por operador (`O1 33,8 %`, `O2 79,7 %`, agregado `69,3 %`) y el efecto de posición en la
+tiempos por operador (`O1 33,8 %`, `O2 79,7 %`, agregado `69,3 %`) en la Sección 3.17 y el efecto de posición en la
 Sección 3.14; la cota del instrumento (múltiplos de `5 s` `199/200` y de `10 s` `180/200`, y la
 telefonía como cota inferior por la grabación acotada a `45 s`) en `04-marco-metodologico.tex:16`
 y `:76`. Las seis explicaciones rivales de `08-discusion.tex:22-24` citan cifras aisladas.
@@ -16,10 +16,13 @@ y `:76`. Las seis explicaciones rivales de `08-discusion.tex:22-24` citan cifras
   `tiempo_automatizado_s` y `canal_origen`.
 - `evaluation/stats.py`: `reduccion_relativa`, `escenario_sensibilidad`,
   `granularidad_manual`, `estadisticos_descriptivos`, `wilcoxon_tiempos_detallado`.
-- `evaluation/data/campana/analisis/resultados.json`: tiempos por operador y efecto de posición
-  de la campaña complementaria (Sección 3.14 del memo).
+- `evaluation/data/campana/brazo_manual.csv` (duraciones manuales por `id_etiquetador`) cruzado
+  con `evaluation/data/campana/corpus_campana.json` (`tiempo_automatizado_s` de la corrida
+  propia): de ahí salen las reducciones por operador, como las derivó c-196 (Sección 3.17).
+- `evaluation/data/campana/analisis/resultados.json`: efecto de posición (Spearman) de la
+  campaña complementaria (Sección 3.14 del memo).
 - Valores canónicos de referencia en `docs/Tesis/Correcciones/numeros-canonicos.md`
-  (Secciones 3.8 y 3.14) y en `07-resultados.tex:12-63`.
+  (Secciones 3.8, 3.14 y 3.17) y en `07-resultados.tex:12-63`.
 
 **Hecho del estado actual:** la cifra primaria `71,2 %` (media) y su IC `[67,2 %; 74,6 %]` no se
 tocan. Ningún escenario nuevo se mide: todos ya fueron calculados y registrados.
@@ -66,9 +69,9 @@ cada una rotulada:
 - **Por canal** (`76,98 / 51,07 / 93,44 %`): la menor es correo electrónico `51,07 %`; no se
   presenta como mínimo global, porque es una reducción intra-canal.
 - **Por operador** (`O1 33,8 %`, `O2 79,7 %`, agregado `69,3 %`): proviene de la campaña
-  complementaria, cuyo brazo manual mide solo la decisión de sector y no es comparable con el
-  brazo de `2026-10`. La lectura `33,8 %` es la más adversa entre escenarios rotulados, pero no
-  el mínimo del estimando primario.
+  complementaria (`brazo_manual.csv` cruzado con `corpus_campana.json`, Sección 3.17), cuyo brazo
+  manual mide solo la decisión de sector y no es comparable con el brazo de `2026-10`. La lectura
+  `33,8 %` es la más adversa entre escenarios rotulados, pero no el mínimo del estimando primario.
 - **Efecto de posición**: significativo para uno de los dos operadores y acotado por su MDE; no
   produce una cifra de reducción, pero acota la estabilidad del orden.
 - **Cota inferior del instrumento**: la telefonía automatizada es cota inferior de la duración
@@ -93,7 +96,7 @@ Funciones puras (con prueba sintética antes de implementar):
 |---|---|---|
 | `rango_descuentos(manual, automatizado, descuentos)` | Reducción por descuento y el mínimo | `stats.escenario_sensibilidad`, `stats.reduccion_relativa` |
 | `resumen_por_canal(casos)` | Reducción intra-canal y canal mínimo | `stats.reduccion_relativa` |
-| `resumen_por_operador(resultados)` | Reducciones `O1`, `O2` y agregada desde `resultados.json` | lectura del artefacto |
+| `resumen_por_operador(registros_manual, automatizado_por_caso)` | Reducciones `O1`, `O2` y agregada desde `brazo_manual.csv` × `corpus_campana.json` | lectura de los artefactos |
 | `resumen_posicion(resultados)` | Coeficiente, `p` y MDE del efecto de posición | lectura del artefacto |
 | `cota_instrumento(manual)` | Múltiplos de `5 s` y `10 s` y la nota de la telefonía | `stats.granularidad_manual` |
 
@@ -101,7 +104,7 @@ Funciones puras (con prueba sintética antes de implementar):
 `68,61 %` y `65,57 %` de reducción global; `76,98 %`, `51,07 %` y `93,44 %` por canal;
 `199/200` y `180/200` de granularidad; `33,8 %`, `79,7 %` y `69,3 %` por operador; y los valores
 de efecto de posición de la Sección 3.14. Las series se leen del corpus y el bloque por operador de
-`resultados.json`, no de constantes.
+`brazo_manual.csv` y `corpus_campana.json`, no de constantes.
 
 Salidas del JSON: rango primario con mínimo y escenario; tabla por canal; tabla por operador;
 efecto de posición; cota del instrumento; SHA-256 de las entradas; y una nota de no comparabilidad
@@ -132,8 +135,8 @@ renumerar la enumeración y las remisiones.
 
 Se agrega la Sección `3.N` (primer número libre al aplicar; hoy la última es `3.36`, esperado
 `3.37`) con: el rango primario y el mínimo; la tabla por canal; la tabla por operador; el efecto de
-posición; la cota del instrumento; la procedencia de cada valor (corpus, `resultados.json`, clave y
-comando); y el estado (`vigente` para los valores ya canónicos reutilizados; `sensibilidad` /
+posición; la cota del instrumento; la procedencia de cada valor (corpus, `brazo_manual.csv`,
+`corpus_campana.json`, `resultados.json`, clave y comando); y el estado (`vigente` para los valores ya canónicos reutilizados; `sensibilidad` /
 `reinterpretación` para la síntesis). Declara de forma explícita que no mide de nuevo y que no
 modifica las Secciones 3.1 a 3.36.
 
@@ -165,7 +168,7 @@ Cada tarea de prosa cita la clave del memo de la que toma la cifra.
 | Duplicar cifras y romper la repetición acotada | La tabla es la síntesis; resultados y discusión conservan sus cifras con remisión |
 | Crecer en páginas | Tabla compacta o párrafo; verificar `\@abspage@last` y compensar dentro del mismo bloque |
 | Colisión de numeración del memo | Fijar el primer número libre al aplicar (tarea 0.5) |
-| Deriva del corpus o de `resultados.json` | Los anclajes abortan sin escribir; SHA-256 de las entradas en el JSON |
+| Deriva del corpus, de `brazo_manual.csv` o de `resultados.json` | Los anclajes abortan sin escribir; SHA-256 de las entradas en el JSON |
 
 ## Migration Plan
 

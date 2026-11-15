@@ -2875,6 +2875,36 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 77 — Robustez de la linea de base frente a la referencia (c-225)
+
+> Cierra la limitacion 2 del analisis de limitaciones estructurales de la v1.4.1: la brecha hibrido menos linea de base clasica se evaluaba sobre una sola eleccion de referencia (arbitrado completo `206` y, antes, los `103` de consenso), mientras la tesis informa al hibrido bajo dos lecturas mas. El change mide la brecha sobre los tres subconjuntos alineados con las lecturas de la tesis, sin medicion nueva ni cambios canonicos.
+
+### [C-225] `robustez-de-la-linea-de-base-frente-a-la-referencia` — APLICADO/ARCHIVADO (2026-11-15, MEDIUM)
+
+- **Estado**: aplicadas las 23 tareas (5 grupos); script offline `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py` (+ test TDD) y salidas JSON/MD/SHA256SUMS deterministas; `openspec validate --strict` valido. Archivado el 2026-11-15 en `openspec/changes/archive/2026-11-15-c-225-robustez-de-la-linea-de-base-frente-a-la-referencia/`.
+- **Scope**: `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py`; `evaluation/data/campana/analisis/README.md`; seccion aditiva `3.36` de `numeros-canonicos.md`; prosa de `07-resultados` y `08-discusion`; `dictamen-correcciones.md` (matriz C25). Specs sincronizados: `evaluation-baseline-paired-contrast` (LBP-04, LBP-05), `tesis-document` y `tesis-numeros-canonicos`.
+- **Hallazgo**: la brecha hibrido menos linea de base (`+0,1990` sobre `206`) se reporta con IC 95 % sobre los tres subconjuntos de referencia —consenso `E3`/`E4` (`n = 142`), `150` originales sin exclusion (`n = 150`) y arbitrado completo (`n = 206`)—; el script reproduce las anclas `142/206`, `109/142`, `112/150`, `101/206` y `88/206` antes de escribir y aborta si no coinciden. La cifra primaria `0,6893/206`, el macro-F1 `0,7024` y el veredicto del umbral `0,85` no cambian.
+- **Dependencias**: c-213 (contraste pareado y artefactos), c-206/c-221 (predicciones y arbitraje) y c-219 (lecturas por origen de la referencia). No toca `App/`, `n8n/`, el clasificador, la configuracion, el corpus ni las predicciones.
+- **Governance**: MEDIUM (analisis y prosa). Cero llamadas a Gemini.
+- **Leer antes**: `openspec/changes/archive/2026-11-15-c-225-robustez-de-la-linea-de-base-frente-a-la-referencia/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/numeros-canonicos.md` (Seccion 3.36).
+
+---
+
+## FASE 78 — Consolidar el rango de robustez de tiempos (c-226)
+
+> Cierra la limitacion 4 (instrumentos asimetricos, orden fijo de los brazos y llamadas recitadas): las sensibilidades de tiempos ya existian pero dispersas entre resultados y discusion, de modo que el lector no veia un unico rango. El change las reune en una sola tabla rotulada como sensibilidad, sin medir de nuevo ni cambiar la cifra primaria.
+
+### [C-226] `consolidar-el-rango-de-robustez-de-tiempos` — APLICADO/ARCHIVADO (2026-11-15, MEDIUM)
+
+- **Estado**: aplicadas las 27 tareas (5 grupos); script offline `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py` (+ test TDD) y salidas JSON/MD/SHA256SUMS deterministas; `openspec validate --strict` valido. Archivado el 2026-11-15 en `openspec/changes/archive/2026-11-15-c-226-consolidar-el-rango-de-robustez-de-tiempos/`.
+- **Scope**: `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py`; `evaluation/data/campana/analisis/README.md`; seccion aditiva nueva de `numeros-canonicos.md` (posterior a la `3.36` de c-225, sin renumerar); prosa de `07-resultados`, `08-discusion` y `04-marco-metodologico` (amenaza 1); `dictamen-correcciones.md`. Specs sincronizados: `tesis-document` (requisito «Divulgacion del procedimiento de medicion de tiempos y analisis de sensibilidad» modificado) y `tesis-numeros-canonicos` (registro aditivo).
+- **Hallazgo**: la sintesis unica del rango de robustez de tiempos reune los descuentos de `5 s` y `10 s`, el desagregado por canal, los tiempos por operador, el efecto de posicion y la cota inferior del instrumento, declara el rango del estimando primario y el escenario que lo minimiza, y separa las cotas de alcance (canal, operador) del minimo global. La cifra primaria `71,2 %` y su intervalo `[67,2 %; 74,6 %]` no cambian; el consolidado es una reinterpretacion de escenarios ya calculados, no una medicion nueva.
+- **Dependencias**: c-134 (sensibilidad de redondeo, granularidad y desagregado por canal), c-196 (tiempos por operador) y c-169 (campana complementaria y efecto de posicion). No toca `App/`, `n8n/`, el clasificador, la configuracion, el corpus, las predicciones ni los artefactos congelados.
+- **Governance**: MEDIUM (analisis y prosa). Cero llamadas a Gemini.
+- **Leer antes**: `openspec/changes/archive/2026-11-15-c-226-consolidar-el-rango-de-robustez-de-tiempos/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/numeros-canonicos.md` (seccion aditiva del rango de robustez de tiempos).
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)

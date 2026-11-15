@@ -2659,6 +2659,128 @@ Verificación reproducible: `python3 -m pytest evaluation/data/campana/analisis/
 prosa vive en `07-resultados.tex` (párrafo del arbitraje), `08-discusion.tex` (limitación octava) y
 `10-recomendaciones.tex` (`subsec:corpus-independiente`).
 
+### 3.36 Robustez de la brecha híbrido menos línea de base frente a la referencia (c-225)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.35. Registra la brecha híbrido menos línea de base clásica, con IC 95 %, sobre los tres
+subconjuntos de referencia que la tesis informa por separado: consenso `E3`/`E4` (`n = 142`), los
+`150` originales sin exclusión (`n = 150`) y el corpus arbitrado completo (`n = 206`). Análisis de
+solo lectura, determinista y offline: no invoca a Gemini, no usa red ni base de datos, no
+reclasifica, no reentrena y no modifica el corpus, las predicciones, los artefactos congelados ni
+ningún número canónico. Cero llamadas pagas. Las tres lecturas son descriptivas, se reportan juntas
+y no se corrigen por multiplicidad.
+
+*Numeración.* El memo terminaba en la Sección `3.35` (c-224); esta sección es la `3.36`, la primera
+libre (releída al aplicar; c-226 reserva la `3.37`).
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Brecha balanceada, consenso `E3`/`E4` (`n = 142`): `+0,2324`, IC 95 % `[0,1408; 0,3239]`; aciertos `109/142` frente a `76/142` (`b = 43`, `c = 10`); McNemar corregido `p = 1,105e-05` | `analisis_robustez_linea_de_base_c225.json`, clave `subconjuntos.consenso_e3_e4.contrastes.balanceada`; comando `python3 evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py` | vigente (nuevo) |
+| Brecha balanceada, `150` originales sin exclusión (`n = 150`): `+0,1667`, IC 95 % `[0,0733; 0,2600]`; aciertos `112/150` frente a `87/150` (`b = 39`, `c = 14`); McNemar corregido `p = 0,0010` | misma fuente, clave `subconjuntos.original_150.contrastes.balanceada` | vigente (nuevo) |
+| Brecha balanceada, corpus arbitrado completo (`n = 206`): `+0,1990`, IC 95 % `[0,1165; 0,2767]`; aciertos `142/206` frente a `101/206` (`b = 61`, `c = 20`); McNemar corregido `p = 8,812e-06` | misma fuente, clave `subconjuntos.arbitrado_completo.contrastes.balanceada` | vigente (nuevo) |
+| Brecha sin re-ponderación, consenso `E3`/`E4` (`n = 142`): `+0,3239`, IC 95 % `[0,2324; 0,4085]`; aciertos `109/142` frente a `63/142` (`b = 51`, `c = 5`); McNemar corregido `p = 1,817e-09` | misma fuente, clave `subconjuntos.consenso_e3_e4.contrastes.sin_repoderacion` | vigente (nuevo) |
+| Brecha sin re-ponderación, `150` originales (`n = 150`): `+0,2133`, IC 95 % `[0,1267; 0,3000]`; aciertos `112/150` frente a `80/150` (`b = 42`, `c = 10`); McNemar corregido `p = 1,716e-05` | misma fuente, clave `subconjuntos.original_150.contrastes.sin_repoderacion` | vigente (nuevo) |
+| Brecha sin re-ponderación, corpus arbitrado completo (`n = 206`): `+0,2621`, IC 95 % `[0,1845; 0,3398]`; aciertos `142/206` frente a `88/206` (`b = 69`, `c = 15`); McNemar corregido `p = 7,348e-09` | misma fuente, clave `subconjuntos.arbitrado_completo.contrastes.sin_repoderacion` | vigente (nuevo) |
+| Particiones de contexto: `arbitraje_e5` `64` casos y bandera `tres_vias` `6` casos; no son subconjuntos de contraste | misma fuente, clave `contexto` | contexto (nuevo) |
+| Anclas verificadas antes de escribir: híbrido `142/206`, `109/142` y `112/150`; línea de base balanceada `101/206`; sin re-ponderación `88/206`; cardinalidades `142`, `150` y `206` | misma fuente, clave `anclas_verificadas`; agregados de las secciones `3.25`, `3.30` y `3.32` y de `linea_de_base_clasica_c210.json` | verificado (sin cambio) |
+| Cifra primaria `0,6893/206`, macro-F1 `0,7024` y veredicto del umbral `0,85` | `07-resultados.tex`; secciones `3.1` a `3.35`; sin cambio | vigente (sin cambio) |
+
+**Método.** Las predicciones por caso de la línea de base se reconstruyen con
+`evaluation.linea_de_base.predecir` (semilla `42`, entrenada con los `200` casos del corpus de
+ajuste); las del híbrido se leen de `predicciones_arbitrado.json`. El contraste usa la misma
+convención de c-213 (LBP-01): tabla 2x2 de aciertos estrictos, McNemar con `p` exacta bilateral y
+corregida por continuidad (criterio exacto si `b + c < 25`; en las seis lecturas `b + c >= 25`, por
+lo que el `p` primario es el corregido) y diferencia `(b − c)/n` con IC 95 % bootstrap percentil
+pareado (`10000` remuestreos, semilla `20261021`). Los subconjuntos se derivan de
+`arbitraje_tres_vias.json` (`origen == "consenso_e3_e4"`) y de los ids `I001`..`I150`; el corpus
+completo tiene `206` casos.
+
+**Lectura.** Las seis brechas son positivas y sus seis intervalos excluyen el cero: la ventaja del
+híbrido sobre la línea de base clásica se mantiene en los tres subconjuntos y en las dos variantes.
+La brecha menor es la del subconjunto de `150` originales con la variante balanceada (`+0,1667`,
+IC `[0,0733; 0,2600]`); la mayor es la del consenso `E3`/`E4` sin re-ponderación (`+0,3239`, IC
+`[0,2324; 0,4085]`). La lectura no cambia la cifra primaria ni el veredicto del umbral y se rotula
+como sensibilidad/robustez, no como medición nueva.
+
+Verificación reproducible: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_robustez_linea_de_base_c225.py -q`
+(`19` pruebas); dos corridas del script producen salidas idénticas byte a byte
+(`analisis_robustez_linea_de_base_c225.json`: `6f9a1c0ce4bb163425f2c521cd78a0da414ce25f26df527f694fa3f3011dcc16`;
+`.md`: `1471517a9b92c1dc2f023d2c7137d14bd1433fdf94f77a25f2add30426c44d82`); los anclajes abortan
+sin escribir si difieren. La prosa en `07-resultados.tex` y `08-discusion.tex` se redacta según la
+decisión del autor sobre el encuadre y el formato (preguntas abiertas OQ1 y OQ2 del change).
+
+### 3.37 Rango de robustez de los tiempos: consolidado de escenarios (c-226)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.36. Consolida, en un único lugar, los escenarios de robustez de la reducción de la media del
+tiempo de registro de la campaña 2026-10 que la tesis ya calculaba por separado: los descuentos de
+redondeo (Sección 3.8), el desagregado por canal (Sección 3.8), las reducciones por operador
+(Sección 3.17), el efecto de posición (Sección 3.14) y la granularidad del instrumento (Sección 3.8 y
+`04-marco-metodologico.tex:16,76`). Análisis de solo lectura, determinista y offline: no invoca a
+Gemini, no usa red ni base de datos, no mide de nuevo y no modifica el corpus, las predicciones, los
+artefactos congelados ni ningún número canónico. Cero llamadas pagas. La cifra primaria `71,2 %` y su
+intervalo `[67,2 %; 74,6 %]` no cambian.
+
+*Numeración.* El memo terminaba en la Sección `3.36` (c-225); esta sección es la `3.37`, la primera
+libre.
+
+**Rango del estimando primario.** El estimando es la reducción de la media del tiempo de registro de
+la campaña 2026-10. Los escenarios comparables entre sí son los descuentos de redondeo:
+
+| Escenario | Media manual ajustada | Reducción de la media | Rol | Procedencia | Estado |
+|---|---|---|---|---|---|
+| Sin descuento | `61,585 s` | `71,16 %` | cifra primaria (cota superior) | `analisis_rango_robustez_tiempos_c226.json`, clave `rango_primario.escenarios[0].reduccion_media` (reutiliza `data/corpus_evaluacion_pseudonimizado.json`; `evaluation/stats.py::reduccion_relativa`; Sección 3.8) | vigente (reutilizado) |
+| Descuento `5 s` | `56,585 s` | `68,61 %` | cota inferior conservadora | idem; clave `rango_primario.escenarios[1].reduccion_media` | vigente (reutilizado) |
+| Descuento `10 s` | `51,585 s` | `65,57 %` | **mínimo del estimando primario** | idem; claves `rango_primario.escenarios[2].reduccion_media` y `rango_primario.escenario_minimo` | vigente (reutilizado) |
+
+Rango del estimando primario: `[65,57 %; 71,16 %]`; el escenario que lo minimiza es el descuento de
+`10 s` (`65,57 %`), coherente con la resolución efectiva de la planilla (`180/200` valores son
+múltiplos de `10 s`; `199/200` de `5 s`).
+
+**Cotas de alcance (rotuladas; no son el mismo estimando y no se comparan entre sí).**
+
+| Cota | Valor | Procedencia | Estado |
+|---|---|---|---|
+| Por canal (intra-canal) | telefonía `76,98 %`; correo `51,07 %`; formulario web `93,44 %`; el menor es correo `51,07 %` | `analisis_rango_robustez_tiempos_c226.json`, clave `por_canal.por_canal.<canal>.reduccion_media` (reutiliza `data/corpus_evaluacion_pseudonimizado.json`; `evaluation/stats.py::reduccion_relativa`; `tab:tiempos-canal`; Sección 3.8) | sensibilidad (reutilizado) |
+| Por operador (campaña complementaria) | `O1` `33,8 %`; `O2` `79,7 %`; agregado `69,3 %` | `analisis_rango_robustez_tiempos_c226.json`, claves `por_operador.por_operador.<O>.reduccion_media` y `por_operador.agregado.reduccion_media` (`evaluation/data/campana/brazo_manual.csv` × `evaluation/data/campana/corpus_campana.json`; Sección 3.17) | sensibilidad (reutilizado) |
+| Efecto de posición (Spearman) | `O2` `rho = -0,3604`, `p = 0,00011` (significativo); `O1` `rho = -0,0628`, `p = 0,5147` (no significativo) | `analisis_rango_robustez_tiempos_c226.json`, claves `efecto_posicion.por_operador.<O>.rho` y `.p` (de `evaluation/data/campana/analisis/resultados.json`; Sección 3.14) | sensibilidad (reutilizado) |
+| Efecto mínimo detectable del efecto de posición | `rho = 0,276` | `analisis_rango_robustez_tiempos_c226.json`, clave `efecto_posicion.mde_rho` (de `evaluation/data/campana/analisis/resultados.json`; Sección 3.14) | vigente (reutilizado) |
+| Cota inferior del instrumento (granularidad) | múltiplos de `5 s` `199/200`; de `10 s` `180/200` | `analisis_rango_robustez_tiempos_c226.json`, clave `cota_instrumento.multiplos.5` / `.10` (`data/corpus_evaluacion_pseudonimizado.json`; `evaluation/stats.py::granularidad_manual`; Sección 3.8; `04-marco-metodologico.tex:16`) | vigente (reutilizado) |
+| Cota inferior del instrumento (telefonía) | grabación acotada a `45 s`: la duración registrada es cota inferior de la duración real, de modo que la reducción medida `77,0 %` es cota superior de la reducción telefónica real | `analisis_rango_robustez_tiempos_c226.json`, clave `cota_instrumento.nota_telefonia` (`04-marco-metodologico.tex:76`; `tab:tiempos-canal`) | vigente (reutilizado) |
+
+Las reducciones por operador provienen de la **campaña complementaria**, cuyo brazo manual mide solo
+la decisión de sector y no es comparable con el brazo de `2026-10` (Sección 3.17). Por eso `33,8 %`
+es la lectura más adversa entre las cotas rotuladas, pero **no** es el mínimo del estimando primario
+ni una reducción del estudio principal: el mínimo del estimando primario es `65,57 %` (descuento de
+`10 s`). El mínimo intra-canal (`51,07 %`, correo electrónico) tampoco es el mínimo global, porque es
+una reducción intra-canal.
+
+**Método y reproducibilidad.** El rango primario reutiliza `evaluation/stats.py::reduccion_relativa`
+sobre `data/corpus_evaluacion_pseudonimizado.json`; las reducciones por operador cruzan
+`evaluation/data/campana/brazo_manual.csv` (duración `timestamp − inicio`) con
+`evaluation/data/campana/corpus_campana.json` (automatizado de la corrida propia de la complementaria,
+media `14,6 s`); el efecto de posición se lee de `evaluation/data/campana/analisis/resultados.json`.
+Comando reproducible (desde la raíz del repositorio):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py
+```
+
+Los anclajes (`71,16`, `68,61` y `65,57` globales; `76,98`, `51,07` y `93,44` por canal; `199/200` y
+`180/200` de granularidad; `33,8`, `79,7` y `69,3` por operador; y el efecto de posición de la
+Sección 3.14) abortan sin escribir si difieren. Dos corridas producen salidas idénticas byte a byte
+(`analisis_rango_robustez_tiempos_c226.json`:
+`a8384e2275ea78de52330729d731d5ee22bb13da10aa8ab92a7200f7c1955a41`; `.md`:
+`dee7ee9b41117cc6ad6d59b091dbfcf03760c7dd5def99be476d4877dda5de8a`). Verificación:
+`python3 -m pytest evaluation/data/campana/analisis/test_analisis_rango_robustez_tiempos_c226.py -q`
+(`31` pruebas).
+
+**Alcance.** La síntesis es una lectura de **sensibilidad/reinterpretación**: reúne escenarios ya
+calculados y no es una medición nueva. El rango acota la magnitud de la reducción, pero **no** estima
+el efecto de orden ni elimina la asimetría de instrumentos ni el orden fijo de los brazos. La prosa
+en `07-resultados.tex`, `08-discusion.tex` y `04-marco-metodologico.tex` se redacta según la decisión
+del autor sobre el encuadre (tarea 0.5 / OQ1 del change).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con

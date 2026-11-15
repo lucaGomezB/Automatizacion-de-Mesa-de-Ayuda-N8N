@@ -1,0 +1,180 @@
+{
+  "aditivo": {
+    "declaracion": "Lectura de sensibilidad/reinterpretacion: el rango de robustez reune escenarios ya calculados y no es una medicion nueva; la cifra primaria 71,2 % y su intervalo [67,2 %; 74,6 %] no cambian. Registro aditivo en la seccion 3.37 del memo.",
+    "reemplaza_numeros_canonicos": false,
+    "seccion_memo": "3.37"
+  },
+  "anclas_verificadas": {
+    "granularidad_10": [
+      180,
+      0
+    ],
+    "granularidad_5": [
+      199,
+      0
+    ],
+    "posicion_mde_rho": [
+      0.276,
+      3
+    ],
+    "posicion_p_O1": [
+      0.5147,
+      4
+    ],
+    "posicion_p_O2": [
+      0.00011,
+      5
+    ],
+    "posicion_rho_O1": [
+      -0.0628,
+      4
+    ],
+    "posicion_rho_O2": [
+      -0.3604,
+      4
+    ],
+    "reduccion_canal_correo electrónico": [
+      51.07,
+      2
+    ],
+    "reduccion_canal_formulario web": [
+      93.44,
+      2
+    ],
+    "reduccion_canal_llamada telefónica": [
+      76.98,
+      2
+    ],
+    "reduccion_global_0": [
+      71.16,
+      2
+    ],
+    "reduccion_global_10": [
+      65.57,
+      2
+    ],
+    "reduccion_global_5": [
+      68.61,
+      2
+    ],
+    "reduccion_operador_O1": [
+      33.8,
+      1
+    ],
+    "reduccion_operador_O2": [
+      79.7,
+      1
+    ],
+    "reduccion_operador_agregado": [
+      69.3,
+      1
+    ]
+  },
+  "change": "c-226-consolidar-el-rango-de-robustez-de-tiempos",
+  "cota_instrumento": {
+    "multiplos": {
+      "5": 199,
+      "10": 180
+    },
+    "n": 200,
+    "nota_telefonia": "Telefonia: la grabacion esta acotada a un maximo de 45 s, de modo que el tiempo automatizado medido de la llamada es una cota inferior de su duracion real y su reduccion medida es una cota superior de la reduccion telefonica real."
+  },
+  "efecto_posicion": {
+    "mde_rho": 0.2762543921274527,
+    "por_operador": {
+      "O1": {
+        "mde_rho": 0.2762543921274527,
+        "p": 0.5146511237712036,
+        "rho": -0.06278470537160674,
+        "significativo": false
+      },
+      "O2": {
+        "mde_rho": 0.2762543921274527,
+        "p": 0.00011016629279475025,
+        "rho": -0.3603566945474636,
+        "significativo": true
+      }
+    }
+  },
+  "entradas_sha256": {
+    "brazo_manual.csv": "25ef12ba7e4c27ba5489d3daff099c697416d996858299e25ffa57dfa2a4d46f",
+    "corpus_campana.json": "99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5",
+    "corpus_evaluacion_pseudonimizado.json": "1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb",
+    "resultados.json": "0604a2b12b5de7b1025438ef8273da34a0b06b5c792f4ad07e08f38c5f658af1"
+  },
+  "generador": "evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py",
+  "metodo": "consolidado de escenarios ya calculados; el rango primario reutiliza evaluation.stats.reduccion_relativa sobre el corpus canonico; las reducciones por operador cruzan brazo_manual.csv con corpus_campana.json; el efecto de posicion se lee de resultados.json; sin red ni Gemini y sin medicion nueva",
+  "nota_no_comparabilidad": "Las cotas de alcance (por canal, por operador, efecto de posicion y cota del instrumento) NO son el mismo estimando que el rango primario y no se comparan entre si: son sensibilidad o reinterpretacion, no una medicion nueva.",
+  "por_canal": {
+    "canal_minimo": "correo electrónico",
+    "por_canal": {
+      "correo electrónico": {
+        "n": 66,
+        "reduccion_media": 0.510669436997319,
+        "reduccion_mediana": 0.48364000000000007
+      },
+      "formulario web": {
+        "n": 53,
+        "reduccion_media": 0.9343657894736842,
+        "reduccion_mediana": 0.93675
+      },
+      "llamada telefónica": {
+        "n": 81,
+        "reduccion_media": 0.7697533606905335,
+        "reduccion_mediana": 0.7403055555555556
+      }
+    },
+    "reduccion_minima": 0.510669436997319
+  },
+  "por_operador": {
+    "agregado": {
+      "automatizado_media": 14.60819,
+      "manual_media": 47.5525,
+      "n": 200,
+      "reduccion_media": 0.6927986961779087
+    },
+    "por_operador": {
+      "O1": {
+        "automatizado_media": 13.315845454545453,
+        "manual_media": 20.1,
+        "n": 110,
+        "reduccion_media": 0.3375201266395297
+      },
+      "O2": {
+        "automatizado_media": 15.517927272727272,
+        "manual_media": 76.61818181818182,
+        "n": 110,
+        "reduccion_media": 0.7974641670621737
+      }
+    }
+  },
+  "rango_primario": {
+    "definicion": "reduccion de la media del tiempo de registro de la campana 2026-10",
+    "escenario_minimo": {
+      "descuento_s": 10.0,
+      "media_manual_ajustada": 51.585,
+      "reduccion_media": 0.6557022390229719
+    },
+    "escenarios": [
+      {
+        "descuento_s": 0.0,
+        "media_manual_ajustada": 61.585,
+        "reduccion_media": 0.7116083461881952
+      },
+      {
+        "descuento_s": 5.0,
+        "media_manual_ajustada": 56.585,
+        "reduccion_media": 0.686125298223911
+      },
+      {
+        "descuento_s": 10.0,
+        "media_manual_ajustada": 51.585,
+        "reduccion_media": 0.6557022390229719
+      }
+    ],
+    "rango": [
+      0.6557022390229719,
+      0.7116083461881952
+    ]
+  }
+}
