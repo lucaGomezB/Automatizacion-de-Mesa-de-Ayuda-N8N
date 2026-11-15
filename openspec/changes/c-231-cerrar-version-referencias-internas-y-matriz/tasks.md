@@ -44,7 +44,7 @@ Este change NO escribe código de producción ejecutable: la Parte 1 corrige una
 - [x] 4.2 Correr `python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py` (0 fallas) y `python verify_citations.py` desde `docs/Tesis/v10 (IA)/` (PASS); confirmar con `rg` que no quedan `Sección[~ ]3.xx` en el cuerpo ni cadenas `1.4.1` vigentes.
 - [x] 4.3 Confirmar con `git diff --stat` que no cambiaron `App/`, `n8n/`, el clasificador, la configuración, el corpus ni las predicciones.
 - [x] 4.4 Correr `openspec validate c-231-cerrar-version-referencias-internas-y-matriz --strict` y verificar que pasa.
-- [ ] 4.5 Dejar a cargo del orquestador la actualización de `CHANGES.md` y el `engram sync`; no pushear sin autorización.
+- [x] 4.5 Dejar a cargo del orquestador la actualización de `CHANGES.md` y el `engram sync`; no pushear sin autorización. Hecho: `CHANGES.md` con la entrada C-231 `APLICADO`; `engram sync` commiteado (`bb4ce3c`); el push del branch queda pendiente de autorización.
 - [x] 4.6 Guardar en Engram el resumen del change con el tag, el anexo, los valores repuntados y el resultado de las verificaciones; reportar al orquestador.
 
 ## Evidencia de verificación (obligatoria al reportar)
