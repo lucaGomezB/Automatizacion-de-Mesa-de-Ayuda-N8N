@@ -2905,6 +2905,52 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## Cambios propuestos — mejoras estructurales (c-227 a c-231, sin aplicar)
+
+> Cinco changes propuestos el 2026-11-15 para atacar las limitaciones estructurales que pesan sobre el criterio 4 (metodologia) y el criterio 8 (redaccion) del ultimo dictamen. Todos validan con `openspec validate --strict` y quedan sin aplicar. Los numeros de seccion del memo son los esperados; el primero libre real es el `3.38` (la ultima vigente es la `3.37`, de c-226).
+
+### [C-227] `monitorear-el-servicio-de-inferencia-y-la-deriva-del-modelo` — PROPUESTO (2026-11-15, MEDIUM)
+
+- **Estado**: propuesto (proposal/design/tasks/specs); `openspec validate --strict` valido. Sin aplicar.
+- **Objetivo**: gestionar el riesgo operativo de la dependencia del servicio externo de inferencia (Gemini) y de la version del modelo (limitaciones 3 y 4): capa de abstraccion del proveedor, canary set fijo + job de reevaluacion periodica offline, deteccion de deriva, umbrales de alerta y fallback documentado. No cambia ningun numero canonico.
+- **Specs**: `inference-provider-abstraction`, `model-drift-monitoring`.
+- **Memo**: no toca el memo.
+- **Governance**: MEDIUM (LOW en alertas/fallback).
+
+### [C-228] `clasificador-supervisado-sobre-el-corpus-acumulado` — PROPUESTO (2026-11-15, HIGH)
+
+- **Estado**: propuesto; valido. Sin aplicar. **Depende de datos que aun no existen** (corpus acumulado + etiquetado + consentimiento).
+- **Objetivo**: medir un clasificador supervisado entrenado sobre el corpus acumulado de la organizacion (limitacion 5): curacion, split sin leakage, modelo BERT-class + benchmark de modelos abiertos, revision del codebook `Sistemas`<->`Software`, evaluacion en corpus de prevalencia natural. Declara que `0,85` **no es alcanzable** sobre el corpus de 206 (techo `0,835` aun corrigiendo todos los errores de `Sistemas`; paridad manual `0,8278`).
+- **Specs**: `supervised-corpus-curation`, `supervised-classifier-benchmark`, `taxonomy-codebook-revision`, `natural-prevalence-evaluation-corpus`, `tesis-document`, `tesis-numeros-canonicos`.
+- **Memo**: seccion aditiva esperada `3.41`.
+- **Governance**: HIGH (datos nuevos + entrenamiento + consentimiento).
+
+### [C-229] `muestreo-probabilistico-del-universo-de-incidentes` — PROPUESTO (2026-11-15, HIGH)
+
+- **Estado**: propuesto; valido. Sin aplicar. **Depende de la organizacion**.
+- **Objetivo**: estimar las metricas sobre una muestra probabilistica del universo (amenaza 5): universo + marco muestral, cuotas prefijadas por canal y sector, etiquetado independiente con consentimiento, estimacion ponderada (Horvitz-Thompson + post-estratificacion) con IC sobre el universo completo y efecto de diseno. Hace **valida la estimacion**; no sube la exactitud.
+- **Specs**: `evaluation-probabilistic-sampling`, `tesis-document`, `tesis-numeros-canonicos`.
+- **Memo**: seccion aditiva esperada `3.40`.
+- **Governance**: HIGH (protocolo: datos nuevos, etiquetado humano, consentimiento).
+
+### [C-230] `referencia-por-mayoria-con-etiquetadores-independientes` — PROPUESTO (2026-11-15, HIGH)
+
+- **Estado**: propuesto; valido. Sin aplicar. **Depende de 3 etiquetadores nuevos** + consentimiento.
+- **Objetivo**: eliminar el arbitro unico (`E5` fijaba `64/206` = 31 %) con una referencia por mayoria de `5` etiquetadores (`E3`, `E4` + `E6`, `E7`, `E8`), implementar el kappa de Fleiss y recomputar/comparar la cifra primaria. Ataca la deduccion de C4 *"un solo arbitro en el 31 % de las referencias"*.
+- **Specs**: `discordant-arbitration`, `evaluation-framework`, `evaluation-out-of-sample-validation`, `tesis-document`, `tesis-numeros-canonicos`.
+- **Memo**: seccion aditiva esperada `3.39`.
+- **Governance**: HIGH (sujetos humanos + consentimiento).
+
+### [C-231] `cerrar-version-referencias-internas-y-matriz` — PROPUESTO (2026-11-15, HIGH para el tag)
+
+- **Estado**: propuesto; valido. Sin aplicar. Es el mismo barrido que cierra C8.
+- **Objetivo**: (1) corregir la matriz **stale** de c-196 (segunda instancia: `N-02`/`N-04`/`N-05`/`P16` marcados `PENDIENTE` contra el texto actual y el commit `c5b2fb9`); (2) cortar un tag **`v1.5.0`** que incluya c-223 a c-226 y repuntar portada (`00-portada.tex:31`) y Anexo B (`12-anexos.tex:58`), desambiguando `version entregada` (tesis) vs `configuracion entregada` (software `v1.3.0`); (3) agregar un **anexo de numeros canonicos** y repuntar las **12** refs `Seccion[~ ]3.xx`.
+- **Specs**: `tesis-document`, `tesis-numeros-canonicos`.
+- **Memo**: seccion aditiva esperada `3.38`.
+- **Governance**: HIGH (tag) + MEDIUM (matriz y anexo).
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
