@@ -97,7 +97,7 @@
 \contentsline {paragraph}{Comparación con una línea de base clásica.}{101}{paragraph*.47}%
 \contentsline {paragraph}{Contraste pareado frente a la línea de base.}{103}{paragraph*.49}%
 \contentsline {paragraph}{Contraste frente a un esquema de modelo de lenguaje solo.}{104}{paragraph*.50}%
-\contentsline {subsection}{\numberline {8.11}Capacidad del tramo compartido bajo carga concurrente}{105}{subsection.8.11}%
+\contentsline {subsection}{\numberline {8.11}Capacidad del tramo compartido bajo carga concurrente}{106}{subsection.8.11}%
 \contentsline {subsection}{\numberline {8.12}Sensibilidad a la referencia de verdad}{107}{subsection.8.12}%
 \contentsline {section}{\numberline {9}Discusión}{109}{section.9}%
 \contentsline {subsection}{\numberline {9.1}Interpretación de los resultados}{109}{subsection.9.1}%

@@ -2860,6 +2860,21 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 76 — Acotar el arbitraje por mayoria de los tres etiquetadores (c-224)
+
+> Cierra la observacion del dictamen post-v1.3.0 sobre la fragilidad de la referencia: la regla vigente de arbitraje ya coincide con la mayoria de `{E3, E4, E5}` en `200` de `206` casos; solo los `6` casos con tres etiquetas distintas carecen de mayoria. El change acota el efecto de reasignarlos y reformula la linea de trabajo futuro.
+
+### [C-224] `acotar-el-arbitraje-por-mayoria` — APLICADO (2026-11-15, MEDIUM)
+
+- **Estado**: aplicadas las 27 tareas (5 grupos); script offline `analisis_arbitraje_mayoria_c224.py` (+ test TDD, 25 pruebas) y salidas JSON/MD/SHA256SUMS deterministas; `openspec validate --strict` valido. Sin archivar.
+- **Scope**: `evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py`; `evaluation/data/campana/analisis/README.md`; seccion aditiva `3.35` de `numeros-canonicos.md`; prosa de `07-resultados`, `08-discusion` y `10-recomendaciones`; `dictamen-correcciones.md` (matriz C24).
+- **Hallazgo**: coincidencia estructural `200/206` (`142` de consenso + `58` arbitrados con mayoria); `6` casos sin mayoria (`I033`, `I042`, `I056`, `I130`, `I194`, `I198`); reasignar los `5` reasignables mueve la exactitud estricta de `142/206` (`0,6893`) a `147/206` (`0,7136`) y el macro-F1 de `0,7024` a `0,7249`; ningun extremo alcanza el `0,85`. La cifra primaria no cambia.
+- **Dependencias**: c-216 (referencia y calibracion), c-219 (sesgo de corpus y referencia) y c-221 (arbitraje). No toca `App/`, `n8n/`, el clasificador, el corpus ni las predicciones.
+- **Governance**: MEDIUM (analisis y prosa). Cero llamadas a Gemini.
+- **Leer antes**: `openspec/changes/c-224-acotar-el-arbitraje-por-mayoria/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/numeros-canonicos.md` (Seccion 3.35).
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
@@ -2934,6 +2949,8 @@ Actualizacion 2026-10-27 (release v1.2.2 de la FASE 40 y cierre de la familia): 
 Actualizacion 2026-11-15 (release v1.4.1 de la FASE 74 y cierre de la entrega): C-222 `recalcular-el-balance-neto-con-el-costo-medido` (31/31, MEDIUM) recalculo el balance neto canonico con el `c` medido de c-220 (`69,51 s`, IC 95 % `[33,42; 106,56] s`) en lugar del supuesto «10 a 15 minutos», propago la incertidumbre del `c` y de `e_aut - e_man` y llevo la lectura a la prosa; `B = +30,6` h-persona por trimestre, IC condicional `[+26,7; +34,6]` y cota combinada `[+23,8; +35,8]` (excluye el cero), con `a* = 19,7 %`. Se publico la release `v1.4.1` —tag anotado sobre `2d8b0d5c4b872140caf9348ae0f7ac3ecbe7ba59`, 2026-11-14; PDF de 155 paginas, 0 errores—, que incorpora ademas la correccion N-16 del dictamen (novena limitacion, Paket); el commit `1965e33` consigna el hash del tag en el Anexo B. Se archivo C-222 el 2026-11-14. Quedan superadas las lineas de estado de la instantanea 2026-11-10 (que declaraba 4 changes ACTIVOS y release vigente `v1.2.19`): c-191, c-196, c-201 y c-202 quedaron archivados entre el 2026-11-11 y el 2026-11-12, de modo que el estado actual es **0 changes ACTIVOS** (`openspec list --json` no reporta ninguno). La release vigente de la tesis es `v1.4.1`; `v1.4.0` (c-221, tag anotado sobre `406ce2bf328bc22fca786d8a158bf8e48136534d`, PDF 155 paginas) y `v1.3.0` y las anteriores quedan como versiones previas inmutables. El 2026-11-15 se actualizo la copia de entrega `docs/Tesis/tesis_ultima_version.pdf` al build v1.4.1 (byte-identico a `docs/Tesis/v10 (IA)/paper/main.pdf`, SHA-256 `2b66da8ee56ff2a1ccd4d192cb69b41d7dd518c114ab3cac6b6125b3dae98aec`) y el `README.md` paso a v1.4.1 (commit `00333ce`, pusheado a `origin/main`).
 
 Actualizacion 2026-11-15 (c-223, reproducibilidad): C-223 `preservar-el-commit-de-la-corrida-fuera-de-muestra` (30/30, MEDIUM; HIGH para el tag) anclo el commit `561b3c4` con el tag anotado `archivo/corrida-fuera-de-muestra-561b3c4` y lo publico en `origin`; el tag preserva el arbol de fuentes de la primera corrida fuera de muestra y los artefactos se identifican por sus SHA-256. La release `v1.4.1` no se movio y los tags `v*` quedaron intactos. El PDF recompilado mantiene 155 paginas, 0 errores y 0 referencias indefinidas. El change queda aplicado y sin archivar.
+
+Actualizacion 2026-11-15 (c-224, arbitraje por mayoria): C-224 `acotar-el-arbitraje-por-mayoria` (27/27, MEDIUM) agrego el analisis offline `analisis_arbitraje_mayoria_c224.py` (25 pruebas TDD) y la seccion aditiva `3.35` del memo. La regla vigente coincide con la mayoria de `{E3, E4, E5}` en `200` de `206` casos; solo `6` casos con tres etiquetas distintas carecen de mayoria. Reasignar los `5` reasignables mueve la exactitud estricta de `142/206` (`0,6893`) a `147/206` (`0,7136`) y el macro-F1 de `0,7024` a `0,7249`; ningun extremo alcanza el umbral de `0,85` y la cifra primaria no cambia. La prosa de `07`, `08` y `10` incorpora la lectura y el trabajo futuro se reformula hacia mas etiquetadores independientes. El change queda aplicado y sin archivar.
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)

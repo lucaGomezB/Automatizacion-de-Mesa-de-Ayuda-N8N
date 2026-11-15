@@ -2588,6 +2588,77 @@ muestra el árbol de fuentes; `git ls-remote --tags origin 'archivo/*'` devuelve
 (el tag no contiene el artefacto). La declaración de la tesis vive en el apartado metodológico del
 diseño fuera de muestra (`04-marco-metodologico.tex`); el README de la campaña conserva su nota.
 
+### 3.35 Acotación del arbitraje por mayoría de los tres etiquetadores (c-224)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.34. Registra que la regla vigente de arbitraje coincide con la mayoría de los tres
+etiquetadores (`E3`, `E4`, `E5`) en `200` de `206` casos, identifica los `6` casos sin mayoría y
+acota el efecto de reasignarlos sobre la exactitud estricta y las métricas por clase. Análisis de
+solo lectura, determinista y offline: no invoca a Gemini, no usa red ni base de datos, no
+reclasifica, no reentrena y no modifica el corpus, las predicciones, los artefactos congelados ni
+ningún número canónico. Cero llamadas pagas.
+
+*Numeración.* El memo terminaba en la Sección `3.34` (c-223); esta sección es la `3.35`, la primera
+libre (releída al aplicar).
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Coincidencia de la regla vigente con la mayoría de `{E3, E4, E5}`: `200` de `206` casos | `analisis_arbitraje_mayoria_c224.json`, clave `coincidencia`; comando `python3 evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py` | vigente (nuevo) |
+| Identidad estructural: `142` de consenso + `58` arbitrados con mayoría = `200` | misma fuente, clave `identidad` | vigente (nuevo) |
+| Casos sin mayoría (tres etiquetas distintas): `I033`, `I042`, `I056`, `I130`, `I194`, `I198` | misma fuente, clave `sin_mayoria` | vigente (nuevo) |
+| Exactitud estricta vigente: `142/206` (`0,6893`) | misma fuente, clave `exactitud.aciertos` | vigente (sin cambio) |
+| Extremo máximo de la exactitud estricta: `147/206` (`0,7136`), `k = 5` reasignables | misma fuente, clave `exactitud.max` | cota de sensibilidad (nuevo) |
+| Caso no reasignable: `I042` (la predicción no cae entre las tres etiquetas) | misma fuente, clave `exactitud.no_reasignables` | vigente (nuevo) |
+| Macro-F1 vigente: `0,7024`; extremo máximo: `0,7249` | misma fuente, clave `metricas` | vigente y cota de sensibilidad |
+| Exactitud laxa: `162/206` (`0,7864`) | `07-resultados.tex`; sin cambio | vigente (sin cambio) |
+
+**Casos sin mayoría: detalle de las tres etiquetas.** Cada caso sin mayoría con sus tres etiquetas
+(`E3`, `E4`, `E5`), su predicción congelada y la referencia vigente (fuente, clave
+`detalle_sin_mayoria`; comando `python3 evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py`):
+
+| Caso | `E3` | `E4` | `E5` | Predicción | Referencia |
+|---|---|---|---|---|---|
+| `I033` | Soporte Tecnico Software | Sistemas | Soporte Tecnico Hardware | Sistemas | Soporte Tecnico Hardware |
+| `I042` | Seguridad Informatica | Sistemas | Bases de Datos | Soporte Tecnico Software | Bases de Datos |
+| `I056` | Soporte Tecnico Software | Sistemas | Seguridad Informatica | Soporte Tecnico Software | Seguridad Informatica |
+| `I130` | Soporte Tecnico Software | Sistemas | Seguridad Informatica | Sistemas | Seguridad Informatica |
+| `I194` | Bases de Datos | Sistemas | Soporte Tecnico Hardware | Sistemas | Soporte Tecnico Hardware |
+| `I198` | Sistemas | Soporte Tecnico Software | Seguridad Informatica | Soporte Tecnico Software | Seguridad Informatica |
+
+**Métricas por clase en ambos extremos.** Precision (`P`), sensibilidad (`S`) y `F1` por clase en la
+referencia vigente y en el extremo máximo con reasignación (fuente, clave `metricas`; mismo comando):
+
+| Clase | `P` vigente | `S` vigente | `F1` vigente | `P` máximo | `S` máximo | `F1` máximo |
+|---|---|---|---|---|---|---|
+| Bases de Datos | `0,7778` | `0,8750` | `0,8235` | `0,7778` | `0,8750` | `0,8235` |
+| Seguridad Informatica | `0,6452` | `0,6250` | `0,6349` | `0,6452` | `0,6897` | `0,6667` |
+| Sistemas | `0,7045` | `0,5082` | `0,5905` | `0,7727` | `0,5312` | `0,6296` |
+| Soporte Tecnico Hardware | `0,7857` | `0,8627` | `0,8224` | `0,7857` | `0,8980` | `0,8381` |
+| Soporte Tecnico Software | `0,5789` | `0,7174` | `0,6408` | `0,6140` | `0,7292` | `0,6667` |
+
+Los soportes por clase en el extremo máximo (`16`, `29`, `64`, `49`, `48`) solo reflejan la
+reasignación de los casos con mayoría dentro del conjunto sin mayoría; el `macro-F1` pasa de
+`0,7024` a `0,7249` (fila de la tabla resumen).
+
+La coincidencia es estructural: en los `142` casos de consenso `E3 = E4`, la regla usa esa etiqueta
+y coincide por construcción; en los `64` casos arbitrados, `E5` fija la referencia y `58` de ellos
+tienen una mayoría que ya es la etiqueta de `E5`. Solo los `6` casos con tres etiquetas distintas
+carecen de mayoría. Reasignar cada caso reasignable a la etiqueta que coincide con la predicción
+congelada mueve la exactitud estricta de `142/206` a `147/206` y el macro-F1 de `0,7024` a
+`0,7249`; ningún extremo alcanza el umbral de `0,85`. El rango se rotula como **cota de
+sensibilidad** y no reemplaza la cifra primaria. La fragilidad de la referencia (kappa `0,5569`,
+árbitro único, doble etiquetado original no conservado) sigue siendo la limitación de fondo: la
+mayoría de tres no puede estimarse con los datos actuales porque `E5` no etiquetó los `142` casos
+de consenso. La línea de trabajo futuro que proponía «arbitraje por mayoría de tres etiquetadores»
+se reformula como «más etiquetadores independientes que permitan estimar la mayoría sin depender de
+un único tercer etiquetador».
+
+Verificación reproducible: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_arbitraje_mayoria_c224.py -q`
+(`25` pruebas); dos corridas del script producen salidas idénticas byte a byte; los anclajes
+(`200`, `6`, `142`, `147`, `64`, `206`, macro-F1 `0,7024`) abortan sin escribir si difieren. La
+prosa vive en `07-resultados.tex` (párrafo del arbitraje), `08-discusion.tex` (limitación octava) y
+`10-recomendaciones.tex` (`subsec:corpus-independiente`).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con

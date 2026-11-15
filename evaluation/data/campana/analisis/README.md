@@ -494,3 +494,40 @@ Es aditivo: sus cifras van a la sección `3.32` del memo canónico y no reemplaz
   casos comunes (solo confianza, `I026`/`I043`/`I050`/`I055`/`I067`/`I084`/`I085`); el `commit`
   `1b62fdb` de `predicciones_arbitrado.json` es alcanzable desde `main` y el `561b3c4` de
   `predicciones_independiente.json` no lo es (lo versionó `1b17e55`).
+
+## Acotación del arbitraje por mayoría (c-224)
+
+`analisis_arbitraje_mayoria_c224.py` calcula, de solo lectura, sin red y sin Gemini, la
+coincidencia de la regla vigente de arbitraje con la mayoría de los tres etiquetadores
+(`E3`, `E4`, `E5`), identifica los casos sin mayoría y acota el efecto de reasignarlos sobre la
+exactitud estricta y las métricas por clase. Es aditivo: sus cifras van a la sección `3.35` del
+memo canónico y no reemplazan ningún número `vigente` de las secciones `3.1` a `3.34`; no cambia
+el umbral del `85 %`, el balance neto `B`, `a*` ni los artefactos congelados.
+
+- Anclajes que abortan antes de escribir (exit distinto de cero, sin salidas): coincidencia
+  `200/206`; identidad `142 + 58 = 200`; los `6` casos sin mayoría (`I033`, `I042`, `I056`,
+  `I130`, `I194`, `I198`); exactitud estricta `142/206` y máximo `147/206`; `64` arbitrados y
+  `142` de consenso.
+- Método: reutiliza `evaluation/metrics.py` (`matriz_confusion`, `precision_por_clase`,
+  `sensibilidad_por_clase`, `f1_por_clase`, `f1_macro`); sin red ni Gemini; determinista. El
+  prerregistro NO fue ciego (ver el docstring del generador).
+- Entradas versionadas (solo lectura): `../doble_etiquetado_arbitrado.csv`,
+  `../arbitraje_tres_vias.json`, `../predicciones_arbitrado.json` y
+  `../corpus_independiente_arbitrado.json`.
+- Comando (desde la raíz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py
+  ```
+
+- Salidas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte), con su SHA-256 (también en
+  `analisis_arbitraje_mayoria_c224.SHA256SUMS.txt`):
+  - `analisis_arbitraje_mayoria_c224.json`: `a06d42bd6a23ef0593077f46536f0fd7292479cd1b0beeabf230cb6409651367`
+  - `analisis_arbitraje_mayoria_c224.md`: `194a836d2c4c2731358dbf88b78e56f689baec24489906888bef91949b9272b6`
+- Prueba: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_arbitraje_mayoria_c224.py -q`
+  (`25` pruebas).
+- Resultado registrado (sección `3.35` del memo): la regla vigente coincide con la mayoría de
+  `{E3, E4, E5}` en `200/206` casos; los `6` restantes carecen de mayoría. Reasignar los casos
+  reasignables (`I033`, `I056`, `I130`, `I194`, `I198`; `I042` no lo es) mueve la exactitud
+  estricta de `142/206` (`0,6893`) a `147/206` (`0,7136`) y el macro-F1 de `0,7024` a `0,7249`;
+  ningún extremo alcanza el umbral de `0,85`.

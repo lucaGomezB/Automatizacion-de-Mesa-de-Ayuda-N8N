@@ -5844,7 +5844,7 @@ tarea.
 | C21/am | Anexo J retirado; fuente de defensa conservada | c-221 | `docs/defensa/respuestas-tribunal.md:1` | `-` | `Respuestas del grupo a las preguntas del tribunal` | cerrada |
 | C21/an | Bibliografía: clave Efron1994 alineada | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:823` | `-` | `@book{Efron1994_bootstrap,` | cerrada |
 | C21/ao | Bibliografía: ServiceNow a documentación oficial | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:699` | `-` | `https://www.servicenow.com/docs/` | cerrada |
-| C21/ap | Bibliografía: repositorio en versión 1.4.0 | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:917` | `-` | `(Versi{\'o}n 1.4.0)` | cerrada |
+| C21/ap | Bibliografía: repositorio en versión 1.4.0 | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:917` | `-` | `(Versi{\'o}n 1.4.0)` | SUPERADA por c-222 (versión 1.4.1) |
 
 ### c-222: balance neto recalculado con el costo medido (checkpoint confirmado; grupos 0 a 4)
 
@@ -6014,3 +6014,27 @@ tarea.
 | C23/g | Tesis: declaración metodológica del tag y los SHA-256 | c-223 | `04-marco-metodologico.tex:100` | `subsec:analisis-estadistico` | `se preserva por el tag anotado de archivo` | cerrada |
 | C23/h | Resultados: sin cambios (3.3 omitida por neutralidad de páginas) | c-223 | `07-resultados.tex:360` | `subsec:validacion-fuera-muestra` | `Validación fuera de muestra` | cerrada (sin cambio) |
 | C23/i | Discusión: sin limitación nueva (3.4 no aplicada; tag publicado) | c-223 | `08-discusion.tex:44` | `subsec:limitaciones-estudio` | `nueve limitaciones` | cerrada (sin cambio) |
+
+### c-224: acotación del arbitraje por mayoría de los tres etiquetadores (grupos 0 a 4)
+
+- **Change**: `c-224-acotar-el-arbitraje-por-mayoria` (árbol de trabajo; sin commit ni push).
+- **Fecha de registro**: 2026-11-15.
+- **Observación atendida** (dictamen CONEAU post-`v1.3.0`): la referencia arbitrada depende de un único árbitro en `64` de `206` casos. El change acota la fragilidad de la referencia: la regla vigente (consenso `E3`/`E4`; `E5` cuando difieren) coincide con la mayoría de `{E3, E4, E5}` en `200` de `206` casos; solo los `6` casos con tres etiquetas distintas carecen de mayoría.
+- **Resultado**: reasignar los casos reasignables mueve la exactitud estricta entre `142/206` (`0,6893`) y `147/206` (`0,7136`), y el macro-F1 entre `0,7024` y `0,7249`. Ningún extremo alcanza el umbral de `0,85`; la cifra primaria no cambia. El rango es una cota de sensibilidad, no una medición nueva.
+- **Archivos afectados**: `evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py` (+ test TDD, 25 pruebas; salidas JSON/MD/SHA256SUMS); `evaluation/data/campana/analisis/README.md`; `docs/Tesis/Correcciones/numeros-canonicos.md` (Sección 3.35); `07-resultados.tex`, `08-discusion.tex` y `10-recomendaciones.tex`.
+- **Sin cambios**: `App/`, `n8n/`, el clasificador, la configuración, el corpus, las predicciones ni los artefactos congelados. Cero llamadas a Gemini.
+
+#### Matriz de trazabilidad (C24/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C24/a | Script y pruebas del acuerdo con la mayoría | c-224 | `evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py:1` | `-` | `Acotacion del arbitraje por mayoria` | vigente (nuevo) |
+| C24/b | Coincidencia 200/206 | c-224 | `evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.json:212` | `-` | `"n": 200,` | vigente (nuevo) |
+| C24/c | 6 casos sin mayoría | c-224 | `evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.json:418` | `-` | `"sin_mayoria"` | vigente (nuevo) |
+| C24/d | Rango 142/206–147/206 | c-224 | `evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.json:262` | `-` | `"max": 147` | cota de sensibilidad |
+| C24/e | Memo: Sección 3.35 aditiva | c-224 | `docs/Tesis/Correcciones/numeros-canonicos.md:2591` | `-` | `3.35 Acotación del arbitraje por mayoría` | vigente (nuevo) |
+| C24/f | Resultados: oración de sensibilidad | c-224 | `07-resultados.tex:366` | `subsec:validacion-fuera-muestra` | `200 de 206` | cerrada |
+| C24/g | Discusión: limitación octava acotada | c-224 | `08-discusion.tex:62` | `subsec:limitaciones-estudio` | `200 de 206` | cerrada |
+| C24/h | Recomendaciones: trabajo futuro reformulado | c-224 | `10-recomendaciones.tex:26` | `subsec:corpus-independiente` | `más etiquetadores independientes` | cerrada |
+| C24/i | Memo: detalle de las tres etiquetas de los 6 casos sin mayoría | c-224 | `docs/Tesis/Correcciones/numeros-canonicos.md:2615` | `-` | `Casos sin mayoría: detalle de las tres etiquetas` | vigente (nuevo) |
+| C24/j | Memo: métricas por clase en ambos extremos | c-224 | `docs/Tesis/Correcciones/numeros-canonicos.md:2628` | `-` | `Métricas por clase en ambos extremos` | vigente (nuevo) |
