@@ -2,7 +2,7 @@
 
 Al final de cada tarea, entre parentesis, el requisito del change que cumple (nombre corto). Nombres cortos: `TD` (`tesis-document`) «Licitud», «§1.8», «Disposicion»; `OOS` (`evaluation-out-of-sample-validation`) «OOS-027». Las tareas de preparacion y cierre no llevan parentesis.
 
-Este change es prosa LaTeX y documentacion, salvo la rama de retiro del repositorio, que ajusta pruebas y sumas. El ciclo TDD estricto NO aplica (no hay logica nueva); la red de seguridad es `verify_citations.py`, la bateria de `rg`, la compilacion de verificacion en un directorio temporal y la suite de `evaluation/` verde.
+Este change es prosa LaTeX y documentacion, salvo el retiro del repositorio publico, que ajusta pruebas y sumas. El ciclo TDD estricto NO aplica (no hay logica nueva); la red de seguridad es `verify_citations.py`, la bateria de `rg`, la compilacion de verificacion en un directorio temporal y la suite de `evaluation/` verde.
 
 Gobernanza **ALTA**. Cada tarea marcada **[COMPUERTA]** no se ejecuta sin la respuesta escrita de los autores registrada en `docs/Tesis/Correcciones/dictamen-correcciones.md` (tabla de compuertas de c-240, con fecha). Cero llamadas a Gemini. No se tocan `.engram/`, `CHANGES.md`, ni los changes c-228..c-239 (salvo la coordinacion de orden con c-239). Los numeros de linea son de v1.5.2; si una edicion previa los desplaza, se repuntan por contenido.
 
@@ -15,7 +15,7 @@ Gobernanza **ALTA**. Cada tarea marcada **[COMPUERTA]** no se ejecuta sin la res
 ## 1. Compuertas de autores (CHECKPOINT de gobernanza ALTA)
 
 - [ ] 1.1 **[COMPUERTA P4/P8]** Presentar a los autores las preguntas P4 y P8 (reabiertas de c-235) y registrar sus respuestas literales, con fecha, en la tabla de compuertas de c-240 en `dictamen-correcciones.md`: ¿los textos del corpus retirado son descripciones genericas de incidentes sin datos de terceros ni personales, o contienen datos de terceros/personales? Sin respuesta, la tarea 2.1 queda bloqueada. (TD «Licitud»)
-- [ ] 1.2 **[COMPUERTA DP-01]** Registrar la decision de disposicion del repositorio publico: retirar (default K-02) o conservar+rotular con la decision de textos genericos. Sin respuesta, la rama por defecto es retirar. (TD «Disposicion», OOS «OOS-027»)
+- [ ] 1.2 **[COMPUERTA DP-01]** Registrar la decision de los autores de RETIRAR los textos del repositorio publico (resuelta 2026-11-16), en la tabla de compuertas de c-240 en `dictamen-correcciones.md`. (TD «Disposicion», OOS «OOS-027»)
 - [ ] 1.3 **[COMPUERTA DP-02]** Aprobar la redaccion del parrafo de §7.5 y de la frase reconciliada de §1.8 antes de escribirlas. (TD «Licitud», «§1.8»)
 
 ## 2. §7.5 — Parrafo de licitud y alcance
@@ -30,8 +30,8 @@ Gobernanza **ALTA**. Cada tarea marcada **[COMPUERTA]** no se ejecuta sin la res
 
 ## 4. Disposicion del repositorio publico
 
-- [ ] 4.1 **[COMPUERTA DP-01 = retiro]** En un commit propio separado: eliminar `evaluation/data/campana/corpus_independiente.json` y `corpus_independiente_arbitrado.json`, ajustar `evaluation/tests/test_linea_de_base.py`, `evaluation/tests/test_calibracion_gate.py` y `evaluation/monitoreo/test_monitor_deriva.py`, y actualizar las sumas SHA-256 de `evaluation/data/campana/analisis/SHA256SUMS.txt` y de las tablas del README de campana. Verificar `python -m pytest evaluation -q` verde. (OOS «OOS-027»)
-- [ ] 4.2 **[COMPUERTA DP-01 = conservacion]** Verificar que los archivos se conservan sin alterar bytes y con el rotulado de OOS-026; `sha256sum -c evaluation/data/campana/analisis/SHA256SUMS.txt` intacto. Registrar la decision documentada de textos genericos sin datos de terceros. (OOS «OOS-027»)
+- [ ] 4.1 **[COMPUERTA DP-01]** En un commit propio separado: eliminar `evaluation/data/campana/corpus_independiente.json` y `corpus_independiente_arbitrado.json`, ajustar `evaluation/tests/test_linea_de_base.py`, `evaluation/tests/test_calibracion_gate.py` y `evaluation/monitoreo/test_monitor_deriva.py`, y actualizar las sumas SHA-256 de `evaluation/data/campana/analisis/SHA256SUMS.txt` y de las tablas del README de campana. Verificar `python -m pytest evaluation -q` verde. (OOS «OOS-027»)
+- [ ] 4.2 Conservar los bytes de los archivos retirados, si los autores lo deciden, en un archivo PRIVADO fuera del repositorio (no versionado), y citar sus SHA-256 en la tesis como trazabilidad. (OOS «OOS-027»)
 - [ ] 4.3 `dictamen-correcciones.md`: agregar la entrada de c-240 con la tabla de compuertas (P4/P8, DP-01, DP-02: respuesta, fecha, responsable) y filas por observacion: K-02 (parrafo de licitud §7.5 y disposicion del repositorio, archivo:linea), A-02 (§1.8 reconciliada), con fragmento verificable. (TD «Disposicion»)
 
 ## 5. Verificacion de cierre

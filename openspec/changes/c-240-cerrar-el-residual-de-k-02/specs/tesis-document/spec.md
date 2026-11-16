@@ -1,31 +1,27 @@
 ## ADDED Requirements
 
-### Requirement: Parrafo de licitud y alcance de la autorizacion en §7.5 para los datos de la tercera organizacion
+### Requirement: Parrafo de licitud y alcance en §7.5 para los datos del corpus retirado
 
-La subseccion `subsec:consentimiento-derechos` de §7.5 (`11-aspectos-legales.tex`) SHALL contener un parrafo con la base de licitud y el alcance de la autorizacion de los datos del corpus independiente retirado (los textos que en las versiones 1.3.0 a 1.5.2 se presentaron como de una tercera organizacion). El contenido del parrafo SHALL ramificarse por la respuesta registrada de los autores (compuertas P4 y P8 de c-235, reabiertas por este change):
+La subseccion `subsec:consentimiento-derechos` de §7.5 (`11-aspectos-legales.tex`) SHALL contener un parrafo con la base de licitud y el alcance de la autorizacion de los datos del corpus independiente retirado (los textos que en las versiones 1.3.0 a 1.5.2 se presentaron como de una tercera organizacion). El parrafo SHALL declarar de forma explicita: (i) los textos del corpus retirado no contenian datos de una tercera organizacion ni datos personales — eran descripciones genericas de incidentes construidas por los autores — y fueron retirados del repositorio publico y de la tesis; (ii) por lo tanto no corresponde autorizacion ni base de licitud de terceros; (iii) la transferencia de esos textos a la Gemini API se registra en §7.3 (`subsec:transferencia-internacional`); y (iv) la base de licitud de los datos que SI se conservan (corpus de 200 pseudonimizado y campana complementaria) sigue siendo la declarada conforme a la Ley 25.326 (con cita del articulo). El contenido factual SHALL quedar respaldado por la respuesta registrada de los autores (compuertas P4 y P8 de c-235, reabiertas por este change); sin esa respuesta, la tarea que escribe el parrafo queda bloqueada. El parrafo MUST NOT resolverse por omision y MUST NOT contener nombres reales ni la correspondencia alias-identidad.
 
-- **(a) Descripciones genericas sin datos de terceros.** Si los autores registran en `dictamen-correcciones.md` que los textos del corpus retirado son descripciones genericas de incidentes que NO contienen datos de terceros ni datos personales, el parrafo SHALL declararlo de forma explicita: no existen datos de una tercera organizacion en esos textos, por lo tanto no hay autorizacion ni base de licitud que declarar, y SHALL remitir a §7.3 (`subsec:transferencia-internacional`) para la transferencia de esos textos a la Gemini API.
-- **(b) Datos de terceros o personales.** Si los autores registran que los textos SI contienen datos de terceros o datos personales, el parrafo SHALL declarar la autorizacion escrita de la organizacion, su base de licitud conforme a la Ley 25.326 (con cita del articulo) y el alcance de esa autorizacion (uso, publicacion y transferencia), y SHALL remitir a §7.3 para la transferencia.
-
-El parrafo MUST NOT resolverse por omision: SHALL existir en ambas ramas. El texto MUST NOT contener nombres reales ni la correspondencia alias-identidad. La rama elegida SHALL quedar respaldada por una respuesta de autores registrada con fecha; sin esa respuesta, la tarea que escribe el parrafo queda bloqueada.
-
-#### Scenario: Parrafo presente en ambas ramas
+#### Scenario: Parrafo presente
 
 - **WHEN** se lee §7.5 tras aplicar el change
 - **THEN** existe un parrafo de licitud y alcance del corpus retirado
-- **AND** el parrafo no depende de omitir el tema
+- **AND** declara el retiro del repositorio publico y la ausencia de datos de terceros
 
-#### Scenario: Rama de descripciones genericas
+#### Scenario: Sin datos de terceros y retiro declarados
 
-- **WHEN** los autores registraron que los textos son descripciones genericas sin datos de terceros
-- **THEN** §7.5 declara que no hay datos de una tercera organizacion y que no se requiere autorizacion ni base de licitud
-- **AND** remite a §7.3 para la transferencia a la Gemini API
+- **WHEN** se lee el parrafo de licitud
+- **THEN** declara que los textos retirados no contenian datos de terceros ni personales
+- **AND** que fueron retirados del repositorio publico y de la tesis
+- **AND** que no corresponde autorizacion ni base de licitud de terceros
 
-#### Scenario: Rama de datos de terceros
+#### Scenario: Transferencia y licitud de lo conservado
 
-- **WHEN** los autores registraron que los textos contienen datos de terceros o personales
-- **THEN** §7.5 declara la autorizacion escrita, su base de licitud (Ley 25.326, articulo citado) y su alcance (uso, publicacion, transferencia)
-- **AND** remite a §7.3 para la transferencia
+- **WHEN** se lee el parrafo de licitud
+- **THEN** remite a §7.3 para la transferencia de los textos a la Gemini API
+- **AND** declara la base de licitud de los datos que se conservan (Ley 25.326, articulo citado)
 
 #### Scenario: Respaldo registrado
 
@@ -54,29 +50,28 @@ La subseccion `subsec:alcance-delimitaciones` de §1.8 (`01-introduccion.tex`) S
 - **THEN** se conserva la unica organizacion de la provincia de Mendoza como limitacion de validez externa vigente
 - **AND** no cambia ningun valor numerico
 
-### Requirement: Disposicion del repositorio publico decidida y registrada con default alineado a K-02
+### Requirement: Retiro decidido de los textos del corpus independiente del repositorio publico
 
-La disposicion de los textos del corpus independiente publicados en el repositorio publico (`evaluation/data/campana/corpus_independiente.json` y `corpus_independiente_arbitrado.json`) SHALL ser una decision OBLIGATORIA de los autores, registrada en `docs/Tesis/Correcciones/dictamen-correcciones.md` con fecha y responsable. El default alineado a K-02 SHALL ser RETIRAR los textos del repositorio publico y de la tesis (en coherencia con «Si la autorizacion no existe, retirar los textos del repositorio publico y de la tesis»). Los textos MAY conservarse con el rotulado de OOS-026 UNICAMENTE si los autores registran en `dictamen-correcciones.md` la decision de que los textos son descripciones genericas de incidentes sin datos de terceros; en ese caso la conservacion SHALL documentarse explicitamente como decision de autores. La decision MUST NOT quedar sin registrar, y la tesis (por §7.5) y el repositorio SHALL ser coherentes con la rama elegida: si se retira, ningun archivo de la tesis ni del repositorio SHALL seguir alojando esos textos como evidencia vigente.
+La disposicion de los textos del corpus independiente publicados en el repositorio publico (`evaluation/data/campana/corpus_independiente.json` y `corpus_independiente_arbitrado.json`) SHALL ser el RETIRO, decision de los autores registrada en `docs/Tesis/Correcciones/dictamen-correcciones.md` con fecha y responsable, alineada con «Si la autorizacion no existe, retirar los textos del repositorio publico y de la tesis». Los textos SHALL eliminarse del repositorio publico (en un commit propio separado, con el ajuste de las tres pruebas y las sumas SHA-256 segun OOS-027) y de la tesis (por c-235). Los bytes MAY conservarse en un archivo PRIVADO fuera del repositorio, con sus SHA-256 citados en la tesis como trazabilidad; el repositorio publico MUST NOT volver a alojarlos como evidencia vigente. La tesis (por §7.5) y el repositorio SHALL ser coherentes: ningun archivo de la tesis ni del repositorio SHALL seguir alojando esos textos como evidencia vigente.
 
 #### Scenario: Decision registrada
 
 - **WHEN** se lee la entrada de este change en `dictamen-correcciones.md`
-- **THEN** figura la decision de disposicion del repositorio publico con fecha y responsable
-- **AND** figura la rama elegida (retiro o conservacion documentada)
+- **THEN** figura la decision de retirar los textos del repositorio publico con fecha y responsable
 
-#### Scenario: Default K-02 aplicado sin decision contraria
+#### Scenario: Retiro del repositorio y de la tesis
 
-- **WHEN** los autores no registran que los textos son descripciones genericas sin datos de terceros
-- **THEN** los textos se retiran del repositorio publico y de la tesis
+- **WHEN** se aplica el retiro
+- **THEN** los archivos del corpus independiente se eliminan del repositorio publico
+- **AND** ningun archivo de la tesis los aloja como evidencia vigente
 
-#### Scenario: Conservacion solo con decision documentada
+#### Scenario: Trazabilidad sin publicacion
 
-- **WHEN** los autores conservan los textos
-- **THEN** la conservacion esta registrada como decision de autores y documenta que son descripciones genericas sin datos de terceros
-- **AND** los archivos conservados estan rotulados segun OOS-026
+- **WHEN** los autores conservan los bytes en un archivo privado
+- **THEN** el archivo privado queda fuera del repositorio
+- **AND** la tesis cita los SHA-256 como trazabilidad sin publicar el contenido
 
 #### Scenario: Coherencia entre tesis y repositorio
 
-- **WHEN** se compara la rama elegida con §7.5 y con los archivos del repositorio
-- **THEN** §7.5 y el repositorio reflejan la misma rama
-- **AND** ningun archivo aloja los textos como evidencia vigente si la rama es el retiro
+- **WHEN** se compara §7.5 con los archivos del repositorio
+- **THEN** §7.5 declara el retiro y el repositorio ya no aloja los textos

@@ -1,12 +1,12 @@
 ## ADDED Requirements
 
-### Requirement: OOS-027 — Retiro del corpus independiente del repositorio publico (default K-02)
+### Requirement: OOS-027 — Retiro del corpus independiente del repositorio publico (decision de autores)
 
-La disposicion del corpus independiente publicado (`evaluation/data/campana/corpus_independiente.json` y `corpus_independiente_arbitrado.json`) SHALL seguir el default alineado a K-02: retirar los archivos del repositorio publico, salvo que los autores registren en `dictamen-correcciones.md` la decision de que los textos son descripciones genericas de incidentes sin datos de terceros (conservacion + rotulado OOS-026). Si la rama es el retiro, la eliminacion SHALL registrarse como decision de autores, SHALL ir en un commit propio separado del commit de contenido del change, y SHALL ajustar para dejar la suite verde: `evaluation/tests/test_linea_de_base.py`, `evaluation/tests/test_calibracion_gate.py`, `evaluation/monitoreo/test_monitor_deriva.py` y las sumas SHA-256 de `evaluation/data/campana/analisis/SHA256SUMS.txt` y de las tablas del README de campana. El change MUST NOT alterar los bytes de ningun archivo de datos en la rama de conservacion, y MUST NOT borrar archivos sin la decision registrada.
+La disposicion del corpus independiente publicado (`evaluation/data/campana/corpus_independiente.json` y `corpus_independiente_arbitrado.json`) SHALL ser el RETIRO del repositorio publico, alineado con la decision de los autores registrada en `docs/Tesis/Correcciones/dictamen-correcciones.md` y con «Si la autorizacion no existe, retirar los textos del repositorio publico y de la tesis». La eliminacion SHALL ir en un commit propio separado del commit de contenido del change, y SHALL ajustar para dejar la suite verde: `evaluation/tests/test_linea_de_base.py`, `evaluation/tests/test_calibracion_gate.py`, `evaluation/monitoreo/test_monitor_deriva.py` y las sumas SHA-256 de `evaluation/data/campana/analisis/SHA256SUMS.txt` y de las tablas del README de campana. Los bytes de los archivos retirados MAY conservarse en un archivo PRIVADO fuera del repositorio (no versionado), con sus SHA-256 citados en la tesis como trazabilidad; el repositorio publico MUST NOT volver a alojarlos como evidencia vigente. El change MUST NOT borrar archivos sin la decision registrada de los autores.
 
 #### Scenario: Retiro en commit separado
 
-- **WHEN** los autores eligen la rama de retiro (default)
+- **WHEN** la decision registrada es retirar
 - **THEN** los archivos del corpus independiente se eliminan en un commit propio
 - **AND** el commit ajusta las tres pruebas y las sumas SHA-256
 
@@ -15,11 +15,11 @@ La disposicion del corpus independiente publicado (`evaluation/data/campana/corp
 - **WHEN** se ejecuta la suite de `evaluation/` tras el retiro
 - **THEN** pasa, incluidas `test_linea_de_base.py`, `test_calibracion_gate.py` y `monitoreo/test_monitor_deriva.py`
 
-#### Scenario: Conservacion con rotulado
+#### Scenario: Trazabilidad sin publicacion
 
-- **WHEN** los autores registran la decision de conservacion (textos genericos sin datos de terceros)
-- **THEN** los archivos se conservan sin alterar bytes y rotulados segun OOS-026
-- **AND** las sumas SHA-256 siguen coincidiendo
+- **WHEN** los autores conservan los bytes en un archivo privado
+- **THEN** el archivo privado queda fuera del repositorio (no versionado)
+- **AND** la tesis cita los SHA-256 como trazabilidad sin publicar el contenido
 
 #### Scenario: Sin borrado sin decision
 
