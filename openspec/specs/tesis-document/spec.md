@@ -8976,20 +8976,52 @@ ni citas.
 - **WHEN** se ejecuta el script de conteo de oraciones sobre 01, 04, 07 y 08
 - **THEN** informa 0 oraciones de mas de 60 palabras o cada excepcion figura justificada en el registro
 
-### Requirement: Cobertura del backend informada con su procedencia
+### Requirement: Cobertura y conteo de pruebas del backend informados con su procedencia y configuracion
 
 La seccion 6.7 (`06-implementacion.tex`) SHALL informar la cobertura de sentencias de la suite
-unitaria sobre rutas, servicios y repositorios con su valor, el commit y la fecha de la medicion,
-y SHALL imprimir el mismo comando que ejecuta el CI (`pytest -m "not integration"
---cov=app.routes --cov=app.services --cov=app.repositories --cov-report=term-missing`). Si el
-valor no se midio, el texto MUST NOT imprimir una cifra y SHALL dejar el marcador
-`PENDIENTE-AUTORES(N-10)`. El valor SHALL registrarse en `numeros-canonicos.md`.
+unitaria sobre rutas, servicios y repositorios y el numero de pruebas unitarias, con su valor, el
+commit y la fecha de la medicion, y SHALL imprimir el mismo comando que ejecuta el CI
+(`pytest -m "not integration" --cov=app.routes --cov=app.services --cov=app.repositories
+--cov-report=term-missing`). Las cifras SHALL anclarse a la **configuracion evaluada** (commit
+`bf5e099`, 7-10-2026), medida sobre un arbol de trabajo de esa revision con sus dependencias
+pinneadas, y SHALL reportar ademas, si difiere, el contador correspondiente a la **configuracion
+entregada** (tag `v1.3.0`, commit `1b17e55`), porque la tesis distingue configuracion evaluada de
+entregada. La medicion SHALL registrar el entorno empleado (version de Python y requirements de la
+revision) y SHALL declarar la deriva de dependencias como riesgo. Si el valor no se midio, el texto
+MUST NOT imprimir una cifra y SHALL dejar el marcador `PENDIENTE-AUTORES(N-10)`. Los valores SHALL
+registrarse en `numeros-canonicos.md`; si alguna cifra cambia respecto del anclaje previo a
+`v1.2.18`, el cambio SHALL declararse explicitamente en la prosa y registrarse en el memo con su
+procedencia y su estado.
 
-#### Scenario: Cobertura con valor y comando del CI
+#### Scenario: Cobertura con valor, comando del CI y procedencia
 
 - **WHEN** se lee 6.7
 - **THEN** figura el porcentaje con commit y fecha, y el comando incluye `-m "not integration"`
 - **AND** el valor coincide con el registrado en `numeros-canonicos.md`
+
+#### Scenario: Cifras ancladas a la configuracion evaluada
+
+- **WHEN** se lee la subseccion de pruebas de `06-implementacion.tex`
+- **THEN** la cobertura y el numero de pruebas se anclan a `bf5e099` (7-10-2026) con el comando reproducible
+- **AND** el texto distingue la configuracion evaluada de la entregada
+
+#### Scenario: Contraparte de la configuracion entregada reportada
+
+- **WHEN** las cifras de `v1.3.0` (`1b17e55`) difieren de las de `bf5e099`
+- **THEN** el texto reporta ambas lecturas, rotuladas por revision
+- **AND** si no difieren, el texto declara que coinciden
+
+#### Scenario: Cambio de cifra declarado y canalizado
+
+- **WHEN** alguna cifra de cobertura o de conteo de pruebas cambia respecto del valor anclado a `v1.2.18`
+- **THEN** el cambio se declara explicitamente en la prosa
+- **AND** se registra en el memo `numeros-canonicos.md` con su procedencia y su estado
+
+#### Scenario: Deriva de dependencias declarada
+
+- **WHEN** el entorno pinneado de la revision evaluada no puede instalarse o la medicion no se reproduce
+- **THEN** la prosa lo declara como limitacion de reproducibilidad
+- **AND** no se reporta una cifra no reproducida como si lo fuera
 
 #### Scenario: Sin valor medido
 
@@ -10132,34 +10164,6 @@ Cuando el documento cite releases de software con etiquetas que coexisten (`v1.2
 - **THEN** `v1.2.2` se identifica como el despliegue de referencia de la prueba de humo TLS
 - **AND** `v1.3.0` se identifica como la configuracion entregada
 - **AND** ningun hecho sobre la campana experimental o la configuracion evaluada cambia
-
-### Requirement: Anclaje de las cifras de cobertura y pruebas a la configuracion evaluada
-
-`06-implementacion.tex` SHALL anclar las cifras de cobertura de sentencias y el numero de pruebas unitarias a la **configuracion evaluada** (commit `bf5e099`, 7-10-2026), medida con el comando reproducible `pytest -m "not integration" --cov=app.routes --cov=app.services --cov=app.repositories --cov-report=term-missing` sobre un arbol de trabajo de esa revision con sus dependencias pinneadas. SHALL reportar ademas, si difiere, el contador correspondiente a la **configuracion entregada** (tag `v1.3.0`, commit `1b17e55`), porque la tesis distingue configuracion evaluada de entregada. La medicion SHALL registrar el entorno empleado (version de Python, requirements de la revision) y SHALL declarar la deriva de dependencias como riesgo. Si una cifra cambia respecto del valor anclado a `v1.2.18`, el cambio SHALL declararse explicitamente y registrarse en el memo `docs/Tesis/Correcciones/numeros-canonicos.md`.
-
-#### Scenario: Cifras ancladas a la configuracion evaluada
-
-- **WHEN** se lee la subseccion de pruebas de `06-implementacion.tex`
-- **THEN** la cobertura y el numero de pruebas se anclan a `bf5e099` (7-10-2026) con el comando reproducible
-- **AND** el texto distingue la configuracion evaluada de la entregada
-
-#### Scenario: Contraparte de la configuracion entregada reportada
-
-- **WHEN** las cifras de `v1.3.0` (`1b17e55`) difieren de las de `bf5e099`
-- **THEN** el texto reporta ambas lecturas, rotuladas por revision
-- **AND** si no difieren, el texto declara que coinciden
-
-#### Scenario: Cambio de cifra declarado y canalizado
-
-- **WHEN** alguna cifra de cobertura o de conteo de pruebas cambia respecto del valor anclado a `v1.2.18`
-- **THEN** el cambio se declara explicitamente en la prosa
-- **AND** se registra en el memo `numeros-canonicos.md` con su procedencia y su estado
-
-#### Scenario: Deriva de dependencias declarada
-
-- **WHEN** el entorno pinneado de la revision evaluada no puede instalarse o la medicion no se reproduce
-- **THEN** la prosa lo declara como limitacion de reproducibilidad
-- **AND** no se reporta una cifra no reproducida como si lo fuera
 
 ### Requirement: Cierre de version y compilacion de la release v1.5.1
 
