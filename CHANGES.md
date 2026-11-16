@@ -2905,7 +2905,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
-## Cambios propuestos — mejoras estructurales (c-227 a c-231, sin aplicar)
+## Cambios propuestos — mejoras estructurales (c-227 a c-232, sin aplicar)
 
 > Cinco changes para atacar las limitaciones estructurales que pesan sobre el criterio 4 (metodologia) y el criterio 8 (redaccion) del ultimo dictamen. **c-231 y c-227 quedaron aplicados (2026-11-15); c-228, c-229 y c-230 quedan propuestos**, a la espera de la organizacion, los etiquetadores y el consentimiento. Los numeros de seccion del memo son los esperados (c-231 tomo la `3.38`; c-230/c-229/c-228 esperan `3.39`/`3.40`/`3.41`).
 
@@ -2948,6 +2948,14 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Specs**: `tesis-document`, `tesis-numeros-canonicos`.
 - **Memo**: seccion aditiva esperada `3.38`.
 - **Governance**: HIGH (tag) + MEDIUM (matriz y anexo).
+
+### [C-232] `integrar-el-clasificador-supervisado-en-la-configuracion-entregada` — PROPUESTO (2026-11-15, HIGH)
+
+- **Estado**: propuesto; valido. Sin aplicar. **Depende de c-228, c-229 y c-230** (los tres propuestos y sin aplicar) y de datos que todavia no existen.
+- **Objetivo**: capstone de la linea del clasificador. Toma el mejor modelo del benchmark de c-228, lo congela (pesos, tokenizer, codebook y hash del split), lo integra en la configuracion entregada detras del contrato de c-227, lo contrasta cabeza a cabeza contra el hibrido (los 206 + subconjuntos alineados + corpus de c-229) con IC bootstrap y McNemar, y decide con una regla **pre-registrada**: reemplazar la etapa semantica / complementar (segunda opinion o senal de gate) / conservar el hibrido. El default entregado cambia **solo** bajo «reemplazar». El change puede concluir honestamente que el hibrido se conserva.
+- **Specs**: `supervised-classifier-integration`, `delivered-classifier-decision` (nuevas); `inference-provider-abstraction`, `tesis-document`, `tesis-numeros-canonicos` (modificadas).
+- **Memo**: seccion aditiva esperada `3.42`.
+- **Governance**: HIGH (linea del clasificador de produccion y declaracion de la configuracion entregada); 3 checkpoints humanos.
 
 ---
 
