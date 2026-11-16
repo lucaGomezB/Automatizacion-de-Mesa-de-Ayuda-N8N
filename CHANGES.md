@@ -2968,16 +2968,16 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: HIGH (tag anotado `v1.5.1`) + MEDIUM (prosa y bibliografía). Checkpoints humanos A/B/C. Cero llamadas a Gemini.
 - **Leer antes**: `openspec/changes/archive/2026-11-15-c-233-corregir-consistencia-interna-y-bibliografia/{proposal,design,tasks}.md`, `docs/Tesis/Correcciones/auditoria-estilo-coneau-v1.5.0.md` (secciones 3 y 5) y `docs/Tesis/Correcciones/numeros-canonicos.md` (sección aditiva `3.43`).
 
-### [C-234] `recomponer-el-relato-del-corpus-y-reforzar-la-validez-externa` — APLICADO (grupos 0-3) (2026-11-16, MEDIUM)
+### [C-234] `recomponer-el-relato-del-corpus-y-reforzar-la-validez-externa` — APLICADO/ARCHIVADO; entrega `v1.5.2` (2026-11-16, MEDIUM + ALTA por el tag)
 
-- **Estado**: aplicado (grupos 0 a 3; compilación y cierre pendientes). Prosa y documentación únicamente; sin datos nuevos, sin código, sin tag. El relato del corpus único y la validez externa están en el `.tex` (Tabla `tab:procedencia-numeros` en `04-marco-metodologico.tex` y `subsec:aportes-generalizacion` en `09-conclusiones.tex`); el memo aditivo es `3.44`; la fila `+c-234` del libro mayor de páginas (tarea 3.3) y la recompilación (grupo 4) quedan pendientes.
+- **Estado**: aplicado (grupos 0 a 5), verificado y **archivado** el 2026-11-16 (`openspec/changes/archive/2026-11-16-c-234-recomponer-el-relato-del-corpus-y-reforzar-la-validez-externa/`); **registrado como la entrega `v1.5.2`**. Prosa y documentación únicamente; sin datos nuevos, sin código. El relato del corpus único y la validez externa están en el `.tex` (Tabla `tab:procedencia-numeros` en `04-marco-metodologico.tex` y `subsec:aportes-generalizacion` en `09-conclusiones.tex`); el memo aditivo es `3.44`; la fila `+c-234` del libro mayor de páginas registra 164 pp (+3). La entrega se cierra con bump a `v1.5.2` (portada, Anexo B y `.bib`) y tag anotado, con el hash consignado en un commit posterior.
 - **Objetivo**: cerrar las recomendaciones **7** (recomponer el relato de un único corpus congelado: qué número proviene de qué configuración ---tiempos de `hybrid-v1` frente a métricas de `hybrid-v3`; evaluada `bf5e099` frente a entregada `v1.3.0`; campaña complementaria---) y **8** (reforzar la validez externa en las conclusiones: muestra no probabilística por conveniencia, una sola organización, universo proyectado `2.646 = 42 x 63`) de la auditoría interna en estilo CONEAU. Declara a `c-229` como el remedio empírico condicional de la recomendación 8.
 - **Scope**: `docs/Tesis/v10 (IA)/paper/sections/{04-marco-metodologico,07-resultados,08-discusion,09-conclusiones,10-recomendaciones}.tex` y el Anexo B; sección aditiva del memo `3.44`; `dictamen-correcciones.md`; `CHANGES.md`; recompilación del PDF (línea base 161 pp).
 - **Specs**: `tesis-document` (procedencia del corpus, validez externa) y `tesis-numeros-canonicos` (registro aditivo).
 - **Memo**: sección aditiva `3.44`; no renumera `3.38`-`3.43`.
 - **Dependencias**: **independiente** de `c-228` a `c-233`. **No duplica `c-229`** (el remedio con datos nuevos); si `c-229` se aplicara antes, hay que repuntar las líneas de prosa compartidas.
-- **Governance**: MEDIUM (prosa y documentación). Cero llamadas a Gemini. Sin bump de versión ni tag por defecto (OQ2).
-- **Leer antes**: `openspec/changes/c-234-recomponer-el-relato-del-corpus-y-reforzar-la-validez-externa/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/auditoria-estilo-coneau-v1.5.0.md` (sección 4, recomendaciones 7 y 8).
+- **Governance**: MEDIUM (prosa y documentación) + ALTA (tag anotado `v1.5.2`). Cero llamadas a Gemini. La entrega se cierra con bump a `v1.5.2` y tag anotado, decidido por los autores después de la aplicación (revierte el "sin tag" original de OQ2).
+- **Leer antes**: `openspec/changes/archive/2026-11-16-c-234-recomponer-el-relato-del-corpus-y-reforzar-la-validez-externa/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/auditoria-estilo-coneau-v1.5.0.md` (sección 4, recomendaciones 7 y 8).
 
 ---
 
