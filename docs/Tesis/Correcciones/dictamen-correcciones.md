@@ -1038,6 +1038,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-225` + `+c-226` (compilación conjunta) | sin commit (lo crea el orquestador) | 157 | 140 | 17 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{157}`; `Anexos` en p. 141; delta frente a la compilación de c-221 (155 / 138 / 17): +2 total, +2 cuerpo, 0 anexos. c-225 agrega un párrafo y la tabla `tab:robustez-linea-base` en resultados más un pasaje en la limitación 5; c-226 agrega la tabla `tab:rango-robustez-tiempos` y su prosa en resultados, discusión y método. Ambas se compilaron en una sola corrida (batcheada); el delta no se desagrega por change. |
 | `+c-231` (`change/c-231-cerrar-version-referencias-internas-y-matriz`) | sin commit (lo crea el orquestador) | 159 | 140 | 19 | +2 | 0 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{159}`; `Anexos` en p. 141; delta frente a la compilación conjunta de c-225 + c-226 (157 / 140 / 17): +2 total, 0 cuerpo, +2 anexos. El delta proviene del anexo nuevo de números canónicos citados (`12-anexos.tex`, `sec:anexo-numeros-canonicos`), que suma 2 páginas al bloque de anexos sin tocar el cuerpo. |
 | `+c-233` (`change/c-233-corregir-consistencia-interna-y-bibliografia`) | sin commit (lo crea el orquestador) | 161 | 142 | 19 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{161}`; `Anexos` en p. 143; delta frente a c-231 (159 / 140 / 19): +2 total, +2 cuerpo, 0 anexos. El delta proviene del mapa de lectura (subsección nueva en la introducción) y de las precisiones de consistencia de la introducción (B2 y B3); el bloque de anexos no cambia. |
+| `+c-234` (`change/c-234-recomponer-el-relato-del-corpus-y-reforzar-la-validez-externa`) | sin commit (lo crea el orquestador) | 164 | 145 | 19 | +3 | +3 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{164}`; `Anexos` en p. 146; delta frente a c-233 (161 / 142 / 19): +3 total, +3 cuerpo, 0 anexos. El delta proviene del enunciado del corpus unico congelado, el mapeo de procedencia por cifra (`tab:procedencia-numeros`) y la declaracion de validez externa en la conclusion; el bloque de anexos no cambia. |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -6286,3 +6287,54 @@ tarea.
 | C28/s | B9: cierre de la novena limitación | c-233 | `08-discusion.tex:64` | `-` | `La novena limitación (el acceso cerrado) queda superada` | vigente (nuevo) |
 | C28/t | B10: mapa de lectura (organización del documento) | c-233 | `01-introduccion.tex:78` | `subsec:organizacion-documento` | `Organización del documento` | vigente (nuevo) |
 | C28/u | Memo: Sección `3.43` aditiva | c-233 | `docs/Tesis/Correcciones/numeros-canonicos.md:2818` | `-` | `3.43 Cifras de cobertura y pruebas re-ancladas a la configuración evaluada` | vigente (nuevo) |
+
+### c-234: recomponer el relato del corpus y reforzar la validez externa (grupos 0 a 3)
+
+- **Change**: `c-234-recomponer-el-relato-del-corpus-y-reforzar-la-validez-externa` (árbol de trabajo;
+  sin commit ni push en este tramo).
+- **Fecha de registro**: 2026-11-16.
+- **Observación atendida** (auditoría interna en estilo CONEAU sobre `v1.5.0`, sección 4 «Fondo (no
+  bloqueantes)», recomendaciones **7** y **8**): recomponer el relato de un único corpus congelado (qué
+  número proviene de qué configuración) y reforzar la validez externa en las conclusiones (sesgo de
+  selección). Es prosa y procedencia: no mide de nuevo, no introduce datos y no cambia el valor de
+  ningún número canónico. **Grupos 0 a 3 aplicados**; la recompilación (grupo 4), la fila `+c-234` del
+  libro mayor de páginas (tarea 3.3, que necesita el conteo medido) y la verificación de cierre (grupo
+  5) quedan pendientes.
+- **Resultado**: enunciado del corpus único congelado (`data/corpus_evaluacion_pseudonimizado.json`,
+  SHA-256 `1fd17d7e...`) y Tabla `tab:procedencia-numeros` con la procedencia por familia (corrida,
+  configuración y artefacto de origen) en `04-marco-metodologico.tex`; distinción de configuraciones en
+  `07-resultados.tex:8`, `08-discusion.tex:70` y el Anexo B (`12-anexos.tex:62`); declaración de
+  validez externa (muestra no probabilística por conveniencia, organización única, universo proyectado
+  `2.646 = 42 x 63`) y remisión al diseño de muestreo probabilístico como remedio empírico condicional
+  en `09-conclusiones.tex` (`subsec:aportes-generalizacion`) y `10-recomendaciones.tex`
+  (`subsec:estudios-replicacion`); memo sección aditiva `3.44`.
+- **Frontera con `c-229`**: `c-234` declara el estado actual y remite al diseño de muestreo
+  probabilístico; no lo duplica. El diseño y sus datos nuevos quedan en `c-229` (HIGH, propuesto y no
+  aplicado), registrado con estado `condicional` en el memo `3.44`.
+- **Archivos afectados**: `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex`,
+  `07-resultados.tex`, `08-discusion.tex`, `09-conclusiones.tex`, `10-recomendaciones.tex` y
+  `12-anexos.tex`; `docs/Tesis/Correcciones/numeros-canonicos.md` (Sección `3.44`);
+  `docs/Tesis/Correcciones/dictamen-correcciones.md` (esta entrada); `CHANGES.md`.
+- **Sin cambios**: `App/`, `n8n/`, el clasificador, la configuración, el corpus, las predicciones ni
+  los artefactos congelados. Ningún valor canónico cambia; el `git diff` dirigido sobre los `.tex` solo
+  agrega prosa de procedencia y de validez externa. Cero llamadas a Gemini. Sin bump de versión ni tag
+  (OQ2: la tesis permanece en `v1.5.1`).
+- **Verificación ejecutada**: `python3 verify_citations.py` con `STATUS: PASS`; `git diff` dirigido
+  sobre los `.tex` confirma que ninguna cifra de resultado cambió (solo palabras, rótulos y
+  remisiones); la etiqueta `tab:procedencia-numeros` está definida una vez (`04:73`) y referenciada en
+  `04`, `07`, `08` y `12`; la numeración de la Sección 3 del memo sigue sin duplicados (`3.44` sigue a
+  `3.43`).
+
+#### Matriz de trazabilidad (C29/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C29/a | Rec 7: enunciado del corpus único congelado | c-234 | `04-marco-metodologico.tex:48` | `subsec:poblacion-muestra-corpus` | `La evidencia numérica de este trabajo se apoya en un solo corpus congelado` | vigente (nuevo) |
+| C29/b | Rec 7: mapeo de procedencia por familia | c-234 | `04-marco-metodologico.tex:73` | `tab:procedencia-numeros` | `Procedencia de las cifras por familia: corrida, configuración y artefacto de origen` | vigente (nuevo) |
+| C29/c | Rec 7: `hybrid-v1` en tiempos frente a `hybrid-v3` en métricas | c-234 | `07-resultados.tex:8` | `sec:resultados` | `los de correo y formulario, medidas con la configuración \texttt{hybrid-v1}` | vigente (nuevo) |
+| C29/d | Rec 7: procedencia por corrida en la discusión | c-234 | `08-discusion.tex:70` | `subsec:limitaciones-estudio` | `La procedencia de cada familia de cifras por corrida y configuración se resume en la Tabla~\ref{tab:procedencia-numeros}` | vigente (nuevo) |
+| C29/e | Rec 7: Anexo B remite al mapeo de procedencia | c-234 | `12-anexos.tex:62` | `sec:anexo-repositorio` | `La procedencia de cada familia de cifras (corrida, configuración y artefacto de origen) se resume en la Tabla~\ref{tab:procedencia-numeros}` | vigente (nuevo) |
+| C29/f | Rec 8: validez externa con la fuerza correcta | c-234 | `09-conclusiones.tex:51` | `subsec:aportes-generalizacion` | `La validez externa de estos resultados es acotada y se declara con la fuerza que el diseño permite` | vigente (nuevo) |
+| C29/g | Rec 8: remedio empírico condicional y no ejecutado | c-234 | `09-conclusiones.tex:51` | `subsec:aportes-generalizacion` | `Ese diseño es, a la fecha de esta tesis, condicional y no ejecutado` | vigente (nuevo) |
+| C29/h | Rec 8: remisión sin duplicar `c-229` | c-234 | `10-recomendaciones.tex:34` | `subsec:estudios-replicacion` | `requeriría, además, un diseño de muestreo probabilístico de ese universo` | vigente (nuevo) |
+| C29/i | Memo: Sección `3.44` aditiva | c-234 | `docs/Tesis/Correcciones/numeros-canonicos.md:2854` | `-` | `3.44 Procedencia del corpus único y declaración de validez externa` | vigente (nuevo) |

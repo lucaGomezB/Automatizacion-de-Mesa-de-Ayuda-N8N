@@ -2851,6 +2851,56 @@ revisiones.
 **Valores previos intactos.** Ningún valor ni estado de las secciones `3.1` a `3.42` cambia, salvo el
 `1.773` de la sección `3.17(g)`, que queda `retirado` por esta sección.
 
+### 3.44 Procedencia del corpus único y declaración de validez externa (c-234)
+
+Sección **aditiva**: no renumera ni modifica ninguna sección `3.1` a `3.43`. No cambia el valor de
+ningún número canónico ni introduce datos nuevos. Registra el **mapeo de procedencia** de las cifras
+del corpus único congelado (qué número proviene de qué corrida y configuración) y la **declaración de
+validez externa** de las conclusiones, con su remedio empírico (`c-229`) en estado `condicional`.
+
+**Corpus único congelado.** La evidencia numérica de la tesis se apoya en un solo corpus,
+`data/corpus_evaluacion_pseudonimizado.json`, con huella SHA-256
+`1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`. La multiplicidad es de
+**configuraciones y corridas** sobre ese corpus, no de corpus distintos. Mapeo de procedencia por
+familia de cifras (`04-marco-metodologico.tex`, Tabla `tab:procedencia-numeros`):
+
+| Familia de cifras | Corrida | Configuración | Artefacto de origen | Estado |
+|---|---|---|---|---|
+| Tiempos manuales (200) | Campaña 2026-10, sub-ventana jun-ago 2026 | Flujo manual cronometrado por el par observador | `data/corpus_evaluacion_pseudonimizado.json` (`tiempo_manual_s`) | vigente |
+| Tiempos automatizados de correo y formulario (119) | 2-10-2026 | `hybrid-v1` (89 patrones; prompt sin reglas de frontera; cortocircuito >= 0,90) | corpus (`tiempo_automatizado_s`); registro primario `data/corpus_resultados_web_correo.json` (118 de 119) | vigente |
+| Tiempos telefónicos (81) | 5 y 6-10-2026 (recalculados el 19-10-2026) | Sin configuración única (25 el 5 y 56 el 6; la versión del 6 no consta) | corpus (`tiempo_automatizado_s`); registro `data/corpus_resultados_telefonia.json` | vigente |
+| Métricas de clasificación | Ejecución fuera de línea del 7-10-2026 (22:22 UTC) | `hybrid-v3`, commit `bf5e099` (configuración evaluada) | `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente |
+| Campaña complementaria de medición | nov-2026 (backend desde `cda7712`) | `hybrid-v3` sobre backend posterior; comparable con 2026-10 solo sobre la caché | `evaluation/data/campana/` (`intervenciones.csv`, `brazo_manual.csv`, `corpus_campana.json`) | vigente |
+
+Se distinguen la **configuración evaluada** (`bf5e099`), la **entregada** (tag `v1.3.0` del software)
+y la **de la campaña complementaria** (sin un único commit). El detalle narrativo consta en
+`04-marco-metodologico.tex` (`subsec:poblacion-muestra-corpus` y el párrafo `Procedencia de los datos
+del brazo automatizado`), `07-resultados.tex:8`, `08-discusion.tex:70` y el Anexo B
+(`12-anexos.tex:62`).
+
+**Validez externa declarada.** Las conclusiones (`09-conclusiones.tex`,
+`subsec:aportes-generalizacion`) declaran la amenaza con la fuerza del diseño: muestra **no
+probabilística por conveniencia** (los 200 son los incidentes cronometrados), **organización única**
+(servicios, provincia de Mendoza) y **universo proyectado, no medido** (`2.646 = 42 x 63`); las
+cifras valen para este corpus y no se extrapolan al universo. El **remedio empírico** es un diseño de
+muestreo probabilístico del universo, entregado por el change `c-229`
+(`muestreo-probabilistico-del-universo-de-incidentes`, HIGH, propuesto y no aplicado), declarado
+**condicional y no ejecutado**: la validez externa no queda establecida por esta tesis.
+`10-recomendaciones.tex` (`subsec:estudios-replicacion`) remite a ese diseño sin duplicar su
+contenido.
+
+| Declaración | Procedencia | Estado |
+|---|---|---|
+| Muestra no probabilística por conveniencia (200 cronometrados) | `09-conclusiones.tex` (`subsec:aportes-generalizacion`); `04-marco-metodologico.tex:46` | vigente (nuevo) |
+| Organización única (servicios, Mendoza) | idem | vigente (nuevo) |
+| Universo proyectado, no medido (`2.646 = 42 x 63`) | idem; memo `3.33` | vigente (nuevo) |
+| Remedio empírico: diseño de muestreo probabilístico del universo (`c-229`) | idem; `CHANGES.md` [C-229] | **condicional** (no ejecutado) |
+
+**Valores previos intactos.** Ningún valor ni estado de las secciones `3.1` a `3.43` cambia; esta
+sección solo agrega el registro de procedencia y la declaración de validez externa. La numeración de
+la Sección 3 sigue consecutiva y sin duplicados (`3.44` sigue a `3.43`; `3.39`-`3.42` permanecen
+reservadas a `c-230`/`c-229`/`c-228`/`c-232`).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
