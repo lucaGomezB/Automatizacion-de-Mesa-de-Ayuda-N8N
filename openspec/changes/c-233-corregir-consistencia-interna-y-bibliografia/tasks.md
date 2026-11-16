@@ -60,17 +60,19 @@ Gobernanza **ALTA** (tag anotado `v1.5.1`) + **MEDIA** (prosa y bibliografia). C
   **CHECKPOINT B resuelto (autores):** las cifras de B4 quedaron cerradas y el memo `3.43` y la prosa son consistentes; se autoriza la recompilacion de cierre.
 
 - [x] 5.2 Bump de version a `v1.5.1` en `00-portada.tex:31` ("Versión 1.5.1"), `12-anexos.tex:58` (tag anotado `v1.5.1`) y `:62`, y `Bibliography_base.bib:917`; verificar que no queda una mencion vigente de `1.5.0` en esos puntos. (TD «Cierre»)
-- [ ] 5.3 Commitear `docs/Tesis/Correcciones/auditoria-estilo-coneau-v1.5.0.md` (hoy sin trackear, C7); verificar con `git status` que ya no figura sin seguimiento. (TD «Cierre»)
-- [x] 5.4 Recompilar con `latexmk -xelatex main.tex` (o xelatex -> biber -> xelatex -> xelatex) en el entorno de registro; verificar 0 errores fatales, 0 referencias/citas indefinidas y 0 etiquetas duplicadas. (TD «Cierre»)
-- [x] 5.5 Regenerar `paper/compilacion.md` con `docs/Tesis/Correcciones/resumir_registro_compilacion.py` (no a mano); registrar el nuevo conteo de paginas y el delta frente a 159 pp. (TD «Cierre»)
-- [ ] 5.6 **[CHECKPOINT C — ALTA]** Presentar a los autores la compilacion de cierre y solicitar autorizacion expresa para cortar el tag anotado `v1.5.1` (OQ3). Registrar la decision. (TD «Cierre»)
-- [ ] 5.7 Con autorizacion (5.6), cortar el tag anotado `v1.5.1` sobre el commit de contenido y consignar su hash en un commit inmediatamente posterior en el Anexo B (patron v1.5.0); verificar que ningun tag previo se movio con `git tag -l "v1.5.*"`. Si no hay autorizacion, cerrar sin tag y registrarlo. (TD «Cierre»)
+- [x] 5.3 Commitear `docs/Tesis/Correcciones/auditoria-estilo-coneau-v1.5.0.md` (hoy sin trackear, C7); verificar con `git status` que ya no figura sin seguimiento. (TD «Cierre») — Commiteada en `9c5b45c` junto con el contenido (OQ4).
+- [x] 5.4 Recompilar con `latexmk -xelatex main.tex` (o xelatex -> biber -> xelatex -> xelatex) en el entorno de registro; verificar 0 errores fatales, 0 referencias/citas indefinidas y 0 etiquetas duplicadas. (TD «Cierre») — Hecha con la imagen Docker `texlive-thesis`; 161 pp, 0 errores.
+- [x] 5.5 Regenerar `paper/compilacion.md` con `docs/Tesis/Correcciones/resumir_registro_compilacion.py` (no a mano); registrar el nuevo conteo de paginas y el delta frente a 159 pp. (TD «Cierre») — Regenerado; delta +2 pp (161 vs 159).
+- [x] 5.6 **[CHECKPOINT C — ALTA]** Presentar a los autores la compilacion de cierre y solicitar autorizacion expresa para cortar el tag anotado `v1.5.1` (OQ3). Registrar la decision. (TD «Cierre»)
+
+  **CHECKPOINT C resuelto (autores):** autorizacion expresa otorgada para cortar el tag anotado `v1.5.1` (OQ3).
+- [x] 5.7 Con autorizacion (5.6), cortar el tag anotado `v1.5.1` sobre el commit de contenido y consignar su hash en un commit inmediatamente posterior en el Anexo B (patron v1.5.0); verificar que ningun tag previo se movio con `git tag -l "v1.5.*"`. Si no hay autorizacion, cerrar sin tag y registrarlo. (TD «Cierre») — Tag `v1.5.1` sobre `9c5b45c`; hash consignado en `af63d46`; `v1.5.0` sin mover.
 
 ## 6. Verificacion de cierre
 
-- [ ] 6.1 Confirmar con `git diff --stat` que no cambiaron `App/`, `n8n/`, el clasificador, la configuracion, el corpus ni las predicciones; que no se renumeraron secciones del memo; y que solo A1..A3 y B1..B10 cambiaron en la tesis.
-- [ ] 6.2 Correr `python verify_citations.py` y confirmar `STATUS: PASS`; confirmar que el PDF no contiene la secuencia `??` y que `\@abspage@last` quedo registrado en `compilacion.md`.
-- [ ] 6.3 Confirmar que los tres checkpoints (A, B, C) quedaron registrados y que el tag, si se corto, tiene autorizacion y hash consignado.
-- [ ] 6.4 Correr `openspec validate c-233-corregir-consistencia-interna-y-bibliografia --strict` y verificar que pasa.
-- [ ] 6.5 Dejar a cargo del orquestador el `engram sync`; no pushear ni publicar sin instruccion del autor.
-- [ ] 6.6 Guardar en Engram el resumen del change con el nombre, los artefactos, el numero de memo, el conteo de paginas y el resultado de las verificaciones.
+- [x] 6.1 Confirmar con `git diff --stat` que no cambiaron `App/`, `n8n/`, el clasificador, la configuracion, el corpus ni las predicciones; que no se renumeraron secciones del memo; y que solo A1..A3 y B1..B10 cambiaron en la tesis. — Confirmado: `git diff --name-only 1c9d917..HEAD` no toca `App/`, `n8n/`, `evaluation/`, `data/` ni `docker/`; memo `3.43` aditiva con `3.39`-`3.42` reservadas.
+- [x] 6.2 Correr `python verify_citations.py` y confirmar `STATUS: PASS`; confirmar que el PDF no contiene la secuencia `??` y que `\@abspage@last` quedo registrado en `compilacion.md`. — PASS (94/94, 173 comandos); 0 `??`; 161 pp en `compilacion.md`.
+- [x] 6.3 Confirmar que los tres checkpoints (A, B, C) quedaron registrados y que el tag, si se corto, tiene autorizacion y hash consignado. — A (OQ1), B (5.1) y C (5.6) registrados; tag `v1.5.1` autorizado y con hash consignado.
+- [x] 6.4 Correr `openspec validate c-233-corregir-consistencia-interna-y-bibliografia --strict` y verificar que pasa. — exit 0.
+- [x] 6.5 Dejar a cargo del orquestador el `engram sync`; no pushear ni publicar sin instruccion del autor. — No se pusheo; el `engram sync` queda a cargo del autor.
+- [x] 6.6 Guardar en Engram el resumen del change con el nombre, los artefactos, el numero de memo, el conteo de paginas y el resultado de las verificaciones. — Guardado (`opsx/c-233-consistencia-bibliografia/apply`).
