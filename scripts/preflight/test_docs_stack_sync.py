@@ -285,6 +285,35 @@ def test_chequeo_1_modelo_de_claude_diverge_falla(tmp_path):
     _assert_fails_naming(checks, "CLAUDE.md")
 
 
+def test_chequeo_1_modelo_por_constante_se_resuelve(tmp_path):
+    """c-227: `gemini_model` se define como `INFERENCE_MODEL_DEFAULT` (constante).
+
+    La barrera debe resolver el nombre desde `constants.py` y no perder el valor
+    (regresion que tumbo el job de backend: `Settings dice None` y, en cascada,
+    todo modelo de la KB marcado como retirado).
+    """
+    raiz = _arbol_sincronizado(tmp_path)
+    _mutar(
+        raiz,
+        CONSTANTS_REL,
+        "SECTORES_CANONICOS: tuple[str, ...] = (",
+        'INFERENCE_MODEL_DEFAULT: str = "gemini-3.6-flash"\n'
+        "SECTORES_CANONICOS: tuple[str, ...] = (",
+    )
+    _mutar(
+        raiz,
+        SETTINGS_REL,
+        'gemini_model: str = "gemini-3.6-flash"',
+        "gemini_model: str = INFERENCE_MODEL_DEFAULT",
+    )
+
+    checks = _checks(raiz)
+
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+    modelo = next(c for c in checks if c.name.startswith("modelo:"))
+    assert "gemini-3.6-flash" in modelo.detail
+
+
 # ===========================================================================
 # Chequeo 2 - timeout y reintentos
 # ===========================================================================
