@@ -1205,11 +1205,33 @@ def _get_classifier_version(classifier: Any) -> str:
     return getattr(classifier, "CACHE_VERSION", type(classifier).__name__)
 
 
+def _identidad_inferencia_por_defecto() -> tuple[str, str]:
+    """Proveedor y modelo por defecto de la inferencia (c-227, D2).
+
+    Se leen de ``app.constants`` (modulo liviano) para no exigir credenciales ni
+    arrastrar ``app.classifiers`` en el camino de cache hit. Los defaults resuelven
+    al proveedor y al modelo vigentes, de modo que la evidencia congelada —cuyas
+    predicciones no declaran proveedor ni modelo— sigue siendo valida (W-3).
+
+    Returns:
+        Par `(provider, model)` por defecto.
+    """
+    _ensure_backend_on_path()
+    from app.constants import (  # type: ignore[import]
+        INFERENCE_MODEL_DEFAULT,
+        INFERENCE_PROVIDER_DEFAULT,
+    )
+
+    return INFERENCE_PROVIDER_DEFAULT, INFERENCE_MODEL_DEFAULT
+
+
 def _is_cache_valid(
     predicciones_path: pathlib.Path,
     corpus_hash: str,
     corpus_count: int,
     classifier_version: str,
+    provider: Optional[str] = None,
+    model: Optional[str] = None,
 ) -> bool:
     """
     Verifica si el archivo de predicciones existente es un cache valido.
@@ -1220,12 +1242,21 @@ def _is_cache_valid(
     - `cache_meta.corpus_hash` coincide con `corpus_hash`.
     - `cache_meta.corpus_count` coincide con `corpus_count`.
     - `cache_meta.classifier_version` coincide con `classifier_version`.
+    - `cache_meta.provider` y `cache_meta.model` coinciden con la identidad de
+      inferencia esperada (c-227, D2).
+
+    La AUSENCIA de `provider`/`model` en el metadata se interpreta como el proveedor
+    y el modelo por defecto: la evidencia congelada de la configuracion vigente
+    (cuyas predicciones no declaran esos campos) permanece valida. Una version de
+    modelo distinta de la vigente invalida la entrada.
 
     Args:
         predicciones_path: Ruta al archivo predicciones.json.
         corpus_hash: Hash SHA-256 del archivo de corpus actual.
         corpus_count: Cantidad de casos en el corpus actual.
         classifier_version: Clave de version del clasificador actual.
+        provider: Proveedor de inferencia esperado (None = el por defecto).
+        model: Version de modelo esperada (None = la por defecto).
 
     Returns:
         True si el cache es valido, False en cualquier otro caso.
@@ -1240,11 +1271,17 @@ def _is_cache_valid(
     if not isinstance(data, dict) or "cache_meta" not in data:
         return False
 
+    provider_defecto, model_defecto = _identidad_inferencia_por_defecto()
+    provider = provider if provider is not None else provider_defecto
+    model = model if model is not None else model_defecto
+
     meta = data["cache_meta"]
     return (
         meta.get("corpus_hash") == corpus_hash
         and meta.get("corpus_count") == corpus_count
         and meta.get("classifier_version") == classifier_version
+        and meta.get("provider", provider_defecto) == provider
+        and meta.get("model", model_defecto) == model
     )
 
 
@@ -1590,10 +1627,17 @@ async def main_con_corpus_real(
             )
         classifier_version = _get_classifier_version(classifier)
         predicciones = await evaluar_corpus(corpus, classifier)
+        # c-227 (D2): la identidad de inferencia (proveedor + modelo) distingue la
+        # cache. Se registra con los defaults vigentes (modulo liviano, sin
+        # credenciales); la ausencia de estos campos en un cache previo —evidencia
+        # congelada— se interpreta como los defaults y sigue siendo valida.
+        proveedor, modelo = _identidad_inferencia_por_defecto()
         cache_meta: Dict[str, Any] = {
             "corpus_hash": corpus_hash,
             "corpus_count": corpus_count,
             "classifier_version": classifier_version,
+            "provider": proveedor,
+            "model": modelo,
             "generated_at": datetime.now(tz=timezone.utc).isoformat(),
             **procedencia_adicional,
         }

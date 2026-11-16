@@ -908,3 +908,120 @@ El memo canónico `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL incorpora
 - **WHEN** se comparan las secciones 3.1 a 3.32 antes y después del change
 - **THEN** cada valor conserva su cifra y su estado
 - **AND** solo se agrega la sección nueva y la remisión desde la sección 3.21
+
+### Requirement: Registro aditivo de las cifras del arbitraje por mayoría
+
+El memo canónico `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL incorporar la sección de
+c-224 con el primer número de sección libre al aplicar, y con una tabla de valores aditivos que
+incluya, como mínimo: la coincidencia entre la regla vigente (consenso de `E3` y `E4`; `E5`
+cuando difieren) y la etiqueta mayoritaria de `{E3, E4, E5}` (`200` de `206` casos); los `6`
+casos sin mayoría con sus identificadores y sus tres etiquetas; el rango de exactitud estricta
+(`142/206` a `147/206`); y las métricas por clase en ambos extremos. Cada valor SHALL llevar su
+archivo fuente, la clave del JSON y el comando que lo produce. La sección SHALL declarar que es
+aditiva y MUST NOT modificar ni reemplazar ningún valor ni estado de las secciones previas del
+memo.
+
+#### Scenario: Sección aditiva con procedencia
+
+- **WHEN** se lee la sección de c-224
+- **THEN** cada valor tiene archivo fuente, clave y comando
+- **AND** la sección declara que no reemplaza valores de las secciones previas del memo
+
+#### Scenario: Valores previos intactos
+
+- **WHEN** se comparan las secciones previas del memo antes y después del change
+- **THEN** ninguna cifra ni estado cambió
+
+### Requirement: Registro aditivo de la robustez de la línea de base frente a la referencia
+
+El memo canónico `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL recibir una sección aditiva
+nueva (la `3.36`, primera libre tras la `3.35` de c-224) que registre, por subconjunto de referencia
+—consenso `E3`/`E4` (`n = 142`), `150` originales (`n = 150`) y arbitrado completo (`n = 206`)—, la
+brecha híbrido menos línea de base con su IC 95 %, sus aciertos, el criterio de McNemar aplicado, la
+fuente (el JSON del análisis de robustez) y el comando que lo produce. Cada valor SHALL figurar con
+estado `vigente (nuevo)`, SHALL declararse aditivo y MUST NOT reemplazar ningún valor de las
+secciones `3.1` a `3.35`. La sección SHALL declarar que la cifra primaria `0,6893/206`, el macro-F1
+`0,7024` y el veredicto del umbral `0,85` no cambian.
+
+#### Scenario: Sección aditiva con procedencia por valor
+
+- **WHEN** se lee la sección `3.36` del memo
+- **THEN** cada cifra de la brecha por subconjunto figura con su fuente (JSON) y su comando
+- **AND** cada valor se marca `vigente (nuevo)` y aditivo
+
+#### Scenario: Valores previos intactos
+
+- **WHEN** se comparan las secciones `3.1` a `3.35` antes y después de la incorporación
+- **THEN** ningún valor `vigente` cambia
+- **AND** la cifra primaria `0,6893/206`, el macro-F1 `0,7024` y el veredicto del umbral `0,85` se declaran sin cambios
+
+### Requirement: Registro aditivo del rango de robustez de tiempos
+
+El memo canonico `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL incorporar una seccion nueva
+y aditiva, posterior a la ultima seccion vigente, sin renumerar ni alterar las anteriores. La
+seccion SHALL registrar, como minimo: el rango del estimando primario (reduccion de la media global
+de la campana 2026-10) con sus escenarios de descuento de `5 s` y `10 s`, el escenario que lo
+minimiza y su valor; el desagregado por canal con la reduccion intra-canal; los tiempos por
+operador con la aclaracion de que provienen de la campana complementaria y no son comparables con
+el brazo de 2026-10; el efecto de posicion con su medida y su efecto minimo detectable; y la cota
+inferior del instrumento (multiplos de `5 s` y `10 s`, y la telefonia como cota inferior de la
+duracion real de la llamada). Cada valor SHALL llevar su archivo y ruta de origen, o el comando que
+lo reproduce, y un estado en `{vigente, sensibilidad, reinterpretacion, condicional, retirado}`. La
+seccion SHALL declarar de forma explicita que el consolidado es una sintesis de escenarios ya
+calculados, que no mide de nuevo, que no cambia la cifra primaria `71,2 %` ni su intervalo y que no
+modifica ningun valor ni estado de las secciones 3.1 a 3.36. La seccion SHALL distinguir el minimo
+del estimando primario de las cotas de alcance y MUST NOT presentar el valor por operador mas
+adverso como minimo global.
+
+#### Scenario: Seccion aditiva con el primer numero libre
+
+- **WHEN** se aplica el change y se relee el indice del memo
+- **THEN** la seccion nueva ocupa el primer numero libre posterior a la ultima seccion vigente
+- **AND** ninguna seccion previa se renumera ni se reescribe
+
+#### Scenario: Cada escenario con procedencia y estado
+
+- **WHEN** se lee la seccion nueva del memo
+- **THEN** cada escenario tiene archivo fuente o comando, ambito y estado
+- **AND** la sintesis esta rotulada como sensibilidad o reinterpretacion, no como medicion nueva
+
+#### Scenario: Rango y minimo declarados sin cambiar la cifra primaria
+
+- **WHEN** se busca el rango de robustez de tiempos
+- **THEN** la seccion declara el rango del estimando primario y el escenario que lo minimiza
+- **AND** la cifra primaria `71,2 %` y su intervalo siguen sin cambios
+- **AND** las cotas de alcance por canal y por operador quedan separadas del minimo global
+
+#### Scenario: Valores previos intactos
+
+- **WHEN** se comparan las secciones 3.1 a 3.36 antes y despues del change
+- **THEN** cada valor conserva su cifra y su estado
+- **AND** solo se agrega la seccion nueva
+
+### Requirement: Registro del anexo de números canónicos citados y de sus referencias
+
+El memo canónico `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL incorporar una sección nueva y aditiva, posterior a la última sección vigente (hoy `3.37`), sin renumerar ni alterar las anteriores, que registre el anexo de números canónicos de la tesis: el rótulo del anexo (`sec:anexo-numeros-canonicos`), las secciones del memo cuyos valores el cuerpo cita (`3.31`, `3.33`, `3.35` y `3.36`) y cada valor transcripto al anexo con su procedencia y su estado. La sección SHALL declarar de forma explícita que el anexo es una transcripción condensada del memo, que el memo sigue siendo la fuente interna de verdad y que el anexo no introduce valores ausentes del memo ni modifica ningún valor ni estado previo. La sección SHALL registrar el reemplazo de las referencias del cuerpo al memo por número de sección (`Sección 3.xx`) por la remisión al anexo, y SHALL declarar cuántas ocurrencias se repuntaron. El memo SHALL conservar la trazabilidad del anexo hacia los valores citados, de modo que cada cifra del anexo se resuelva a una fila vigente del memo.
+
+#### Scenario: Sección aditiva con el primer número libre
+
+- **WHEN** se aplica el change y se relee el índice del memo
+- **THEN** la sección nueva ocupa el primer número libre posterior a la última sección vigente
+- **AND** ninguna sección previa se renumera ni se reescribe
+
+#### Scenario: Trazabilidad anexo-memo por valor
+
+- **WHEN** se lee la sección nueva del memo
+- **THEN** figuran el rótulo del anexo, las secciones del memo citadas por el cuerpo y cada valor transcripto con su procedencia y su estado
+- **AND** cada valor transcripto existe en el memo con el mismo valor y estado
+
+#### Scenario: Valores previos intactos
+
+- **WHEN** se comparan las secciones anteriores del memo antes y después del change
+- **THEN** cada valor conserva su cifra y su estado
+- **AND** solo se agrega la sección nueva
+
+#### Scenario: Referencias internas repuntadas
+
+- **WHEN** se recorre el cuerpo de los capítulos tras el change
+- **THEN** no queda ninguna cita del memo por número de sección (`Sección 3.xx`)
+- **AND** la sección nueva del memo declara cuántas ocurrencias se repuntaron al anexo

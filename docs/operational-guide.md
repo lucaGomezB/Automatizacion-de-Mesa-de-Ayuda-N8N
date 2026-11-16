@@ -829,4 +829,107 @@ ser distinto del de la aplicación, y `TEST_PG_ALLOW_APP_DB=1` se reserva
 exclusivamente para entornos efímeros dedicados (por ejemplo, un service container
 de CI), nunca para una base con datos reales.
 
+---
+
+## 12. Monitoreo del servicio de inferencia y de la deriva del modelo (c-227)
+
+Gestiona como riesgo operativo la dependencia de un servicio externo de inferencia
+(Gemini) y de una version especifica de modelo. Es una **senal operativa**: no mide
+de nuevo la tesis, no cambia ningun numero canonico y no toca `evaluation/evidence/`.
+
+### 12.1 Que mide
+
+Un **conjunto canario** fijo y versionado (`evaluation/data/canario/canario.json`,
+103 casos, ids `I*`), disjunto del corpus de ajuste y **no apto para ajustar**. Su
+**linea de base congelada** (`evaluation/data/canario/canario_baseline.json`) registra
+las metricas calculadas una sola vez desde los artefactos versionados:
+
+| Metrica | Linea de base | Piso (delta 0.05) |
+|---|---|---|
+| exactitud estricta | 0.8446601941747572 | 0.7946601941747572 |
+| F1 macro | 0.7446560846560847 | 0.6946560846560846 |
+
+### 12.2 Ejecutar el job
+
+```bash
+# Reproduccion offline por defecto (sin proveedor, sin costo):
+PYTHONPATH=App/Backend python -m evaluation.monitoreo.monitor_deriva
+
+# Identificador de corrida explicito (por defecto, la fecha UTC actual):
+PYTHONPATH=App/Backend python -m evaluation.monitoreo.monitor_deriva --fecha 2026-11-15
+```
+
+El reporte se escribe en `evaluation/data/canario/reportes/reporte_<fecha>.md`. Dos
+corridas sobre las mismas entradas producen salidas identicas byte a byte.
+
+### 12.3 Cadencia
+
+- **Reproduccion offline: mensual** y **ante cualquier cambio de proveedor o de
+  version de modelo** (deriva de identidad).
+- **Corrida fresca (paga): solo bajo demanda**, con confirmacion explicita. Sobre
+  103 casos el costo estimado es ~USD 0.02:
+
+```bash
+# Solo bajo demanda y con confirmacion; NO se ejecuta en rutina:
+PYTHONPATH=App/Backend python -m evaluation.monitoreo.monitor_deriva --fresh --confirm-paid
+# o, equivalentemente, con EVALUATION_CONFIRM_PAID=1
+```
+
+Sin `--confirm-paid` (ni `EVALUATION_CONFIRM_PAID=1`), una corrida que necesite
+predicciones frescas aborta con codigo de salida 2 y un mensaje claro, **sin invocar
+al proveedor**.
+
+### 12.4 Lectura de la deriva (dos ejes)
+
+El veredicto separa dos causas para no atribuir a un cambio de codigo lo que en
+realidad es un cambio de modelo, y viceversa:
+
+| Identidad (proveedor/modelo) | Metrica bajo la tolerancia | Veredicto |
+|---|---|---|
+| sin cambio | no | `sin_deriva` |
+| **cambio** | no | `deriva_de_identidad` |
+| sin cambio | **si** | `deriva_de_metrica` |
+| **cambio** | **si** | `ambas` |
+
+- `deriva_de_identidad`: cambio de proveedor o de version de modelo respecto de la
+  linea de base. Revisar el alta/version del modelo; puede explicar cambios de metrica.
+- `deriva_de_metrica`: identidad estable y una metrica monitoreada cayo mas alla de
+  la tolerancia (`base - actual > 0.05`). Revisar el servicio de inferencia.
+
+### 12.5 Pisos y sobrescritura por entorno
+
+Los pisos por metrica viven en `Settings` (`monitoring_exactitud_estricta_floor`,
+`monitoring_f1_macro_floor`) y la tolerancia en `monitoring_tolerancia`. Se
+sobrescriben por variable de entorno sin recompilar:
+
+```bash
+MONITORING_F1_MACRO_FLOOR=0.70 MONITORING_TOLERANCIA=0.06 \
+  PYTHONPATH=App/Backend python -m evaluation.monitoreo.monitor_deriva
+```
+
+### 12.6 Alerta y fallback operativo
+
+Cuando una metrica queda **por debajo de su piso**, el job emite una alerta que
+nombra la **metrica, su valor, su piso y la corrida**. La alerta documenta el
+fallback operativo vigente y el criterio de restablecimiento:
+
+- **Fallback** (`classification-resilience`): ante la indisponibilidad del servicio
+  de inferencia, la cascada degrada al **filtro deterministico con revision humana**
+  (`etapa=fallback`, `confianza=0.0`, `requiere_revision_humana=true`). La alerta NO
+  cambia el clasificador ni dispara un recambio automatico de proveedor.
+- **Restablecimiento**: volver a la operacion normal cuando la identidad efectiva
+  coincida con la de la linea de base y las metricas del canario esten sobre sus
+  pisos en una corrida offline.
+
+### 12.7 Verificacion
+
+```bash
+cd evaluation
+pytest monitoreo/ -q
+```
+
+Los tests verifican la disyuncion del canario con el corpus de ajuste, la
+reproduccion de la linea de base, la deteccion de deriva (sin deriva / de metrica /
+de identidad / ambas), las alertas y que la corrida paga aborta sin confirmacion.
+
 

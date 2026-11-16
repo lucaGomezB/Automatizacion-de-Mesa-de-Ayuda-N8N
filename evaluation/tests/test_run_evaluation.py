@@ -2267,6 +2267,8 @@ async def test_c166_el_cache_independiente_trae_commit_y_pines_ademas_de_los_cua
         "corpus_hash",
         "corpus_count",
         "classifier_version",
+        "provider",
+        "model",
         "generated_at",
         "commit",
         "pines",
@@ -2277,7 +2279,7 @@ async def test_c166_el_cache_independiente_trae_commit_y_pines_ademas_de_los_cua
     assert clasificador.call_count == 4
 
 
-async def test_c166_sin_procedencia_extra_el_cache_meta_conserva_sus_cuatro_campos(
+async def test_c166_sin_procedencia_extra_el_cache_meta_conserva_sus_campos_base(
     corpus_fixture_path, tmp_path
 ):
     import json
@@ -2297,7 +2299,16 @@ async def test_c166_sin_procedencia_extra_el_cache_meta_conserva_sus_cuatro_camp
     )
 
     meta = json.loads(predicciones.read_text(encoding="utf-8"))["cache_meta"]
-    assert set(meta) == {"corpus_hash", "corpus_count", "classifier_version", "generated_at"}
+    # c-227 (D2): el cache suma la identidad de inferencia (provider/model) a los
+    # campos base; sin `procedencia_extra` no agrega commit ni pines.
+    assert set(meta) == {
+        "corpus_hash",
+        "corpus_count",
+        "classifier_version",
+        "provider",
+        "model",
+        "generated_at",
+    }
 
 
 async def test_c166_un_cache_valido_no_vuelve_a_pedir_la_procedencia(tmp_path):

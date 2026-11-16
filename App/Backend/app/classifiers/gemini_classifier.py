@@ -41,6 +41,13 @@ from google.genai import errors as genai_errors
 from google.genai import types as genai_types
 
 from app.classifiers.base import BaseClassifier
+from app.classifiers.provider import (
+    InferenceParams,
+    InferenceProvider,
+    InferenceTerminalError,
+    InferenceTimeoutError,
+    InferenceTransientError,
+)
 from app.config.settings import get_settings
 from app.constants import SECTORES_CANONICOS
 from app.core.exceptions import (
@@ -324,6 +331,104 @@ def _validate_gemini_response(raw: str) -> dict:
     return {"categoría": categoria, "confianza": float(confianza)}
 
 
+def _build_generation_config(params: InferenceParams) -> genai_types.GenerateContentConfig:
+    """
+    Arma la configuracion de generacion de Gemini a partir de los parametros (D1).
+
+    Los parametros calibrados (Anexo H §H.2) llegan en `params`; el resto de la
+    configuracion es propia del SDK del proveedor y NO forma parte del contrato de
+    la interfaz:
+        - Modo JSON: la API restringe la salida a JSON puro, sin fences Markdown.
+        - Schema estructurado: restringe la respuesta a los strings canonicos con su
+          casing correcto (defensa en profundidad en el ORIGEN de la peticion).
+        - `thinking_budget=0`: los tokens de razonamiento cuentan contra
+          `max_output_tokens` y truncarian la respuesta visible.
+        - Safety settings parcialmente desactivados para la terminologia tecnica.
+    """
+    return genai_types.GenerateContentConfig(
+        temperature=params.temperature,           # 0.3: reduce variabilidad
+        top_p=params.top_p,                       # 0.9: nucleus sampling rioplatense
+        max_output_tokens=params.max_output_tokens,  # 100: suficiente para JSON
+        candidate_count=params.candidate_count,   # 1: optimiza latencia
+        response_mime_type="application/json",
+        response_schema=genai_types.Schema(
+            type="OBJECT",
+            properties={
+                "categoría": genai_types.Schema(
+                    type="STRING",
+                    enum=list(SECTORES_CANONICOS),
+                ),
+                "confianza": genai_types.Schema(
+                    type="NUMBER",
+                ),
+            },
+            required=["categoría", "confianza"],
+        ),
+        thinking_config=genai_types.ThinkingConfig(thinking_budget=0),
+        safety_settings=[
+            genai_types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
+            genai_types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
+            genai_types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="BLOCK_NONE"),
+            genai_types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
+        ],
+    )
+
+
+class GeminiProvider:
+    """
+    Implementacion de `InferenceProvider` sobre el SDK google-genai (c-227, D1).
+
+    Envuelve UNICAMENTE la llamada al SDK: arma la configuracion de generacion,
+    ejecuta la peticion con el limite de latencia por llamada y traduce los errores
+    de `genai` a la taxonomia canonica de la interfaz (transitorio/terminal). El
+    clasificador deja de depender de `genai_errors` para decidir los reintentos.
+
+    La construccion del prompt, la validacion del contrato de respuesta y el
+    resultado estructurado quedan del lado de `GeminiClassifier`.
+    """
+
+    NOMBRE = "gemini"
+
+    def __init__(self, *, client: genai.Client | None = None) -> None:
+        """Usa el cliente compartido (o uno inyectado en tests, sin red ni costo)."""
+        self._client = client if client is not None else get_genai_client()
+
+    async def generate(self, *, prompt: str, params: InferenceParams) -> str:
+        """
+        Ejecuta la generacion y devuelve el texto crudo; traduce los errores.
+
+        Raises:
+            InferenceTimeoutError: la llamada supero `params.timeout` (transitorio).
+            InferenceTransientError: indisponibilidad o limite de tasa (transitorio).
+            InferenceTerminalError: peticion/autenticacion/autorizacion (terminal).
+        """
+        config = _build_generation_config(params)
+        try:
+            # asyncio.wait_for garantiza el limite de latencia POR LLAMADA.
+            response = await asyncio.wait_for(
+                self._client.aio.models.generate_content(
+                    model=params.model,
+                    contents=prompt,
+                    config=config,
+                ),
+                timeout=params.timeout,
+            )
+        except TimeoutError as exc:
+            raise InferenceTimeoutError(
+                f"timeout del proveedor de inferencia ({params.timeout}s)."
+            ) from exc
+        except Exception as exc:  # noqa: BLE001 - se traduce a la taxonomia canonica
+            if _is_transient_error(exc):
+                raise InferenceTransientError(
+                    f"falla transitoria del proveedor ({type(exc).__name__})."
+                ) from exc
+            raise InferenceTerminalError(
+                f"falla terminal del proveedor ({type(exc).__name__})."
+            ) from exc
+        return response.text.strip()
+
+
+
 class GeminiClassifier(BaseClassifier):
     """
     Clasificador semántico basado en Gemini 3.6 Flash.
@@ -343,6 +448,7 @@ class GeminiClassifier(BaseClassifier):
         self,
         *,
         client: genai.Client | None = None,
+        provider: InferenceProvider | None = None,
         sleep: Callable[[float], Awaitable[None]] | None = None,
         monotonic: Callable[[], float] | None = None,
         random_fn: Callable[[], float] | None = None,
@@ -351,60 +457,43 @@ class GeminiClassifier(BaseClassifier):
         Inicializa el clasificador configurando el cliente de Gemini con los
         parámetros definidos en Settings (que reproducen docs/parameters_gemini.md).
 
+        `provider` es la dependencia de la INTERFAZ del proveedor de inferencia
+        (c-227, D1): si se inyecta una implementacion (falsa o real) el clasificador
+        la usa sin construir el SDK. Sin `provider`, se envuelve el cliente de Gemini.
+
         Los parametros `sleep`, `monotonic` y `random_fn` son inyectables para que
         el bucle de reintento sea testeable de forma determinista (sin esperas
         reales ni aleatoriedad no reproducible). En produccion se usan los del
         sistema.
         """
         settings = get_settings()
-        # Cliente compartido y reutilizado (BE B7); se cierra en el shutdown.
-        # Inyectable para tests (cliente genai simulado, sin red ni costo).
-        self._client = client if client is not None else get_genai_client()
+        # Modelo y proveedor efectivos (c-227, D2): sin configuracion, los vigentes.
+        self._provider_name = settings.inference_provider
+        self._model_name = settings.inference_model
 
-        # Modelo configurable via settings.gemini_model (default: Gemini 3.6 Flash)
-        self._model_name = settings.gemini_model
-
-        # Configuración de generación con parámetros calibrados (Anexo H §H.2).
-        # Safety settings parcialmente desactivados para permitir terminología
-        # técnica que podría ser bloqueada por los filtros de contenido predeterminados
-        # (ej. "se cayó", "atasco", "corte de red"). Ver Anexo H §H.2.
-        self._generation_config = genai_types.GenerateContentConfig(
-            temperature=settings.gemini_temperature,         # 0.3: reduce variabilidad
-            top_p=settings.gemini_top_p,                     # 0.9: nucleus sampling rioplatense
+        # Parametros de inferencia independientes del proveedor (D1).
+        self._params = InferenceParams(
+            model=self._model_name,
+            temperature=settings.gemini_temperature,           # 0.3: reduce variabilidad
+            top_p=settings.gemini_top_p,                       # 0.9: nucleus sampling
             max_output_tokens=settings.gemini_max_output_tokens,  # 100: suficiente para JSON
-            candidate_count=settings.gemini_candidate_count,      # 1: optimiza latencia
-            # Modo JSON: la API restringe la salida a JSON puro, sin fences Markdown
-            # (```json ... ```) que el validador del Anexo H §H.3 rechaza por diseño.
-            response_mime_type="application/json",
-            # Schema estructurado: restringe la respuesta a exactamente los 3 strings
-            # canónicos con su casing correcto. Evita que Gemini devuelva "SISTEMAS"
-            # u otras variantes de mayúsculas que el validador del Anexo H §H.3 rechaza
-            # por ser case-sensitive. El enum actúa en el ORIGEN (request), complementando
-            # la instrucción del prompt (defensa en profundidad). Ver docs/parameters_gemini.md.
-            response_schema=genai_types.Schema(
-                type="OBJECT",
-                properties={
-                    "categoría": genai_types.Schema(
-                        type="STRING",
-                        enum=list(SECTORES_CANONICOS),
-                    ),
-                    "confianza": genai_types.Schema(
-                        type="NUMBER",
-                    ),
-                },
-                required=["categoría", "confianza"],
-            ),
-            # Los tokens de razonamiento ("thinking") del modelo cuentan contra
-            # max_output_tokens=100, truncando la respuesta visible. Presupuesto
-            # 0 desactiva el razonamiento: respuesta directa, completa y de menor latencia.
-            thinking_config=genai_types.ThinkingConfig(thinking_budget=0),
-            safety_settings=[
-                genai_types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
-                genai_types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
-                genai_types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="BLOCK_NONE"),
-                genai_types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
-            ],
+            candidate_count=settings.gemini_candidate_count,   # 1: optimiza latencia
+            timeout=float(settings.gemini_timeout_seconds),
         )
+        # Configuracion de generacion (Anexo H §H.2). Se conserva como atributo por
+        # compatibilidad; la arma la misma funcion que usa el proveedor concreto.
+        self._generation_config = _build_generation_config(self._params)
+
+        # Dependencia por la INTERFAZ (D1): una implementacion falsa se inyecta sin
+        # importar el SDK. Sin proveedor inyectado se usa la implementacion Gemini.
+        if provider is not None:
+            self._provider = provider
+            self._client = client  # puede ser None: el proveedor inyectado no usa el SDK
+        else:
+            # Cliente compartido y reutilizado (BE B7); se cierra en el shutdown.
+            # Inyectable para tests (cliente genai simulado, sin red ni costo).
+            self._client = client if client is not None else get_genai_client()
+            self._provider = GeminiProvider(client=self._client)
 
         self._timeout = settings.gemini_timeout_seconds       # configurable (default 30s): límite de latencia
         self._human_review_threshold = settings.human_review_threshold  # 0.70
@@ -477,17 +566,11 @@ class GeminiClassifier(BaseClassifier):
             raw_response: str | None = None
 
             try:
-                # asyncio.wait_for garantiza el límite de latencia POR INTENTO
-                # (asyncio.TimeoutError == TimeoutError en Python ≥3.11).
-                response = await asyncio.wait_for(
-                    self._client.aio.models.generate_content(
-                        model=self._model_name,
-                        contents=prompt,
-                        config=self._generation_config,
-                    ),
-                    timeout=self._timeout,
+                # El proveedor (interfaz) ejecuta la llamada con su limite de latencia
+                # por intento y traduce los errores de su SDK a la taxonomia canonica.
+                raw_response = await self._provider.generate(
+                    prompt=prompt, params=self._params
                 )
-                raw_response = response.text.strip()
 
                 # Validar la respuesta según el protocolo del Anexo H §H.3
                 validated = _validate_gemini_response(raw_response)
@@ -501,25 +584,16 @@ class GeminiClassifier(BaseClassifier):
                 )
                 return self._fallback(raw_response)
 
-            except TimeoutError as exc:
-                # Timeout transitorio: elegible para reintento.
+            except InferenceTimeoutError as exc:
+                # Timeout transitorio (del proveedor): elegible para reintento.
                 last_reason = "timeout"
                 last_error = exc
                 logger.warning(
                     "gemini_timeout", timeout_s=self._timeout, attempt=attempt
                 )
 
-            except Exception as exc:
-                if not _is_transient_error(exc):
-                    # Falla terminal: un solo intento, sin reintento.
-                    logger.error(
-                        "gemini_retry_terminal",
-                        attempt=attempt,
-                        error_class=type(exc).__name__,
-                    )
-                    raise GeminiUnavailableError(
-                        "Gemini API no disponible."
-                    ) from exc
+            except InferenceTransientError as exc:
+                # Falla transitoria (5xx/429): elegible para reintento.
                 last_reason = "transient"
                 last_error = exc
                 logger.warning(
@@ -527,6 +601,17 @@ class GeminiClassifier(BaseClassifier):
                     attempt=attempt,
                     error_class=type(exc).__name__,
                 )
+
+            except InferenceTerminalError as exc:
+                # Falla terminal: un solo intento, sin reintento.
+                logger.error(
+                    "gemini_retry_terminal",
+                    attempt=attempt,
+                    error_class=type(exc).__name__,
+                )
+                raise GeminiUnavailableError(
+                    "Gemini API no disponible."
+                ) from exc
 
             else:
                 # Éxito: construir el resultado y salir del bucle.
@@ -537,6 +622,10 @@ class GeminiClassifier(BaseClassifier):
                     categoria=validated["categoría"],
                     confianza=confianza,
                     requiere_revision_humana=requiere_revision,
+                    # Trazabilidad de la identidad efectiva (c-227, D4): el evento
+                    # identifica proveedor y modelo SIN la clave de API ni el texto.
+                    proveedor=self._provider_name,
+                    modelo=self._model_name,
                 )
                 return ClasificacionResult(
                     sector_predicho=validated["categoría"],

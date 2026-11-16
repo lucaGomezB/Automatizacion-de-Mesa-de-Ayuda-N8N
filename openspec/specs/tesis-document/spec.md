@@ -456,7 +456,19 @@ reduccion SHALL apoyarse en la mediana y en estadisticos de rango, no solo en la
 media. La prueba de Wilcoxon SHALL reportar el valor real con correccion por
 empates (W=363, T+=19737, T−=363, p=3,08e-32, r=0,9639) y SHALL declarar el
 numero real de pares en que el flujo automatizado no fue mas rapido (12 de 200),
-sin afirmar "W=0" ni "sin excepcion".
+sin afirmar "W=0" ni "sin excepcion". La tesis SHALL presentar, en una sola tabla o
+parrafo, la sintesis del rango de robustez de los tiempos con los escenarios ya
+calculados: descuentos de `5 s` y `10 s`, desagregado por canal, tiempos por
+operador, efecto de posicion y cota inferior del instrumento. La sintesis SHALL
+declarar el rango completo del estimando primario (reduccion de la media global de
+la campana 2026-10) y el escenario que lo minimiza, y SHALL informar las lecturas
+por canal y por operador como cotas de alcance rotuladas, sin presentarlas como el
+minimo global. La sintesis SHALL rotularse como sensibilidad o reinterpretacion y
+MUST NOT presentarse como medicion nueva. La cifra primaria `71,2 %` y su intervalo
+`[67,2 %; 74,6 %]` SHALL conservarse sin cambios. La discusion SHALL remitir desde
+las seis explicaciones rivales a la sintesis, y la limitacion correspondiente y la
+amenaza 1 de la metodologia SHALL precisar que el rango acota la magnitud pero no
+estima el efecto de orden ni elimina la asimetria de instrumentos.
 
 #### Scenario: Redondeo declarado y sensibilidad reportada
 
@@ -474,6 +486,25 @@ sin afirmar "W=0" ni "sin excepcion".
 
 - **WHEN** se leen los resultados de tiempos
 - **THEN** se declara que en 12 de 200 pares el flujo automatizado no fue mas rapido que el manual
+
+#### Scenario: Rango de robustez consolidado
+
+- **WHEN** se lee la sintesis de tiempos en resultados
+- **THEN** una sola tabla o parrafo reune los descuentos de 5 s y 10 s, el desagregado por canal, los tiempos por operador, el efecto de posicion y la cota inferior del instrumento
+- **AND** declara el rango del estimando primario y el escenario que lo minimiza
+- **AND** la sintesis esta rotulada como sensibilidad o reinterpretacion
+
+#### Scenario: Cotas de alcance rotuladas
+
+- **WHEN** se leen las lecturas por canal y por operador
+- **THEN** se informan como cotas de alcance con su ambito, sin presentar el valor por operador mas adverso como minimo global
+- **AND** la cifra primaria 71,2 % y su intervalo [67,2 %; 74,6 %] no cambian
+
+#### Scenario: Remision desde la discusion y la limitacion
+
+- **WHEN** se leen las seis explicaciones rivales y la limitacion de tiempos
+- **THEN** remiten a la sintesis del rango de robustez
+- **AND** precisan que el rango acota la magnitud pero no estima el efecto de orden ni elimina la asimetria de instrumentos
 
 ### Requirement: Consistencia de anexos, documentacion de soporte y PDF
 
@@ -9024,22 +9055,26 @@ verdadero sin ese dato. El registro (`dictamen-correcciones.md`) SHALL inventari
 - **THEN** figuran al menos los marcadores N-01, N-02, N-04, N-05, N-13, N-16 y P16
 - **AND** cada uno figura en el inventario del registro
 
-### Requirement: Trazabilidad de la devolucion de segunda instancia en el registro
+### Requirement: Trazabilidad de la devolución de segunda instancia en el registro
 
-`docs/Tesis/Correcciones/dictamen-correcciones.md` SHALL incluir una seccion "Dictamen v10 /
-v1.2.18 (2026-11-11) - c-196 (devolucion de segunda instancia)" con una matriz de 7 columnas (Rec | Sintesis |
-Change | Archivo:linea | Ancla | Fragmento verificable | Estado) con una fila por N-01 a N-16,
-fragmentos tomados del texto final y estado; las decisiones del design de c-196; el inventario de
-`PENDIENTE-AUTORES`; y el libro mayor de paginas y palabras. Las filas de matrices anteriores cuyo
-parrafo reescribe c-196 SHALL marcarse "SUPERADA por c-196". `verificar_matriz_trazabilidad.py`
-SHALL reportar 0 fallas y la compilacion SHALL cumplir el requisito "Thesis PDF compilation" (0
-errores, 0 referencias o citas indefinidas, `verify_citations.py` PASS, `compilacion.md` con el
-SHA-256 del PDF).
+`docs/Tesis/Correcciones/dictamen-correcciones.md` SHALL incluir una sección "Dictamen v10 / v1.2.18 (2026-11-11) - c-196 (devolución de segunda instancia)" con una matriz de 7 columnas (Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado) con una fila por N-01 a N-16, fragmentos tomados del texto final y estado; las decisiones del design de c-196; el inventario de `PENDIENTE-AUTORES`; y el libro mayor de páginas y palabras. El estado de cada fila SHALL reflejar el texto vigente del repositorio: las observaciones `N-02`, `N-04`, `N-05` y `P16` SHALL figurar como cerradas, con el fragmento verificable y el `archivo:línea` del texto vigente (`12-anexos.tex` para `N-02` y `P16`; `04-marco-metodologico.tex` para `N-04` y `N-05`) y la referencia al commit `c5b2fb9` (2026-11-11), que las cerró. Ninguna de esas cuatro observaciones SHALL figurar en el inventario `PENDIENTE-AUTORES`, que SHALL quedar sin filas pendientes. Las filas de matrices anteriores cuyo párrafo reescribe c-196 SHALL marcarse "SUPERADA por c-196". `verificar_matriz_trazabilidad.py` SHALL reportar 0 fallas y la compilación SHALL cumplir el requisito "Thesis PDF compilation" (0 errores, 0 referencias o citas indefinidas, `verify_citations.py` PASS, `compilacion.md` con el SHA-256 del PDF).
 
 #### Scenario: Matriz de c-196 verificada
 
-- **WHEN** se ejecuta `python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py` desde la raiz
-- **THEN** el resumen informa filas de la seccion de c-196 y 0 fallas
+- **WHEN** se ejecuta `python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py` desde la raíz
+- **THEN** el resumen informa filas de la sección de c-196 y 0 fallas
+
+#### Scenario: Estados reales de N-02, N-04, N-05 y P16
+
+- **WHEN** se lee la fila de `N-02`, `N-04` o `N-05` en la tabla de correcciones de la sección c-196
+- **THEN** su Estado es cerrada y no "PENDIENTE", con el fragmento del texto vigente y la referencia a `c5b2fb9`
+- **AND** la observación, la corrección y el archivo declarados no cambian
+
+#### Scenario: Inventario PENDIENTE-AUTORES sin pendientes
+
+- **WHEN** se lee el inventario `PENDIENTE-AUTORES` de la sección c-196
+- **THEN** no contiene ninguna fila de `N-02`, `N-04`, `N-05` ni `P16`
+- **AND** la sección declara que no quedan pendientes de autores
 
 ### Requirement: Afinado de escritura por capitulo segun las calificaciones de la devolucion
 
@@ -9719,13 +9754,20 @@ doble etiquetado y arbitraje por un tercer etiquetador, ni fijar como criterio d
 arbitraje se ejecute antes de reportar, porque ambas cosas se ejecutaron. La línea de
 `subsec:frontera-sistemas` SHALL orientarse al análisis de la taxonomía con los casos disponibles
 y SHALL tener criterio de éxito; la de `subsec:corpus-independiente` SHALL proponer un corpus de
-composición natural, con cuotas prefijadas y arbitraje por mayoría de tres etiquetadores.
+composición natural, con cuotas prefijadas y más etiquetadores independientes, y MUST NOT
+proponer «arbitraje por mayoría de tres etiquetadores» como mecanismo faltante.
 
 #### Scenario: Líneas ya ejecutadas retiradas
 
 - **WHEN** se leen `subsec:frontera-sistemas` y `subsec:corpus-independiente`
 - **THEN** ninguna propone como próximo paso lo ya realizado
 - **AND** cada una declara un criterio de éxito
+
+#### Scenario: Mayoría de tres no se propone como faltante
+
+- **WHEN** se busca «mayoría de tres» en `10-recomendaciones.tex`
+- **THEN** no hay coincidencias
+- **AND** `subsec:corpus-independiente` propone más etiquetadores independientes
 
 ### Requirement: Subsecciones propias para la validación fuera de muestra y las comparaciones
 
@@ -9814,9 +9856,16 @@ corpus y referencias, y SHALL ajustar su síntesis para declarar de qué exactit
 La tesis SHALL declarar que la confianza de Gemini difirió entre las dos corridas fuera de muestra
 en los casos comunes, con la cantidad registrada, y que el orden del prerregistro de la calibración
 se demuestra con las fechas de autor de los commits. La documentación de la campaña SHALL registrar
-que el `commit` declarado en `predicciones_independiente.json` no es alcanzable desde `main` (puede
-existir como objeto colgante en el clon donde se hizo la corrida, pero no viaja con `fetch` ni con
-`clone`) y cuál commit versionó el archivo. MUST NOT afirmar que ese commit no existe.
+que el `commit` declarado en `predicciones_independiente.json` no es alcanzable desde `main`, que se
+preserva mediante el tag anotado `archivo/corrida-fuera-de-muestra-561b3c4` con su SHA completo, y
+cuál commit versionó el archivo. La tesis SHALL declarar en el apartado metodológico del diseño
+fuera de muestra que el árbol de fuentes de la corrida se preserva por ese tag y SHALL consignar el
+SHA-256 de `predicciones_independiente.json` y de `reporte_independiente.md` tal como están
+versionados. Si el tag no puede publicarse, la documentación y la tesis SHALL declarar la salvedad
+de forma explícita, con el commit que versionó el archivo, y MUST NOT presentar la salvedad como
+equivalente a la preservación. MUST NOT afirmar que ese commit no existe, MUST NOT afirmar que el
+tag contiene los artefactos de salida si no los contiene, y MUST NOT presentar la preservación por
+tag como alcanzabilidad desde `main`.
 
 #### Scenario: Declaraciones presentes
 
@@ -9825,9 +9874,16 @@ existir como objeto colgante en el clon donde se hizo la corrida, pero no viaja 
 
 #### Scenario: Commit de la primera corrida descrito por alcanzabilidad
 
-- **WHEN** se lee el README de la campaña sobre `predicciones_independiente.json`
-- **THEN** dice que el `commit` declarado no es alcanzable desde `main` y nombra el commit que versionó el archivo
-- **AND** no afirma que el commit no exista
+- **WHEN** se lee el README de la campaña y la declaración metodológica sobre `predicciones_independiente.json`
+- **THEN** dicen que el `commit` declarado no es alcanzable desde `main`, nombran el tag de archivo con su SHA completo y el commit que versionó el archivo
+- **AND** la tesis consigna el SHA-256 de las predicciones y del reporte versionados
+- **AND** no afirman que el commit no exista ni que el tag contenga los artefactos de salida
+
+#### Scenario: Salvedad explícita si el tag no se publica
+
+- **WHEN** el tag de archivo no se publica
+- **THEN** el README y la tesis declaran la salvedad de forma explícita, con el commit que versionó el archivo y los SHA-256
+- **AND** la salvedad no se presenta como equivalente a la preservación por tag
 
 ### Requirement: Sin identificadores internos de cambio en el cuerpo
 
@@ -9860,23 +9916,116 @@ citarse si se verificó en una fuente oficial.
 
 ### Requirement: Versión entregada identificable y con la evidencia vigente
 
-La portada, la entrada bibliográfica del repositorio y el Anexo B SHALL identificar la misma
-versión nueva, cuyo tag SHALL contener el texto y los artefactos de evidencia que la tesis cita. El
-Anexo B MUST NOT afirmar que los commits posteriores al tag no modifican las fuentes si eso no es
-verificable; SHALL declarar que el commit posterior al tag solo consigna su hash. El cronograma
-SHALL registrar la validación fuera de muestra, el arbitraje, la línea de base y los análisis
-posteriores con la precisión de su evidencia. `paper/compilacion.md` SHALL regenerarse con la
-compilación final. La creación y la publicación del tag MUST NOT realizarse sin confirmación
-expresa de los autores.
+La portada (`00-portada.tex`), la entrada bibliográfica del repositorio (`Bibliography_base.bib`, `Gomez2026_repositorio`) y el Anexo B (`12-anexos.tex`, `sec:anexo-repositorio`) SHALL identificar la misma versión nueva del documento, cuyo tag SHALL contener el texto y los artefactos de evidencia que la tesis cita, incluidos los de `c-223`, `c-224`, `c-225` y `c-226`. El Anexo B MUST NOT afirmar que los commits posteriores al tag no modifican las fuentes si eso no es verificable; SHALL declarar que el commit posterior al tag solo consigna su hash. El Anexo B SHALL desambiguar de forma explícita la `versión entregada` del documento (el tag del manuscrito) de la `configuración entregada` del software (el tag `v1.3.0`), de modo que la misma palabra no designe dos objetos distintos. El commit etiquetado SHALL llevar en el Anexo B la oración de reemplazo sin imprimir el hash de una release previa, y el commit inmediatamente posterior SHALL reemplazarla por el hash completo del commit etiquetado. El cronograma SHALL registrar la validación fuera de muestra, el arbitraje, la línea de base y los análisis posteriores con la precisión de su evidencia. `paper/compilacion.md` SHALL regenerarse con la compilación final. La creación y la publicación del tag MUST NOT realizarse sin confirmación expresa de los autores.
 
 #### Scenario: Tag coherente con el documento
 
 - **WHEN** se compara el hash del Anexo B con `git rev-parse <tag>^{commit}`
 - **THEN** coinciden
-- **AND** `git show <tag>:` encuentra los artefactos de evidencia citados por la tesis
-- **AND** la portada y la entrada del repositorio nombran la misma versión
+- **AND** `git show <tag>:` encuentra los artefactos de evidencia citados por la tesis, incluidos los de `c-223` a `c-226`
+- **AND** la portada, la entrada del repositorio y el Anexo B nombran la misma versión
+
+#### Scenario: El tag contiene la evidencia nueva
+
+- **WHEN** se ejecuta `git merge-base --is-ancestor <commit-de-c-223> <tag>` y la verificación análoga para `c-224`, `c-225` y `c-226`
+- **THEN** los cuatro commits son ancestros del tag
+- **AND** `git show <tag>:docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex` contiene el anexo nuevo de números canónicos
+
+#### Scenario: Desambiguación de documento y software
+
+- **WHEN** se lee `sec:anexo-repositorio` en el Anexo B
+- **THEN** la `versión entregada` designa el tag del documento de tesis y la `configuración entregada` designa el tag del software
+- **AND** las dos expresiones se declaran como objetos distintos
+
+#### Scenario: Sin hash ajeno en el PDF etiquetado
+
+- **WHEN** se extrae el texto del PDF compilado en el tag y se busca el hash de la release previa (`v1.4.1`)
+- **THEN** el PDF etiquetado no contiene ese hash
+- **AND** el Anexo B del PDF etiquetado muestra la oración de reemplazo
 
 #### Scenario: Cronograma actualizado
 
 - **WHEN** se lee `docs/diagrams/cronograma.md`
 - **THEN** figuran los hitos de noviembre de 2026 con su evidencia
+
+### Requirement: Acotación del arbitraje por mayoría en la limitación y los resultados
+
+`08-discusion.tex` SHALL precisar en la limitación 8 que la regla vigente (consenso de `E3` y
+`E4`; `E5` cuando difieren) coincide con la etiqueta mayoritaria de `{E3, E4, E5}` en `200` de
+`206` casos, y que los `6` casos sin mayoría acotan la exactitud estricta entre `0,6893`
+(`142/206`) y `0,7136` (`147/206`). `07-resultados.tex` SHALL registrar ese rango en el párrafo
+del arbitraje de `subsec:validacion-fuera-muestra`, rotulado como sensibilidad, y remitir a la
+sección del memo canónico que lo registra, sin cambiar las cifras vigentes del párrafo
+(`0,6893`, `0,7864`, `0,7489`, `0,7467`, `31/61`). El change MUST NOT cambiar `0,6893`,
+`0,7024`, el umbral de `0,85` ni el veredicto del umbral.
+
+#### Scenario: Limitación 8 acotada
+
+- **WHEN** se busca «200 de 206» en `08-discusion.tex`
+- **THEN** la línea de la limitación 8 contiene la coincidencia y el rango
+- **AND** la fragilidad de la referencia se conserva como limitación de fondo
+
+#### Scenario: Rango en resultados
+
+- **WHEN** se busca «147/206» en `07-resultados.tex`
+- **THEN** la línea del párrafo del arbitraje contiene el rango rotulado como sensibilidad
+- **AND** las cifras vigentes del párrafo (`0,6893`, `0,7864`, `0,7489`, `0,7467`, `31/61`) no cambian
+
+### Requirement: Robustez de la brecha frente a la referencia en resultados y discusión
+
+`07-resultados.tex` SHALL incluir, junto a `tab:linea-base-clasica`, una tabla o párrafo que informe
+la brecha híbrido menos línea de base clásica con su IC 95 % sobre los tres subconjuntos de
+referencia: consenso `E3`/`E4` (`n = 142`), `150` originales sin exclusión (`n = 150`) y corpus
+arbitrado completo (`n = 206`), con la fuente (`analisis_robustez_linea_de_base_c225.json`). El
+bloque SHALL rotularse como sensibilidad o robustez y MUST NOT presentarse como una medición nueva.
+`08-discusion.tex` SHALL leer el resultado en la limitación sobre la comparación con clasificadores
+alternativos y SHALL declarar que la conclusión sobre la línea de base no depende de una sola
+elección de referencia. La incorporación MUST NOT cambiar `0,6893/206`, `0,7024`, el veredicto del
+umbral `0,85` ni ningún otro valor canónico, y su crecimiento neto de páginas SHALL registrarse en el
+libro mayor de `dictamen-correcciones.md`.
+
+#### Scenario: Brecha por subconjunto presente en resultados
+
+- **WHEN** se lee `07-resultados.tex` junto a `tab:linea-base-clasica`
+- **THEN** figura la brecha con su IC en los tres subconjuntos
+- **AND** el bloque se rotula como sensibilidad o robustez y remite a su fuente
+
+#### Scenario: Lectura acotada en la discusión
+
+- **WHEN** se lee la limitación sobre la comparación con clasificadores alternativos en `08-discusion.tex`
+- **THEN** el texto declara que la conclusión sobre la línea de base no depende de una sola referencia
+- **AND** no presenta la lectura múltiple como una medición nueva
+
+#### Scenario: Cifras canónicas intactas
+
+- **WHEN** se comparan las cifras del bloque con el memo canónico
+- **THEN** `0,6893/206`, `0,7024` y el veredicto del umbral `0,85` no cambian
+- **AND** el crecimiento de páginas queda registrado en el libro mayor
+
+### Requirement: Anexo de números canónicos citados y cuerpo sin referencias internas al memo
+
+`docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex` SHALL incorporar un anexo nuevo (rotulado «Anexo» en español, con etiqueta `sec:anexo-numeros-canonicos`) que reúna los números canónicos que el cuerpo cita, y solo ellos, ubicado de modo que no renumere los anexos A a I existentes. El anexo SHALL ser una transcripción condensada del memo: cada valor SHALL llevar su cifra, su procedencia (archivo o comando que lo reproduce) y un estado en `{vigente, sensibilidad, reinterpretacion, condicional, retirado}` tomados del memo `docs/Tesis/Correcciones/numeros-canonicos.md`. El anexo MUST NOT reproducir las secciones completas del memo, MUST NOT introducir valores ausentes del memo y MUST NOT modificar ningún valor canónico. El memo SHALL conservarse como fuente interna de verdad del proyecto. Las referencias del cuerpo al memo por número de sección (`Sección 3.xx`) SHALL reemplazarse por una remisión al anexo (`\autoref{sec:anexo-numeros-canonicos}`); tras el change, ningún capítulo del cuerpo SHALL citar el memo de números canónicos por número de sección. El crecimiento de páginas del anexo SHALL registrarse en el libro mayor de `dictamen-correcciones.md`.
+
+#### Scenario: Anexo con los números citados
+
+- **WHEN** se compila y se lee el anexo nuevo del Anexo de números canónicos
+- **THEN** figuran los valores de las secciones `3.31`, `3.33`, `3.35` y `3.36` del memo que el cuerpo cita
+- **AND** ningún otro valor del memo se reproduce
+
+#### Scenario: Procedencia y estado por cifra
+
+- **WHEN** se recorre el anexo nuevo
+- **THEN** cada valor declara su procedencia (archivo o comando) y su estado
+- **AND** el estado coincide con el del memo
+
+#### Scenario: Cuerpo sin referencias internas por sección
+
+- **WHEN** se busca `Sección[~ ]3\.[0-9]{2}` en `docs/Tesis/v10 (IA)/paper/sections/*.tex`
+- **THEN** no quedan coincidencias en los capítulos del cuerpo
+- **AND** cada oración que citaba el memo por sección remite ahora a `\autoref{sec:anexo-numeros-canonicos}`
+
+#### Scenario: Sin cifras nuevas ni valores cambiados
+
+- **WHEN** se comparan los valores del anexo con el memo
+- **THEN** cada cifra del anexo existe en el memo con el mismo valor y estado
+- **AND** ningún valor canónico vigente cambia

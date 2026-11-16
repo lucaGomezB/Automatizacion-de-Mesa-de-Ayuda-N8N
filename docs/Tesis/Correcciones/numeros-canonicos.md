@@ -2588,6 +2588,233 @@ muestra el árbol de fuentes; `git ls-remote --tags origin 'archivo/*'` devuelve
 (el tag no contiene el artefacto). La declaración de la tesis vive en el apartado metodológico del
 diseño fuera de muestra (`04-marco-metodologico.tex`); el README de la campaña conserva su nota.
 
+### 3.35 Acotación del arbitraje por mayoría de los tres etiquetadores (c-224)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.34. Registra que la regla vigente de arbitraje coincide con la mayoría de los tres
+etiquetadores (`E3`, `E4`, `E5`) en `200` de `206` casos, identifica los `6` casos sin mayoría y
+acota el efecto de reasignarlos sobre la exactitud estricta y las métricas por clase. Análisis de
+solo lectura, determinista y offline: no invoca a Gemini, no usa red ni base de datos, no
+reclasifica, no reentrena y no modifica el corpus, las predicciones, los artefactos congelados ni
+ningún número canónico. Cero llamadas pagas.
+
+*Numeración.* El memo terminaba en la Sección `3.34` (c-223); esta sección es la `3.35`, la primera
+libre (releída al aplicar).
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Coincidencia de la regla vigente con la mayoría de `{E3, E4, E5}`: `200` de `206` casos | `analisis_arbitraje_mayoria_c224.json`, clave `coincidencia`; comando `python3 evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py` | vigente (nuevo) |
+| Identidad estructural: `142` de consenso + `58` arbitrados con mayoría = `200` | misma fuente, clave `identidad` | vigente (nuevo) |
+| Casos sin mayoría (tres etiquetas distintas): `I033`, `I042`, `I056`, `I130`, `I194`, `I198` | misma fuente, clave `sin_mayoria` | vigente (nuevo) |
+| Exactitud estricta vigente: `142/206` (`0,6893`) | misma fuente, clave `exactitud.aciertos` | vigente (sin cambio) |
+| Extremo máximo de la exactitud estricta: `147/206` (`0,7136`), `k = 5` reasignables | misma fuente, clave `exactitud.max` | cota de sensibilidad (nuevo) |
+| Caso no reasignable: `I042` (la predicción no cae entre las tres etiquetas) | misma fuente, clave `exactitud.no_reasignables` | vigente (nuevo) |
+| Macro-F1 vigente: `0,7024`; extremo máximo: `0,7249` | misma fuente, clave `metricas` | vigente y cota de sensibilidad |
+| Exactitud laxa: `162/206` (`0,7864`) | `07-resultados.tex`; sin cambio | vigente (sin cambio) |
+
+**Casos sin mayoría: detalle de las tres etiquetas.** Cada caso sin mayoría con sus tres etiquetas
+(`E3`, `E4`, `E5`), su predicción congelada y la referencia vigente (fuente, clave
+`detalle_sin_mayoria`; comando `python3 evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py`):
+
+| Caso | `E3` | `E4` | `E5` | Predicción | Referencia |
+|---|---|---|---|---|---|
+| `I033` | Soporte Tecnico Software | Sistemas | Soporte Tecnico Hardware | Sistemas | Soporte Tecnico Hardware |
+| `I042` | Seguridad Informatica | Sistemas | Bases de Datos | Soporte Tecnico Software | Bases de Datos |
+| `I056` | Soporte Tecnico Software | Sistemas | Seguridad Informatica | Soporte Tecnico Software | Seguridad Informatica |
+| `I130` | Soporte Tecnico Software | Sistemas | Seguridad Informatica | Sistemas | Seguridad Informatica |
+| `I194` | Bases de Datos | Sistemas | Soporte Tecnico Hardware | Sistemas | Soporte Tecnico Hardware |
+| `I198` | Sistemas | Soporte Tecnico Software | Seguridad Informatica | Soporte Tecnico Software | Seguridad Informatica |
+
+**Métricas por clase en ambos extremos.** Precision (`P`), sensibilidad (`S`) y `F1` por clase en la
+referencia vigente y en el extremo máximo con reasignación (fuente, clave `metricas`; mismo comando):
+
+| Clase | `P` vigente | `S` vigente | `F1` vigente | `P` máximo | `S` máximo | `F1` máximo |
+|---|---|---|---|---|---|---|
+| Bases de Datos | `0,7778` | `0,8750` | `0,8235` | `0,7778` | `0,8750` | `0,8235` |
+| Seguridad Informatica | `0,6452` | `0,6250` | `0,6349` | `0,6452` | `0,6897` | `0,6667` |
+| Sistemas | `0,7045` | `0,5082` | `0,5905` | `0,7727` | `0,5312` | `0,6296` |
+| Soporte Tecnico Hardware | `0,7857` | `0,8627` | `0,8224` | `0,7857` | `0,8980` | `0,8381` |
+| Soporte Tecnico Software | `0,5789` | `0,7174` | `0,6408` | `0,6140` | `0,7292` | `0,6667` |
+
+Los soportes por clase en el extremo máximo (`16`, `29`, `64`, `49`, `48`) solo reflejan la
+reasignación de los casos con mayoría dentro del conjunto sin mayoría; el `macro-F1` pasa de
+`0,7024` a `0,7249` (fila de la tabla resumen).
+
+La coincidencia es estructural: en los `142` casos de consenso `E3 = E4`, la regla usa esa etiqueta
+y coincide por construcción; en los `64` casos arbitrados, `E5` fija la referencia y `58` de ellos
+tienen una mayoría que ya es la etiqueta de `E5`. Solo los `6` casos con tres etiquetas distintas
+carecen de mayoría. Reasignar cada caso reasignable a la etiqueta que coincide con la predicción
+congelada mueve la exactitud estricta de `142/206` a `147/206` y el macro-F1 de `0,7024` a
+`0,7249`; ningún extremo alcanza el umbral de `0,85`. El rango se rotula como **cota de
+sensibilidad** y no reemplaza la cifra primaria. La fragilidad de la referencia (kappa `0,5569`,
+árbitro único, doble etiquetado original no conservado) sigue siendo la limitación de fondo: la
+mayoría de tres no puede estimarse con los datos actuales porque `E5` no etiquetó los `142` casos
+de consenso. La línea de trabajo futuro que proponía «arbitraje por mayoría de tres etiquetadores»
+se reformula como «más etiquetadores independientes que permitan estimar la mayoría sin depender de
+un único tercer etiquetador».
+
+Verificación reproducible: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_arbitraje_mayoria_c224.py -q`
+(`25` pruebas); dos corridas del script producen salidas idénticas byte a byte; los anclajes
+(`200`, `6`, `142`, `147`, `64`, `206`, macro-F1 `0,7024`) abortan sin escribir si difieren. La
+prosa vive en `07-resultados.tex` (párrafo del arbitraje), `08-discusion.tex` (limitación octava) y
+`10-recomendaciones.tex` (`subsec:corpus-independiente`).
+
+### 3.36 Robustez de la brecha híbrido menos línea de base frente a la referencia (c-225)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.35. Registra la brecha híbrido menos línea de base clásica, con IC 95 %, sobre los tres
+subconjuntos de referencia que la tesis informa por separado: consenso `E3`/`E4` (`n = 142`), los
+`150` originales sin exclusión (`n = 150`) y el corpus arbitrado completo (`n = 206`). Análisis de
+solo lectura, determinista y offline: no invoca a Gemini, no usa red ni base de datos, no
+reclasifica, no reentrena y no modifica el corpus, las predicciones, los artefactos congelados ni
+ningún número canónico. Cero llamadas pagas. Las tres lecturas son descriptivas, se reportan juntas
+y no se corrigen por multiplicidad.
+
+*Numeración.* El memo terminaba en la Sección `3.35` (c-224); esta sección es la `3.36`, la primera
+libre (releída al aplicar; c-226 reserva la `3.37`).
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Brecha balanceada, consenso `E3`/`E4` (`n = 142`): `+0,2324`, IC 95 % `[0,1408; 0,3239]`; aciertos `109/142` frente a `76/142` (`b = 43`, `c = 10`); McNemar corregido `p = 1,105e-05` | `analisis_robustez_linea_de_base_c225.json`, clave `subconjuntos.consenso_e3_e4.contrastes.balanceada`; comando `python3 evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py` | vigente (nuevo) |
+| Brecha balanceada, `150` originales sin exclusión (`n = 150`): `+0,1667`, IC 95 % `[0,0733; 0,2600]`; aciertos `112/150` frente a `87/150` (`b = 39`, `c = 14`); McNemar corregido `p = 0,0010` | misma fuente, clave `subconjuntos.original_150.contrastes.balanceada` | vigente (nuevo) |
+| Brecha balanceada, corpus arbitrado completo (`n = 206`): `+0,1990`, IC 95 % `[0,1165; 0,2767]`; aciertos `142/206` frente a `101/206` (`b = 61`, `c = 20`); McNemar corregido `p = 8,812e-06` | misma fuente, clave `subconjuntos.arbitrado_completo.contrastes.balanceada` | vigente (nuevo) |
+| Brecha sin re-ponderación, consenso `E3`/`E4` (`n = 142`): `+0,3239`, IC 95 % `[0,2324; 0,4085]`; aciertos `109/142` frente a `63/142` (`b = 51`, `c = 5`); McNemar corregido `p = 1,817e-09` | misma fuente, clave `subconjuntos.consenso_e3_e4.contrastes.sin_repoderacion` | vigente (nuevo) |
+| Brecha sin re-ponderación, `150` originales (`n = 150`): `+0,2133`, IC 95 % `[0,1267; 0,3000]`; aciertos `112/150` frente a `80/150` (`b = 42`, `c = 10`); McNemar corregido `p = 1,716e-05` | misma fuente, clave `subconjuntos.original_150.contrastes.sin_repoderacion` | vigente (nuevo) |
+| Brecha sin re-ponderación, corpus arbitrado completo (`n = 206`): `+0,2621`, IC 95 % `[0,1845; 0,3398]`; aciertos `142/206` frente a `88/206` (`b = 69`, `c = 15`); McNemar corregido `p = 7,348e-09` | misma fuente, clave `subconjuntos.arbitrado_completo.contrastes.sin_repoderacion` | vigente (nuevo) |
+| Particiones de contexto: `arbitraje_e5` `64` casos y bandera `tres_vias` `6` casos; no son subconjuntos de contraste | misma fuente, clave `contexto` | contexto (nuevo) |
+| Anclas verificadas antes de escribir: híbrido `142/206`, `109/142` y `112/150`; línea de base balanceada `101/206`; sin re-ponderación `88/206`; cardinalidades `142`, `150` y `206` | misma fuente, clave `anclas_verificadas`; agregados de las secciones `3.25`, `3.30` y `3.32` y de `linea_de_base_clasica_c210.json` | verificado (sin cambio) |
+| Cifra primaria `0,6893/206`, macro-F1 `0,7024` y veredicto del umbral `0,85` | `07-resultados.tex`; secciones `3.1` a `3.35`; sin cambio | vigente (sin cambio) |
+
+**Método.** Las predicciones por caso de la línea de base se reconstruyen con
+`evaluation.linea_de_base.predecir` (semilla `42`, entrenada con los `200` casos del corpus de
+ajuste); las del híbrido se leen de `predicciones_arbitrado.json`. El contraste usa la misma
+convención de c-213 (LBP-01): tabla 2x2 de aciertos estrictos, McNemar con `p` exacta bilateral y
+corregida por continuidad (criterio exacto si `b + c < 25`; en las seis lecturas `b + c >= 25`, por
+lo que el `p` primario es el corregido) y diferencia `(b − c)/n` con IC 95 % bootstrap percentil
+pareado (`10000` remuestreos, semilla `20261021`). Los subconjuntos se derivan de
+`arbitraje_tres_vias.json` (`origen == "consenso_e3_e4"`) y de los ids `I001`..`I150`; el corpus
+completo tiene `206` casos.
+
+**Lectura.** Las seis brechas son positivas y sus seis intervalos excluyen el cero: la ventaja del
+híbrido sobre la línea de base clásica se mantiene en los tres subconjuntos y en las dos variantes.
+La brecha menor es la del subconjunto de `150` originales con la variante balanceada (`+0,1667`,
+IC `[0,0733; 0,2600]`); la mayor es la del consenso `E3`/`E4` sin re-ponderación (`+0,3239`, IC
+`[0,2324; 0,4085]`). La lectura no cambia la cifra primaria ni el veredicto del umbral y se rotula
+como sensibilidad/robustez, no como medición nueva.
+
+Verificación reproducible: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_robustez_linea_de_base_c225.py -q`
+(`19` pruebas); dos corridas del script producen salidas idénticas byte a byte
+(`analisis_robustez_linea_de_base_c225.json`: `6f9a1c0ce4bb163425f2c521cd78a0da414ce25f26df527f694fa3f3011dcc16`;
+`.md`: `1471517a9b92c1dc2f023d2c7137d14bd1433fdf94f77a25f2add30426c44d82`); los anclajes abortan
+sin escribir si difieren. La prosa en `07-resultados.tex` y `08-discusion.tex` se redacta según la
+decisión del autor sobre el encuadre y el formato (preguntas abiertas OQ1 y OQ2 del change).
+
+### 3.37 Rango de robustez de los tiempos: consolidado de escenarios (c-226)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.36. Consolida, en un único lugar, los escenarios de robustez de la reducción de la media del
+tiempo de registro de la campaña 2026-10 que la tesis ya calculaba por separado: los descuentos de
+redondeo (Sección 3.8), el desagregado por canal (Sección 3.8), las reducciones por operador
+(Sección 3.17), el efecto de posición (Sección 3.14) y la granularidad del instrumento (Sección 3.8 y
+`04-marco-metodologico.tex:16,76`). Análisis de solo lectura, determinista y offline: no invoca a
+Gemini, no usa red ni base de datos, no mide de nuevo y no modifica el corpus, las predicciones, los
+artefactos congelados ni ningún número canónico. Cero llamadas pagas. La cifra primaria `71,2 %` y su
+intervalo `[67,2 %; 74,6 %]` no cambian.
+
+*Numeración.* El memo terminaba en la Sección `3.36` (c-225); esta sección es la `3.37`, la primera
+libre.
+
+**Rango del estimando primario.** El estimando es la reducción de la media del tiempo de registro de
+la campaña 2026-10. Los escenarios comparables entre sí son los descuentos de redondeo:
+
+| Escenario | Media manual ajustada | Reducción de la media | Rol | Procedencia | Estado |
+|---|---|---|---|---|---|
+| Sin descuento | `61,585 s` | `71,16 %` | cifra primaria (cota superior) | `analisis_rango_robustez_tiempos_c226.json`, clave `rango_primario.escenarios[0].reduccion_media` (reutiliza `data/corpus_evaluacion_pseudonimizado.json`; `evaluation/stats.py::reduccion_relativa`; Sección 3.8) | vigente (reutilizado) |
+| Descuento `5 s` | `56,585 s` | `68,61 %` | cota inferior conservadora | idem; clave `rango_primario.escenarios[1].reduccion_media` | vigente (reutilizado) |
+| Descuento `10 s` | `51,585 s` | `65,57 %` | **mínimo del estimando primario** | idem; claves `rango_primario.escenarios[2].reduccion_media` y `rango_primario.escenario_minimo` | vigente (reutilizado) |
+
+Rango del estimando primario: `[65,57 %; 71,16 %]`; el escenario que lo minimiza es el descuento de
+`10 s` (`65,57 %`), coherente con la resolución efectiva de la planilla (`180/200` valores son
+múltiplos de `10 s`; `199/200` de `5 s`).
+
+**Cotas de alcance (rotuladas; no son el mismo estimando y no se comparan entre sí).**
+
+| Cota | Valor | Procedencia | Estado |
+|---|---|---|---|
+| Por canal (intra-canal) | telefonía `76,98 %`; correo `51,07 %`; formulario web `93,44 %`; el menor es correo `51,07 %` | `analisis_rango_robustez_tiempos_c226.json`, clave `por_canal.por_canal.<canal>.reduccion_media` (reutiliza `data/corpus_evaluacion_pseudonimizado.json`; `evaluation/stats.py::reduccion_relativa`; `tab:tiempos-canal`; Sección 3.8) | sensibilidad (reutilizado) |
+| Por operador (campaña complementaria) | `O1` `33,8 %`; `O2` `79,7 %`; agregado `69,3 %` | `analisis_rango_robustez_tiempos_c226.json`, claves `por_operador.por_operador.<O>.reduccion_media` y `por_operador.agregado.reduccion_media` (`evaluation/data/campana/brazo_manual.csv` × `evaluation/data/campana/corpus_campana.json`; Sección 3.17) | sensibilidad (reutilizado) |
+| Efecto de posición (Spearman) | `O2` `rho = -0,3604`, `p = 0,00011` (significativo); `O1` `rho = -0,0628`, `p = 0,5147` (no significativo) | `analisis_rango_robustez_tiempos_c226.json`, claves `efecto_posicion.por_operador.<O>.rho` y `.p` (de `evaluation/data/campana/analisis/resultados.json`; Sección 3.14) | sensibilidad (reutilizado) |
+| Efecto mínimo detectable del efecto de posición | `rho = 0,276` | `analisis_rango_robustez_tiempos_c226.json`, clave `efecto_posicion.mde_rho` (de `evaluation/data/campana/analisis/resultados.json`; Sección 3.14) | vigente (reutilizado) |
+| Cota inferior del instrumento (granularidad) | múltiplos de `5 s` `199/200`; de `10 s` `180/200` | `analisis_rango_robustez_tiempos_c226.json`, clave `cota_instrumento.multiplos.5` / `.10` (`data/corpus_evaluacion_pseudonimizado.json`; `evaluation/stats.py::granularidad_manual`; Sección 3.8; `04-marco-metodologico.tex:16`) | vigente (reutilizado) |
+| Cota inferior del instrumento (telefonía) | grabación acotada a `45 s`: la duración registrada es cota inferior de la duración real, de modo que la reducción medida `77,0 %` es cota superior de la reducción telefónica real | `analisis_rango_robustez_tiempos_c226.json`, clave `cota_instrumento.nota_telefonia` (`04-marco-metodologico.tex:76`; `tab:tiempos-canal`) | vigente (reutilizado) |
+
+Las reducciones por operador provienen de la **campaña complementaria**, cuyo brazo manual mide solo
+la decisión de sector y no es comparable con el brazo de `2026-10` (Sección 3.17). Por eso `33,8 %`
+es la lectura más adversa entre las cotas rotuladas, pero **no** es el mínimo del estimando primario
+ni una reducción del estudio principal: el mínimo del estimando primario es `65,57 %` (descuento de
+`10 s`). El mínimo intra-canal (`51,07 %`, correo electrónico) tampoco es el mínimo global, porque es
+una reducción intra-canal.
+
+**Método y reproducibilidad.** El rango primario reutiliza `evaluation/stats.py::reduccion_relativa`
+sobre `data/corpus_evaluacion_pseudonimizado.json`; las reducciones por operador cruzan
+`evaluation/data/campana/brazo_manual.csv` (duración `timestamp − inicio`) con
+`evaluation/data/campana/corpus_campana.json` (automatizado de la corrida propia de la complementaria,
+media `14,6 s`); el efecto de posición se lee de `evaluation/data/campana/analisis/resultados.json`.
+Comando reproducible (desde la raíz del repositorio):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py
+```
+
+Los anclajes (`71,16`, `68,61` y `65,57` globales; `76,98`, `51,07` y `93,44` por canal; `199/200` y
+`180/200` de granularidad; `33,8`, `79,7` y `69,3` por operador; y el efecto de posición de la
+Sección 3.14) abortan sin escribir si difieren. Dos corridas producen salidas idénticas byte a byte
+(`analisis_rango_robustez_tiempos_c226.json`:
+`a8384e2275ea78de52330729d731d5ee22bb13da10aa8ab92a7200f7c1955a41`; `.md`:
+`dee7ee9b41117cc6ad6d59b091dbfcf03760c7dd5def99be476d4877dda5de8a`). Verificación:
+`python3 -m pytest evaluation/data/campana/analisis/test_analisis_rango_robustez_tiempos_c226.py -q`
+(`31` pruebas).
+
+**Alcance.** La síntesis es una lectura de **sensibilidad/reinterpretación**: reúne escenarios ya
+calculados y no es una medición nueva. El rango acota la magnitud de la reducción, pero **no** estima
+el efecto de orden ni elimina la asimetría de instrumentos ni el orden fijo de los brazos. La prosa
+en `07-resultados.tex`, `08-discusion.tex` y `04-marco-metodologico.tex` se redacta según la decisión
+del autor sobre el encuadre (tarea 0.5 / OQ1 del change).
+
+### 3.38 Anexo de números canónicos citados: registro y repunte de las referencias del cuerpo (c-231)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones 3.1 a
+3.37. Registra el anexo nuevo de la tesis (`docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex`, Anexo J,
+etiqueta `sec:anexo-numeros-canonicos`, rótulo «Números canónicos citados») y el repunte de las
+referencias internas del cuerpo.
+
+**Naturaleza.** El anexo es una **transcripción condensada** de este memo, recortada a los valores que
+el cuerpo cita de las secciones `3.31`, `3.33`, `3.35` y `3.36`. Este memo sigue siendo la **fuente
+interna de verdad**; el anexo no introduce valores ausentes de él ni modifica ningún valor ni estado
+previo. La trazabilidad por valor es la siguiente (cada fila del anexo resuelve a la fila indicada de
+este memo):
+
+| Sección del memo | Valores transcriptos al anexo | Estado |
+|---|---|---|
+| `3.31` (costo de la derivación errónea) | `c = 69,51 s` e IC `[33,42; 106,56] s`; corrección en la compuerta `24,01 s` e IC `[3,42; 50,06] s`; re-decisión `45,50 s`; paridad manual `0,8278`; costo marginal `0,51` h-persona/trimestre por punto | vigente (nuevo) |
+| `3.33` (balance neto con el costo medido) | `B = +30,6` h-persona/trimestre e IC condicional `[+26,7; +34,6]`, cota combinada `[+23,8; +35,8]`; `a* = 19,7 %` e IC `[13,4; 25,8] %`; insumos `N = 2.646`, `Δt = 43,82 s`, `e_aut = 28/138 = 0,2029`, `e_man = 26/151 = 0,1722` y diferencia `+0,0307` IC `[-0,0460; +0,1070]`; rejilla 5/10/15 min (`B = +25,4 / +18,7 / +11,9`; `a* = 68,2 / 75,5 / 77,9 %`; IC `[+8,6; +42,4]`, `[-15,0; +52,5]`, `[-38,6; +62,7]`) | vigente (nuevo) y, la rejilla, condicional (superada) |
+| `3.35` (acotación por mayoría) | coincidencia `200 de 206`; identidad `142 + 58 = 200`; casos sin mayoría `I033, I042, I056, I130, I194, I198`; exactitud `142/206 = 0,6893` y extremo `147/206 = 0,7136` (`k = 5`); macro-F1 `0,7024` y extremo `0,7249`; exactitud laxa `162/206 = 0,7864` | vigente (nuevo) y, el extremo, sensibilidad; la cifra primaria y la laxa, sin cambio |
+| `3.36` (robustez de la brecha) | brecha balanceada `+0,2324` IC `[0,1408; 0,3239]` (`n = 142`), `+0,1667` IC `[0,0733; 0,2600]` (`n = 150`), `+0,1990` IC `[0,1165; 0,2767]` (`n = 206`); sin re-ponderación `+0,3239`, `+0,2133` y `+0,2621` con sus IC; cifra primaria `0,6893`, macro-F1 `0,7024` y umbral `0,85` | vigente (nuevo); la cifra primaria y el umbral, sin cambio |
+
+Cada valor del anexo declara además su procedencia (el `.json` versionado y su clave, o el `.tex`
+citado), y los comandos reproducibles constan en la prosa del anexo.
+
+**Repunte de las referencias del cuerpo.** Las referencias del cuerpo al memo por número de sección se
+reemplazaron por la remisión al anexo (`\autoref{sec:anexo-numeros-canonicos}`). Se repuntaron **12
+ocurrencias** en **11 líneas**: `01-introduccion.tex:48`, `04-marco-metodologico.tex:78`,
+`07-resultados.tex:393`, `08-discusion.tex:56`, `:62`, `:84` (dos: `Sección~3.31` y `Sección~3.33`),
+`:114`, `:117`, `:121`, `:125` y `10-recomendaciones.tex:34`. La verificación de cierre
+`rg "Sección[~ ]3\.[0-9]{2}"` sobre los capítulos del cuerpo devuelve 0 coincidencias. El memo no se
+retira del repositorio y conserva las secciones `3.31`, `3.33`, `3.35` y `3.36` intactas.
+
+**Valores previos intactos.** Ningún valor ni estado de las secciones 3.1 a 3.37 cambia; esta sección
+solo agrega el registro del anexo y del repunte.
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con

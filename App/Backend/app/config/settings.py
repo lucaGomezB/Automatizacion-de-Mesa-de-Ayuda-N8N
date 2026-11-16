@@ -24,6 +24,8 @@ from functools import lru_cache
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from app.constants import INFERENCE_MODEL_DEFAULT, INFERENCE_PROVIDER_DEFAULT
+
 
 class Settings(BaseSettings):
     """
@@ -75,7 +77,7 @@ class Settings(BaseSettings):
     # está disponible para cuentas nuevas. Cambiar el modelo exige re-evaluar las
     # métricas de exactitud.
     gemini_api_key: str                         # Clave de API de Google AI (obligatoria)
-    gemini_model: str = "gemini-3.6-flash"
+    gemini_model: str = INFERENCE_MODEL_DEFAULT  # Modelo vigente (fuente del default de inference_model)
     gemini_temperature: float = 0.3             # Reduce variabilidad; mejora consistencia
     gemini_top_p: float = 0.9                   # Nucleus sampling para variantes léxicas rioplatenses
     gemini_max_output_tokens: int = 100         # Suficiente para JSON (~15 tokens) + margen
@@ -87,6 +89,31 @@ class Settings(BaseSettings):
     # (docs/prompt_gemini.txt). El override es necesario en contenedores donde la
     # estructura difiere del repo (ej. GEMINI_PROMPT_PATH=/app/docs/gemini_prompt.txt).
     gemini_prompt_path: str = ""
+
+    # ── Seleccion del proveedor de inferencia (c-227, D2) ─────────────────────
+    # El proveedor y la version de modelo de la etapa semantica son seleccionables
+    # por configuracion, sin editar el clasificador. Un registro resuelve el nombre
+    # del proveedor a su factory (app.classifiers.provider). Los defaults resuelven
+    # al proveedor y al modelo vigentes: sin configuracion explicita el
+    # comportamiento NO cambia (neutralidad por defecto). `inference_model` vacio
+    # hereda `gemini_model` (compatibilidad), de modo que cambiar el modelo no exige
+    # tocar el clasificador.
+    inference_provider: str = INFERENCE_PROVIDER_DEFAULT
+    inference_model: str = ""  # vacio -> hereda gemini_model (compatibilidad, D2)
+
+    # ── Umbrales del monitoreo de deriva (c-227, D6) ──────────────────────────
+    # Pisos por metrica monitoreada del canario, configurables sin recompilar
+    # (override por entorno: MONITORING_EXACTITUD_ESTRICTA_FLOOR, etc.). Los
+    # defaults se DERIVAN de la linea de base congelada menos la tolerancia del
+    # checkpoint 0.6 (delta = 0.05): piso = max(0, base - 0.05). La linea de base
+    # se recalcula offline desde los artefactos versionados del canario
+    # (evaluation/data/canario/); si cambia, estos defaults deben revisarse (hay un
+    # test guardia en evaluation/monitoreo/test_monitor_deriva.py).
+    #   exactitud estricta: 0.8446601941747572 - 0.05 = 0.7946601941747572
+    #   f1 macro          : 0.7446560846560847 - 0.05 = 0.6946560846560846
+    monitoring_tolerancia: float = 0.05
+    monitoring_exactitud_estricta_floor: float = 0.7946601941747572
+    monitoring_f1_macro_floor: float = 0.6946560846560846
 
     # ── Resiliencia de la clasificación con Gemini (c-58) ─────────────────────
     # Reintento ACOTADO ante fallas TRANSITORIAS del proveedor (503/429/5xx y
@@ -397,6 +424,19 @@ class Settings(BaseSettings):
                 "clave anterior configurada; ids iguales hacen la rotacion "
                 "ambigua y rechazan los tokens de la clave anterior."
             )
+        return self
+
+    @model_validator(mode="after")
+    def _resolver_modelo_inferencia(self) -> "Settings":
+        """Un `inference_model` vacio hereda `gemini_model` (c-227, D2).
+
+        Sin configuracion explicita el modelo efectivo coincide con el vigente
+        (`gemini-3.6-flash`), de modo que la abstraccion del proveedor es neutral.
+        Definir `INFERENCE_MODEL` por entorno cambia el modelo efectivo sin
+        recompilar; dejar `inference_model` vacio conserva el de `gemini_model`.
+        """
+        if not (self.inference_model or "").strip():
+            self.inference_model = self.gemini_model
         return self
 
 

@@ -2860,6 +2860,97 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 76 — Acotar el arbitraje por mayoria de los tres etiquetadores (c-224)
+
+> Cierra la observacion del dictamen post-v1.3.0 sobre la fragilidad de la referencia: la regla vigente de arbitraje ya coincide con la mayoria de `{E3, E4, E5}` en `200` de `206` casos; solo los `6` casos con tres etiquetas distintas carecen de mayoria. El change acota el efecto de reasignarlos y reformula la linea de trabajo futuro.
+
+### [C-224] `acotar-el-arbitraje-por-mayoria` — APLICADO (2026-11-15, MEDIUM)
+
+- **Estado**: aplicadas las 27 tareas (5 grupos); script offline `analisis_arbitraje_mayoria_c224.py` (+ test TDD, 25 pruebas) y salidas JSON/MD/SHA256SUMS deterministas; `openspec validate --strict` valido. Sin archivar.
+- **Scope**: `evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py`; `evaluation/data/campana/analisis/README.md`; seccion aditiva `3.35` de `numeros-canonicos.md`; prosa de `07-resultados`, `08-discusion` y `10-recomendaciones`; `dictamen-correcciones.md` (matriz C24).
+- **Hallazgo**: coincidencia estructural `200/206` (`142` de consenso + `58` arbitrados con mayoria); `6` casos sin mayoria (`I033`, `I042`, `I056`, `I130`, `I194`, `I198`); reasignar los `5` reasignables mueve la exactitud estricta de `142/206` (`0,6893`) a `147/206` (`0,7136`) y el macro-F1 de `0,7024` a `0,7249`; ningun extremo alcanza el `0,85`. La cifra primaria no cambia.
+- **Dependencias**: c-216 (referencia y calibracion), c-219 (sesgo de corpus y referencia) y c-221 (arbitraje). No toca `App/`, `n8n/`, el clasificador, el corpus ni las predicciones.
+- **Governance**: MEDIUM (analisis y prosa). Cero llamadas a Gemini.
+- **Leer antes**: `openspec/changes/c-224-acotar-el-arbitraje-por-mayoria/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/numeros-canonicos.md` (Seccion 3.35).
+
+---
+
+## FASE 77 — Robustez de la linea de base frente a la referencia (c-225)
+
+> Cierra la limitacion 2 del analisis de limitaciones estructurales de la v1.4.1: la brecha hibrido menos linea de base clasica se evaluaba sobre una sola eleccion de referencia (arbitrado completo `206` y, antes, los `103` de consenso), mientras la tesis informa al hibrido bajo dos lecturas mas. El change mide la brecha sobre los tres subconjuntos alineados con las lecturas de la tesis, sin medicion nueva ni cambios canonicos.
+
+### [C-225] `robustez-de-la-linea-de-base-frente-a-la-referencia` — APLICADO/ARCHIVADO (2026-11-15, MEDIUM)
+
+- **Estado**: aplicadas las 23 tareas (5 grupos); script offline `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py` (+ test TDD) y salidas JSON/MD/SHA256SUMS deterministas; `openspec validate --strict` valido. Archivado el 2026-11-15 en `openspec/changes/archive/2026-11-15-c-225-robustez-de-la-linea-de-base-frente-a-la-referencia/`.
+- **Scope**: `evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py`; `evaluation/data/campana/analisis/README.md`; seccion aditiva `3.36` de `numeros-canonicos.md`; prosa de `07-resultados` y `08-discusion`; `dictamen-correcciones.md` (matriz C25). Specs sincronizados: `evaluation-baseline-paired-contrast` (LBP-04, LBP-05), `tesis-document` y `tesis-numeros-canonicos`.
+- **Hallazgo**: la brecha hibrido menos linea de base (`+0,1990` sobre `206`) se reporta con IC 95 % sobre los tres subconjuntos de referencia —consenso `E3`/`E4` (`n = 142`), `150` originales sin exclusion (`n = 150`) y arbitrado completo (`n = 206`)—; el script reproduce las anclas `142/206`, `109/142`, `112/150`, `101/206` y `88/206` antes de escribir y aborta si no coinciden. La cifra primaria `0,6893/206`, el macro-F1 `0,7024` y el veredicto del umbral `0,85` no cambian.
+- **Dependencias**: c-213 (contraste pareado y artefactos), c-206/c-221 (predicciones y arbitraje) y c-219 (lecturas por origen de la referencia). No toca `App/`, `n8n/`, el clasificador, la configuracion, el corpus ni las predicciones.
+- **Governance**: MEDIUM (analisis y prosa). Cero llamadas a Gemini.
+- **Leer antes**: `openspec/changes/archive/2026-11-15-c-225-robustez-de-la-linea-de-base-frente-a-la-referencia/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/numeros-canonicos.md` (Seccion 3.36).
+
+---
+
+## FASE 78 — Consolidar el rango de robustez de tiempos (c-226)
+
+> Cierra la limitacion 4 (instrumentos asimetricos, orden fijo de los brazos y llamadas recitadas): las sensibilidades de tiempos ya existian pero dispersas entre resultados y discusion, de modo que el lector no veia un unico rango. El change las reune en una sola tabla rotulada como sensibilidad, sin medir de nuevo ni cambiar la cifra primaria.
+
+### [C-226] `consolidar-el-rango-de-robustez-de-tiempos` — APLICADO/ARCHIVADO (2026-11-15, MEDIUM)
+
+- **Estado**: aplicadas las 27 tareas (5 grupos); script offline `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py` (+ test TDD) y salidas JSON/MD/SHA256SUMS deterministas; `openspec validate --strict` valido. Archivado el 2026-11-15 en `openspec/changes/archive/2026-11-15-c-226-consolidar-el-rango-de-robustez-de-tiempos/`.
+- **Scope**: `evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py`; `evaluation/data/campana/analisis/README.md`; seccion aditiva nueva de `numeros-canonicos.md` (posterior a la `3.36` de c-225, sin renumerar); prosa de `07-resultados`, `08-discusion` y `04-marco-metodologico` (amenaza 1); `dictamen-correcciones.md`. Specs sincronizados: `tesis-document` (requisito «Divulgacion del procedimiento de medicion de tiempos y analisis de sensibilidad» modificado) y `tesis-numeros-canonicos` (registro aditivo).
+- **Hallazgo**: la sintesis unica del rango de robustez de tiempos reune los descuentos de `5 s` y `10 s`, el desagregado por canal, los tiempos por operador, el efecto de posicion y la cota inferior del instrumento, declara el rango del estimando primario y el escenario que lo minimiza, y separa las cotas de alcance (canal, operador) del minimo global. La cifra primaria `71,2 %` y su intervalo `[67,2 %; 74,6 %]` no cambian; el consolidado es una reinterpretacion de escenarios ya calculados, no una medicion nueva.
+- **Dependencias**: c-134 (sensibilidad de redondeo, granularidad y desagregado por canal), c-196 (tiempos por operador) y c-169 (campana complementaria y efecto de posicion). No toca `App/`, `n8n/`, el clasificador, la configuracion, el corpus, las predicciones ni los artefactos congelados.
+- **Governance**: MEDIUM (analisis y prosa). Cero llamadas a Gemini.
+- **Leer antes**: `openspec/changes/archive/2026-11-15-c-226-consolidar-el-rango-de-robustez-de-tiempos/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/numeros-canonicos.md` (seccion aditiva del rango de robustez de tiempos).
+
+---
+
+## Cambios propuestos — mejoras estructurales (c-227 a c-231, sin aplicar)
+
+> Cinco changes para atacar las limitaciones estructurales que pesan sobre el criterio 4 (metodologia) y el criterio 8 (redaccion) del ultimo dictamen. **c-231 y c-227 quedaron aplicados (2026-11-15); c-228, c-229 y c-230 quedan propuestos**, a la espera de la organizacion, los etiquetadores y el consentimiento. Los numeros de seccion del memo son los esperados (c-231 tomo la `3.38`; c-230/c-229/c-228 esperan `3.39`/`3.40`/`3.41`).
+
+### [C-227] `monitorear-el-servicio-de-inferencia-y-la-deriva-del-modelo` — APLICADO (2026-11-15, MEDIUM)
+
+- **Estado**: aplicado (grupos 0-5, 0 tareas pendientes). Interfaz del proveedor `App/Backend/app/classifiers/provider.py` + `GeminiProvider` + registro + `Settings` (`inference_provider`/`inference_model`) + identidad de la cache; canario `evaluation/data/canario/` (103 casos, tomado del corpus independiente) + `evaluation/monitoreo/monitor_deriva.py` con pisos δ=0.05 (exactitud estricta + F1 macro); `docs/operational-guide.md` §12 (procedimiento + fallback). Neutralidad: los 200 casos canonicos reproducidos caso por caso (0 diferencias). Tests: backend 1826 OK, evaluation 1419 OK; `evaluation/evidence/` byte-identica; `openspec validate --strict` valido. Sin archivar.
+- **Objetivo**: gestionar el riesgo operativo de la dependencia del servicio externo de inferencia (Gemini) y de la version del modelo (limitaciones 3 y 4): capa de abstraccion del proveedor, canary set fijo + job de reevaluacion periodica offline, deteccion de deriva, umbrales de alerta y fallback documentado. No cambia ningun numero canonico.
+- **Specs**: `inference-provider-abstraction`, `model-drift-monitoring`.
+- **Memo**: no toca el memo.
+- **Governance**: MEDIUM (LOW en alertas/fallback).
+
+### [C-228] `clasificador-supervisado-sobre-el-corpus-acumulado` — PROPUESTO (2026-11-15, HIGH)
+
+- **Estado**: propuesto; valido. Sin aplicar. **Depende de datos que aun no existen** (corpus acumulado + etiquetado + consentimiento).
+- **Objetivo**: medir un clasificador supervisado entrenado sobre el corpus acumulado de la organizacion (limitacion 5): curacion, split sin leakage, modelo BERT-class + benchmark de modelos abiertos, revision del codebook `Sistemas`<->`Software`, evaluacion en corpus de prevalencia natural. Declara que `0,85` **no es alcanzable** sobre el corpus de 206 (techo `0,835` aun corrigiendo todos los errores de `Sistemas`; paridad manual `0,8278`).
+- **Specs**: `supervised-corpus-curation`, `supervised-classifier-benchmark`, `taxonomy-codebook-revision`, `natural-prevalence-evaluation-corpus`, `tesis-document`, `tesis-numeros-canonicos`.
+- **Memo**: seccion aditiva esperada `3.41`.
+- **Governance**: HIGH (datos nuevos + entrenamiento + consentimiento).
+
+### [C-229] `muestreo-probabilistico-del-universo-de-incidentes` — PROPUESTO (2026-11-15, HIGH)
+
+- **Estado**: propuesto; valido. Sin aplicar. **Depende de la organizacion**.
+- **Objetivo**: estimar las metricas sobre una muestra probabilistica del universo (amenaza 5): universo + marco muestral, cuotas prefijadas por canal y sector, etiquetado independiente con consentimiento, estimacion ponderada (Horvitz-Thompson + post-estratificacion) con IC sobre el universo completo y efecto de diseno. Hace **valida la estimacion**; no sube la exactitud.
+- **Specs**: `evaluation-probabilistic-sampling`, `tesis-document`, `tesis-numeros-canonicos`.
+- **Memo**: seccion aditiva esperada `3.40`.
+- **Governance**: HIGH (protocolo: datos nuevos, etiquetado humano, consentimiento).
+
+### [C-230] `referencia-por-mayoria-con-etiquetadores-independientes` — PROPUESTO (2026-11-15, HIGH)
+
+- **Estado**: propuesto; valido. Sin aplicar. **Depende de 3 etiquetadores nuevos** + consentimiento.
+- **Objetivo**: eliminar el arbitro unico (`E5` fijaba `64/206` = 31 %) con una referencia por mayoria de `5` etiquetadores (`E3`, `E4` + `E6`, `E7`, `E8`), implementar el kappa de Fleiss y recomputar/comparar la cifra primaria. Ataca la deduccion de C4 *"un solo arbitro en el 31 % de las referencias"*.
+- **Specs**: `discordant-arbitration`, `evaluation-framework`, `evaluation-out-of-sample-validation`, `tesis-document`, `tesis-numeros-canonicos`.
+- **Memo**: seccion aditiva esperada `3.39`.
+- **Governance**: HIGH (sujetos humanos + consentimiento).
+
+### [C-231] `cerrar-version-referencias-internas-y-matriz` — APLICADO (2026-11-15, HIGH para el tag)
+
+- **Estado**: aplicado (todos los grupos). Compilación de cierre de **159 páginas** limpia (0 referencias/citas indefinidas, 0 etiquetas duplicadas; `Anexos` en p. 141); cadenas de versión `v1.5.0` repuntadas en la portada (`00-portada.tex:31`), el Anexo B (`12-anexos.tex:58`) y la entrada bibliográfica (`.bib`); anexo nuevo de números canónicos citados (`sec:anexo-numeros-canonicos`) y las 12 refs del cuerpo repuntadas a él; memo sección aditiva `3.38`. El tag anotado `v1.5.0` se está cortando (autorización expresa OQ3). Archivado: no.
+- **Objetivo**: (1) corregir la matriz **stale** de c-196 (segunda instancia: `N-02`/`N-04`/`N-05`/`P16` marcados `PENDIENTE` contra el texto actual y el commit `c5b2fb9`); (2) cortar un tag **`v1.5.0`** que incluya c-223 a c-226 y repuntar portada (`00-portada.tex:31`) y Anexo B (`12-anexos.tex:58`), desambiguando `version entregada` (tesis) vs `configuracion entregada` (software `v1.3.0`); (3) agregar un **anexo de numeros canonicos** y repuntar las **12** refs `Seccion[~ ]3.xx`.
+- **Specs**: `tesis-document`, `tesis-numeros-canonicos`.
+- **Memo**: seccion aditiva esperada `3.38`.
+- **Governance**: HIGH (tag) + MEDIUM (matriz y anexo).
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
@@ -2934,6 +3025,8 @@ Actualizacion 2026-10-27 (release v1.2.2 de la FASE 40 y cierre de la familia): 
 Actualizacion 2026-11-15 (release v1.4.1 de la FASE 74 y cierre de la entrega): C-222 `recalcular-el-balance-neto-con-el-costo-medido` (31/31, MEDIUM) recalculo el balance neto canonico con el `c` medido de c-220 (`69,51 s`, IC 95 % `[33,42; 106,56] s`) en lugar del supuesto «10 a 15 minutos», propago la incertidumbre del `c` y de `e_aut - e_man` y llevo la lectura a la prosa; `B = +30,6` h-persona por trimestre, IC condicional `[+26,7; +34,6]` y cota combinada `[+23,8; +35,8]` (excluye el cero), con `a* = 19,7 %`. Se publico la release `v1.4.1` —tag anotado sobre `2d8b0d5c4b872140caf9348ae0f7ac3ecbe7ba59`, 2026-11-14; PDF de 155 paginas, 0 errores—, que incorpora ademas la correccion N-16 del dictamen (novena limitacion, Paket); el commit `1965e33` consigna el hash del tag en el Anexo B. Se archivo C-222 el 2026-11-14. Quedan superadas las lineas de estado de la instantanea 2026-11-10 (que declaraba 4 changes ACTIVOS y release vigente `v1.2.19`): c-191, c-196, c-201 y c-202 quedaron archivados entre el 2026-11-11 y el 2026-11-12, de modo que el estado actual es **0 changes ACTIVOS** (`openspec list --json` no reporta ninguno). La release vigente de la tesis es `v1.4.1`; `v1.4.0` (c-221, tag anotado sobre `406ce2bf328bc22fca786d8a158bf8e48136534d`, PDF 155 paginas) y `v1.3.0` y las anteriores quedan como versiones previas inmutables. El 2026-11-15 se actualizo la copia de entrega `docs/Tesis/tesis_ultima_version.pdf` al build v1.4.1 (byte-identico a `docs/Tesis/v10 (IA)/paper/main.pdf`, SHA-256 `2b66da8ee56ff2a1ccd4d192cb69b41d7dd518c114ab3cac6b6125b3dae98aec`) y el `README.md` paso a v1.4.1 (commit `00333ce`, pusheado a `origin/main`).
 
 Actualizacion 2026-11-15 (c-223, reproducibilidad): C-223 `preservar-el-commit-de-la-corrida-fuera-de-muestra` (30/30, MEDIUM; HIGH para el tag) anclo el commit `561b3c4` con el tag anotado `archivo/corrida-fuera-de-muestra-561b3c4` y lo publico en `origin`; el tag preserva el arbol de fuentes de la primera corrida fuera de muestra y los artefactos se identifican por sus SHA-256. La release `v1.4.1` no se movio y los tags `v*` quedaron intactos. El PDF recompilado mantiene 155 paginas, 0 errores y 0 referencias indefinidas. El change queda aplicado y sin archivar.
+
+Actualizacion 2026-11-15 (c-224, arbitraje por mayoria): C-224 `acotar-el-arbitraje-por-mayoria` (27/27, MEDIUM) agrego el analisis offline `analisis_arbitraje_mayoria_c224.py` (25 pruebas TDD) y la seccion aditiva `3.35` del memo. La regla vigente coincide con la mayoria de `{E3, E4, E5}` en `200` de `206` casos; solo `6` casos con tres etiquetas distintas carecen de mayoria. Reasignar los `5` reasignables mueve la exactitud estricta de `142/206` (`0,6893`) a `147/206` (`0,7136`) y el macro-F1 de `0,7024` a `0,7249`; ningun extremo alcanza el umbral de `0,85` y la cifra primaria no cambia. La prosa de `07`, `08` y `10` incorpora la lectura y el trabajo futuro se reformula hacia mas etiquetadores independientes. El change queda aplicado y sin archivar.
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)

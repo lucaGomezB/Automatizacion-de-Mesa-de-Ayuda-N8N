@@ -5,15 +5,15 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 
 | Concepto | Valor |
 |---|---|
-| Fuente compilada | arbol de trabajo sobre c-223 (preservar el commit de la corrida fuera de muestra) |
+| Fuente compilada | arbol de trabajo sobre c-231 (C2: hash del tag en el Anexo B) |
 | Motor | XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026) |
 | Biber | 2.22 |
-| Paginas | 155 |
+| Paginas | 159 |
 | Errores fatales | 0 |
 | Referencias indefinidas | 0 |
 | Citas indefinidas | 0 |
 | Etiquetas duplicadas (multiply defined) | 0 |
-| Overfull \hbox (maximo) | 19 (82,3 pt) |
+| Overfull \hbox (maximo) | 22 (82,3 pt) |
 | Lineas WARN de biber | 0 |
 | Lineas ERROR de biber | 0 |
-| SHA-256 de main.pdf | `a9d310ae99b5c7b43697d19f8e989e9fdbeebfb0b6e1322a0b1e33cbb76a5787` |
+| SHA-256 de main.pdf | `4ee6c4ec0dc200809a8eb90cd3ae4884258361d593862a2a661ab0b4b9db3137` |

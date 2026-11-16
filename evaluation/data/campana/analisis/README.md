@@ -494,3 +494,128 @@ Es aditivo: sus cifras van a la sección `3.32` del memo canónico y no reemplaz
   casos comunes (solo confianza, `I026`/`I043`/`I050`/`I055`/`I067`/`I084`/`I085`); el `commit`
   `1b62fdb` de `predicciones_arbitrado.json` es alcanzable desde `main` y el `561b3c4` de
   `predicciones_independiente.json` no lo es (lo versionó `1b17e55`).
+
+## Acotación del arbitraje por mayoría (c-224)
+
+`analisis_arbitraje_mayoria_c224.py` calcula, de solo lectura, sin red y sin Gemini, la
+coincidencia de la regla vigente de arbitraje con la mayoría de los tres etiquetadores
+(`E3`, `E4`, `E5`), identifica los casos sin mayoría y acota el efecto de reasignarlos sobre la
+exactitud estricta y las métricas por clase. Es aditivo: sus cifras van a la sección `3.35` del
+memo canónico y no reemplazan ningún número `vigente` de las secciones `3.1` a `3.34`; no cambia
+el umbral del `85 %`, el balance neto `B`, `a*` ni los artefactos congelados.
+
+- Anclajes que abortan antes de escribir (exit distinto de cero, sin salidas): coincidencia
+  `200/206`; identidad `142 + 58 = 200`; los `6` casos sin mayoría (`I033`, `I042`, `I056`,
+  `I130`, `I194`, `I198`); exactitud estricta `142/206` y máximo `147/206`; `64` arbitrados y
+  `142` de consenso.
+- Método: reutiliza `evaluation/metrics.py` (`matriz_confusion`, `precision_por_clase`,
+  `sensibilidad_por_clase`, `f1_por_clase`, `f1_macro`); sin red ni Gemini; determinista. El
+  prerregistro NO fue ciego (ver el docstring del generador).
+- Entradas versionadas (solo lectura): `../doble_etiquetado_arbitrado.csv`,
+  `../arbitraje_tres_vias.json`, `../predicciones_arbitrado.json` y
+  `../corpus_independiente_arbitrado.json`.
+- Comando (desde la raíz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_arbitraje_mayoria_c224.py
+  ```
+
+- Salidas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte), con su SHA-256 (también en
+  `analisis_arbitraje_mayoria_c224.SHA256SUMS.txt`):
+  - `analisis_arbitraje_mayoria_c224.json`: `a06d42bd6a23ef0593077f46536f0fd7292479cd1b0beeabf230cb6409651367`
+  - `analisis_arbitraje_mayoria_c224.md`: `194a836d2c4c2731358dbf88b78e56f689baec24489906888bef91949b9272b6`
+- Prueba: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_arbitraje_mayoria_c224.py -q`
+  (`25` pruebas).
+- Resultado registrado (sección `3.35` del memo): la regla vigente coincide con la mayoría de
+  `{E3, E4, E5}` en `200/206` casos; los `6` restantes carecen de mayoría. Reasignar los casos
+  reasignables (`I033`, `I056`, `I130`, `I194`, `I198`; `I042` no lo es) mueve la exactitud
+  estricta de `142/206` (`0,6893`) a `147/206` (`0,7136`) y el macro-F1 de `0,7024` a `0,7249`;
+  ningún extremo alcanza el umbral de `0,85`.
+
+## Robustez de la linea de base frente a la referencia (c-225)
+
+`analisis_robustez_linea_de_base_c225.py` mide, de solo lectura, sin red y sin Gemini, la
+brecha híbrido menos línea de base clásica con su IC 95 % sobre los tres subconjuntos de
+referencia que la tesis informa por separado: consenso `E3`/`E4` (`n = 142`), los `150`
+originales sin exclusión (`n = 150`) y el corpus arbitrado completo (`n = 206`). Es
+aditivo: sus cifras van a la sección `3.36` del memo canónico y no reemplazan ningún
+número `vigente` de las secciones `3.1` a `3.35`; no cambia el umbral del `85 %`, el
+balance neto `B`, `a*` ni los artefactos congelados.
+
+- Anclajes que abortan antes de escribir (exit distinto de cero, sin salidas): híbrido
+  `142/206`, `109/142` y `112/150`; línea de base balanceada `101/206` y sin
+  re-ponderación `88/206`; cardinalidades `142`, `150` y `206`.
+- Método: reconstruye las predicciones por caso de la línea de base con
+  `evaluation.linea_de_base.predecir` (semilla `42`, entrenada con los `200` casos de
+  `../corpus_campana.json`), lee el híbrido de `../predicciones_arbitrado.json` y aplica la
+  misma convención de c-213 (tabla 2x2, McNemar con `p` exacta y corregida, diferencia
+  `(b - c)/n` con IC bootstrap percentil pareado, `10000` remuestreos, semilla `20261021`).
+  Sin red ni Gemini; determinista. Las tres lecturas son descriptivas y no se corrigen por
+  multiplicidad.
+- Entradas versionadas (solo lectura): `../corpus_campana.json`,
+  `../corpus_independiente_arbitrado.json`, `../predicciones_arbitrado.json`,
+  `../arbitraje_tres_vias.json` y `linea_de_base_clasica_c210.json` (anclas).
+- Comando (desde la raíz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_robustez_linea_de_base_c225.py
+  ```
+
+- Salidas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte), con su SHA-256 (también
+  en `analisis_robustez_linea_de_base_c225.SHA256SUMS.txt`):
+  - `analisis_robustez_linea_de_base_c225.json`: `6f9a1c0ce4bb163425f2c521cd78a0da414ce25f26df527f694fa3f3011dcc16`
+  - `analisis_robustez_linea_de_base_c225.md`: `1471517a9b92c1dc2f023d2c7137d14bd1433fdf94f77a25f2add30426c44d82`
+- Prueba: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_robustez_linea_de_base_c225.py -q`
+  (`19` pruebas).
+- Resultado registrado (sección `3.36` del memo): la brecha es positiva y su IC excluye el
+  cero en los tres subconjuntos y en ambas variantes. Balanceada: consenso `+0,2324`
+  `[0,1408; 0,3239]`, `150` originales `+0,1667` `[0,0733; 0,2600]` y completo `+0,1990`
+  `[0,1165; 0,2767]`. Sin re-ponderación: `+0,3239` `[0,2324; 0,4085]`, `+0,2133`
+  `[0,1267; 0,3000]` y `+0,2621` `[0,1845; 0,3398]`. El subconjunto `150` originales
+  conserva la significación; su brecha es la menor de las tres.
+
+## Rango de robustez de los tiempos (c-226)
+
+`analisis_rango_robustez_tiempos_c226.py` consolida, de solo lectura, sin red y sin
+Gemini, los escenarios de robustez de tiempos ya calculados sobre la reducción de la media
+del tiempo de registro de la campaña 2026-10: los descuentos de `0 s`, `5 s` y `10 s`
+(rango del estimando primario), el desagregado por canal, las reducciones por operador de
+la campaña complementaria, el efecto de posición y la cota inferior del instrumento.
+Es aditivo: sus cifras van a la sección `3.37` del memo canónico y no reemplazan ningún
+número de las secciones `3.1` a `3.36`. No mide de nuevo: la cifra primaria `71,2 %` y su
+intervalo `[67,2 %; 74,6 %]` no cambian.
+
+- Anclajes que abortan antes de escribir (exit distinto de cero, sin salidas): `71,16 %`,
+  `68,61 %` y `65,57 %` globales; `76,98 %`, `51,07 %` y `93,44 %` por canal; `199/200` y
+  `180/200` de granularidad; `33,8 %`, `79,7 %` y `69,3 %` por operador; y los valores del
+  efecto de posición de la sección `3.14`.
+- Método: el rango primario reutiliza `evaluation.stats.reduccion_relativa` sobre el corpus
+  canónico; las reducciones por operador cruzan `brazo_manual.csv` (duración
+  `timestamp - inicio`) con `corpus_campana.json` (automatizado de la corrida propia, media
+  `14,6 s`); el efecto de posición se lee de `resultados.json`. Sin red ni Gemini;
+  determinista.
+- Entradas versionadas (solo lectura): `../../../../data/corpus_evaluacion_pseudonimizado.json`
+  (canónico), `../brazo_manual.csv`, `../corpus_campana.json` y `resultados.json`.
+  **Desvío declarado respecto del design (D2):** el design ubicaba las reducciones por
+  operador en `resultados.json`; ese artefacto no las contiene y las cifras canónicas
+  proceden de `brazo_manual.csv` cruzado con `corpus_campana.json` (como en c-196 / sección
+  `3.17`).
+- Comando (desde la raíz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_rango_robustez_tiempos_c226.py
+  ```
+
+- Salidas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte), con su SHA-256 (también
+  en `analisis_rango_robustez_tiempos_c226.SHA256SUMS.txt`):
+  - `analisis_rango_robustez_tiempos_c226.json`: `a8384e2275ea78de52330729d731d5ee22bb13da10aa8ab92a7200f7c1955a41`
+  - `analisis_rango_robustez_tiempos_c226.md`: `dee7ee9b41117cc6ad6d59b091dbfcf03760c7dd5def99be476d4877dda5de8a`
+- Prueba: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_rango_robustez_tiempos_c226.py -q`
+  (`31` pruebas).
+- Resultado registrado (sección `3.37` del memo): rango del estimando primario
+  `[65,57 %; 71,16 %]`; el escenario que lo minimiza es el descuento de `10 s` (`65,57 %`).
+  Cotas de alcance rotuladas (no comparables): por canal, el mínimo intra-canal es correo
+  electrónico `51,07 %`; por operador de la campaña complementaria, `O1 33,8 %`, `O2 79,7 %`
+  y agregado `69,3 %`; efecto de posición significativo para `O2` (`rho = -0,3604`,
+  `p = 0,00011`) y no para `O1`, con MDE `rho = 0,276`; granularidad del redondeo manual
+  (`199/200` múltiplos de `5 s` y `180/200` de `10 s`).

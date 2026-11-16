@@ -200,8 +200,16 @@ def _get(datos: Any, *claves: str, default: Any = None) -> Any:
 # ---------------------------------------------------------------------------
 # Parsers puros (lectura estatica, sin red y sin importar el backend)
 # ---------------------------------------------------------------------------
-def _leer_settings(path: "pathlib.Path | str") -> Dict[str, Any]:
-    """Defaults de `Settings` leidos con `ast` (no importa el backend)."""
+def _leer_settings(
+    path: "pathlib.Path | str", constantes: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """Defaults de `Settings` leidos con `ast` (no importa el backend).
+
+    Cuando el default referencia una constante del modulo `constants.py`
+    (p. ej. `gemini_model: str = INFERENCE_MODEL_DEFAULT`), se resuelve con el
+    mapa `constantes` (nombre -> valor) para que el valor efectivo no se pierda.
+    """
+    constantes = constantes or {}
     arbol = ast.parse(pathlib.Path(path).read_text(encoding="utf-8"))
     valores: Dict[str, Any] = {}
     for nodo in ast.walk(arbol):
@@ -210,6 +218,10 @@ def _leer_settings(path: "pathlib.Path | str") -> Dict[str, Any]:
             and isinstance(nodo.target, ast.Name)
             and nodo.value is not None
         ):
+            if isinstance(nodo.value, ast.Name):
+                if nodo.value.id in constantes:
+                    valores[nodo.target.id] = constantes[nodo.value.id]
+                continue
             try:
                 valores[nodo.target.id] = ast.literal_eval(nodo.value)
             except (ValueError, SyntaxError):
@@ -951,7 +963,8 @@ def check_docs(
     api_ts_path: "pathlib.Path | str" = API_TS_PATH,
 ) -> List[Check]:
     """Ejecuta los diecisiete chequeos de sincronizacion documental."""
-    settings = _leer_settings(settings_path)
+    constantes_mapa = _leer_settings(constants_path)
+    settings = _leer_settings(settings_path, constantes_mapa)
     constantes = _leer_constantes(constants_path)
     requirements = _leer_requirements(requirements_path)
     compose = _leer_compose(compose_path)
