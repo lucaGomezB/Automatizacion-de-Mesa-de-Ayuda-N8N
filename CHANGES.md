@@ -2905,7 +2905,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
-## Cambios propuestos — mejoras estructurales (c-227 a c-232, sin aplicar)
+## Cambios propuestos — mejoras estructurales (c-227 a c-233, sin aplicar)
 
 > Cinco changes para atacar las limitaciones estructurales que pesan sobre el criterio 4 (metodologia) y el criterio 8 (redaccion) del ultimo dictamen. **c-231 y c-227 quedaron aplicados (2026-11-15); c-228, c-229 y c-230 quedan propuestos**, a la espera de la organizacion, los etiquetadores y el consentimiento. Los numeros de seccion del memo son los esperados (c-231 tomo la `3.38`; c-230/c-229/c-228 esperan `3.39`/`3.40`/`3.41`).
 
@@ -2956,6 +2956,17 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Specs**: `supervised-classifier-integration`, `delivered-classifier-decision` (nuevas); `inference-provider-abstraction`, `tesis-document`, `tesis-numeros-canonicos` (modificadas).
 - **Memo**: seccion aditiva esperada `3.42`.
 - **Governance**: HIGH (linea del clasificador de produccion y declaracion de la configuracion entregada); 3 checkpoints humanos.
+
+### [C-233] `corregir-consistencia-interna-y-bibliografia` — APLICADO (2026-11-15, HIGH para el tag)
+
+- **Estado**: aplicado (grupos 0-6; redacción, procedencia, etiquetas y bibliografía). Compilación de cierre de **161 páginas** limpia (0 errores fatales, 0 referencias/citas indefinidas, 0 etiquetas duplicadas; `Anexos` en p. 143); versión `v1.5.1` repuntada en la portada (`00-portada.tex:31`), el Anexo B (`12-anexos.tex:58` y `:62`) y la entrada bibliográfica (`.bib`, `Gomez2026_repositorio`); memo sección aditiva `3.43`. El tag anotado `v1.5.1` se corta con autorización expresa (su hash se consigna en un commit posterior). Sin commit ni push (lo crea el orquestador). No se archiva.
+- **Objetivo**: cerrar las **diez inconsistencias internas** (B1 a B10), las **tres anomalías bibliográficas** (A1 a A3) y el **re-anclaje de las cifras de cobertura/pruebas** (B4) a la configuración evaluada `bf5e099`, señalados por la auditoría interna en estilo CONEAU sobre `v1.5.0` (APROBADO CON OBSERVACIONES, secciones 3 y 5). Es corrección de palabras, rótulos, procedencia y etiquetas; la única medición nueva es B4, declarada y canalizada por el memo. No cambia el valor de ningún número canónico (salvo las cifras de cobertura/pruebas de B4).
+- **Scope**: `docs/Tesis/v10 (IA)/Bibliography_base.bib`; `docs/Tesis/v10 (IA)/paper/sections/{00-resumen,01-introduccion,05-arquitectura,06-implementacion,07-resultados,08-discusion,11-aspectos-legales}.tex`; sección aditiva `3.43` de `numeros-canonicos.md`; `dictamen-correcciones.md`; `CHANGES.md`. En el grupo 5: `00-portada.tex`, `12-anexos.tex`, bump de versión y tag anotado.
+- **Specs**: `tesis-document` (consistencia, bibliografía, nomenclatura, tipografía, mapa, release, cobertura, cierre) y `tesis-numeros-canonicos` (registro aditivo y trazabilidad).
+- **Memo**: sección aditiva `3.43` (cifras de cobertura/pruebas re-ancladas); no renumera `3.38`-`3.42`.
+- **Dependencias**: **independiente** de `c-228`, `c-229`, `c-230`, `c-231` y `c-232`; no los bloquea ni ellos la bloquean. Si alguno de esos changes se aplicara después, podría requerir repuntar líneas de la prosa tocada aquí.
+- **Governance**: HIGH (tag anotado `v1.5.1`) + MEDIUM (prosa y bibliografía). Checkpoints humanos A/B/C. Cero llamadas a Gemini.
+- **Leer antes**: `openspec/changes/c-233-corregir-consistencia-interna-y-bibliografia/{proposal,design,tasks}.md`, `docs/Tesis/Correcciones/auditoria-estilo-coneau-v1.5.0.md` (secciones 3 y 5) y `docs/Tesis/Correcciones/numeros-canonicos.md` (sección aditiva `3.43`).
 
 ---
 

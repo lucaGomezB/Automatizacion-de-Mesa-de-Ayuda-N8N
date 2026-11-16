@@ -2815,6 +2815,42 @@ retira del repositorio y conserva las secciones `3.31`, `3.33`, `3.35` y `3.36` 
 **Valores previos intactos.** Ningún valor ni estado de las secciones 3.1 a 3.37 cambia; esta sección
 solo agrega el registro del anexo y del repunte.
 
+### 3.43 Cifras de cobertura y pruebas re-ancladas a la configuración evaluada (c-233)
+
+Sección **aditiva**: no renumera ni modifica ninguna sección `3.1` a `3.42`. No cambia el valor de
+ningún número canónico; el único estado que pasa a `retirado` es el conteo de pruebas `1.773` de la
+sección `3.17(g)`, reemplazado por las cifras re-ancladas de abajo. Registra la cobertura de sentencias
+y el conteo de pruebas unitarias **re-anclados** a la **configuración evaluada** `bf5e099` (7-10-2026)
+—la primera revisión que versiona la cascada `hybrid-v3`—, con la **configuración entregada**
+`v1.3.0` (`1b17e55`) como contraparte. La entrada previa de cobertura es la sección `3.17(g)`.
+
+**Procedimiento (reproducible, solo lectura sobre `App/Backend`).** Cada revisión se midió en un árbol
+de trabajo aislado (`git worktree add`) con un virtualenv propio y el `App/Backend/requirements.txt`
+de esa revisión, sin deriva de dependencias. Comando:
+`pytest -m "not integration" --cov=app.routes --cov=app.services --cov=app.repositories --cov-report=term-missing`.
+Entorno: Python 3.12.3. SHA-256 del `requirements.txt` recalculado desde el blob de cada commit
+(`git cat-file -p <rev>:App/Backend/requirements.txt | sha256sum`): `bf5e099`
+`e5d495f6fa8e24aa6a20ea61fe0251dade5250c9792c659e5ea0e0b0959c3413`; `v1.3.0` y `v1.2.18`
+`7c32603c723568f686b6ab593c5d9688dce60e69e9af657fb92828abcca815d1` (idénticos).
+
+| Revisión | Fecha | Cobertura | Sentencias | Sin cubrir | Pruebas unitarias | Estado |
+|---|---|---|---|---|---|---|
+| `bf5e099` (evaluada) | 7-10-2026 | 88 % | 1.419 | 175 | 1.016 | vigente (nuevo) |
+| `v1.3.0` / `1b17e55` (entregada) | 2026-11-12 | 90 % | 2.503 | 242 | 1.798 | vigente (nuevo) |
+| `v1.2.18` / `03d1612` (ancla previa, sección `3.17(g)`) | 2026-11-11 | 90 % | 2.503 | 242 | 1.773 | retirado (conteo de pruebas) |
+
+**Lectura.** La cobertura (`90 %`), las sentencias (`2.503`) y las sin cubrir (`242`) de `v1.3.0`
+coinciden con el ancla previa `v1.2.18`; **solo cambia el conteo de pruebas** (`1.773` → `1.798`), de
+modo que el `1.773` de la sección `3.17(g)` pasa a `retirado`. La configuración evaluada `bf5e099`
+reporta `88 %` sobre `1.419` sentencias y `175` sin cubrir, con `1.016` pruebas aprobadas; el
+denominador menor se explica por el código incorporado entre el 7 de octubre y el cierre de la cascada
+(autenticación con MFA, directorio, ciclo de vida del incidente y comentarios de incidente), que amplía
+las sentencias y la suite. El código de los clasificadores es el mismo `hybrid-v3` en las dos
+revisiones.
+
+**Valores previos intactos.** Ningún valor ni estado de las secciones `3.1` a `3.42` cambia, salvo el
+`1.773` de la sección `3.17(g)`, que queda `retirado` por esta sección.
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con

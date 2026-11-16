@@ -31,7 +31,7 @@ El instrumento de transferencia internacional está documentado en el repositori
 
 \subsection{Seguridad técnica}\label{subsec:seguridad-tecnica}
 
-Las medidas de seguridad técnica del sistema se sustentan en la triada confidencialidad, integridad y disponibilidad (CIA) descrita por \textcite{Stallings2018_computer_security}, y su evidencia de control se sintetiza en la \autoref{tab:cumplimiento-iso} (tema Tecnológico). El cifrado en reposo con Fernet (AES-128 en modo CBC con HMAC-SHA-256), el cifrado en tránsito sobre TLS~1.2/1.3 en el borde, el control de acceso por rol. El registro de auditoría de las modificaciones, la gestión de credenciales por variables de entorno y las medidas de disponibilidad ---respaldo diario cifrado con prueba de restauración, contenedores con reinicio automático y monitoreo de salud---. Todas ellas quedan mapeadas allí junto con sus brechas residuales. La capa TLS 1.2/1.3 se verifica de forma automatizada sobre el despliegue de referencia de la release v1.2.2, capacidad de la configuración entregada y no de la evaluada (Anexo~B, Tabla~\ref{tab:configuracion-evaluada-entregada}); los dos despliegues de la campaña experimental y la irrelevancia de TLS para las mediciones se detallan en la \autoref{subsec:vision-general}.
+Las medidas de seguridad técnica del sistema se sustentan en la triada confidencialidad, integridad y disponibilidad (CIA) descrita por \textcite{Stallings2018_computer_security}, y su evidencia de control se sintetiza en la \autoref{tab:cumplimiento-iso} (tema Tecnológico). El cifrado en reposo con Fernet (AES-128 en modo CBC con HMAC-SHA-256), el cifrado en tránsito sobre TLS~1.2/1.3 en el borde, el control de acceso por rol. El registro de auditoría de las modificaciones, la gestión de credenciales por variables de entorno y las medidas de disponibilidad ---respaldo diario cifrado con prueba de restauración, contenedores con reinicio automático y monitoreo de salud---. Todas ellas quedan mapeadas allí junto con sus brechas residuales. La capa TLS 1.2/1.3 se verifica de forma automatizada sobre el despliegue de referencia de la prueba de humo, correspondiente a la release \texttt{v1.2.2} (despliegue de referencia de esa prueba, distinto de la configuración entregada \texttt{v1.3.0}); la capacidad de TLS pertenece a la configuración entregada (\texttt{v1.3.0}) y no a la evaluada (Anexo~B, Tabla~\ref{tab:configuracion-evaluada-entregada}); los dos despliegues de la campaña experimental y la irrelevancia de TLS para las mediciones se detallan en la \autoref{subsec:vision-general}.
 
 \subsection{Consentimiento, derechos del usuario y supervisión humana}\label{subsec:consentimiento-derechos}
 
@@ -104,7 +104,7 @@ RC (Recuperar) & Recuperación y restauración & 2 & Respaldo cifrado y continui
 \bottomrule
 \end{tabular}
 \par
-{\footnotesize\textit{Fuente:} elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0 (\texttt{docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md}, sección~4), con el estado reconciliado al 28-10-2026 (release \texttt{v1.3.0}).\par}
+{\footnotesize\textit{Fuente:} elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0 (\texttt{docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md}, sección~4), con el estado reconciliado al 28-10-2026 (configuración entregada \texttt{v1.3.0}).\par}
 \end{table}
 
 \subsubsection{Brechas principales y hoja de ruta}\label{subsec:cumplimiento-brechas}

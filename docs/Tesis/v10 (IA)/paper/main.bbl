@@ -40,9 +40,19 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Complementa la Disposición 60-E/2016 de la Dirección Nacional de Protección de Datos Personales}
+      \field{note}{Complementa la Disposición 60-E/2016 de la Dirección Nacional de Protección de Datos Personales. Publicada en el Boletín Oficial de la República Argentina del 18 de octubre de 2023}
       \field{title}{Resolución 198/2023: Cláusulas contractuales modelo para la transferencia internacional de datos personales}
+      \field{urlday}{15}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
       \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.boletinoficial.gob.ar/detalleAviso/primera/296189/20231018
+      \endverb
+      \verb{url}
+      \verb https://www.boletinoficial.gob.ar/detalleAviso/primera/296189/20231018
+      \endverb
     \endentry
     \entry{ahuja2023mega}{article}{}{}
       \name{author}{12}{}{%
@@ -1358,7 +1368,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.5.0)}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.5.1)}
       \field{urlday}{14}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
@@ -3291,6 +3301,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Machine Learning Technologies}
+      \field{note}{La URL de arXiv (2010.16061) es un espejo posterior del artículo publicado en 2011 en Journal of Machine Learning Technologies 2(1):37--63; el original no dispone de DOI}
       \field{number}{1}
       \field{title}{Evaluation: From precision, recall and {F}-measure to {ROC}, informedness, markedness and correlation}
       \field{volume}{2}
@@ -3506,6 +3517,9 @@
            given={Óscar},
            giveni={Ó\bibinitperiod},
            givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {IOS Press}%
       }
       \strng{namehash}{7268938061362c346fdd5d01b361d8c6}
       \strng{fullhash}{d9db77653593261d10daca4bb50fbf96}
@@ -5605,9 +5619,19 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Complementa la Disposición 60-E/2016 de la Dirección Nacional de Protección de Datos Personales}
+      \field{note}{Complementa la Disposición 60-E/2016 de la Dirección Nacional de Protección de Datos Personales. Publicada en el Boletín Oficial de la República Argentina del 18 de octubre de 2023}
       \field{title}{Resolución 198/2023: Cláusulas contractuales modelo para la transferencia internacional de datos personales}
+      \field{urlday}{15}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
       \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.boletinoficial.gob.ar/detalleAviso/primera/296189/20231018
+      \endverb
+      \verb{url}
+      \verb https://www.boletinoficial.gob.ar/detalleAviso/primera/296189/20231018
+      \endverb
     \endentry
     \entry{ahuja2023mega}{article}{}{}
       \name{author}{12}{}{%
@@ -6923,7 +6947,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.5.0)}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.5.1)}
       \field{urlday}{14}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
@@ -8856,6 +8880,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Machine Learning Technologies}
+      \field{note}{La URL de arXiv (2010.16061) es un espejo posterior del artículo publicado en 2011 en Journal of Machine Learning Technologies 2(1):37--63; el original no dispone de DOI}
       \field{number}{1}
       \field{title}{Evaluation: From precision, recall and {F}-measure to {ROC}, informedness, markedness and correlation}
       \field{volume}{2}
@@ -9071,6 +9096,9 @@
            given={Óscar},
            giveni={Ó\bibinitperiod},
            givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {IOS Press}%
       }
       \strng{namehash}{7268938061362c346fdd5d01b361d8c6}
       \strng{fullhash}{d9db77653593261d10daca4bb50fbf96}

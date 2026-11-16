@@ -1037,6 +1037,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-221` (`change/c-221-propagar-el-arbitraje-y-atender-el-dictamen-post-v1-3-0`) | sin commit (lo crea el orquestador) | 155 | 138 | 17 | -1 | +7 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change; presupuesto de D13: <= 0 con el Anexo J retirado (cumple) | Medido: `abspage@last{155}`; `Anexos` en p. 139; delta frente a la compilacion de c-219 (156 / 131 / 25): -1 total, +7 cuerpo, -8 anexos. El retiro del Anexo J (material de defensa: `docs/defensa/respuestas-tribunal.md`), que aporta las 8 paginas de anexos menos, compensa el crecimiento del cuerpo (dos subsecciones nuevas en resultados, la tabla de matriz y metricas por clase, el apartado metodologico del corpus independiente, las amenazas septima y octava, el complemento descriptivo de calibracion y los parrafos de discusion, conclusiones y recomendaciones). El bloque incluye la prosa no compilada de c-220 (una fila de `tab:variables` y un parrafo en `04`), que no tuvo fila propia porque c-220 no compila; el delta neto total (-1) cumple el presupuesto <= 0 de D13. |
 | `+c-225` + `+c-226` (compilación conjunta) | sin commit (lo crea el orquestador) | 157 | 140 | 17 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{157}`; `Anexos` en p. 141; delta frente a la compilación de c-221 (155 / 138 / 17): +2 total, +2 cuerpo, 0 anexos. c-225 agrega un párrafo y la tabla `tab:robustez-linea-base` en resultados más un pasaje en la limitación 5; c-226 agrega la tabla `tab:rango-robustez-tiempos` y su prosa en resultados, discusión y método. Ambas se compilaron en una sola corrida (batcheada); el delta no se desagrega por change. |
 | `+c-231` (`change/c-231-cerrar-version-referencias-internas-y-matriz`) | sin commit (lo crea el orquestador) | 159 | 140 | 19 | +2 | 0 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{159}`; `Anexos` en p. 141; delta frente a la compilación conjunta de c-225 + c-226 (157 / 140 / 17): +2 total, 0 cuerpo, +2 anexos. El delta proviene del anexo nuevo de números canónicos citados (`12-anexos.tex`, `sec:anexo-numeros-canonicos`), que suma 2 páginas al bloque de anexos sin tocar el cuerpo. |
+| `+c-233` (`change/c-233-corregir-consistencia-interna-y-bibliografia`) | sin commit (lo crea el orquestador) | 161 | 142 | 19 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{161}`; `Anexos` en p. 143; delta frente a c-231 (159 / 140 / 19): +2 total, +2 cuerpo, 0 anexos. El delta proviene del mapa de lectura (subsección nueva en la introducción) y de las precisiones de consistencia de la introducción (B2 y B3); el bloque de anexos no cambia. |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -6218,3 +6219,70 @@ tarea.
 | C27/g | Repunte de las refs del cuerpo (la de introducción) | c-231 | `01-introduccion.tex:48` | `-` | `\autoref{sec:anexo-numeros-canonicos}` | cerrada |
 | C27/h | Repunte de las refs del cuerpo (la de discusión) | c-231 | `08-discusion.tex:56` | `-` | `\autoref{sec:anexo-numeros-canonicos}` | cerrada |
 | C27/i | Memo: Sección `3.38` aditiva | c-231 | `docs/Tesis/Correcciones/numeros-canonicos.md:2784` | `-` | `3.38 Anexo de números canónicos citados` | vigente (nuevo) |
+
+### c-233: consistencia interna y bibliografía de la tesis v1.5.0 (grupos 0 a 6)
+
+- **Change**: `c-233-corregir-consistencia-interna-y-bibliografia` (árbol de trabajo; sin commit ni
+  push en este grupo).
+- **Fecha de registro**: 2026-11-15.
+- **Observación atendida** (auditoría interna en estilo CONEAU sobre la tesis `v1.5.0`, veredicto
+  APROBADO CON OBSERVACIONES): diez inconsistencias internas entre el resumen, la introducción y los
+  capítulos de resultados/discusión, tres anomalías bibliográficas menores y metadatos de cobertura
+  medidos sobre una revisión (`v1.2.18`) distinta de la configuración evaluada (`bf5e099`). Es
+  corrección de redacción, procedencia, etiquetas y bibliografía; la única medición nueva es el
+  re-anclaje de las cifras de cobertura/pruebas (B4), declarado y canalizado por el memo. **Cerrada**
+  (grupos 0 a 6 aplicados; el tag anotado `v1.5.1` lo corta el orquestador).
+- **Resultado**: A1 (`note` de `Powers2011_evaluation`), A2 (`publisher` de
+  `ramonferrer2026tripletotext`) y A3 (`url` de `AAIP2023_resolucion198`) corregidas sin alterar el año
+  ni el DOI; B1 a B10 resueltas con fragmento verificable; cifras de cobertura/pruebas re-ancladas a la
+  configuración evaluada `bf5e099` (88 %, 1.419 sentencias, 175 sin cubrir, 1.016 pruebas) con
+  contraparte `v1.3.0` (90 %, 2.503 sentencias, 242 sin cubrir, 1.798 pruebas); memo sección aditiva
+  `3.43`.
+- **Cierre de versión (C5)**: bump a `v1.5.1` en la portada (`00-portada.tex:31`), el Anexo B
+  (`12-anexos.tex:58` y `:62`) y la entrada bibliográfica (`Bibliography_base.bib`, `Gomez2026_repositorio`).
+- **Tag (C6)**: el tag anotado `v1.5.1` se corta sobre el commit de contenido; su hash se consigna en el
+  commit inmediatamente posterior (patrón v1.5.0). Ningún tag previo se mueve. Lo corta el orquestador.
+- **Auditoría (C7)**: `docs/Tesis/Correcciones/auditoria-estilo-coneau-v1.5.0.md` queda trackeada (ya no
+  figura sin seguimiento).
+- **Archivos afectados**: `docs/Tesis/v10 (IA)/Bibliography_base.bib`; `docs/Tesis/v10 (IA)/paper/sections/00-resumen.tex`,
+  `01-introduccion.tex`, `05-arquitectura.tex`, `06-implementacion.tex`, `07-resultados.tex`,
+  `08-discusion.tex` y `11-aspectos-legales.tex`; `docs/Tesis/Correcciones/numeros-canonicos.md`
+  (Sección `3.43`); `docs/Tesis/Correcciones/dictamen-correcciones.md` (esta entrada); `CHANGES.md`.
+- **Sin cambios**: `App/`, `n8n/`, el clasificador, la configuración, el corpus, las predicciones ni
+  los artefactos congelados; ningún valor canónico previo cambia salvo las cifras de cobertura/pruebas
+  de B4 (declaradas). Cero llamadas a Gemini.
+- **Compilación (C1, hecha)**: **161** páginas (`abspage@last{161}`), `Anexos` en p. 143, 0 errores
+  fatales, 0 referencias indefinidas, 0 citas indefinidas, 0 etiquetas duplicadas. Delta frente a c-231
+  (159 / 140 / 19): +2 total, +2 cuerpo, 0 anexos; proviene del mapa de lectura (subsección nueva en la
+  introducción) y de las precisiones de consistencia (B2 y B3). `compilacion.md` regenerado (fuente
+  «arbol de trabajo sobre c-233 (version v1.5.1, contenido)»).
+- **Verificación ejecutada**: `git diff` dirigido sobre los `.tex` para confirmar que ningún número de
+  resultado cambió (solo palabras, rótulos y etiquetas); `python verify_citations.py` con `STATUS: PASS`;
+  `git status --short` confirma que solo se tocaron los `.tex`, el `.bib`, el memo, el dictamen,
+  `CHANGES.md` y las tareas del change.
+
+#### Matriz de trazabilidad (C28/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C28/a | A1: `note` con el espejo arXiv posterior | c-233 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:161` | `-` | `es un espejo posterior del art{\'i}culo publicado en 2011` | vigente (nuevo) |
+| C28/b | A2: `publisher` IOS Press sin tocar el DOI | c-233 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:366` | `-` | `publisher = {IOS Press}` | vigente (nuevo) |
+| C28/c | A3: localizador oficial de la Resolución 198/2023 | c-233 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:1018` | `-` | `boletinoficial.gob.ar/detalleAviso/primera/296189/20231018` | vigente (nuevo) |
+| C28/d | B1: calificador del cuerpo en el resumen | c-233 | `00-resumen.tex:13` | `-` | `no concluyente, con estimación puntual por encima de la cota` | vigente (nuevo) |
+| C28/e | B2: tasa a priori frente al brazo manual medido | c-233 | `01-introduccion.tex:18` | `-` | `es una estimación a priori que no se re-midió directamente` | vigente (nuevo) |
+| C28/f | B3: validación fuera de muestra en la introducción | c-233 | `01-introduccion.tex:66` | `-` | `exactitud estricta cruda de 0,6893 y una ponderada de 0,7489` | vigente (nuevo) |
+| C28/g | B4: cobertura/pruebas re-ancladas a la evaluada | c-233 | `06-implementacion.tex:85` | `-` | `sobre la configuración evaluada (commit \texttt{bf5e099}, 7-10-2026): 88~\% (1.419 sentencias, 175 sin cubrir), con 1.016 pruebas` | vigente (nuevo) |
+| C28/h | B5: `v1.2.2` frente a `v1.3.0` en la arquitectura | c-233 | `05-arquitectura.tex:8` | `-` | `ese despliegue de referencia no es la configuración entregada \texttt{v1.3.0}` | vigente (nuevo) |
+| C28/i | B5: etiqueta de release en aspectos legales | c-233 | `11-aspectos-legales.tex:34` | `-` | `distinto de la configuración entregada \texttt{v1.3.0}` | vigente (nuevo) |
+| C28/j | B5: configuración entregada en aspectos legales | c-233 | `11-aspectos-legales.tex:107` | `-` | `configuración entregada \texttt{v1.3.0}` | vigente (nuevo) |
+| C28/k | B6: cadenas de sector canónicas (objetivo) | c-233 | `01-introduccion.tex:48` | `-` | `Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos o Sistemas` | vigente (nuevo) |
+| C28/l | B6: cadenas de sector canónicas (alcance) | c-233 | `01-introduccion.tex:72` | `-` | `Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos y Sistemas` | vigente (nuevo) |
+| C28/m | B6: cadenas de sector canónicas (resultados) | c-233 | `07-resultados.tex:347` | `-` | `corresponde a la frontera entre Soporte Tecnico Hardware y Soporte Tecnico Software` | vigente (nuevo) |
+| C28/n | B6: cadenas de sector canónicas (discusión) | c-233 | `08-discusion.tex:26` | `-` | `Soporte Tecnico Software (5), Bases de Datos (2) y Seguridad Informatica (2)` | vigente (nuevo) |
+| C28/o | B7: apertura `¿` en la pregunta de investigación | c-233 | `01-introduccion.tex:26` | `-` | `¿reduce la automatización del registro inicial` | vigente (nuevo) |
+| C28/p | B7: aperturas `¿` en los interrogantes subsidiarios | c-233 | `01-introduccion.tex:28` | `-` | `¿cuál es la magnitud de la reducción` | vigente (nuevo) |
+| C28/q | B8: rótulo «exactitud estricta del brazo manual» | c-233 | `01-introduccion.tex:48` | `-` | `la paridad con la exactitud estricta del brazo manual (82,78~\%)` | vigente (nuevo) |
+| C28/r | B9: novena limitación rotulada como superada | c-233 | `08-discusion.tex:46` | `-` | `ya quedó superada y se conserva por su valor informativo` | vigente (nuevo) |
+| C28/s | B9: cierre de la novena limitación | c-233 | `08-discusion.tex:64` | `-` | `La novena limitación (el acceso cerrado) queda superada` | vigente (nuevo) |
+| C28/t | B10: mapa de lectura (organización del documento) | c-233 | `01-introduccion.tex:78` | `subsec:organizacion-documento` | `Organización del documento` | vigente (nuevo) |
+| C28/u | Memo: Sección `3.43` aditiva | c-233 | `docs/Tesis/Correcciones/numeros-canonicos.md:2818` | `-` | `3.43 Cifras de cobertura y pruebas re-ancladas a la configuración evaluada` | vigente (nuevo) |
