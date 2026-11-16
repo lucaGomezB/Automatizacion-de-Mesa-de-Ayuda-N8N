@@ -1456,6 +1456,14 @@
       "sessions": 0,
       "memories": 1,
       "prompts": 1
+    },
+    {
+      "id": "082e4092",
+      "created_by": "Usuario",
+      "created_at": "2026-11-16T13:03:52Z",
+      "sessions": 0,
+      "memories": 7,
+      "prompts": 0
     }
   ]
 }
