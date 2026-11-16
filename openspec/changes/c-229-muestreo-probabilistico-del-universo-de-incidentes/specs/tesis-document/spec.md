@@ -1,41 +1,106 @@
 ## ADDED Requirements
 
-### Requirement: Declaracion del diseno de muestreo probabilistico del universo y su estado condicional
+### Requirement: Muestra probabilistica del universo incorporada solo en una version posterior a la defensa
 
-La tesis SHALL declarar, en el capitulo metodologico (subseccion de poblacion, muestra y corpus,
-`subsec:poblacion-muestra-corpus`) y en el trabajo futuro (capitulo de recomendaciones,
-`subsec:corpus-independiente`), que la validacion reportada se apoya en una muestra no probabilistica
-por conveniencia de una sola organizacion y que existe un diseno de muestreo probabilistico
-estratificado del universo, con cuotas prefijadas por canal y por sector, denominadores y reglas de
-decision prefijados, cuyo estado es `condicional` porque depende de datos que aun no existen y de la
-cooperacion de la organizacion. La tesis SHALL declarar de forma explicita que ese diseno NO eleva la
-exactitud del clasificador, sino que hace valida la estimacion (permite referir las metricas al
-universo con su efecto de diseno). La tesis SHALL reportar la lectura ponderada de la exactitud
-estricta (`0,7489`) y el efecto de diseno como lecturas complementarias rotuladas, y MUST NOT
-presentar la ponderada como la cifra primaria (`0,6893`) ni cambiar ningun valor canonico. La tesis
-MUST NOT afirmar que la muestra de 200 casos es probabilistica ni que su intervalo de confianza se
-estima sobre el universo.
+Este requisito SHALL aplicarse solo en una version de la tesis posterior a la defensa y solo si se
+cumplen las tres condiciones: la campana probabilistica se ejecuto, el acta de la compuerta de
+procedencia (PS-003) y la documentacion de la compuerta etica y legal (PS-004) de
+`evaluation-probabilistic-sampling` estan cerradas, y existe la estimacion de PS-006. Si alguna falta,
+la tesis MUST NOT mencionar el diseno mas alla de lo que ya fijan los requisitos de trabajo futuro y de
+remedio empirico condicional. Cumplidas las condiciones: `subsec:poblacion-muestra-corpus` SHALL
+describir la muestra probabilistica como distinta del corpus de 200 casos, que SHALL seguir descrito
+como muestra por conveniencia; una subseccion nueva de `07-resultados.tex` (etiqueta propuesta
+`subsec:muestra-probabilistica`) SHALL informar la exactitud ponderada y la cruda rotuladas, el DEFF,
+el IC con su metodo, las cuotas alcanzadas y las clases declaradas no estimables; la quinta amenaza de
+`subsec:amenazas-validez` SHALL precisar que la estimacion se refiere al universo del periodo de esa
+organizacion y no a otras; `subsec:corpus-independiente` SHALL conservar los elementos que exige su
+requisito vigente y agregar una remision a la subseccion de resultados nueva; `11-aspectos-legales.tex`
+SHALL declarar la autorizacion institucional, la base de licitud, el consentimiento de los
+etiquetadores y, en `subsec:transferencia-internacional`, los textos de la muestra enviados a
+proveedores con su cantidad, o que no se enviaron. La tesis SHALL declarar que el diseno no eleva la
+exactitud del clasificador sino que hace valida la estimacion. El texto MUST NOT reintroducir cifras,
+alias de etiquetadores ni descripciones del corpus retirado del ejemplar, MUST NOT cambiar el valor
+de ninguna cifra canonica del corpus de 200 y MUST NOT introducir identificadores `c-NNN` en el cuerpo.
 
-#### Scenario: Metodologia declara el diseno y su estado condicional
+#### Scenario: Sin campana o sin compuertas, la tesis no cambia
 
-- **WHEN** se lee la subseccion de poblacion, muestra y corpus
-- **THEN** figura la declaracion de que la muestra es no probabilistica por conveniencia y que existe un diseno probabilistico estratificado cuyo estado es `condicional`
-- **AND** se declara que el diseno no eleva la exactitud del clasificador, sino que hace valida la estimacion
+- **WHEN** falta la campana, el acta de procedencia o la documentacion etica y legal
+- **THEN** ninguna seccion de la tesis describe la muestra probabilistica como realizada
+- **AND** solo figuran las menciones de trabajo futuro y remedio condicional vigentes
 
-#### Scenario: Lectura ponderada y efecto de diseno rotulados
+#### Scenario: Resultados en subseccion nueva
 
-- **WHEN** se leen los resultados de la validacion fuera de muestra
-- **THEN** la lectura ponderada `0,7489` y el efecto de diseno figuran rotulados como complementarios
-- **AND** la cifra primaria `0,6893` y su intervalo no cambian
+- **WHEN** se lee la version posterior a la defensa con la campana ejecutada
+- **THEN** `subsec:muestra-probabilistica` informa exactitud ponderada y cruda rotuladas, DEFF, IC, cuotas alcanzadas y clases no estimables
+- **AND** el corpus de 200 sigue descrito como muestra por conveniencia con sus cifras canonicas intactas
 
-#### Scenario: Recomendaciones remiten al diseno
+#### Scenario: Transferencias y autorizacion declaradas
 
-- **WHEN** se lee la subseccion de validacion sobre un corpus independiente
-- **THEN** remite al diseno probabilistico del universo con cuotas prefijadas por canal y sector
-- **AND** declara que su ejecucion depende de datos nuevos y de la cooperacion de la organizacion
+- **WHEN** se lee el capitulo 7 de esa version
+- **THEN** figuran la autorizacion institucional, la base de licitud, el consentimiento de los etiquetadores y los textos enviados a proveedores con su cantidad, o la declaracion de que no se enviaron
 
-#### Scenario: Sin afirmacion de muestreo probabilistico
+#### Scenario: Sin evidencia retirada
 
-- **WHEN** se busca en la tesis una afirmacion de que la muestra de 200 casos es probabilistica o que su intervalo se estima sobre el universo
-- **THEN** no aparece ninguna
-- **AND** el muestreo se declara no probabilistico por conveniencia de forma coherente en el cuerpo y el resumen
+- **WHEN** se busca en `sections/*.tex` de esa version alguna cifra o alias de etiquetador de la evidencia retirada fuera de la nota de versiones
+- **THEN** no hay coincidencias atribuibles a este change
+
+## MODIFIED Requirements
+
+### Requirement: Validez externa declarada en las conclusiones con su remedio empirico
+
+Las conclusiones SHALL declarar la amenaza a la validez externa con la fuerza que el diseno permite: la muestra es **no probabilistica por conveniencia** (los 200 casos son los incidentes cronometrados), proviene de **una sola organizacion** (servicios, provincia de Mendoza) y el universo es **proyectado, no medido** (`2.646 = 42 x 63`), de modo que las cifras valen para este corpus y no se extrapolan al universo de incidentes. La declaracion SHALL senalar que el remedio empirico es el **diseno de muestreo probabilistico del universo** (change `c-229`). Mientras ese diseno no se haya ejecutado con sus compuertas de procedencia y etica/legal cerradas, SHALL presentarlo como **condicional y no ejecutado** y MUST NOT afirmar que la validez externa ya fue establecida. En una version posterior a la defensa con la campana ejecutada y las compuertas cerradas, SHALL presentarlo como ejecutado, con remision a sus resultados, y SHALL acotar su alcance al universo del periodo de esa organizacion: MUST NOT afirmar validez externa respecto de otras organizaciones, sectores o regiones. La correccion MUST NOT cambiar el valor de ningun numero canonico.
+
+#### Scenario: Fuerza correcta en la conclusion
+
+- **WHEN** se leen las conclusiones (`09-conclusiones.tex`)
+- **THEN** el texto declara la muestra no probabilistica por conveniencia, la organizacion unica y el universo proyectado (`2.646 = 42 x 63`)
+- **AND** las cifras se declaran validas para este corpus y no extrapolables al universo
+
+#### Scenario: Remedio empirico declarado como condicional
+
+- **WHEN** se lee la declaracion de validez externa y el diseno no se ejecuto con sus compuertas cerradas
+- **THEN** remite al diseno de muestreo probabilistico (change `c-229`) como remedio empirico
+- **AND** lo presenta como condicional y no ejecutado, sin afirmar que la validez externa ya esta establecida
+
+#### Scenario: Remedio ejecutado con alcance acotado
+
+- **WHEN** se lee una version posterior a la defensa con la campana ejecutada y las compuertas cerradas
+- **THEN** la declaracion remite a los resultados de la muestra probabilistica y acota su alcance al universo del periodo de esa organizacion
+- **AND** no afirma validez externa respecto de otras organizaciones, sectores o regiones
+
+#### Scenario: Valores canonicos intactos
+
+- **WHEN** se compara el `.tex` antes y despues del change
+- **THEN** ningun valor canonico cambia de valor
+- **AND** las unicas diferencias son palabras y remisiones de procedencia
+
+### Requirement: Seleccion de los casos por conveniencia declarada
+
+La seccion 4.4 (`subsec:poblacion-muestra-corpus`) SHALL describir una sola forma de seleccion de
+los 200 casos: muestreo no probabilistico por conveniencia (disponibilidad), siendo los 200 casos
+los incidentes cronometrados en la campaña manual; la formula de tamaño muestral SHALL informarse
+como margen de error implicado y no como diseño. La tesis MUST NOT describir el corpus de 200 casos
+como muestreo estratificado ni con asignacion proporcional en `04-marco-metodologico.tex`, el
+resumen, el abstract ("convenience sample") ni la discusion. Solo en una version posterior a la
+defensa con la muestra probabilistica ejecutada y sus compuertas cerradas, la tesis MAY describir
+como estratificada esa muestra nueva, siempre identificada como distinta del corpus de 200 casos.
+La seccion 4.8 SHALL incluir el sesgo de seleccion como amenaza a la validez externa. Las fechas del
+periodo relevado y el criterio de seleccion MUST NOT inventarse: quedan marcados
+`PENDIENTE-AUTORES(N-04)` hasta que los autores los aporten.
+
+#### Scenario: Una sola descripcion
+
+- **WHEN** se busca "estratificad" o "stratified" en `00-resumen.tex`, `04-marco-metodologico.tex` y `08-discusion.tex`
+- **THEN** no hay coincidencias afirmativas referidas al corpus de 200 casos (una negacion explicita se cuenta aparte)
+- **AND** 4.4 y el abstract nombran el muestreo por conveniencia
+
+#### Scenario: Muestra nueva distinguida
+
+- **WHEN** una version posterior a la defensa describe como estratificada la muestra probabilistica
+- **THEN** el texto la identifica como distinta del corpus de 200 casos
+- **AND** el corpus de 200 casos sigue descrito como muestra por conveniencia
+
+#### Scenario: Sesgo de seleccion en 4.8
+
+- **WHEN** se lee `subsec:amenazas-validez`
+- **THEN** figura el sesgo de seleccion como amenaza a la validez externa

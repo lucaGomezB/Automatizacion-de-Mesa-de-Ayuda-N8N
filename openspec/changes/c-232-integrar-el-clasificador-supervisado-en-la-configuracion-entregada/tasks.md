@@ -1,88 +1,90 @@
 # Tasks: Integrar el clasificador supervisado en la configuracion entregada
 
-Al final de cada tarea, entre parentesis, el requisito del change que cumple, por nombre corto precedido de su capacidad. Nombres cortos: `SCI` (`supervised-classifier-integration`) «SCI-001», «SCI-002», «SCI-003»; `DCD` (`delivered-classifier-decision`) «DCD-001», «DCD-002»; `IPA` (`inference-provider-abstraction`) «Proveedor supervisado»; `TD` (`tesis-document`) «Veredicto honesto»; `NC` (`tesis-numeros-canonicos`) «Registro aditivo». Las tareas de preparacion y las verificaciones transversales no llevan parentesis.
+Al final de cada tarea, entre parentesis, el requisito del change que cumple, por nombre corto precedido de su capacidad. Nombres cortos: `SCI` (`supervised-classifier-integration`) «SCI-001», «SCI-002», «SCI-003»; `DCD` (`delivered-classifier-decision`) «DCD-001», «DCD-002», «DCD-003»; `IPA` (`inference-provider-abstraction`) «Proveedor supervisado»; `TD` (`tesis-document`) «Ejemplar sin cambios», «Veredicto posterior»; `NC` (`tesis-numeros-canonicos`) «Registro aditivo 3.42». Las tareas de preparacion y las verificaciones transversales no llevan parentesis.
 
-Este change SÍ escribe codigo ejecutable: aplica el ciclo TDD estricto (RED → GREEN → TRIANGULATE → REFACTOR) sobre las funciones puras del congelado y del contraste pareado, con la suite de `evaluation/` y la del backend como red de seguridad. El contraste real y el veredicto quedan **condicionados** a que `c-228`/`c-229`/`c-230` entreguen sus artefactos; si no, las tareas se bloquean y se registran.
+**Alcance (adaptacion a la devolucion de tercera instancia, ver `proposal.md`):** por defecto este change se aplica DESPUES de cerrar la entrega (`c-235` → `c-239`) y queda BLOQUEADO hasta que `c-228`, `c-229` y `c-230` entreguen. No modifica el ejemplar que se defiende ni el default entregado. Ninguna tarea usa cifras ni artefactos retirados por `c-235`, el corpus de 200 casos como conjunto de contraste ni el canario de `c-227` como referencia.
 
-Gobernanza **ALTA** (toca la linea del clasificador de produccion y la configuracion entregada). Checkpoints humanos obligatorios: **CHECKPOINT A** antes de consumir el resultado de `c-228` y congelar el modelo; **CHECKPOINT B** antes de cambiar el default entregado o registrar el adaptador como seleccionable; **CHECKPOINT C** antes de emitir el veredicto y de tocar la declaracion de configuracion entregada.
+Este change SI escribe codigo ejecutable: aplica el ciclo TDD estricto (RED → GREEN → TRIANGULATE → REFACTOR) con fixtures rotulados como sinteticos en nombre de archivo, cabecera y salida, y con la suite de `evaluation/` y la del backend como red de seguridad.
 
-## 0. Preparacion y verificacion de estado
+Gobernanza **ALTA**. Checkpoints: **A** antes de consumir `c-228` y congelar; **B** antes de cambiar el default; **C** antes de emitir el veredicto; **D** antes de cualquier envio de texto a terceros (incluida la Gemini API).
 
-- [ ] 0.1 Leer `proposal.md`, `design.md` (D1 a D8) y los cinco specs delta; cargar los `SKILL.md` completos de `python-testing`, `python-design-patterns` y `pytest-coverage` antes de escribir codigo y registrar la resolucion.
-- [ ] 0.2 Capturar la linea de base como evidencia de partida: `git status`, `git rev-parse HEAD`, `sha256sum evaluation/data/campana/predicciones_arbitrado.json data/corpus_evaluacion_pseudonimizado.json`, y los anclajes (`0,6893/206`, macro-F1 `0,7024`, techo `0,835`, manual `0,8278`, frontera `16/64`). Registrar modificaciones preexistentes ajenas a este change y no tocarlas.
-- [ ] 0.3 **Red de seguridad:** correr `cd evaluation && pytest -q` y `cd App/Backend && pytest -m "not integration"` y registrar el resultado (debe pasar antes de editar; si algo falla, detenerse y reportarlo como fallo preexistente).
-- [ ] 0.4 Releer `App/Backend/app/classifiers/provider.py`, `base.py`, `hybrid.py` y `Settings` (`inference_provider`/`inference_model`); confirmar que la integracion puede apoyarse en la abstraccion de `c-227` sin reescribirla.
-- [ ] 0.5 **[CHECKPOINT A — BLOQUEA EL GRUPO 1]** Confirmar con los autores el criterio de seleccion del «mejor modelo» de `c-228` (OQ1) y presentar el esquema de congelado y versionado (binario o puntero + hash) antes de consumir o copiar artefactos. Registrar la respuesta.
-- [ ] 0.6 **[CHECKPOINT C — prospectivo]** Confirmar con los autores, y registrar, la regla de decision pre-registrada (umbrales de IC, margen de macro-F1, correccion por comparaciones multiples, OQ2) ANTES de correr el contraste. La regla no se modifica despues.
-- [ ] 0.7 Releer el indice de `numeros-canonicos.md` y fijar el primer numero de seccion libre (hoy la ultima planificada es `3.41`; esperado `3.42`). Registrar el numero elegido.
-- [ ] 0.8 Verificar la disponibilidad de los insumos de `c-228`, `c-229` y `c-230`; si falta alguno, registrar el bloqueo de las tareas dependientes sin sustituirlo por datos de conveniencia.
+## 0. Preparacion, compuertas y linea de base
 
-## 1. Congelado del modelo seleccionado (TDD, SCI; depende de c-228 y del CHECKPOINT A)
+- [ ] 0.1 Leer `proposal.md`, `design.md` (D0 a D10) y los cinco specs delta; cargar los `SKILL.md` de `python-testing`, `python-design-patterns` y `pytest-coverage` y registrar la resolucion.
+- [ ] 0.2 Verificar que `c-235` a `c-239` estan archivados (o registrar la decision de los autores de adelantar el grupo 1, OQ6) y el estado de `c-228`, `c-229` y `c-230`; registrar como bloqueados los grupos 2, 5 y 6 si falta alguno, sin sustituir insumos.
+- [ ] 0.3 Capturar la linea de base: `git status`, `git rev-parse HEAD` y `sha256sum` de `App/Backend/app/classifiers/*.py`. Registrar modificaciones ajenas y no tocarlas.
+- [ ] 0.4 **Red de seguridad:** correr `cd evaluation && pytest -q` y `cd App/Backend && pytest -m "not integration"`; si algo falla, detenerse y reportarlo como fallo preexistente.
+- [ ] 0.5 Releer `App/Backend/app/classifiers/provider.py`, `base.py`, `hybrid.py` y `Settings`; confirmar que la integracion se apoya en la abstraccion de `c-227` sin reescribirla.
+- [ ] 0.6 **[CHECKPOINT D — K-02, BLOQUEA EL GRUPO 5]** Registrar la respuesta de los autores a OQ3: si existen predicciones del hibrido registradas en operacion para el corpus acreditado o si la autorizacion escrita de la organizacion cubre expresamente enviar esos textos a la Gemini API. Sin una de las dos, registrar el bloqueo del contraste. (DCD-003)
+- [ ] 0.7 **[K-01, BLOQUEA EL GRUPO 5]** Verificar que `c-229` y `c-230` registraron cerradas sus compuertas de procedencia y etica (export crudo, constancia de la organizacion en custodia del director, SHA-256, verificacion del director) para el corpus y la referencia que se consumen. (DCD-003)
+- [ ] 0.8 Releer el indice de `numeros-canonicos.md` y confirmar que la seccion `3.42` sigue reservada a este change y libre; si esta ocupada, detenerse y reportar.
 
-- [ ] 1.1 **RED:** escribir `evaluation/tests/test_congelado_modelo_c232.py` con pruebas sinteticas del lector/validador del manifiesto de congelado (campos obligatorios, hashes presentes, comando de evaluacion) antes de existir el modulo; ejecutar y confirmar que fallan por ausencia de la implementacion. (SCI-001)
-- [ ] 1.2 **GREEN:** implementar el lector/validador con la minima logica para pasar las pruebas (funcion pura sobre un manifiesto en memoria). (SCI-001)
-- [ ] 1.3 **TRIANGULATE:** agregar casos con manifiesto incompleto, hash de split ausente y campos extra; confirmar que GENERALIZA y que rechaza lo invalido. (SCI-001)
-- [ ] 1.4 **REFACTOR:** extraer constantes y nombres; correr las pruebas tras cada paso y confirmar verde. (SCI-001)
-- [ ] 1.5 Consumir el resultado del benchmark de `c-228` y seleccionar exactamente un modelo (el mejor por los criterios fijados de antemano); emitir `evaluation/data/modelo_supervisado_c232/` con el manifiesto (pesos/puntero + SHA-256, tokenizer, version del codebook, hash del split, preprocesamiento, comando de evaluacion) y registrar la decision del CHECKPOINT A. (SCI-001)
-- [ ] 1.6 Verificar con una prueba que el artefacto aborta/registra el bloqueo si `c-228` no entrego modelo o benchmark; registrar los SHA-256 del artefacto congelado. (SCI-001)
-- [ ] 1.7 Verificar con `git diff --stat` que no se modifico el clasificador de produccion, el prompt vigente ni las predicciones congeladas. (SCI-001)
+## 1. Sin datos nuevos: funciones puras y adaptador (TDD; posterior a la entrega salvo OQ6)
 
-## 2. Integracion detras del mismo contrato (TDD, SCI, IPA; CHECKPOINT B)
+- [ ] 1.1 **RED:** escribir `evaluation/tests/test_congelado_modelo_c232.py` con manifiestos sinteticos rotulados (campos obligatorios, hashes, `procedencia_datos`, comando); confirmar que fallan. (SCI-001)
+- [ ] 1.2 **GREEN:** implementar el validador de manifiesto como funcion pura. (SCI-001)
+- [ ] 1.3 **TRIANGULATE:** manifiesto incompleto, hash ausente, campos extra, procedencia ausente; confirmar que rechaza lo invalido. (SCI-001)
+- [ ] 1.4 **REFACTOR:** correr las pruebas tras cada paso. (SCI-001)
+- [ ] 1.5 **RED:** escribir pruebas del adaptador local del modelo supervisado a traves de `BaseClassifier`/registro de `c-227`, con un modelo sintetico rotulado, sin tocar el hibrido; confirmar que fallan. (SCI-002, IPA «Proveedor supervisado»)
+- [ ] 1.6 **GREEN:** implementar el adaptador offline y registrarlo como proveedor seleccionable, con default sin cambios. (SCI-002, SCI-003, IPA «Proveedor supervisado»)
+- [ ] 1.7 **TRIANGULATE:** seleccion por configuracion, cinco cadenas exactas, proveedor desconocido, ausencia de llamadas de red; confirmar que generaliza. (SCI-002, IPA «Proveedor supervisado»)
+- [ ] 1.8 **REFACTOR:** correr las pruebas tras cada paso; verificar con una prueba de neutralidad que el default reproduce el hibrido. (SCI-003)
+- [ ] 1.9 **RED:** escribir `evaluation/tests/test_contraste_cabeza_a_cabeza_c232.py` con datos sinteticos rotulados (tabla 2x2, diferencia pareada con IC, McNemar, caso sin pareja, hash de entrada que no coincide); confirmar que fallan. (DCD-001)
+- [ ] 1.10 **GREEN:** implementar las funciones puras del contraste reutilizando `evaluation/metrics.py` y `evaluation/stats.py` sin modificarlos. (DCD-001)
+- [ ] 1.11 **TRIANGULATE:** sin discordancias, caso sin pareja, subconjunto no pre-especificado rechazado; confirmar que generaliza. (DCD-001)
+- [ ] 1.12 **REFACTOR:** correr las pruebas tras cada paso. (DCD-001)
+- [ ] 1.13 **RED:** escribir `evaluation/tests/test_regla_veredicto_c232.py` con resultados sinteticos de las tres salidas, «no supera» y empate en el limite del IC; confirmar que fallan. (DCD-002)
+- [ ] 1.14 **GREEN:** implementar la funcion pura de la regla de tres vias. (DCD-002)
+- [ ] 1.15 **TRIANGULATE:** confirmar salida exhaustiva y exclusiva. (DCD-002)
+- [ ] 1.16 **REFACTOR:** correr las pruebas tras cada paso. (DCD-002)
 
-- [ ] 2.1 **RED:** escribir pruebas que describan el adaptador del modelo supervisado a traves del contrato de `c-227` (`BaseClassifier`/registro de proveedores) sin tocar el hibrido, antes de la implementacion; ejecutar y confirmar que fallan. (SCI-002, IPA «Proveedor supervisado»)
-- [ ] 2.2 **GREEN:** implementar el adaptador y registrar el proveedor supervisado (offline, pesos congelados), con la minima logica para pasar las pruebas. (SCI-002, IPA «Proveedor supervisado»)
-- [ ] 2.3 **TRIANGULATE:** agregar casos de seleccion por configuracion, de contrato canonico preservado (cinco cadenas exactas) y de fallo explicito ante proveedor desconocido; confirmar que GENERALIZA. (SCI-002, IPA «Proveedor supervisado»)
-- [ ] 2.4 **REFACTOR:** extraer constantes y nombres; correr las pruebas tras cada paso y confirmar verde. (SCI-002)
-- [ ] 2.5 Implementar la seleccion por configuracion del proveedor supervisado (default sin cambios: resuelve al hibrido salvo que el veredicto sea reemplazar). (SCI-003, IPA «Proveedor supervisado»)
-- [ ] 2.6 Verificar con una prueba de neutralidad que, con el default, se reproducen caso por caso las predicciones del hibrido y que ningun numero canonico cambia; verificar que las cinco cadenas canonicas permanecen exactas. (SCI-003)
-- [ ] 2.7 **[CHECKPOINT B]** Confirmar con los autores, y registrar, la decision sobre el default entregado (BLOQUEA la 2.5 si implica cambiar el default). Si el veredicto (grupo 4) aun no existe, dejar 2.5 en hibrido por defecto. (SCI-003)
+## 2. Congelado del modelo seleccionado (depende de c-228; CHECKPOINT A)
 
-## 3. Contraste cabeza a cabeza (TDD, DCD-001; depende de c-229 y c-230)
+- [ ] 2.1 **[CHECKPOINT A]** Confirmar con los autores el criterio de seleccion de `c-228` (OQ1) y el esquema binario o puntero + hash. (SCI-001)
+- [ ] 2.2 **[BLOQUEADA HASTA c-228]** Consumir el benchmark de `c-228`, seleccionar exactamente un modelo y emitir `evaluation/data/modelo_supervisado_c232/` con el manifiesto validado; si `c-228` no entrego, registrar el bloqueo. (SCI-001)
+- [ ] 2.3 Verificar con `git diff --stat` que no cambio el clasificador de produccion, el prompt ni las predicciones congeladas. (SCI-001)
 
-- [ ] 3.1 **RED:** escribir `evaluation/tests/test_contraste_cabeza_a_cabeza_c232.py` con pruebas sinteticas de la tabla pareada (aciertos por sistema, tabla 2x2, diferencia pareada con IC, McNemar) antes de existir el modulo; ejecutar y confirmar que fallan. (DCD-001)
-- [ ] 3.2 **GREEN:** implementar las funciones puras del contraste con la minima logica para pasar las pruebas, reutilizando `evaluation/metrics.py` y `evaluation/stats.py` sin modificarlos. (DCD-001)
-- [ ] 3.3 **TRIANGULATE:** agregar casos sin discordancias, con un caso sin pareja y con interseccion de textos, y confirmar que GENERALIZA sin romper. (DCD-001)
-- [ ] 3.4 **REFACTOR:** extraer constantes y nombres; correr las pruebas tras cada paso y confirmar verde. (DCD-001)
-- [ ] 3.5 Implementar el script `evaluation/data/campana/analisis/analisis_veredicto_c232.py` (solo lectura, determinista, sin red ni Gemini): lee el modelo congelado, las predicciones del hibrido y la referencia retenida, y el corpus de `c-229`; emite `analisis_veredicto_c232.{json,md,SHA256SUMS.txt}`. (DCD-001)
-- [ ] 3.6 Implementar el anclaje que aborta antes de escribir si no reproduce `142/206` y macro-F1 `0,7024` sobre la referencia vigente; verificar que el script termina con error sin escribir si un caso carece de pareja. (DCD-001)
-- [ ] 3.7 Verificar que dos corridas con los mismos insumos son identicas byte a byte y que los SHA-256 de las entradas no cambian. (DCD-001)
-- [ ] 3.8 Verificar que cada lectura sobre los `206` queda rotulada como contraste descriptivo y declara que `0,85` no es alcanzable sobre esa referencia. (DCD-001)
+## 3. Integracion con el modelo real (CHECKPOINT B)
 
-## 4. Regla pre-registrada y veredicto (DCD-002; CHECKPOINT C)
+- [ ] 3.1 **[BLOQUEADA HASTA 2.2]** Conectar el adaptador del grupo 1 a los pesos congelados; verificar inferencia local, determinista y sin red. (SCI-002, IPA «Proveedor supervisado»)
+- [ ] 3.2 **[CHECKPOINT B]** Registrar con los autores que el default sigue en el hibrido; solo un veredicto reemplazar (grupo 5) habilita revisar ese default. (SCI-003)
 
-- [ ] 4.1 **RED:** escribir pruebas de la evaluacion de la regla de tres vias (reemplazar / complementar / conservar) sobre resultados sinteticos, antes de la implementacion; ejecutar y confirmar que fallan. (DCD-002)
-- [ ] 4.2 **GREEN:** implementar la funcion pura que aplica la regla pre-registrada y devuelve el veredicto con su evidencia, con la minima logica para pasar las pruebas. (DCD-002)
-- [ ] 4.3 **TRIANGULATE:** agregar casos de cada salida, incluida la de «no supera» y el empate en el limite del IC; confirmar que GENERALIZA y que la salida es exhaustiva y exclusiva. (DCD-002)
-- [ ] 4.4 **REFACTOR:** extraer constantes y nombres; correr las pruebas tras cada paso y confirmar verde. (DCD-002)
-- [ ] 4.5 Registrar la regla pre-registrada en `docs/campana-medicion/runbook-veredicto-c232.md` con los umbrales y el margen (OQ2), fechada ANTES de correr el contraste; verificar que no se modifica despues de observar el resultado. (DCD-002)
-- [ ] 4.6 **[CHECKPOINT C]** Presentar a los autores el veredicto con su evidencia y su IC; registrar la decision. Si el veredicto es reemplazar, presentar tambien el cambio del default entregado antes de aplicarlo. (DCD-002, TD «Veredicto honesto»)
-- [ ] 4.7 Producir el veredicto del script y verificar que es exactamente uno de los tres, con evidencia y sin ocultar la salida «no supera». (DCD-002)
+## 4. Regla pre-registrada y constancia (DCD-002; antes del grupo 5)
 
-## 5. Tesis, memo y trazabilidad (TD, NC; tras 0.7)
+- [ ] 4.1 Registrar la regla en `docs/campana-medicion/runbook-veredicto-c232.md` (umbrales, margen de macro-F1, subconjuntos pre-especificados, correccion por comparaciones multiples, SHA-256 de las entradas previstas; OQ2) ANTES de obtener las predicciones sobre el corpus acreditado. (DCD-002)
+- [ ] 4.2 Entregar al director la constancia del pre-registro con el SHA-256 del runbook (OQ4) y registrar su fecha en `dictamen-correcciones.md`; sin constancia, el grupo 5 queda bloqueado. (DCD-002)
 
-- [ ] 5.1 Informar en `07-resultados.tex` el contraste cabeza a cabeza por sistema y por lectura (retenida y prevalencia natural) con sus intervalos, rotulado; no presentar una lectura como si la otra no existiera. (TD «Veredicto honesto»)
-- [ ] 5.2 Acotar en `08-discusion.tex` el alcance y las limitaciones del veredicto, sin afirmar mas de lo medido. (TD «Veredicto honesto»)
-- [ ] 5.3 Declarar en `09-conclusiones.tex` y `10-recomendaciones.tex` el veredicto (reemplazar / complementar / conservar), incluido «no supera», y su consecuencia sobre la configuracion entregada; si no es reemplazar, declarar que el hibrido sigue siendo el clasificador entregado; declarar la dependencia de `c-228`/`c-229`/`c-230` y de datos inexistentes. (TD «Veredicto honesto»)
-- [ ] 5.4 Si el veredicto es reemplazar, revisar con los autores la declaracion de la configuracion entregada (Anexo B / nota de version, `12-anexos.tex`) y actualizarla; si no, verificar que la declaracion no cambia. (TD «Veredicto honesto»)
-- [ ] 5.5 Agregar la seccion aditiva (ver 0.7) en `numeros-canonicos.md` con las dos lecturas, la diferencia pareada, McNemar y el veredicto, cada uno con procedencia, ambito y estado; declarar que no cambia `0,6893`, el macro-F1 `0,7024` ni el veredicto del `0,85` y que no altera las secciones `3.1` a `3.41`. (NC «Registro aditivo»)
-- [ ] 5.6 Verificar con `git diff` dirigido que la seccion del memo es aditiva y que la prosa no introduce identificadores `c-NNN` ni valores canonicos nuevos; verificar que `rg` no encuentra el `0,85` presentado como alcanzable sobre los `206` ni el modelo presentado como entregado si no lo es. (TD «Veredicto honesto», NC «Registro aditivo»)
-- [ ] 5.7 Compilar con XeLaTeX (`latexmk -xelatex main.tex`), verificar `\@abspage@last`, cero referencias indefinidas y cero etiquetas duplicadas; registrar el delta de paginas. Si el entorno no tiene LaTeX, registrar la compilacion como tarea diferida al release. (TD «Veredicto honesto»)
-- [ ] 5.8 Agregar en `docs/Tesis/Correcciones/dictamen-correcciones.md` la entrada del change con los artefactos nuevos, la seccion del memo y las anclas de prosa (archivo:linea y frase verificable). (NC «Registro aditivo»)
+## 5. Contraste y veredicto (depende de c-229, c-230, 0.6, 0.7 y 4.2; CHECKPOINTS C y D)
 
-## 6. Verificacion de cierre
+- [ ] 5.1 **[BLOQUEADA]** Obtener las predicciones del hibrido sobre el corpus acreditado segun 0.6 (registradas en operacion o corrida autorizada contra la Gemini API, declarando cantidad de textos, fecha y modelo) y las del modelo congelado (local). (DCD-001, DCD-003)
+- [ ] 5.2 Implementar y correr `evaluation/data/campana/analisis/analisis_veredicto_c232.py` (solo lectura, determinista, sin red) sobre el corpus acreditado con la referencia por mayoria; emitir `analisis_veredicto_c232.{json,md,SHA256SUMS.txt}`. (DCD-001)
+- [ ] 5.3 Verificar que el script aborta sin escribir si un hash de entrada no coincide con el pre-registrado o si un caso carece de pareja, y que dos corridas son identicas byte a byte. (DCD-001)
+- [ ] 5.4 **[CHECKPOINT C]** Aplicar la regla y presentar a los autores el veredicto con evidencia e IC; registrar la decision. Si es reemplazar, presentar el cambio del default antes de aplicarlo. (DCD-002)
 
-- [ ] 6.1 Volver a correr `cd evaluation && pytest -q` y `cd App/Backend && pytest -m "not integration"` y confirmar que no hay regresiones; correr el contraste una vez mas y comparar SHA-256 con 3.7.
-- [ ] 6.2 Confirmar con `git diff --stat` que no cambiaron las cinco cadenas canonicas, el prompt vigente, los parametros de inferencia, la evidencia congelada ni las predicciones; confirmar que el default entrega el hibrido salvo veredicto reemplazar.
-- [ ] 6.3 Confirmar que los tres checkpoints (A, B, C) quedaron registrados, que la regla pre-registrada es anterior al contraste y que las tareas condicionadas se declaran bloqueadas si faltaron los insumos.
-- [ ] 6.4 Correr `openspec validate c-232-integrar-el-clasificador-supervisado-en-la-configuracion-entregada --strict` y verificar que pasa.
-- [ ] 6.5 Dejar a cargo del orquestador la actualizacion de `CHANGES.md` y el `engram sync`; no pushear, no crear tag ni release.
-- [ ] 6.6 Guardar en Engram el resumen del change con el nombre, los artefactos, la seccion del memo, los SHA-256, el veredicto y el resultado de las verificaciones; reportar al orquestador con la tabla de evidencia del ciclo TDD.
+## 6. Memo, registro y tesis posterior (TD, NC)
+
+- [ ] 6.1 Agregar la seccion `### 3.42` en `numeros-canonicos.md` solo con valores producidos con compuertas cerradas; si no hay ninguno, registrar el bloqueo sin cifras. (NC «Registro aditivo 3.42»)
+- [ ] 6.2 Verificar con `git diff` dirigido que la seccion es aditiva y no cita cifras retiradas por `c-235`. (NC «Registro aditivo 3.42»)
+- [ ] 6.3 Verificar con `git diff --stat "docs/Tesis/v10 (IA)/paper/sections"` que este change no modifico el ejemplar de la defensa. (TD «Ejemplar sin cambios»)
+- [ ] 6.4 Solo en una version posterior a la defensa y con compuertas cerradas: informar el veredicto respetando el texto que deja `c-235`; compilar y verificar referencias. Si no se cumplen las condiciones, registrar la tarea como no aplicable. (TD «Veredicto posterior»)
+- [ ] 6.5 Agregar en `dictamen-correcciones.md` la entrada del change con compuertas, constancia del pre-registro, artefactos y seccion `3.42`.
+- [ ] 6.6 Registrar en `docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md` (archivo de `c-237`) el trabajo de este change hecho con asistentes de IA, con herramienta y verificacion de los autores.
+
+## 7. Verificacion de cierre
+
+- [ ] 7.1 Volver a correr `cd evaluation && pytest -q` y `cd App/Backend && pytest -m "not integration"`; comparar SHA-256 del contraste con 5.3.
+- [ ] 7.2 Confirmar con `git diff --stat` que no cambiaron cadenas canonicas, prompt, parametros, gate ni el ejemplar; que el default sigue en el hibrido salvo veredicto reemplazar.
+- [ ] 7.3 Correr sobre los artefactos nuevos la busqueda de cifras y alias retirados que fija la seccion de adaptacion de `proposal.md` y confirmar que no hay coincidencias.
+- [ ] 7.4 Confirmar que los checkpoints A a D y la constancia del pre-registro quedaron registrados, y que lo no ejecutado figura como bloqueado.
+- [ ] 7.5 Correr `openspec validate c-232-integrar-el-clasificador-supervisado-en-la-configuracion-entregada --strict`.
+- [ ] 7.6 Dejar a cargo del orquestador `CHANGES.md` y el `engram sync`; no pushear ni crear tag.
+- [ ] 7.7 Guardar en Engram el resumen y reportar con la tabla de evidencia del ciclo TDD.
 
 ## Evidencia del ciclo TDD (obligatoria al reportar)
 
 | Tarea | Archivo de prueba | Capa | Red de seguridad | RED | GREEN | TRIANGULATE | REFACTOR |
 |---|---|---|---|---|---|---|---|
-| 1.1-1.4 | `evaluation/tests/test_congelado_modelo_c232.py` | Unit | `pytest -q` de `evaluation/` | falla por ausencia | pasa | manifiesto incompleto, hash ausente, extras | limpio |
-| 2.1-2.4 | `App/Backend/tests/test_*_c232.py` | Unit | `pytest -m "not integration"` | falla por ausencia | pasa | config, contrato canonico, proveedor desconocido | limpio |
-| 3.1-3.4 | `evaluation/tests/test_contraste_cabeza_a_cabeza_c232.py` | Unit | `pytest -q` de `evaluation/` | falla por ausencia | pasa | sin discordancias, sin pareja, interseccion | limpio |
-| 4.1-4.4 | `evaluation/tests/test_regla_veredicto_c232.py` | Unit | `pytest -q` de `evaluation/` | falla por ausencia | pasa | reemplazar/complementar/conservar, limite de IC | limpio |
+| 1.1-1.4 | `evaluation/tests/test_congelado_modelo_c232.py` | Unit | `pytest -q` de `evaluation/` | falla por ausencia | pasa | manifiesto incompleto, hash ausente, extras, procedencia | limpio |
+| 1.5-1.8 | `App/Backend/tests/test_*_c232.py` | Unit | `pytest -m "not integration"` | falla por ausencia | pasa | config, contrato canonico, proveedor desconocido, sin red | limpio |
+| 1.9-1.12 | `evaluation/tests/test_contraste_cabeza_a_cabeza_c232.py` | Unit | `pytest -q` de `evaluation/` | falla por ausencia | pasa | sin discordancias, sin pareja, hash, subconjunto no pre-especificado | limpio |
+| 1.13-1.16 | `evaluation/tests/test_regla_veredicto_c232.py` | Unit | `pytest -q` de `evaluation/` | falla por ausencia | pasa | tres salidas, limite de IC | limpio |

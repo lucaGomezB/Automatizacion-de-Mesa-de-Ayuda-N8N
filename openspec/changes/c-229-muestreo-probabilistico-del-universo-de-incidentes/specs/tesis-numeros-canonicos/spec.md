@@ -2,42 +2,39 @@
 
 ### Requirement: Registro aditivo del diseno de muestreo probabilistico y del efecto de diseno
 
-El memo canonico `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL incorporar una seccion nueva y
-aditiva, posterior a la ultima seccion vigente (hoy `3.37`; esperado `3.40`), sin renumerar ni
-alterar las anteriores. La seccion SHALL registrar, como minimo: la lectura ponderada vigente de la
-exactitud estricta (`0,7489`, bootstrap `[0,6822; 0,8099]`) con su procedencia y la aclaracion de que
-sus pesos son la composicion por sector del corpus de 200 y NO la del universo; el efecto de diseno de
-la post-estratificacion aplicada al corpus con su metodo y su procedencia, con estado `condicional`;
-la definicion del universo, el marco y los estratos del diseno probabilistico como plan, sin valores de
-resultado; y la declaracion de que la ejecucion del diseno depende de datos que aun no existen y de la
-cooperacion de la organizacion, con su condicion de reversibilidad. Cada valor SHALL declarar su
-procedencia (archivo y linea, o el comando de solo lectura que lo reproduce) y un estado en
-`{vigente, condicional}`. La seccion SHALL declarar de forma explicita que es un diseno planificado y
-una lectura complementaria, que no mide de nuevo, que no cambia la cifra primaria `0,6893` ni la
-lectura ponderada `0,7489`, y que no modifica ningun valor ni estado de las Secciones 3.1 a 3.37. El
-efecto de diseno del diseno probabilistico SHALL declararse no computable sin la muestra probabilistica
-y MUST NOT consignarse un valor estimado en su lugar.
+El memo canonico `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL incorporar la seccion
+reservada `3.40` (reserva que reconocen los registros de `c-234` y `c-235`), aditiva y sin renumerar
+ni alterar ninguna otra seccion. La seccion SHALL registrar: el universo, el marco, los estratos, las
+cuotas con minimos por sector y las clases declaradas no estimables, como plan; el control de sanidad
+de la herramienta (post-estratificacion del corpus de 200 con su propia composicion: `147/200 =
+0,7350`, DEFF `1`), rotulado como verificacion de implementacion y no como estimacion poblacional; el
+estado de las compuertas de procedencia y etica/legal con la fecha del acta, sin datos personales; y,
+solo si la campana se ejecuto con las compuertas cerradas, la exactitud ponderada y la cruda, el DEFF
+y el IC sobre el universo con su comando reproducible. Mientras la muestra no exista, el DEFF del
+diseno SHALL figurar como no computable con estado `condicional`, sin valor estimado. Cada valor
+SHALL declarar su procedencia (archivo y clave, o comando de solo lectura) y un estado en
+`{vigente, condicional}`. La seccion MUST NOT citar como ancla, insumo ni comparador ninguna cifra con
+estado `retirado` en el memo, y MUST NOT cambiar el valor ni el estado de ninguna otra seccion.
 
-#### Scenario: Seccion aditiva con el primer numero libre
+#### Scenario: Seccion reservada aditiva
 
 - **WHEN** se aplica el change y se relee el indice del memo
-- **THEN** la seccion nueva ocupa el primer numero libre posterior a la ultima seccion vigente
-- **AND** ninguna seccion previa se renumera ni se reescribe
+- **THEN** la seccion nueva es la `3.40`
+- **AND** ninguna otra seccion se renumera ni se reescribe
 
-#### Scenario: Procedencia, estado y rotulo por valor
+#### Scenario: Control de sanidad rotulado
 
-- **WHEN** se lee la seccion nueva del memo
-- **THEN** la lectura ponderada y el efecto de diseno tienen archivo o comando de procedencia y estado en `{vigente, condicional}`
-- **AND** la seccion esta rotulada como diseno planificado y lectura complementaria, no como medicion nueva
+- **WHEN** se lee el registro del control de sanidad
+- **THEN** figura `147/200 = 0,7350` con DEFF `1`, con su comando
+- **AND** se rotula como verificacion de implementacion, no como estimacion poblacional
 
-#### Scenario: Cifras canonicas intactas
+#### Scenario: Sin cifras retiradas
 
-- **WHEN** se comparan las Secciones 3.1 a 3.37 antes y despues del change
-- **THEN** cada valor y estado previo se conserva
-- **AND** solo se agrega la seccion nueva
+- **WHEN** se buscan en la seccion `3.40` cifras con estado `retirado` en el memo
+- **THEN** no hay coincidencias
 
-#### Scenario: Efecto de diseno del diseno no consignado sin la muestra
+#### Scenario: DEFF del diseno no consignado sin la muestra
 
-- **WHEN** se busca el efecto de diseno del diseno probabilistico en el memo
-- **THEN** figura como no computable con su motivo y su condicion de reversibilidad
-- **AND** no aparece ningun valor estimado presentado como el del diseno probabilistico
+- **WHEN** la campana no se ejecuto
+- **THEN** el DEFF del diseno figura como no computable y `condicional`
+- **AND** no aparece ningun valor estimado en su lugar

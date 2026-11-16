@@ -1,49 +1,54 @@
 ## ADDED Requirements
 
-### Requirement: Kappa de Fleiss y matriz de acuerdo por pares para cinco etiquetadores
+### Requirement: Kappa de Fleiss y matriz de acuerdo por pares para tres o mas etiquetadores
 
 El framework SHALL calcular, en `evaluation/kappa.py`, un kappa de Fleiss no ponderado sobre la
-etiqueta primaria `sector_etiquetado` de las filas con `tarea = doble_etiquetado` de cinco
-etiquetadores, con las 5 clases de `SECTORES_CANONICOS`, para estimar el acuerdo multi-evaluador de
-la referencia por mayoria (ARB-009 de `discordant-arbitration`). El calculo SHALL aceptar tres o mas
-etiquetadores y SHALL soportar cantidad variable de etiquetadores por caso cuando la cobertura no sea
-completa, informando por caso la cantidad de etiquetadores. El resultado MUST incluir `P_bar`, `P_e`,
-kappa, el numero de casos y de etiquetadores por caso, el rotulo de Landis y Koch del valor puntual y
-su IC (asintotico declarado o bootstrap percentil por casos con `SEMILLA_BOOTSTRAP` y
-`REMUESTREOS_BOOTSTRAP` de `evaluation/metrics.py`). El framework SHALL ofrecer ademas una matriz de
-acuerdo por pares que calcule el kappa de Cohen de cada par de etiquetadores reutilizando
-`kappa_cohen`, sin reimplementarlo. Sin varianza entre etiquetadores en todos los casos (`P_e = 1`),
-el kappa MUST declararse no estimable. El resultado MUST declarar que este kappa estima la fiabilidad
-entre los cinco etiquetadores y no el acuerdo del clasificador contra la referencia. La reutilizacion
-SHALL respetar los helpers de bootstrap de `evaluation/metrics.py`, sin reimplementarlos.
+etiqueta primaria `sector_etiquetado` de tres o mas etiquetadores, con las 5 clases de
+`SECTORES_CANONICOS`, para estimar el acuerdo multievaluador de la referencia por mayoria
+(`evaluation-majority-reference`). El calculo SHALL soportar cantidad variable de etiquetadores por
+caso cuando la cobertura no sea completa, informando por caso la cantidad de etiquetadores. El
+resultado MUST incluir `P_bar`, `P_e`, kappa, el numero de casos y de etiquetadores por caso, el
+rotulo de Landis y Koch del valor puntual y su IC (asintotico declarado o bootstrap percentil por
+casos con `SEMILLA_BOOTSTRAP` y `REMUESTREOS_BOOTSTRAP` de `evaluation/metrics.py`, sin
+reimplementarlos). El framework SHALL ofrecer ademas una matriz de acuerdo por pares que calcule el
+kappa de Cohen de cada par de etiquetadores reutilizando `kappa_cohen`. Sin varianza entre
+etiquetadores (`P_e = 1`), el kappa MUST declararse no estimable. El resultado MUST declarar que
+estima la fiabilidad entre etiquetadores y no el acuerdo del clasificador contra la referencia. Las
+pruebas SHALL escribirse antes de la implementacion y SHALL verificar el calculo contra un oraculo
+sintetico calculado a mano y contra un ejemplo publicado, citado en la prueba con su fuente.
 
-#### Scenario: Oraculo de kappa de Fleiss
+#### Scenario: Oraculo sintetico de kappa de Fleiss
 
-- **WHEN** se calcula el kappa de Fleiss sobre una matriz de conteos conocida con varios etiquetadores por caso
-- **THEN** devuelve `P_bar`, `P_e` y kappa con tolerancia de 1e-6 respecto del valor del oraculo
+- **WHEN** se calcula el kappa de Fleiss sobre una matriz de conteos sintetica con valores esperados calculados a mano
+- **THEN** devuelve `P_bar`, `P_e` y kappa con tolerancia de 1e-6 respecto del oraculo
 - **AND** la salida incluye el rotulo de Landis y Koch y su IC
+
+#### Scenario: Ejemplo publicado reproducido
+
+- **WHEN** se calcula el kappa de Fleiss sobre la matriz de un ejemplo publicado
+- **THEN** reproduce el valor de la fuente con la tolerancia de su redondeo
+- **AND** la prueba cita la fuente
 
 #### Scenario: Cobertura variable por caso
 
-- **WHEN** algunos casos tienen cinco etiquetadores y otros tienen menos
+- **WHEN** algunos casos tienen mas etiquetadores que otros
 - **THEN** el kappa se calcula con la cantidad efectiva por caso y la cantidad por caso se informa
-- **AND** no se exige cobertura completa ni se imputan etiquetas faltantes
+- **AND** no se imputan etiquetas faltantes
 
 #### Scenario: Matriz de acuerdo por pares
 
 - **WHEN** se solicita la matriz del kappa de Cohen por par de etiquetadores
-- **THEN** cada par figura con su kappa de Cohen calculado por `kappa_cohen`
-- **AND** `kappa_cohen` no se reimplementa
+- **THEN** cada par figura con su kappa calculado por `kappa_cohen`, sin reimplementarlo
 
 #### Scenario: Sin varianza se declara no estimable
 
-- **WHEN** todos los etiquetadores coinciden en todos los casos de modo que `P_e = 1`
+- **WHEN** todos los etiquetadores coinciden en un unico sector en todos los casos, de modo que `P_e = 1`
 - **THEN** el kappa se declara no estimable y no se devuelve valor numerico
 
 #### Scenario: Alcance declarado
 
 - **WHEN** se lee la salida del kappa de Fleiss
-- **THEN** declara que estima la fiabilidad entre los cinco etiquetadores
+- **THEN** declara que estima la fiabilidad entre etiquetadores
 - **AND** no se presenta como acuerdo del clasificador contra la referencia
 
 ## MODIFIED Requirements

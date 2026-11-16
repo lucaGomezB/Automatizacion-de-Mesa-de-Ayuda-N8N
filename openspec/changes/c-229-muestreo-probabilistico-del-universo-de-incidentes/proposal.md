@@ -1,85 +1,91 @@
 # Proposal: Muestreo probabilistico del universo de incidentes
 
+## Adaptacion a la devolucion de tercera instancia (16/11/2026)
+
+Este change se propuso el 15/11/2026, un dia antes de la devolucion de tercera instancia (`auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md`), y se reformula sin haberse aplicado (0 tareas).
+
+- **Premisa que cayo.** La version original anclaba la herramienta y la prosa en la lectura ponderada `0,7489` (bootstrap `[0,6822; 0,8099]`) y citaba como cifra primaria `0,6893`. Ambas son cifras de la validacion fuera de muestra que los autores **retiran** del ejemplar (K-01, opcion 2), junto con `analisis_propagacion_arbitraje_c221.json` y las secciones 3.25 y 3.32 del memo. El motivo del retiro lo fija `c-235` (`proposal.md` y `design.md`, D1 y D3); este change no lo reformula. Tambien caen como destino los hosts de prosa que `c-235` elimina (la subseccion de `07-resultados.tex` donde iba la lectura ponderada).
+- **Que se conserva.** El nucleo: universo, marco y estratos; diseno estratificado con cuotas prefijadas; estimacion de Horvitz-Thompson y post-estratificacion; efecto de diseno de Kish; IC bootstrap sobre el universo completo. Tambien el numero reservado del memo (`3.40`).
+- **Que cambia.** (1) La verificacion de la herramienta ya no depende de datos retirados: oraculo sintetico rotulado como tal y control de sanidad sobre el corpus de 200 (post-estratificar con su propia composicion reproduce la exactitud cruda `147/200` y da DEFF = 1). (2) La campana nueva queda sujeta a dos compuertas previas a cualquier computo: **procedencia** (K-01) y **etica y legal** (K-02), incluida la brecha que la version original no cubria: clasificar los casos nuevos con el hibrido envia su texto a la Gemini API. (3) El etiquetado sigue el protocolo de referencia por mayoria de `c-230`, sin arbitro unico. (4) La composicion por sector del corpus de 200, verificada (`85 / 67 / 31 / 16 / 1`), se usa solo como senal de planificacion para fijar cuotas minimas y declarar de antemano que clases no son estimables. (5) Se registra el trabajo con asistentes de IA en el inventario de `c-237` (A-03).
+- **Alcance respecto de la entrega.** Este change **no modifica el ejemplar que se defiende**. Se ejecuta despues del cierre de la entrega (`c-235` → `c-236` → `c-237` → `c-238` → `c-239`), primero del grupo `c-229` → `c-230` → `c-228` → `c-232`. Hasta entonces la tesis solo lo menciona como trabajo futuro, en los terminos que ya fijan `c-235` (requisito de trabajo futuro con procedencia acreditable en `subsec:corpus-independiente`) y `c-234` (remedio empirico condicional en `subsec:aportes-generalizacion` y `subsec:estudios-replicacion`). Toda prosa de este change se condiciona a una version posterior a la defensa, con la campana ejecutada y las compuertas cerradas. Si los autores quieren hacer algo antes de la defensa, es una Open Question (`design.md`, OQ5), no el plan por defecto.
+
 ## Why
 
-La amenaza 5 (validez externa, `04-marco-metodologico.tex:114`) declara que los 200 casos **no son una muestra probabilistica**: son los incidentes cronometrados en la campana manual, una muestra por conveniencia de una sola organizacion. El corpus se tomo sin estratificacion ni asignacion proporcional (memo, seccion 3.17, ap. (f), N-04) y la distribucion del universo por sector **no esta disponible** (memo, linea 376). Por eso el margen de error del `6,66 %` y todo IC reportado **presuponen un muestreo aleatorio que no se realizo** (`04-marco-metodologico.tex:52`): son una referencia, no una garantia de representatividad.
+La amenaza de sesgo de seleccion (quinta amenaza de `subsec:amenazas-validez`, `04-marco-metodologico.tex`) declara que los 200 casos **no son una muestra probabilistica**: son los incidentes cronometrados en la campana manual, una muestra por conveniencia de una sola organizacion. La distribucion del universo por sector **no esta disponible** (memo, linea 376) y el margen de error del `6,66 %` presupone un muestreo aleatorio que no se realizo (`subsec:poblacion-muestra-corpus`). Las conclusiones (`subsec:aportes-generalizacion`, agregado por `c-234`) declaran que el remedio empirico es un diseno de muestreo probabilistico del universo, **condicional y no ejecutado**.
 
-La lectura ponderada de la exactitud estricta (`0,7489`, `07-resultados.tex:393`) usa como pesos la **composicion por sector del corpus de 200** y no la del universo (memo, requisito OOS-020): pondera la muestra, no la refiere a la poblacion. La tesis ya fija la linea de trabajo futuro: repetir la validacion sobre un "corpus de composicion natural, con cuotas prefijadas por canal y por sector" y estimar el intervalo de confianza sobre el "universo completo, sin excluir casos" (`10-recomendaciones.tex:26`).
-
-Este change convierte esa linea en un **diseno probabilistico reproducible**: define el universo y su marco, fija un muestreo estratificado con cuotas prefijadas por canal y por sector, y entrega la maquinaria de estimacion ponderada (Horvitz-Thompson / post-estratificacion) con su efecto de diseno, para que las metricas puedan referirse al universo. No mide de nuevo, no cambia ningun valor canonico y **no eleva la exactitud del clasificador**: valida la estimacion.
+Este change convierte esa remision en un diseno reproducible y, si la organizacion coopera, en una medicion: define el universo y su marco, fija un muestreo estratificado con cuotas prefijadas por canal y por sector, y entrega la maquinaria de estimacion ponderada con su efecto de diseno. La devolucion de tercera instancia no lo exige; el criterio del tribunal es que la evidencia nueva solo vale si su procedencia puede acreditarse. Por eso las dos compuertas son condicion de todo computo sobre datos nuevos. El diseno **no eleva la exactitud del clasificador**: hace valida la estimacion.
 
 ## What Changes
 
 | Bloque | Que cambia | Gobernanza |
 |---|---|---|
-| **A. Diseno muestral** | Protocolo nuevo `docs/campana-medicion/protocolo-muestreo-probabilistico.md`: universo (poblacion del periodo, `N`), marco muestral, estratos (sector, canal, complejidad), cuotas prefijadas por canal y por sector, denominadores y reglas de decision prefijados, etiquetado independiente y consentimiento. Sin valores numericos nuevos de resultado. | **HIGH** (datos nuevos, etiquetado humano, consentimiento) |
-| **B. Herramienta de estimacion** | Script offline de solo lectura `evaluation/data/campana/analisis/estimador_muestreo_probabilistico_c229.py` (TDD) que calcula pesos de Horvitz-Thompson y post-estratificacion, la exactitud estricta ponderada y el **efecto de diseno** (Kish), con IC bootstrap sobre el universo completo (sin exclusion). Corre sobre un fixture sintetico y reproduce el ancla vigente `0,7489`. | MEDIUM |
-| **C. Tesis** | Marco metodologico (`04`, subseccion de poblacion, muestra y corpus) declara el diseno probabilistico y su estado `condicional`; resultados (`07`) reportan la lectura ponderada y su efecto de diseno rotulados; discusion (`08`, amenaza y limitacion de seleccion) precisa que el diseno no elimina el sesgo sin datos; recomendaciones (`10`) remiten al diseno. | MEDIUM |
-| **D. Memo canonico** | Seccion aditiva `3.40` en `docs/Tesis/Correcciones/numeros-canonicos.md` que registra la lectura ponderada y su efecto de diseno con procedencia y estado `condicional`. | LOW |
-| **E. Trazabilidad** | Entrada en `docs/Tesis/Correcciones/dictamen-correcciones.md` con el change, el artefacto y las anclas de prosa. | LOW |
+| **A. Compuertas** | Compuerta de procedencia (K-01) y compuerta etica y legal (K-02), cerradas por el director (o un tercero) contra la evidencia primaria antes de extraer, enviar a terceros o computar. Incluye la decision explicita sobre el envio de los textos a la Gemini API. | **ALTA** |
+| **B. Diseno muestral** | Protocolo nuevo `docs/campana-medicion/protocolo-muestreo-probabilistico.md`: universo, marco, estratos (sector, canal, complejidad), cuotas prefijadas con minimos por sector, clases no estimables declaradas de antemano, denominadores y reglas de decision, y remision al protocolo de referencia de `c-230`. | **ALTA** |
+| **C. Herramienta de estimacion** | Script offline `evaluation/data/campana/analisis/estimador_muestreo_probabilistico_c229.py` (TDD estricto): pesos de Horvitz-Thompson y post-estratificacion, exactitud ponderada, DEFF de Kish, IC bootstrap sobre el universo completo. Verificacion con oraculo sintetico rotulado y control de sanidad sobre el corpus de 200. | MEDIA |
+| **D. Campana** | Extraccion, seleccion y clasificacion de la muestra, solo con las compuertas cerradas. El etiquetado y la referencia los aporta `c-230`. | **ALTA** |
+| **D2. Corpus probabilistico acreditado** | Se denomina **corpus probabilistico acreditado** a la muestra seleccionada segun el diseno, con las dos compuertas cerradas (acta del director) y la referencia por mayoria de `c-230`. Es el unico conjunto retenido de evaluacion que este change y sus consumidores (`c-228`, `c-232`) pueden usar. | **ALTA** |
+| **E. Memo, tesis y trazabilidad** | Seccion reservada `3.40` del memo; prosa de una version posterior a la defensa, condicionada a la campana ejecutada y las compuertas cerradas; entrada en `dictamen-correcciones.md`; registro del uso de asistentes de IA en el inventario de `c-237`. | MEDIA |
 
 **No objetivos.**
 
-- No se ejecuta la campana probabilistica: **depende de datos que aun no existen y de la cooperacion de la organizacion**. El cambio entrega el diseno, la herramienta y la declaracion honesta.
-- No se cambia ningun valor canonico: `71,2 %`, `[67,2 %; 74,6 %]`, `73,5 %`, `0,6508`, `0,6893` y `0,7489` permanecen.
-- No se afirma que el diseno suba la exactitud del clasificador; solo habilita una **estimacion valida**.
-- No se tocan `App/`, `n8n/`, el clasificador, el corpus, las predicciones ni los artefactos congelados.
-- No hay llamadas pagas a Gemini ni trabajo de campo.
+- No modifica el ejemplar que se defiende ni ninguna cifra canonica vigente (`61,6 s`, `17,76 s`, `W = 363`, `73,5 %`, `0,6508`, `110/138`, `6,66 %`, `N = 2.646`).
+- No usa como ancla, insumo ni comparador ninguna cifra ni artefacto que `c-235` retira.
+- No afirma que el diseno suba la exactitud del clasificador.
+- No toca `App/`, `n8n/`, el clasificador, el corpus de 200 ni sus predicciones.
+- No ejecuta llamadas a Gemini ni trabajo de campo mientras alguna compuerta este abierta.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `evaluation-probabilistic-sampling`: el diseno de muestreo probabilistico estratificado del universo de incidentes (marco, estratos, cuotas, reglas de decision) y la estimacion ponderada referida al universo (Horvitz-Thompson / post-estratificacion, efecto de diseno, IC sobre el universo completo).
+- `evaluation-probabilistic-sampling`: diseno de muestreo probabilistico estratificado del universo de incidentes (marco, estratos, cuotas, reglas), definicion del **corpus probabilistico acreditado** (PS-009), compuertas de procedencia y etica/legal previas a todo computo, y estimacion ponderada referida al universo (Horvitz-Thompson / post-estratificacion, DEFF, IC sobre el universo completo).
 
 ### Modified Capabilities
 
-- `tesis-document`: se agrega el requisito de declarar el diseno probabilistico y su estado `condicional` en metodologia y trabajo futuro, y de reportar la lectura ponderada con su efecto de diseno rotulados, sin afirmar que la muestra es probabilistica.
-- `tesis-numeros-canonicos`: se agrega el requisito de registro aditivo de la lectura ponderada y del efecto de diseno, con procedencia y estado `condicional`.
-
-`evaluation-out-of-sample-validation` no se modifica: su ponderacion (OOS-006 / OOS-020) es el antecedente que este change generaliza, y el contrato que cambia es el del diseno probabilistico, que vive en la capability nueva.
+- `tesis-document`: se AGREGA un requisito condicionado (version posterior a la defensa, campana ejecutada y compuertas cerradas) para incorporar el diseno y su resultado; se MODIFICAN "Validez externa declarada en las conclusiones con su remedio empirico" (agrega la rama "ejecutado") y "Seleccion de los casos por conveniencia declarada" (permite describir como estratificada la muestra nueva, nunca la de 200).
+- `tesis-numeros-canonicos`: se AGREGA el registro de la seccion reservada `3.40` con el plan, el control de sanidad y, si existe, la estimacion.
 
 ## Impact
 
 | Area | Impacto | Descripcion |
 |---|---|---|
-| `docs/campana-medicion/protocolo-muestreo-probabilistico.md` | Nuevo | Diseno muestral, marco, estratos, cuotas, reglas y consentimiento |
-| `evaluation/data/campana/analisis/` | Nuevo | Script TDD, prueba, fixture sintetico, JSON/MD y manifiesto SHA-256 |
-| `evaluation/data/campana/analisis/README.md` | Modificado | Registro de entradas, comando, salidas y pruebas |
-| `docs/Tesis/Correcciones/numeros-canonicos.md` | Aditivo | Seccion nueva (esperado `3.40`) con la lectura y el efecto de diseno |
-| `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex` | Modificado | Declaracion del diseno y su estado `condicional` |
-| `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex` | Modificado | Lectura ponderada con su efecto de diseno, rotulada |
-| `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex` | Modificado | Precision en la amenaza 5 y en la limitacion de seleccion |
-| `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex` | Modificado | Remision al diseno probabilistico |
+| `docs/campana-medicion/protocolo-muestreo-probabilistico.md` | Nuevo | Diseno, cuotas, compuertas y remision al protocolo de `c-230` |
+| `docs/campana-medicion/compuertas-c229.md` (nombre a confirmar) | Nuevo | Lista de verificacion de las compuertas y acta del director, sin datos personales |
+| `evaluation/data/campana/analisis/` | Nuevo | Script TDD, prueba, fixture sintetico, salidas y manifiesto SHA-256 |
+| `evaluation/data/campana/probabilistica/` (nombre a confirmar) | Nuevo, condicionado | Muestra pseudonimizada autorizada, hashes de planillas crudas, predicciones |
+| `docs/Tesis/Correcciones/numeros-canonicos.md` | Aditivo | Seccion reservada `3.40` |
 | `docs/Tesis/Correcciones/dictamen-correcciones.md` | Aditivo | Entrada de trazabilidad |
-
-Sin cambios en `App/`, `n8n/`, el clasificador, la configuracion, el corpus ni las predicciones. Cero llamadas a Gemini.
+| `docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md` (de `c-237`) | Aditivo | Registro del trabajo con asistentes de IA (A-03) |
+| `sections/04`, `07`, `08`, `09`, `10`, `11` | Condicionado | Solo en una version posterior a la defensa, con la campana ejecutada y las compuertas cerradas |
 
 ## Risks
 
 | Riesgo | Prob. | Mitigacion |
 |---|---|---|
-| Que el diseno se lea como una medicion realizada o que la muestra de 200 se presente como probabilistica | Alta | Rotulo `condicional` y de "diseno planificado"; la cifra primaria sigue siendo `0,6893` y la muestra por conveniencia se declara como tal |
-| Confundir el efecto de diseno de la post-estratificacion sobre la muestra por conveniencia con el del diseno probabilistico | Media | El script declara la procedencia de los pesos y el estado `condicional`; el efecto de diseno del diseno probabilistico se declara no computable sin la muestra |
-| Duplicar o reinterpretar la lectura `0,7489` | Media | Se cita desde su seccion del memo (3.25 / 3.32) y no se redefine; la seccion nueva solo agrega el efecto de diseno |
-| Que la numeracion del memo colisione | Baja | Se fija el primer numero libre al aplicar (hoy la ultima es `3.37`; esperado `3.40`) |
-| Crecimiento de paginas | Media | Un parrafo por archivo de prosa; verificacion de `\@abspage@last` |
+| Repetir el problema de K-01 (evidencia no acreditable) | Media | Compuerta de procedencia previa a todo computo, verificada por el director contra la evidencia primaria; ninguna prueba estadistica de forma la sustituye |
+| Usar datos de la organizacion o enviarlos a un tercero sin base legal (K-02) | Media | Compuerta etica y legal: autorizacion escrita antes de extraer; decision explicita sobre la Gemini API antes de clasificar; solo material autorizado y pseudonimizado en el repo publico |
+| Que el diseno se lea como medicion realizada | Alta | Rotulo `condicional` hasta que exista la muestra; prosa solo en version posterior a la defensa |
+| Clases raras no estimables (`Bases de Datos`) | Alta | Cuotas minimas y clases no estimables declaradas antes de reunir la muestra |
+| La organizacion no coopera | Media | El change queda en diseno y herramienta; la campana no se ejecuta y no se sustituye por muestreo de conveniencia |
+| Desfase de anclas `archivo:linea` por `c-235` | Alta | Se citan etiquetas LaTeX; las lineas se repuntan por contenido al aplicar |
 
 ## Rollback Plan
 
-`git revert` del commit del change: el protocolo y el script con sus salidas son aditivos; la seccion del memo se retira sin tocar las anteriores; los parrafos de `04`, `07`, `08` y `10` se revierten por archivo. Ningun valor canonico previo se modifica, de modo que el rollback no deja huecos numericos.
+`git revert` del commit del change: protocolo, script y salidas son aditivos; la seccion `3.40` se retira sin tocar las demas; la prosa (si se llego a escribir en una version posterior) se revierte por archivo. Si se versionaron datos de la muestra y la autorizacion se revoca, se retiran del arbol en un commit separado y se declara en el registro de correcciones.
 
 ## Dependencies
 
-- Bloqueada por datos externos: la ejecucion de la campana requiere la poblacion del periodo y la cooperacion de la organizacion. Sin ellos el change entrega diseno, herramienta y declaracion, y deja las cifras del diseno en estado `condicional`.
-- Antecedentes internos: `evaluation-out-of-sample-validation` (OOS-006, OOS-020) y `evaluation-campaign-instrumentation`; `evaluation/linea_de_base.py::lectura_ponderada` como funcion de post-estratificacion reutilizable.
-- `docs/Tesis/Correcciones/analisis-limitaciones-estructurales-v1.4.1.md` (limitacion 3, no factible sin datos nuevos).
+- Despues del cierre de la entrega (`c-239`). Primero del grupo `c-229` → `c-230` → `c-228` → `c-232`.
+- Bloqueada por datos externos: cooperacion y autorizacion escrita de la organizacion; constancia de extraccion.
+- **Dependencia cruzada con `c-230`:** el etiquetado y la referencia de la muestra los define y construye `c-230` (funciones puras y protocolo); la estimacion sobre datos reales de este change espera esa referencia (ver `design.md`, D8).
+- `c-237`: el inventario de uso de asistentes de IA debe existir para la tarea de A-03.
+- Consumidores aguas abajo: `c-228` y `c-232` (los adapta otro agente).
 
 ## Success Criteria
 
-- [ ] El protocolo define el universo, el marco, los estratos (sector, canal, complejidad), las cuotas prefijadas por canal y sector, los denominadores y las reglas de decision, y el consentimiento; ningun valor se presenta como medido.
-- [ ] El script es determinista (dos corridas byte a byte), de solo lectura, sin red ni Gemini, y reproduce el ancla vigente `0,7489` antes de escribir.
-- [ ] El script calcula los pesos de Horvitz-Thompson y de post-estratificacion, la exactitud estricta ponderada y el efecto de diseno, con IC bootstrap sobre el universo completo (sin exclusion).
-- [ ] La tesis declara el diseno como `condicional` y no afirma que la muestra de 200 sea probabilistica ni que su IC se estime sobre el universo.
-- [ ] La seccion nueva del memo no modifica ningun valor de las Secciones 3.1 a 3.37 y registra el efecto de diseno como `condicional`.
+- [ ] El protocolo define universo, marco, estratos, cuotas con minimos por sector, clases no estimables, denominadores, reglas de decision y la remision al protocolo de referencia de `c-230`; ningun valor se presenta como medido.
+- [ ] Las dos compuertas tienen acta del director (o tercero) con fecha, cerrada antes de extraer, enviar o computar; sin acta, la campana no se ejecuta.
+- [ ] El script es determinista, de solo lectura, sin red; reproduce el oraculo sintetico y el control de sanidad (`147/200`, `0,7350`, DEFF = 1) y no lee ningun artefacto retirado.
+- [ ] Ninguna cifra ni artefacto retirado por `c-235` aparece como ancla, insumo o comparador.
+- [ ] El ejemplar que se defiende no cambia por este change.
 - [ ] `openspec validate c-229-muestreo-probabilistico-del-universo-de-incidentes --strict` pasa.

@@ -1,7 +1,8 @@
 ## Purpose
 
 Revisa las definiciones y el criterio de frontera entre los sectores `Sistemas` y
-`Soporte Tecnico Software`, y mide la ambiguedad de etiquetado de esa frontera,
+`Soporte Tecnico Software`, y mide la ambiguedad de etiquetado de esa frontera con
+una linea base del doble etiquetado E1/E2 y una medicion posterior bajo compuertas,
 sin alterar las cinco cadenas canonicas.
 
 ## ADDED Requirements
@@ -11,10 +12,11 @@ sin alterar las cinco cadenas canonicas.
 La revision SHALL actualizar las definiciones de `Sistemas` y `Soporte Tecnico
 Software` y el criterio de frontera en
 `evaluation/data/campana/codebook_doble_etiquetado.md`, con ejemplos de casos
-limitrofes tomados del corpus disponible. La revision MUST NOT alterar las cinco
-cadenas canonicas ni introducir sectores fuera del conjunto canonico, y SHALL
-documentar la definicion anterior y la nueva con su procedencia. La revision SHALL
-declarar que su objeto es reducir la ambiguedad de la frontera y MUST NOT afirmar
+limitrofes tomados solo de textos versionados de procedencia acreditada (el corpus
+de 200 casos o un export acreditado). Ningun ejemplo MUST ser redactado por los
+autores ni generado o asistido por IA. La revision MUST NOT alterar las cinco
+cadenas canonicas ni introducir sectores fuera del conjunto canonico, SHALL
+documentar la definicion anterior y la nueva con su procedencia, y MUST NOT afirmar
 que el clasificador mejorara esa clase.
 
 #### Scenario: Codebook revisado sin cambiar las cadenas canonicas
@@ -23,27 +25,36 @@ que el clasificador mejorara esa clase.
 - **THEN** las definiciones de `Sistemas` y `Soporte Tecnico Software` y el criterio de frontera estan actualizados
 - **AND** las cinco cadenas canonicas permanecen exactas, sensibles a mayusculas y sin tildes
 
-#### Scenario: Procedencia de la revision
+#### Scenario: Ejemplos con procedencia
 
-- **WHEN** se compara el codebook antes y despues
-- **THEN** la definicion anterior y la nueva quedan documentadas con su procedencia
-- **AND** no se afirma que el clasificador vaya a mejorar la clase
+- **WHEN** se revisan los ejemplos limitrofes del codebook
+- **THEN** cada uno remite a un texto versionado de procedencia acreditada
+- **AND** ninguno fue redactado por los autores ni generado por IA
 
-### Requirement: TCR-002 — Medicion de la ambiguedad de la frontera
+### Requirement: TCR-002 — Medicion de la ambiguedad de la frontera con linea base E1/E2
 
 La revision SHALL medir la ambiguedad de la frontera como la proporcion de casos
-limitrofes que los etiquetadores asignan a una sola clase frente a los que dividen
-su asignacion entre `Sistemas` y `Soporte Tecnico Software`, antes y despues de la
-revision del codebook. La medicion SHALL usar los casos disponibles del corpus
-acumulado o del corpus de etiquetado y SHALL reportar el `n`. Si la revision no
-reduce la ambiguedad, el resultado SHALL reportarse igualmente, sin presentarlo
-como una mejora.
+limitrofes que los etiquetadores asignan a una sola clase frente a los que reparten
+su asignacion entre `Sistemas` y `Soporte Tecnico Software`. La medicion «antes»
+SHALL derivarse del doble etiquetado E1/E2 sobre el corpus de 200 casos
+(`evaluation/data/campana/doble_etiquetado.csv`), reproducida por comando, con el
+`n` declarado. La medicion «despues» SHALL exigir etiquetado nuevo con el codebook
+revisado, por etiquetadores registrados en `registro_sujetos.csv` con
+consentimiento, con planillas originales y marcas temporales registradas por la
+herramienta, bajo las compuertas de procedencia y etica; sin ese etiquetado, el
+artefacto SHALL declarar que no hay medicion posterior. Si la revision no reduce la
+ambiguedad, el resultado SHALL reportarse igualmente, sin presentarlo como mejora.
 
-#### Scenario: Proporcion de asignacion unica reportada
+#### Scenario: Linea base reproducida desde E1/E2
 
-- **WHEN** se mide la ambiguedad de la frontera
-- **THEN** se reporta la proporcion de casos asignados a una sola clase, antes y despues
-- **AND** se declara el `n` de la medicion
+- **WHEN** se mide la ambiguedad antes de la revision
+- **THEN** el valor se reproduce por comando desde `doble_etiquetado.csv` con el `n` declarado
+
+#### Scenario: Sin etiquetado nuevo no hay medicion posterior
+
+- **WHEN** no existe etiquetado nuevo bajo compuertas
+- **THEN** el artefacto declara que no hay medicion posterior
+- **AND** no presenta ninguna mejora
 
 #### Scenario: Sin mejora no se oculta
 
