@@ -112,7 +112,7 @@ El documento SHALL declarar que la hipotesis subsidiaria de eficiencia del hibri
 - **THEN** las cifras de 200 casos figuran rotuladas como descriptivas, con la desviacion de los 112 reintentos y el ajuste con el mismo corpus declarados
 - **AND** no se aplica la regla de tres vias como veredicto
 
-#### Scenario: Estimacion dentro de la muestra de la etapa de reglas
+#### Scenario: Estimacion dentro de la muestra
 
 - **WHEN** se leen las cifras `0,7405` y `0,6769` en `08-discusion.tex`
 - **THEN** el texto las califica como estimaciones dentro de la muestra y sin prueba pareada
@@ -123,11 +123,41 @@ El documento SHALL declarar que la hipotesis subsidiaria de eficiencia del hibri
 - **WHEN** se revisa el registro de ejecucion del change
 - **THEN** no hubo invocaciones nuevas a Gemini ni re-ejecucion del brazo
 
-#### Scenario: Sin sobreventa
+#### Scenario: Sin sobreventa de la no inferioridad
 
 - **WHEN** se leen los pasajes de eficiencia en `01-introduccion.tex`, `04-marco-metodologico.tex`, `05-arquitectura.tex`, `07-resultados.tex`, `08-discusion.tex`, `09-conclusiones.tex` y `10-recomendaciones.tex`
 - **THEN** ninguno afirma que el hibrido no es inferior en exactitud ni que la hipotesis se contrasto
 - **AND** todos declaran que la hipotesis queda sin contraste limpio
+
+#### Scenario: Cifras del contraste con procedencia
+
+- **WHEN** se buscan `0,8738`, `0,8447` y las cifras del bloque primario de 103 casos en `07-resultados.tex`
+- **THEN** no figuran como evidencia vigente
+- **AND** el texto declara que el bloque primario se retiro con la validacion fuera de muestra y remite a la nota de versiones
+
+#### Scenario: Salvedades presentes
+
+- **WHEN** se lee el pasaje del brazo de modelo solo dentro de la muestra
+- **THEN** declara la corrida unica a temperatura 0,3, el origen in-corpus de los ajustes, la latencia no medida por etapa, el analisis no ciego y el reintento de fallos tecnicos
+- **AND** el estado se rotula "sin contraste limpio", no "confirmada" ni "no contrastada"
+
+#### Scenario: Regla de decision con el vocabulario previo
+
+- **WHEN** la variante del analisis de sensibilidad con el vocabulario previo al ajuste muestra que la etapa de reglas no supera a Gemini en exactitud sobre los casos que resuelve
+- **THEN** esa variante se declara como salvedad
+- **AND** la discusion no presenta la ventaja in-corpus como evidencia favorable ni declara un veredicto de eficiencia, que queda sin contraste limpio
+
+#### Scenario: Prueba pareada condicionada al memo
+
+- **WHEN** el bloque primario de 103 casos y la seccion `3.28` del memo canonico se retiran con la validacion fuera de muestra
+- **THEN** el texto no cita ningun valor p para el contraste de eficiencia
+- **AND** declara que la hipotesis queda sin contraste limpio
+
+#### Scenario: Veredicto y ahorro informados
+
+- **WHEN** se lee el pasaje de eficiencia en `07-resultados.tex`
+- **THEN** no figuran el veredicto «no concluyente» ni las cifras fuera de muestra del contraste, retirados con la validacion
+- **AND** se declara la hipotesis sin contraste limpio y la estimacion dentro de la muestra, rotulada como descriptiva
 
 ### Requirement: Estado declarado de las hipotesis subsidiarias
 
@@ -146,7 +176,7 @@ Las dos hipotesis subsidiarias de `01-introduccion.tex` SHALL tener un estado de
 - **THEN** no aparece apoyada en el porcentaje de casos resueltos sin el modelo
 - **AND** en su lugar figura la declaracion de que la hipotesis queda sin contraste limpio
 
-#### Scenario: Subsidiaria multicanal no contrastada en su totalidad
+#### Scenario: Subsidiaria multicanal no contrastada
 
 - **WHEN** se leen las conclusiones sobre la integracion de los tres canales
 - **THEN** el texto informa el resultado del test de carga con su veredicto de tres vias
@@ -191,11 +221,11 @@ El documento SHALL presentar de forma consistente el veredicto de la segunda sub
 - **THEN** el texto declara que ese 15 % es preliminar y no re-medido
 - **AND** remite a la medicion del brazo manual de la campana complementaria (`0,8278`; `e_man = 26/151 = 0,1722`) que si mide esa exactitud
 
-#### Scenario: Contribucion acotada a la evidencia vigente
+#### Scenario: Validacion fuera de muestra declarada en la introduccion
 
 - **WHEN** se lee la contribucion en `01-introduccion.tex`
-- **THEN** figura la validacion dentro de la muestra rotulada como tal
-- **AND** no figuran `0,6893`, `0,7489` ni una validacion fuera de muestra como evidencia
+- **THEN** la introduccion declara que la validacion fuera de muestra se retiro del ejemplar y remite a la nota de versiones
+- **AND** la validacion presentada es la dentro de la muestra, rotulada como tal, y no figuran `0,6893` ni `0,7489` como evidencia
 
 #### Scenario: Rotulo de la exactitud del brazo manual
 
@@ -213,7 +243,7 @@ La tesis SHALL declarar en la discusion (`subsec:interpretacion-resultados`) que
 - **THEN** se declaran los ajustes del vocabulario del filtro deterministico, de las reglas de frontera del prompt y del punto de operacion realizados sobre el corpus de validacion
 - **AND** las metricas de clasificacion de los 200 casos se califican como estimaciones dentro de la muestra
 
-#### Scenario: Mitigacion de c-74 acotada
+#### Scenario: Mitigacion fuera de muestra acotada
 
 - **WHEN** se lee la declaracion de procedencia
 - **THEN** la mitigacion de c-74 se acota al punto de operacion
@@ -225,7 +255,7 @@ La tesis SHALL declarar en la discusion (`subsec:interpretacion-resultados`) que
 - **THEN** se declara que la campana 2026-10 no dispuso de un corpus de esas caracteristicas
 - **AND** no se afirma la existencia de un conjunto de aproximadamente 100 incidentes de preproduccion
 
-#### Scenario: Sin afirmacion de no exposicion ni de desempeno fuera de muestra
+#### Scenario: Sin afirmacion de no exposicion
 
 - **WHEN** se buscan en `sections/*.tex` las afirmaciones "sin exposicion a" (el corpus o los 200 casos de validacion), "sin acceso al corpus", "datos no vistos" y "separacion estricta"
 - **THEN** ninguna aparece como afirmacion vigente sobre la version evaluada
@@ -323,7 +353,7 @@ El capitulo de discusion (`08-discusion.tex`) SHALL incluir una subseccion con r
 - **THEN** el texto enuncia el signo solo si el intervalo lo fija
 - **AND** declara el metodo de propagacion y el limite que no se iguala
 
-#### Scenario: Sin sensibilidad con la tasa fuera de muestra
+#### Scenario: Sensibilidad mixta no promovida
 
 - **WHEN** se busca en `subsec:balance-neto` una sensibilidad calculada con la tasa de error fuera de muestra
 - **THEN** no figura

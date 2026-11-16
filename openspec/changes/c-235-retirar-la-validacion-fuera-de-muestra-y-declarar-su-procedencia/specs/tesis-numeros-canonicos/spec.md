@@ -41,7 +41,7 @@ La sección MUST NOT reemplazar ningún valor de las secciones `3.1` a `3.35` y 
 constancia de que, al incorporarse, no cambió la cifra primaria `0,6893/206`, el macro-F1 `0,7024`
 ni el veredicto del umbral `0,85`.
 
-#### Scenario: Sección conservada con procedencia por valor
+#### Scenario: Sección aditiva con procedencia por valor
 
 - **WHEN** se lee la sección `3.36` del memo
 - **THEN** cada cifra de la brecha por subconjunto figura con su fuente (JSON) y su comando

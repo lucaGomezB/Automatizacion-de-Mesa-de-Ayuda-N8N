@@ -120,7 +120,7 @@ En la prosa, los nombres de sector SHALL escribirse en la fuente del cuerpo y co
 - **THEN** figuran los valores que el cuerpo cita
 - **AND** ningún otro valor del memo se reproduce
 
-#### Scenario: Procedencia sin estado ni memo
+#### Scenario: Procedencia y estado por cifra
 
 - **WHEN** se recorre el anexo
 - **THEN** cada valor declara un artefacto versionado con su clave y su comando, o una remisión a una tabla de la tesis
@@ -155,7 +155,7 @@ El cuerpo SHALL quedar sin identificadores de cambio y con oraciones acotadas. L
 - **WHEN** se ejecuta `rg -n -E "\b[cC]-[0-9]{2,3}[ab]?\b"` sobre `paper/sections/*.tex`, excluyendo comentarios y el rango del Anexo I
 - **THEN** no hay coincidencias
 
-#### Scenario: Oraciones acotadas en todo el documento
+#### Scenario: Oraciones acotadas
 
 - **WHEN** se ejecuta `python sent_c197.py "docs/Tesis/v10 (IA)/paper/sections"` con `PYTHONDONTWRITEBYTECODE=1`
 - **THEN** informa 0 oraciones de mas de 60 palabras en todos los archivos salvo `00-portada.tex`
@@ -197,6 +197,11 @@ El documento SHALL incluir la subseccion `subsec:sensibilidad-ajustes`, ubicada 
 
 - **WHEN** se lee la subseccion
 - **THEN** el efecto de las reglas de frontera sobre los 69 casos de la etapa Gemini figura con su nivel de evidencia y su contraste pareado, o se declara no cuantificado
+
+#### Scenario: Columna global solo si es computable
+
+- **WHEN** la exactitud global con Gemini fijo no fue computable
+- **THEN** la tabla no incluye esa columna ni su nota
 
 ### Requirement: Remisiones internas exactas de la vision general, del analisis de sensibilidad y del anexo de documentacion operativa
 

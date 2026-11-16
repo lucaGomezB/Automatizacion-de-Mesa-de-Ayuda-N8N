@@ -40,7 +40,7 @@ El capitulo de discusion (`08-discusion.tex`) SHALL incluir una subseccion con r
 - **THEN** el texto informa el intervalo condicional y la cota combinada con su metodo, y declara que la cota combinada cubre solo el tramo activo medido
 - **AND** no presenta la cota combinada como intervalo del balance real
 
-#### Scenario: Sin sensibilidad con la tasa fuera de muestra
+#### Scenario: Sensibilidad mixta no promovida
 
 - **WHEN** se busca en `subsec:balance-neto` una sensibilidad calculada con la tasa de error fuera de muestra
 - **THEN** no figura
@@ -57,6 +57,48 @@ El capitulo de discusion (`08-discusion.tex`) SHALL incluir una subseccion con r
 - **WHEN** se compila el documento con XeLaTeX tras modificar la subseccion y la tabla
 - **THEN** las remisiones a `subsec:balance-neto` y `tab:balance-neto` resuelven sin referencias indefinidas
 - **AND** ambos rotulos son unicos en el documento
+
+#### Scenario: Lectura central con el costo medido
+
+- **WHEN** se leen el texto y `tab:balance-neto`
+- **THEN** el escenario con `c = 69,51 s` y su intervalo `[33,42; 106,56] s` figura como lectura central
+- **AND** el balance y la exactitud minima de equilibrio se informan con su intervalo
+
+#### Scenario: Grilla previa rotulada como superada
+
+- **WHEN** se busca «10 a 15 minutos» o «supuesto superado» como insumo o rotulo del balance
+- **THEN** la subseccion no rotula la rejilla como «supuesto superado»
+- **AND** la rejilla de 5, 10 y 15 minutos figura como sensibilidad al tramo no medido, con sus cifras conservadas
+
+#### Scenario: Calculo con los supuestos del propio documento
+
+- **WHEN** se aplican las formulas con la grilla de 5, 10 y 15 minutos y el termino de revision
+- **THEN** el texto conserva las cifras de esa sensibilidad rotuladas como sensibilidad al tramo no medido
+- **AND** no las rotula como «supuesto superado» ni como lectura vigente
+
+#### Scenario: Tabla de escenarios con el punto de equilibrio
+
+- **WHEN** se lee la tabla `tab:balance-neto`
+- **THEN** contiene el escenario con el `c` medido como lectura central (cota superior) y, como sensibilidad al tramo no medido, las filas de la rejilla de 5, 10 y 15 minutos con el termino de revision
+- **AND** cada celda coincide con el valor del memo canonico bajo la convencion de redondeo declarada en la nota de la tabla
+
+#### Scenario: Incertidumbre muestral considerada
+
+- **WHEN** se contrasta la exactitud minima de equilibrio con la exactitud estricta observada
+- **THEN** el texto compara la exactitud minima de equilibrio del escenario medido con el intervalo de Wilson observado
+- **AND** declara que el signo del balance depende del tramo de reanudacion no medido y no queda fijado por la muestra
+
+#### Scenario: Exactitud laxa sin cifras inventadas
+
+- **WHEN** la exactitud laxa esta registrada en el memo canonico al momento de aplicar el cambio
+- **THEN** la subseccion la compara con la exactitud minima de equilibrio e informa los escenarios en que el balance resulta positivo bajo esa lectura
+- **AND** si no esta registrada, la subseccion no presenta ningun valor de exactitud laxa y declara que el 26,5 % es una cota superior de la tasa operativa de derivacion erronea atribuible al clasificador
+
+#### Scenario: Incertidumbre y signo
+
+- **WHEN** se contrasta el intervalo de `B` con cero
+- **THEN** el texto informa el intervalo con el metodo de propagacion declarado
+- **AND** declara que el signo depende del tramo de reanudacion no medido
 
 ### Requirement: Viabilidad operativa presentada como condicional
 
@@ -124,7 +166,7 @@ El capitulo de recomendaciones SHALL incluir, en `subsec:estudios-replicacion`, 
 - **THEN** recomienda registrar por caso la derivacion del brazo manual con etiquetadores distintos de los operadores y cronometrar las reasignaciones, incluido el tramo de reanudacion
 - **AND** declara aplicada la medicion de la exactitud manual y remite a `subsec:balance-neto`, que a su vez remite a esta subseccion
 
-#### Scenario: Medicion pendiente que condiciona el signo
+#### Scenario: Balance no declarado bloqueado
 
 - **WHEN** se lee la recomendacion sobre el cronometraje de reasignaciones
 - **THEN** se presenta como la medicion que fijaria el signo del balance neto
@@ -206,3 +248,10 @@ La justificacion del umbral de exactitud del 85~\% en el segundo objetivo especi
 - **WHEN** se comparan `01-introduccion.tex`, `08-discusion.tex` y las filas de paridad y costo marginal de `12-anexos.tex`
 - **THEN** los tres presentan el 85 % como criterio a priori y la paridad medida como lectura posterior
 - **AND** ninguno dice que la justificacion del umbral sea la paridad medida con la tasa manual
+
+#### Scenario: Fuente declarada o reformulacion propia
+
+- **WHEN** se lee la justificacion del umbral de exactitud del 85~\% en el capitulo de introduccion
+- **THEN** cada uno de los criterios convergentes declara su fuente
+- **AND** la estimacion propia de los autores (10 a 15 minutos por reasignacion y la tasa preliminar del 15 %) se declara como estimacion sin registro cuantitativo
+- **AND** no queda ningun argumento presentado como respaldo sin fuente

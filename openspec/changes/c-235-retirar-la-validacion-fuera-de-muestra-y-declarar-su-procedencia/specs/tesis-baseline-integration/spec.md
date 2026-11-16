@@ -9,7 +9,7 @@ Ningún pasaje de la tesis MUST afirmar de forma plana que el esquema híbrido n
 - **WHEN** se buscan en `sections/*.tex` `tab:linea-base-clasica`, `tab:robustez-linea-base` y las cifras de la línea de base
 - **THEN** no hay coincidencias fuera de `subsec:nota-versiones`
 
-#### Scenario: Sin negación plana
+#### Scenario: Grep de afirmaciones obsoletas
 
 - **WHEN** se buscan en `sections/*.tex` las expresiones "no se comparó", "ausencia de una línea de base" y "No se realizó una comparación directa"
 - **THEN** ninguna aparece sin la declaración de que la comparación se realizó y se retiró

@@ -83,10 +83,10 @@ NOT cambiar.
 - **AND** `docs/defensa/respuestas-tribunal.md` se conserva con sus respuestas
 - **AND** la compilacion no informa referencias indefinidas
 
-#### Scenario: Sin cifras fuera de muestra en un eventual anexo
+#### Scenario: Anexo de respuestas conservado por decision de los autores
 
 - **WHEN** los autores registran la decision de reincorporar el anexo de respuestas
-- **THEN** el anexo reproduce el documento fuente
+- **THEN** `12-anexos.tex` contiene la etiqueta `sec:anexo-respuestas-tribunal` con las 16 respuestas del documento fuente
 - **AND** no contiene cifras de la validacion fuera de muestra retirada
 
 ## ADDED Requirements
