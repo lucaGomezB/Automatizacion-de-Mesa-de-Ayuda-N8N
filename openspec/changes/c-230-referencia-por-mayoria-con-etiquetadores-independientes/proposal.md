@@ -1,132 +1,94 @@
-# Proposal: Referencia por mayoría con etiquetadores independientes
+# Proposal: Referencia por mayoria con etiquetadores independientes
+
+## Adaptacion a la devolucion de tercera instancia (16/11/2026)
+
+Este change se propuso el 15/11/2026, un dia antes de la devolucion de tercera instancia (`auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md`), y se **reformula por completo** sin haberse aplicado (0 tareas).
+
+- **Premisa que cayo (completa).** La version original recomputaba la referencia de los `206` casos fuera de muestra con la mayoria de `E3`, `E4` y tres etiquetadores nuevos (`E6`, `E7`, `E8`), para reemplazar al arbitro unico `E5` en los `64` casos arbitrados, y anclaba el recomputo en `142/206` (`0,6893`), macro-F1 `0,7024` y kappa `0,6055`. Todo ese corpus y sus derivados (`doble_etiquetado_arbitrado.csv`, `arbitraje_tres_vias.json`, `corpus_independiente_arbitrado.json`, `predicciones_arbitrado.json`, los 6 casos de tres vias, `confirmacion-posterior-consentimiento.md` como plantilla para los alias nuevos) quedan **retirados** del ejemplar por decision de los autores ante K-01. El motivo lo fija `c-235` (`proposal.md` y `design.md`, D1 y D3); este change no lo reformula. No hay nada que recomputar sobre esos casos.
+- **Que se conserva.** La idea metodologica: una referencia que no dependa de una sola persona, construida por mayoria de varios etiquetadores independientes, con su acuerdo multievaluador (kappa de Fleiss). Tambien el numero reservado del memo (`3.39`) y la linea base que si sobrevive: el doble etiquetado `E1`/`E2` sobre los 200 casos (kappa `0,5569`; 62 casos discordantes, 29 de ellos entre `Sistemas` y `Soporte Tecnico Software`, recontados en esta adaptacion).
+- **Que cambia.** El change pasa a ser: (1) funciones puras `evaluation/mayoria.py` y `kappa_fleiss` en `evaluation/kappa.py`, con TDD estricto y oraculos sinteticos y publicados; (2) el protocolo de referencia por mayoria que completa el **corpus probabilistico acreditado** de `c-229` (spec PS-009 de `evaluation-probabilistic-sampling`) (numero de etiquetadores, cegado, regla de mayoria y de `sin_mayoria` declaradas antes de etiquetar, sin arbitro unico de respaldo), sujeto a las compuertas de procedencia (K-01) y etica/legal (K-02). Se eliminan los deltas sobre `evaluation-out-of-sample-validation` (cuyo ID `OOS-026` ademas chocaba con el que agrega `c-235`) y sobre `discordant-arbitration` (sus MODIFIED ARB-001/002/004 y sus ADDED ARB-009..012 describian a `E3`/`E4`/`E5` sobre los 206 casos). La verificacion de "regla declarada antes" deja de apoyarse solo en `git log`, porque las fechas de commit las controlan los autores: se suma una constancia en custodia del director. Se registra el trabajo con asistentes de IA en el inventario de `c-237` (A-03).
+- **Alcance respecto de la entrega.** Este change **no modifica el ejemplar que se defiende**. Se ejecuta despues del cierre de la entrega (`c-235` → ... → `c-239`), segundo del grupo `c-229` → `c-230` → `c-228` → `c-232`, y depende de `c-229`. Hasta entonces la tesis solo lo menciona como trabajo futuro, en los terminos de `c-235` (requisito de trabajo futuro con procedencia acreditable en `subsec:corpus-independiente`, que ya pide registro de etiquetadores y regla prefijada). Si los autores quieren hacer algo antes de la defensa, es una Open Question (`design.md`, OQ6).
 
 ## Why
 
-El último dictamen CONEAU descuenta en el **criterio 4 (Metodología, peso 20, nota 8)** que la
-referencia fuera de muestra tiene **un solo árbitro**: `E3` y `E4` etiquetaron los `206` casos,
-pero cuando difirieron un único tercero `E5` fijó la referencia en `64 de 206` (`31 %`) con una
-regla **no mayoritaria** (`E5` decide). La fiabilidad de la referencia es moderada (kappa de
-Cohen `E3`/`E4` `0,6055`; `E1`/`E2` `0,5569` sobre la campaña de `200`) y hay `6` casos con tres
-etiquetas distintas (`I033`, `I042`, `I056`, `I130`, `I194`, `I198`). Una referencia que depende de
-una sola persona no permite estimar la mayoría ni el acuerdo entre varios evaluadores.
+La referencia de verdad del estudio es fragil: en la campana complementaria, los etiquetadores independientes `E1` y `E2` coincidieron en 138 de los 200 casos (kappa de Cohen `0,5569`, moderado), y la mitad de las 62 discordancias (29) es la frontera `Sistemas`--`Soporte Tecnico Software`. Con dos etiquetadores no hay mayoria: un desacuerdo solo se resuelve con un tercero, y entonces la referencia depende de una persona. Una referencia por mayoria de tres o mas etiquetadores, con la regla fijada antes de etiquetar, y un acuerdo multievaluador permiten estimar la fiabilidad de la referencia sin ese punto unico.
 
-El autor puede convocar **`3` etiquetadores nuevos independientes** (no operadores, no autores).
-Con `E3` y `E4` eso da **`5` etiquetadores sobre los `206`**, lo que habilita una referencia por
-**MAYORÍA (3 de 5)**, un **acuerdo multi-evaluador (kappa de Fleiss)** y el reemplazo del árbitro
-único. Es una corrección que exige trabajo de campo, datos nuevos y **consentimiento**: gobernanza
-HIGH.
+La devolucion de tercera instancia no exige este trabajo. Su criterio es otro: la evidencia nueva solo vale si su procedencia puede acreditarse. Por eso el change separa lo que no necesita datos (funciones puras con oraculos) de lo que si (la referencia de la muestra de `c-229`), y somete esto ultimo a las compuertas.
 
 ## What Changes
 
-| Bloque | Qué cambia | Gobernanza |
+| Bloque | Que cambia | Gobernanza |
 |---|---|---|
-| **A. Sujetos y consentimiento** | Convocatoria y registro de `E6`, `E7`, `E8` (`P12`, `P13`, `P14`) en `evaluation/data/campana/registro_sujetos.csv`, distintos de operadores, autores y de `E1`-`E5`; consentimiento informado registrado con la plantilla vigente. | **HIGH** |
-| **B. Etiquetado ciego** | Los tres etiquetadores nuevos etiquetan a ciegas con la hoja ciega, la plantilla vacía y el codebook congelado. Se recomienda el corpus completo de `206`; mínimo viable, los `64` divergentes. Artifacto nuevo `doble_etiquetado_mayoria.csv`. | **HIGH** |
-| **C. Referencia por mayoría** | Regla declarada ANTES de ver las etiquetas: mayoría `>= 3` de `5`; los casos sin mayoría se marcan y resuelven con la regla vigente como respaldo rotulado. Sidecar nuevo con el origen de cada referencia y el conteo `sin_mayoria`. | MEDIUM |
-| **D. Acuerdo multi-evaluador** | `kappa_fleiss` (Fleiss) y matriz de acuerdo por pares en `evaluation/kappa.py`, sin cambiar el contrato de dos etiquetadores de `kappa_doble_etiquetado`. | MEDIUM |
-| **E. Recomputo y comparación honesta** | Script de solo lectura que recalcula la exactitud estricta y las métricas por clase bajo la referencia por mayoría y bajo la referencia vigente (árbitro único), ancladas a `142/206` (`0,6893`) y macro-F1 `0,7024`, y reporta AMBAS. La cifra primaria puede cambiar: se informa, no se oculta. | MEDIUM |
-| **F. Memo, tesis y trazabilidad** | Sección aditiva del memo (primer número libre; hoy la última es `3.37`, esperado `3.39`), prosa en método/resultados/discusión/recomendaciones y entrada en `dictamen-correcciones.md`. | LOW/MEDIUM |
+| **A. Funciones puras (TDD)** | `evaluation/mayoria.py` (mayoria, `sin_mayoria`, conjunto laxo) y `kappa_fleiss` + matriz de Cohen por pares en `evaluation/kappa.py`, sin cambiar el contrato de dos etiquetadores de `kappa_doble_etiquetado`. Oraculos sinteticos y un ejemplo publicado. | MEDIA |
+| **B. Protocolo de referencia** | `docs/campana-medicion/protocolo-referencia-mayoria.md`: numero de etiquetadores, cegado, herramienta de etiquetado con marcas propias, regla de mayoria y de `sin_mayoria` declaradas antes de etiquetar, sin arbitro unico; constancia de la regla en custodia del director. | **ALTA** |
+| **C. Compuertas** | Procedencia (K-01) y etica/legal (K-02) previas a cualquier computo sobre etiquetas reales; las comparte con `c-229`. | **ALTA** |
+| **D. Referencia de la muestra** | Con las compuertas cerradas, etiquetado ciego de la muestra de `c-229` por etiquetadores nuevos (alias desde `E6`), construccion de la referencia y del Fleiss. | **ALTA** |
+| **E. Memo, tesis y trazabilidad** | Seccion reservada `3.39` del memo; prosa solo en una version posterior a la defensa; entrada en `dictamen-correcciones.md`; registro del uso de asistentes de IA en el inventario de `c-237`. | MEDIA |
 
 **No objetivos.**
 
-- No se reclasifica el corpus de ajuste ni se recalibra el clasificador congelado; la re-clasificación
-  se hace, si hace falta, con el clasificador congelado `hybrid-v3`.
-- No se modifica el corpus de ajuste, `evaluation/report.md`, el prompt, el umbral ni el vocabulario.
-- No se elige una etiqueta "verdadera" para los casos sin mayoría: se declara el conteo y el rango.
-- No se recalibra el análisis de ruido de referencia (`evaluation-reference-noise-sensitivity`): su
-  calibración usa el kappa `E3`/`E4` vigente y su actualización se difiere.
-- No se reabren las limitaciones estructurales que exigen otro trabajo de campo.
-- No se implementa nada ni se mide en este change: el campo lo ejecutan los autores fuera del repositorio.
+- No modifica el ejemplar que se defiende.
+- No recomputa, reetiqueta ni compara nada sobre el corpus retirado; no usa sus cifras ni artefactos como ancla, insumo o comparador.
+- No reemplaza la referencia del corpus de 200 casos ni cambia sus cifras canonicas (`73,5 %`, `0,6508`, `110/138`, kappa `0,5569`).
+- No modifica `evaluation/doble_etiquetado.py`, `evaluation/arbitraje.py` ni sus specs.
+- No elige una etiqueta "verdadera" para los casos sin mayoria.
 
 ## Capabilities
 
 ### New Capabilities
 
-Ninguna. El change extiende capacidades existentes; no introduce un contrato nuevo.
+- `evaluation-majority-reference`: funciones puras de la referencia por mayoria, protocolo declarado antes de etiquetar, compuertas de procedencia y etica/legal, registro de etiquetadores independientes y construccion de la referencia de la muestra probabilistica de `c-229`.
 
 ### Modified Capabilities
 
-- `discordant-arbitration`: la referencia de los casos discordantes deja de fijarla un único tercer
-  etiquetador (`E5` decide) y pasa a fijarla la **mayoría de cinco etiquetadores independientes**
-  (`E3`, `E4`, `E6`, `E7`, `E8`), con regla de desempate declarada antes de ver las etiquetas; se
-  agregan el registro y el consentimiento de `E6`-`E8`, la cobertura de etiquetado ciego y los
-  artefactos versionados de la referencia por mayoría.
-- `evaluation-framework`: se AGREGA el kappa de Fleiss (multi-evaluador) y la matriz de acuerdo por
-  pares, manteniendo el contrato de exactamente dos etiquetadores de `kappa_doble_etiquetado`.
-- `evaluation-out-of-sample-validation`: se AGREGA el recomputo de la cifra primaria (exactitud
-  estricta y métricas por clase) bajo la referencia por mayoría y su comparación honesta con la
-  referencia vigente de árbitro único.
-- `tesis-document`: se AGREGAN la divulgación de la referencia por mayoría en método, resultados y
-  limitaciones, el registro de los etiquetadores independientes con su consentimiento y la
-  reformulación de la línea de trabajo futuro que este change ejecuta.
-- `tesis-numeros-canonicos`: se AGREGA el registro aditivo de la referencia por mayoría, del kappa de
-  Fleiss y de la comparación de ambas referencias, con procedencia, estado y comando por valor.
+- `evaluation-framework`: se AGREGA el kappa de Fleiss para tres o mas etiquetadores con matriz de Cohen por pares; se MODIFICA el requisito del kappa de Cohen solo para remitir a Fleiss en lugar de declararlo fuera de alcance.
+- `tesis-document`: se AGREGA un requisito condicionado (version posterior a la defensa, referencia construida y compuertas cerradas) para divulgar la referencia por mayoria y el consentimiento de sus etiquetadores.
+- `tesis-numeros-canonicos`: se AGREGA el registro de la seccion reservada `3.39`.
 
-`evaluation-reference-noise-sensitivity` y `evaluation-corpus-bias-mitigation` no se modifican: su
-calibración y sus anclajes usan la referencia vigente y su actualización se difiere (no objetivos).
+Ya no se modifican `discordant-arbitration` ni `evaluation-out-of-sample-validation`.
 
 ## Impact
 
-| Área | Impacto | Descripción |
+| Area | Impacto | Descripcion |
 |---|---|---|
-| `evaluation/data/campana/registro_sujetos.csv` | Modificado | Filas `E6,P12`, `E7,P13`, `E8,P14` |
-| `evaluation/data/campana/doble_etiquetado_mayoria.csv` | Nuevo | Planilla unida de los `5` etiquetadores |
-| `evaluation/data/campana/referencia_mayoria.json` + sidecar | Nuevo | Referencia por mayoría, origen y `sin_mayoria` |
-| `evaluation/kappa.py` | Modificado | `kappa_fleiss`, matriz por pares; Cohen intacto |
-| `evaluation/mayoria.py` | Nuevo | Constructor de la referencia por mayoría |
-| `evaluation/data/campana/analisis/analisis_referencia_mayoria_c230.*` | Nuevo | Script, prueba, JSON, MD y SHA-256 |
-| `docs/campana-medicion/runbook-referencia-mayoria.md` | Nuevo | Protocolo de convocatoria, ciego y desempate |
-| `docs/campana-medicion/confirmacion-posterior-consentimiento.md` | Modificado | Alias `E6`-`E8` |
-| `docs/Tesis/Correcciones/numeros-canonicos.md` | Aditivo | Sección nueva (esperado `3.39`) |
-| `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex` | Modificado | Diseño de la referencia |
-| `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex` | Modificado | Cifra bajo ambas referencias |
-| `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex` | Modificado | Limitación de la referencia acotada |
-| `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex` | Modificado | Línea de trabajo futuro ejecutada |
-| `docs/Tesis/Correcciones/dictamen-correcciones.md` | Aditivo | Entrada de trazabilidad `C30/…` |
-
-Sin cambios en `App/`, `n8n/`, el clasificador, la configuración, el corpus de ajuste, las
-predicciones congeladas ni `evaluation/report.md`.
+| `evaluation/mayoria.py`, `evaluation/tests/test_mayoria.py` | Nuevo | Funciones puras de mayoria |
+| `evaluation/kappa.py`, `evaluation/tests/test_kappa_fleiss.py` | Modificado / nuevo | `kappa_fleiss`, matriz por pares; Cohen intacto salvo el mensaje de alcance |
+| `docs/campana-medicion/protocolo-referencia-mayoria.md` | Nuevo | Protocolo, regla y cegado |
+| `docs/campana-medicion/consentimiento-etiquetadores-referencia-mayoria.md` (nombre a confirmar) | Nuevo | Plantilla de consentimiento escrito previo, sin nombres |
+| `evaluation/data/campana/registro_sujetos.csv` | Modificado, condicionado | Filas desde `E6` con codigos `P` libres |
+| `evaluation/data/campana/probabilistica/` (de `c-229`) | Nuevo, condicionado | Hashes de planillas crudas, referencia, sidecar, Fleiss |
+| `docs/Tesis/Correcciones/numeros-canonicos.md` | Aditivo | Seccion reservada `3.39` |
+| `docs/Tesis/Correcciones/dictamen-correcciones.md` | Aditivo | Entrada de trazabilidad |
+| `docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md` (de `c-237`) | Aditivo | Registro A-03 |
+| `sections/04`, `07`, `08`, `11` | Condicionado | Solo en una version posterior a la defensa |
 
 ## Risks
 
-| Riesgo | Prob. | Mitigación |
+| Riesgo | Prob. | Mitigacion |
 |---|---|---|
-| No se consiguen `3` etiquetadores independientes o falta el consentimiento | Media | Es dependencia explícita; con `+1` (`3` en total) solo se cubre el mínimo. Sin campo, el change queda bloqueado y se declara la limitación en el memo |
-| El resultado cambia y se lee como corrección de la cifra primaria | Alta | Se reportan AMBAS referencias; el rótulo separa "referencia por mayoría" de la vigente; el veredicto del umbral se recalcula, no se oculta |
-| Los casos sin mayoría sesgan la referencia | Media | Regla de mayoría y desempate declarada ANTES de ver las etiquetas; conteo y efecto informados; rango reportado |
-| Derivación del clasificador al recalcular | Baja | Clasificador congelado `hybrid-v3`, `git diff bf5e099 HEAD` registrado |
-| Colisión de numeración del memo con changes concurrentes | Media | Primer número libre al aplicar (tarea 0.4) |
-| Crecimiento de páginas | Media | Tabla compacta o párrafo; verificación de `\@abspage@last` |
+| Evidencia nueva no acreditable (repeticion de K-01) | Media | Compuerta de procedencia con acta del director contra la evidencia primaria |
+| Regla "declarada antes" sin prueba independiente | Media | Constancia fechada en custodia del director, ademas del commit |
+| No se consiguen etiquetadores independientes | Media | Las funciones y el protocolo quedan; la referencia no se construye y no se sustituye por menos etiquetadores sin declararlo |
+| Datos sin autorizacion (K-02) | Media | Compuerta etica y legal compartida con `c-229` |
+| Leer el Fleiss de la muestra como mejora de la referencia de los 200 | Media | Rotulo explicito: aplica a la muestra de `c-229`; la limitacion de los 200 (kappa `0,5569`) se conserva |
 
 ## Rollback Plan
 
-`git revert` del commit del change: el módulo nuevo, el script y sus salidas son aditivos; las filas
-`E6`-`E8` del registro, el artefacto y el sidecar nuevos se retiran; la sección del memo se elimina
-sin tocar las anteriores; la prosa vuelve por archivo. El ciclo TDD se revierte con sus pruebas. No
-hay migraciones ni datos productivos que revertir; el corpus vigente y los valores canónicos previos
-quedan intactos.
+`git revert` del commit: modulo nuevo, pruebas, protocolo y seccion del memo son aditivos; `kappa.py` vuelve a su version previa (el contrato de Cohen no cambia). Si se versionaron datos y se revoca una autorizacion o un consentimiento, se retiran en commit separado y se declara.
 
 ## Dependencies
 
-- **Trabajo de campo FUERA del repositorio**: convocatoria de `3` etiquetadores independientes y su
-  consentimiento informado. Bloquea los bloques B a F.
-- Disponibilidad del custodio de identidades (director) para la correspondencia alias-identidad.
-- Reutiliza los artefactos de c-206 (protocolo ciego, codebook, `validar_registro_sujetos`,
-  `doble_etiquetado_arbitrado.csv`, `arbitraje_tres_vias.json`, `corpus_independiente_arbitrado.json`,
-  `predicciones_arbitrado.json`) y `evaluation/kappa.py`, `evaluation/metrics.py`.
-- No depende de c-223, c-224, c-225 ni c-226.
+- Despues del cierre de la entrega (`c-239`).
+- Depende de `c-229` (muestra probabilistica y compuertas); la estimacion de `c-229` espera a su vez la referencia de este change (secuencia por grupos en `design.md`, D7).
+- Trabajo de campo de los autores: convocatoria de etiquetadores y consentimiento escrito.
+- `c-237`: inventario de uso de asistentes de IA.
+- Consumidores aguas abajo: `c-228`, `c-232` (los adapta otro agente).
 
 ## Success Criteria
 
-- [ ] `E6`, `E7`, `E8` figuran en `registro_sujetos.csv` sin solape por `persona` y con su
-  consentimiento registrado; el protocolo ciego se respeta (los etiquetadores no ven etiquetas,
-  referencia ni predicciones).
-- [ ] La referencia por mayoría cubre los casos etiquetados, declara el conteo `sin_mayoria` y no
-  elige una etiqueta "verdadera" para los empates.
-- [ ] `kappa_fleiss` reproduce un oráculo sintético conocido y el contrato de dos etiquetadores de
-  `kappa_doble_etiquetado` no cambia.
-- [ ] El script reproduce los anclajes `142/206` y macro-F1 `0,7024` antes de escribir y es
-  determinista byte a byte.
-- [ ] El memo registra la sección aditiva (primer número libre) sin alterar las anteriores; la tesis
-  informa ambas referencias y reformula la línea de trabajo futuro ejecutada.
+- [ ] `kappa_fleiss` reproduce un oraculo sintetico calculado a mano y un ejemplo publicado citado; `mayoria` cubre mayoria, empates y cobertura parcial; el contrato de `kappa_doble_etiquetado` no cambia.
+- [ ] El protocolo fija numero de etiquetadores, cegado, herramienta, regla de mayoria y de `sin_mayoria`, sin arbitro unico, con constancia fechada en custodia del director antes de etiquetar.
+- [ ] Ninguna etiqueta real entra en un computo sin el acta de las compuertas.
+- [ ] Ninguna cifra ni artefacto retirado por `c-235` aparece como ancla, insumo o comparador.
+- [ ] El ejemplar que se defiende no cambia por este change.
 - [ ] `openspec validate c-230-referencia-por-mayoria-con-etiquetadores-independientes --strict` pasa.

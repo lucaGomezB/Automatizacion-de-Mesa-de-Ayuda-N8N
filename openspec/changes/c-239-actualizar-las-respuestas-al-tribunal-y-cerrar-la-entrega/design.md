@@ -7,7 +7,7 @@
 - **Loci de version (hoy `1.5.2`)**: `00-portada.tex:31`; `Bibliography_base.bib:919` (titulo de `Gomez2026_repositorio`); `12-anexos.tex:58` y `:62` (Anexo B); `paper/compilacion.md:8`. Otras coincidencias de `1.5.2` en `docs/campana-medicion/guia-ejecucion-campana.md` son numeracion de apartados, no version.
 - **Derivados desactualizados**: `docs/Tesis/tesis_ultima_version.pdf` y `README.md:7` declaran `v1.4.1` (commit `00333ce`); `tesis_para_agente.md` se regenero por ultima vez en `c-207`; los extractos `.txt`, en `c-199/c-200`. `knowledge-base/11_evaluacion_experimental.md` y `knowledge-base/README.md` declaran la release `v1.2.0` y la primera menciona "fuera de muestra".
 - **Registro**: `docs/Tesis/Correcciones/dictamen-correcciones.md` (6340 lineas; ultima matriz `C29/...` de `c-234`; la tabla de c-196 da N-07 y N-15 como "cerrada", L4530 y L4538, mientras la tercera instancia las declara "Parcial"). `verificar_matriz_trazabilidad.py` exige al menos una fila de matriz en toda seccion `## Dictamen ...` que nombre un change >= 190. `CHANGES.md`: c-227 a c-234 bajo "Cambios propuestos — mejoras estructurales" con encabezados `### [C-2xx] ...`; lineas "Actualizacion <fecha> (...)" en "Notas del analisis".
-- **Changes activos con premisas retiradas**: `c-228` (ancla en `0,6893` = `142/206`), `c-230` (referencia `E3`/`E4`/`E5` sobre 206 casos), `c-232` (depende de `c-228`), `c-229` (muestreo probabilistico; cita `0,7489`, que es fuera de muestra, pero su nucleo es el corpus de 200 y la tesis remite a su diseno en `09-conclusiones.tex` como remedio condicional). 0 tareas aplicadas en los cuatro.
+- **Changes activos cuyas premisas se retiraron**: `c-228` (anclaba en `0,6893` = `142/206`), `c-230` (referencia `E3`/`E4`/`E5` sobre 206 casos), `c-232` (depende de `c-228`), `c-229` (muestreo probabilistico; citaba `0,7489`, que es fuera de muestra; la tesis remite a su diseno en `09-conclusiones.tex` como remedio condicional). 0 tareas aplicadas en los cuatro. Los cuatro fueron reformulados el 16/11/2026 por indicacion de un coautor (seccion «Adaptacion a la devolucion de tercera instancia» de cada uno).
 - **Restricciones**: espanol sin emojis; solo alias (`E1`..`E5`, `O1`, `O2`, "los autores", "el director"), nunca nombres reales; cero llamadas a Gemini; no tocar `App/`, `n8n/`, `evaluation/`, `data/` ni `.engram/`; no commitear, taguear ni pushear sin OK expreso de los autores.
 
 ## Goals / Non-Goals
@@ -22,7 +22,7 @@
 - Redactar las correcciones de fondo del ejemplar (son de `c-235` a `c-238`); si al aplicar se detecta que falta una, se reporta y no se corrige aqui.
 - Acreditar la procedencia del corpus retirado o redactar por los autores las respuestas de procedencia y autoria.
 - Reintroducir, recalcular o resumir la validacion fuera de muestra.
-- Disenar o ejecutar `c-228`, `c-229`, `c-230` o `c-232`: solo se registra y ejecuta el destino que decidan los autores.
+- Ejecutar `c-228`, `c-229`, `c-230` o `c-232`: tras su adaptacion son posteriores a esta entrega; aqui solo se registra el destino que confirmen los autores.
 
 ## Decisions
 
@@ -75,9 +75,9 @@ Antes de pedir el tag se registra el checklist: K-01 (busquedas sin coincidencia
 
 `build_tesis_para_agente.py <version>` para `tesis_para_agente.md` (determinista); `pdftotext` UTF-8 del PDF de cierre para `tesis_completa_extraida.txt` y `tesis_para_evaluacion.txt` (saltos de pagina = paginas); copia de `main.pdf` a `docs/Tesis/tesis_ultima_version.pdf`; `README.md:7` a la version nueva. `knowledge-base/`: la spec `project-documentation` ("Sincronia de la base de conocimiento con la release publicada de la tesis") exige valores identicos al memo, sin valores retirados como vigentes; se actualiza la release declarada y se retira o rotula como retirada toda cifra fuera de muestra, solo si difiere del memo vigente tras `c-235`.
 
-### D11. Destino de c-228, c-229, c-230 y c-232: registrar y ejecutar lo que decidan los autores
+### D11. Destino de c-228, c-229, c-230 y c-232: adaptados; registrar lo que confirmen los autores
 
-Recomendacion (OQ2), con el precedente de C-67 (archivado "NO REALIZADO" con `--skip-specs`): `c-230` y `c-228` archivar sin aplicar (su premisa es la referencia `E3`/`E4`/`E5` y el `0,6893`); `c-232` igual (depende de `c-228`); `c-229` conservar como propuesto y reformular su "Why" para retirar `0,7489`, porque la tesis remite a su diseno como remedio empirico condicional (`09-conclusiones.tex`, `subsec:aportes-generalizacion`). Se ejecuta solo lo decidido y se refleja en `CHANGES.md`.
+La recomendacion inicial de este change era archivar sin aplicar `c-228`, `c-230` y `c-232` y reformular `c-229`. El 16/11/2026 un coautor indico que corresponde adaptarlos, y los cuatro se reformularon ese dia: sin cifras ni artefactos retirados como ancla, con compuerta de procedencia (K-01) y compuerta etica y legal (K-02) para todo dato nuevo, y fuera del ejemplar que se defiende. Orden de ejecucion, posterior a esta entrega: `c-229`, `c-230`, `c-228`, `c-232`. La devolucion no exige esa evidencia (la validacion fuera de muestra "no fue exigida por este tribunal") y atribuye la baja de la nota a evidencia nueva que no pudo acreditar; por eso el default es no ejecutar ninguno antes de la defensa. OQ2 queda como la confirmacion de los tres autores de ese destino; si alguno no se confirma, se archiva con el precedente de C-67 ("NO REALIZADO", `--skip-specs`). Se refleja en `CHANGES.md`.
 
 ## Risks / Trade-offs
 
@@ -101,7 +101,7 @@ Reversion: todo es texto versionado; antes del tag basta `git restore`; despues,
 ## Open Questions
 
 - **OQ1.** Numero de version de la entrega: `v1.6.0` (recomendado) o `v1.5.3`.
-- **OQ2.** Destino de `c-228`, `c-229`, `c-230` y `c-232` (recomendacion en D11).
+- **OQ2.** Confirmacion por los tres autores del destino de `c-228`, `c-229`, `c-230` y `c-232`: adaptados y posteriores a la entrega (D11), o archivar.
 - **OQ3.** Insumo escrito de los autores para P1-P5 (quienes son `E3`/`E4`/`E5` respecto de la compania y de los autores; como se produjeron las marcas temporales y los textos del refuerzo; existencia de autorizacion; correspondencia de sectores), P11 (que produjeron los asistentes de IA y como se verifico cada cifra; debe coincidir con `c-237`) y P12 (distribucion del trabajo de la ultima version entre los tres autores).
 - **OQ4.** Si quedan pendientes de autores al momento del tag: ¿se corta la entrega con P marcadas como pendientes y declaradas al tribunal, o se espera el insumo?
 - **OQ5.** Versionar en git la devolucion de tercera instancia (`.md` y `.pdf`, con nombres reales en la ficha), como se hizo con la de segunda instancia, o mantenerla fuera del repositorio publico.

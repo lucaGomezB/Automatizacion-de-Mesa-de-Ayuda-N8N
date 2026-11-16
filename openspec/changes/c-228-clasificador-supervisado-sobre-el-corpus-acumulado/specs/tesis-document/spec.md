@@ -1,52 +1,32 @@
 ## ADDED Requirements
 
-### Requirement: Estado honesto del clasificador supervisado como trabajo futuro dependiente de datos
+### Requirement: Ejemplar de la defensa sin cambios por el clasificador supervisado
 
-`10-recomendaciones.tex` SHALL declarar, en `subsec:clasificador-supervisado` y en
-`subsec:frontera-sistemas`, que el clasificador supervisado entrenado sobre el
-corpus acumulado **depende de datos que todavia no existen** (el volumen que la
-organizacion acumulara en `clasificacion_log`) y de **etiquetado humano con
-consentimiento**, y que no se entrena ni se mide en este trabajo. La subseccion
-SHALL declarar de forma explicita que sobre la referencia de `206` casos el umbral
-`0,85` **no es alcanzable** (harían falta `+34` aciertos; aun corrigiendo los `30`
-errores de `Sistemas` el techo es `0,835`, y el brazo manual anota `0,8278`), y que
-la fuente dominante de error es la ambiguedad de la frontera `Sistemas`↔`Soporte
-Tecnico Software`. `subsec:evaluacion-modelos-abiertos` SHALL mantener su criterio
-de exito sobre un corpus independiente. El texto MUST NOT presentar el
-entrenamiento como realizado, MUST NOT introducir un valor canonico nuevo y MUST
-NOT reunir el umbral de volumen con una justificacion distinta de la indicativa
-vigente.
+El ejemplar que se defiende (`docs/Tesis/v10 (IA)/paper/sections/*.tex` en la version que cierra la entrega) MUST NOT modificarse por el clasificador supervisado sobre el corpus acumulado. En ese ejemplar la linea SHALL figurar solo como trabajo futuro, con el texto que fijan para `subsec:clasificador-supervisado`, `subsec:frontera-sistemas`, `subsec:corpus-independiente` y la limitacion de `Sistemas` de `08-discusion.tex` los requisitos vigentes tras archivar `c-235`; este requisito MUST NOT exigir texto adicional en esas subsecciones.
 
-#### Scenario: Dependencia declarada
+#### Scenario: Ejemplar intacto
 
-- **WHEN** se leen `subsec:clasificador-supervisado` y `subsec:frontera-sistemas`
-- **THEN** declaran que la linea depende de datos inexistentes y de consentimiento
-- **AND** declaran que no se entrena ni se mide en este trabajo
+- **WHEN** se compara `docs/Tesis/v10 (IA)/paper/sections` antes y despues de aplicar este change
+- **THEN** no hay diferencias atribuibles a este change
 
-#### Scenario: No alcanzabilidad sobre los 206 declarada
+#### Scenario: Sin contradiccion con el trabajo futuro vigente
 
-- **WHEN** se busca el tratamiento del umbral en la subseccion del clasificador supervisado
-- **THEN** se declara que `0,85` no es alcanzable sobre los `206` casos, con el techo `0,835` y el `+34`
-- **AND** no se introduce un valor canonico nuevo ni se presenta el entrenamiento como realizado
+- **WHEN** se leen `subsec:clasificador-supervisado` y `subsec:frontera-sistemas` en el ejemplar de la defensa
+- **THEN** su texto es el que dejan los requisitos vigentes tras `c-235`
+- **AND** no se presenta ningun entrenamiento ni medicion del clasificador supervisado como realizado
 
-### Requirement: Frontera Sistemas-Software descrita como problema de taxonomia y de codebook
+### Requirement: Informe del clasificador supervisado solo con compuertas cerradas en una version posterior
 
-`08-discusion.tex` SHALL precisar, en la limitacion correspondiente al desempeno
-de `Sistemas`, que la frontera `Sistemas`↔`Soporte Tecnico Software` es —antes que
-una limitacion de capacidad del clasificador— un problema de taxonomia o de
-criterio de etiquetado, con `16` de `64` errores dirigidos a `Soporte Tecnico
-Software`, y SHALL remitir a la revisión del codebook como linea de trabajo futuro
-y a la no alcanzabilidad del umbral sobre los `206`. La formulacion MUST NOT
-afirmar que el clasificador mejorara esa clase.
+Una version de la tesis posterior a la defensa SHALL informar resultados del clasificador supervisado, de la revision del codebook de la frontera o de su evaluacion solo si la compuerta de procedencia y la compuerta etica y legal constan cerradas y verificadas por el director para cada dato usado. Cuando los informe, el texto SHALL rotular el conjunto de prueba (corpus probabilistico acreditado o particion retenida interna), SHALL declarar que el hibrido se ajusto, en parte, con el corpus de 200 casos y que ninguna lectura sobre ese corpus evalua el clasificador supervisado, SHALL declarar donde corrio cada modelo y si se envio texto a terceros, y MUST NOT usar cifras ni artefactos retirados por `c-235`. El texto MUST NOT introducir identificadores internos `c-NNN` en el cuerpo.
 
-#### Scenario: Frontera descrita y remitida
+#### Scenario: Sin compuertas cerradas no hay informe
 
-- **WHEN** se lee la limitacion sobre `Sistemas` en `08-discusion.tex`
-- **THEN** describe la frontera como problema de taxonomia o de criterio de etiquetado
-- **AND** remite a la revision del codebook y a la no alcanzabilidad del `0,85` sobre los `206`
+- **WHEN** alguna compuerta de un dato usado no consta cerrada y verificada
+- **THEN** la tesis no informa resultados del clasificador supervisado
+- **AND** la linea sigue figurando solo como trabajo futuro
 
-#### Scenario: Sin promesa de mejora
+#### Scenario: Informe rotulado
 
-- **WHEN** se busca una afirmacion sobre la mejora del clasificador en esa clase
-- **THEN** no se afirma que el clasificador mejorara
-- **AND** la revision se presenta como analisis de la taxonomia
+- **WHEN** una version posterior informa resultados con compuertas cerradas
+- **THEN** cada cifra rotula su conjunto de prueba y el lugar de ejecucion del modelo
+- **AND** ninguna lectura sobre el corpus de 200 casos se presenta como evaluacion del clasificador supervisado

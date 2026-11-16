@@ -1,178 +1,170 @@
 # Design: Muestreo probabilistico del universo de incidentes
 
+## Adaptacion a la devolucion de tercera instancia (16/11/2026)
+
+- **Premisa que cayo.** La version del 15/11 anclaba la herramienta en `0,7489` (lectura ponderada sobre el corpus fuera de muestra arbitrado, bootstrap `[0,6822; 0,8099]`, leida de `analisis_propagacion_arbitraje_c221.json`) y ubicaba la prosa junto a esa cifra en la subseccion de validacion fuera de muestra de `07-resultados.tex`. Todo eso queda **retirado** del ejemplar por decision de los autores ante K-01; el motivo esta en `c-235` (`design.md`, D1 y D3) y no se reformula aqui. El viejo D4 (anclaje en `0,7489`) y el viejo D6 (host en resultados) se reemplazan por D4 y D7 de este documento.
+- **Que se conserva.** D1 (alcance diseno + herramienta), D2 (universo, marco, estratos) y D3 (Horvitz-Thompson, post-estratificacion, DEFF, bootstrap), con ajustes.
+- **Que cambia.** Se agregan D5 (compuerta de procedencia), D6 (compuerta etica y legal, con el envio a la Gemini API), D8 (dependencia cruzada con `c-230`) y D9 (cuotas minimas a partir de la composicion verificada). La verificacion de la herramienta pasa a un oraculo sintetico y a un control de sanidad sobre el corpus de 200.
+- **Alcance respecto de la entrega.** Ningun paso de este change modifica el ejemplar que se defiende; se ejecuta despues de `c-239`. La tesis defendida solo menciona el diseno como trabajo futuro en los terminos de `c-235` y `c-234`.
+
 ## Context
 
-La muestra del estudio es no probabilistica por conveniencia: son los `200` incidentes cronometrados
-en la campana manual (`04-marco-metodologico.tex:46`), de una sola organizacion, sin estratificacion
-ni asignacion proporcional (memo, seccion 3.17, ap. (f)). El universo trimestral es
-`N = 42 x 63 = 2.646` y el margen de error `6,66 %` se calcula como "margen de error implicado", que
-"presupone un muestreo aleatorio que no se realizo" (`04-marco-metodologico.tex:52`). La distribucion
-del universo por sector NO esta disponible (memo, linea 376).
+- La muestra del estudio es no probabilistica por conveniencia: los 200 incidentes cronometrados en la campana manual (`subsec:poblacion-muestra-corpus`, `04-marco-metodologico.tex`), de una sola organizacion (servicios, Mendoza). El universo trimestral es `N ≈ 2.646 = 42 × 63` (memo, seccion 3.4, linea 145), **proyectado, no medido**; la distribucion por sector no esta disponible (memo, linea 376). El margen `6,66 %` presupone un muestreo aleatorio que no se realizo.
+- **Composicion del corpus de 200 (verificada en esta adaptacion)**, leida de `data/corpus_evaluacion_pseudonimizado.json` (`casos[*].sector_asignado` y `canal_origen`):
 
-La lectura ponderada vigente de la exactitud estricta es `0,7489`, con bootstrap `[0,6822; 0,8099]`
-(`07-resultados.tex:393`; memo, secciones 3.25 y 3.32). Sus pesos son la composicion por sector del
-corpus de 200 (`evaluation/linea_de_base.py::prevalencia_natural` y `lectura_ponderada`), es decir una
-**post-estratificacion a la composicion de la muestra**, no a la del universo (memo, requisito
-OOS-020). El antecedente del diseno estratificado ya esta en `OOS-006` (cuotas por canal y sector,
-sobremuestreo de la clase minoritaria y ponderacion por la distribucion del universo).
+  | Sector | Casos | Correo | Formulario | Telefono |
+  |---|---:|---:|---:|---:|
+  | Soporte Tecnico Hardware | 85 | 23 | 32 | 30 |
+  | Soporte Tecnico Software | 67 | 23 | 16 | 28 |
+  | Seguridad Informatica | 31 | 14 | 3 | 14 |
+  | Sistemas | 16 | 6 | 1 | 9 |
+  | Bases de Datos | 1 | 0 | 1 | 0 |
+  | **Total** | **200** | **66** | **53** | **81** |
 
-La linea de trabajo futuro de la tesis pide repetir la validacion "sobre corpus de composicion
-natural, con cuotas prefijadas por canal y por sector" y estimar el intervalo "sobre el universo
-completo, sin excluir casos" (`10-recomendaciones.tex:26`).
-
-**Insumos versionados (solo lectura):**
-
-- `evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.json`: lectura ponderada
-  `0,7489` con su bootstrap `[0,6822; 0,8099]` y los pesos por sector leidos del corpus de 200.
-- `data/corpus_evaluacion_pseudonimizado.json`: composicion por sector del corpus de 200 (vector
-  `16 / 85 / 67 / 31 / 1`, suma `200`), usada como peso del anclaje.
-- `evaluation/linea_de_base.py::lectura_ponderada`: funcion de post-estratificacion reutilizable;
-  `evaluation/metrics.py::intervalo_wilson` e `evaluation/stats.py` para los IC y remuestreos.
+  Exactitud estricta cruda sobre el corpus de 200, recalculada de `evaluation/data/campana/predicciones_in_sample.json` (`sector_predicho == sector_asignado`): `147/200 = 0,7350`, que coincide con el valor canonico `73,5 %`. Por sector: Hardware 77/85, Software 48/67, Seguridad 15/31, Sistemas 7/16, Bases de Datos 0/1.
+- La tesis defendida (tras `c-234` y `c-235`) remite a este diseno como remedio empirico **condicional y no ejecutado** (`09-conclusiones.tex`, `subsec:aportes-generalizacion`; `10-recomendaciones.tex`, `subsec:estudios-replicacion`) y propone como trabajo futuro una validacion con procedencia acreditable (`subsec:corpus-independiente`, requisito agregado por `c-235`).
+- El capitulo 7 (`11-aspectos-legales.tex`) declara la base de licitud del sistema, que el instrumento de transferencia internacional esta documentado pero **no suscrito** y que a los proveedores llegaron solo los textos y audios del corpus de 200 (`subsec:transferencia-internacional`; `c-235` lo deja exacto). Una campana nueva que clasifique con el hibrido agrega transferencias.
+- Insumos de codigo reutilizables (solo lectura): `evaluation/linea_de_base.py::lectura_ponderada` (forma de la post-estratificacion; el modulo queda en el repo aunque su uso en la tesis se retira), `evaluation/metrics.py` (Wilson, constantes de bootstrap) y `evaluation/stats.py`.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Definir el universo, el marco muestral y los estratos (sector, canal, complejidad) con procedencia y
-  criterio de inclusion verificable, registrados antes de reunir la muestra.
-- Fijar un diseno estratificado probabilistico con cuotas prefijadas por canal y sector, denominadores
-  y reglas de decision de tres vias, sin reajuste posterior.
-- Entregar la maquinaria de estimacion ponderada (Horvitz-Thompson y post-estratificacion) con el
-  efecto de diseno y un IC sobre el universo COMPLETO, sin excluir casos.
-- Dejar el diseno declarado como `condicional` y honesto sobre su dependencia de datos que aun no
-  existen y de la cooperacion de la organizacion.
-- No cambiar ningun valor canonico y no tocar el corpus, las predicciones ni los artefactos congelados.
+- Definir universo, marco y estratos con procedencia verificable, registrados antes de reunir la muestra.
+- Fijar un diseno estratificado con cuotas prefijadas por canal y sector, con minimos por sector y clases no estimables declaradas de antemano.
+- Entregar la estimacion ponderada (Horvitz-Thompson, post-estratificacion), el DEFF y un IC sobre el universo completo, verificados sin datos retirados.
+- Cerrar dos compuertas (procedencia y etica/legal) antes de cualquier extraccion, envio a terceros o computo sobre datos nuevos.
+- Dejar el resultado, si existe, listo para una version posterior a la defensa.
 
 **Non-Goals:**
 
-- Ejecutar la campana probabilistica (requiere poblacion del periodo y cooperacion de la organizacion).
-- Elevar la exactitud del clasificador: el diseno hace valida la ESTIMACION, no mejora el modelo.
-- Reemplazar la lectura ponderada `0,7489` ni la cifra primaria `0,6893`.
-- Reescribir las secciones existentes de resultados, discusion o metodologia; se agregan parrafos.
-- Resolver la limitacion de una sola organizacion o `n = 200` sin datos nuevos.
+- Modificar el ejemplar que se defiende.
+- Usar cifras o artefactos retirados por `c-235`.
+- Elevar la exactitud del clasificador.
+- Definir el protocolo de etiquetado y la regla de referencia: los define `c-230`.
+- Resolver la limitacion de una sola organizacion: el diseno estima sobre el universo de esa organizacion en un periodo, no sobre otras.
 
 ## Decisions
 
-### D1 — Alcance del change: diseno + herramienta + declaracion, sin campana
+### D1 — Alcance: diseno + herramienta + campana condicionada
 
-El change entrega (a) el protocolo del diseno muestral, (b) la herramienta de estimacion ponderada
-probada con TDD y anclada en el valor vigente, y (c) la prosa y el registro del memo. La **ejecucion**
-de la campana (recolectar la poblacion del periodo, etiquetar, invocar al clasificador) queda fuera:
-depende de datos que aun no existen. Las cifras del diseno probabilistico quedan en estado
-`condicional`. Alternativa descartada: simular una muestra probabilistica y reportarla como resultado,
-porque confundiria el diseno con una medicion y violaria la regla de rotulo del proyecto.
+El change entrega (a) el protocolo, (b) la herramienta verificada y (c), solo si las compuertas se cierran, la campana y su estimacion. Sin compuertas cerradas, el change termina en (a) y (b) y la tesis no cambia. Alternativa descartada: simular una muestra y reportarla como resultado (confunde diseno con medicion).
 
-### D2 — Definicion del universo, marco y estratos
+### D2 — Universo, marco y estratos
 
-- **Universo:** poblacion de incidentes informaticos registrados por la mesa de ayuda en el periodo
-  declarado. El punto de partida operativo es `N = 42 x 63 = 2.646` incidentes por trimestre
-  (memo, seccion 3.4), que el protocolo SHALL confirmar contra el registro del periodo elegido.
-- **Marco muestral:** el registro operativo de incidentes del periodo (la tabla de incidentes de la
-  base), con inclusion enumerable por identificador y probabilidad conocida y mayor que cero.
-- **Estratos:** `sector` (las cinco cadenas canonicas), `canal` (correo, formulario, telefonia) y
-  `complejidad` (definicion operacional a fijar en el protocolo, por ejemplo segun exigencia de
-  contexto o longitud clasificable). La distribucion del universo por estrato SHALL derivarse del
-  registro y, si no esta disponible, declararse como no disponible con el metodo para obtenerla
-  (MUST NOT usar la composicion del corpus de 200 como sustituto).
-- Alternativa descartada: estratificar solo por sector, porque el canal es una fuente de variacion
-  medida (reducciones y exactitud difieren por canal) y las cuotas de la linea de trabajo futuro son
-  por canal y por sector.
+- **Universo:** incidentes informaticos registrados por la mesa de ayuda de la organizacion en un periodo declarado. `N ≈ 2.646` es solo el punto de partida (proyectado); el protocolo SHALL confirmarlo contra el registro del periodo y, si difiere, informar ambos.
+- **Marco:** el registro operativo de incidentes del periodo, enumerable por identificador, con probabilidad de inclusion conocida y mayor que cero.
+- **Estratos:** sector (cinco cadenas canonicas), canal (correo, formulario, telefono) y complejidad (definicion operacional en el protocolo, OQ1). La distribucion del universo por estrato SHALL derivarse del registro; la composicion del corpus de 200 MUST NOT usarse como peso.
+- **Canal telefonico:** en el registro, una llamada figura como texto cargado por el operador; la campana no dispone de audio. El estrato identifica el origen, pero el insumo del clasificador es el texto registrado, no la transcripcion de una llamada; se declara como diferencia respecto del canal telefonico del estudio.
+- **Celdas escasas:** el cruce sector × canal × complejidad tendra celdas vacias o minimas (en el corpus de 200, 13 de las 15 celdas sector × canal no estan vacias y `Bases de Datos` solo aparece en formulario). La regla de colapso de estratos se fija en el protocolo antes de reunir la muestra.
 
-### D3 — Estimacion: Horvitz-Thompson, post-estratificacion y efecto de diseno
+### D3 — Estimacion: Horvitz-Thompson, post-estratificacion, DEFF y bootstrap
 
-- **Pesos de Horvitz-Thompson:** `w_i = 1 / pi_i`, con `pi_i` la probabilidad de inclusion de la unidad
-  en su estrato; el estimador de la exactitud estricta es la razon ponderada de aciertos sobre casos.
-- **Post-estratificacion:** calibracion de los pesos a los totales conocidos de los estratos del
-  universo cuando la distribucion este disponible; reutiliza la forma de `lectura_ponderada` sin
-  modificarla (o su generalizacion a ponderacion por unidad).
-- **Efecto de diseno (Kish):** `DEFF = n * sum(w_i^2) / (sum w_i)^2`. Se informa junto a la exactitud
-  ponderada. El DEFF del diseno probabilistico es **no computable sin la muestra**; el DEFF de la
-  post-estratificacion sobre el corpus existente se informa como ilustracion, rotulado y `condicional`.
-- **Intervalo de confianza:** bootstrap percentil por unidad (semilla fija) sobre el **universo
-  completo, sin exclusion**. Se reporta el metodo y el nivel.
-- Alternativa descartada: IC de Wilson sobre la muestra, porque presupone muestreo aleatorio simple y
-  no incorpora el diseno ni el efecto de diseno.
+- `w_i = 1 / pi_i`; exactitud estricta como razon ponderada de aciertos.
+- Post-estratificacion a los totales del universo cuando esten disponibles del registro.
+- DEFF de Kish `n · Σw_i² / (Σw_i)²`, informado junto a la exactitud ponderada. Sin muestra probabilistica, el DEFF del diseno es **no computable** y se declara asi.
+- IC bootstrap percentil por unidad, estratificado por el diseno, con semilla fija, sobre el universo completo (sin excluir casos por discordancia: los casos `sin_mayoria` de `c-230` entran con su tratamiento declarado).
+- Alternativa descartada: IC de Wilson sobre la muestra (presupone muestreo aleatorio simple).
 
-### D4 — Herramienta offline con anclaje en el valor vigente
+### D4 — Verificacion de la herramienta sin datos retirados
 
-Script `evaluation/data/campana/analisis/estimador_muestreo_probabilistico_c229.py`, pruebas en
-`test_estimador_muestreo_probabilistico_c229.py`, salidas `.json`, `.md` y `.SHA256SUMS.txt` en la
-misma carpeta (UTF-8 sin BOM, LF). Solo lectura, sin red ni Gemini, determinista. Funciones puras con
-prueba sintetica antes de implementar:
+Sustituye al viejo anclaje. Dos verificaciones, ambas previas a escribir salidas:
 
-| Funcion | Que calcula | Reutiliza |
-|---|---|---|
-| `pesos_horvitz_thompson(estratos, cuotas)` | `w_i = 1 / pi_i` por estrato | nada (pura) |
-| `post_estratificar(casos, totales_universo)` | Pesos calibrados a los totales del universo | forma de `lectura_ponderada` |
-| `exactitud_ponderada(aciertos, pesos)` | Razon ponderada de aciertos | `evaluation/metrics.py` |
-| `efecto_diseno(pesos)` | DEFF de Kish | nada (pura) |
-| `ic_bootstrap_universo(...)` | IC bootstrap del estimador ponderado, sin exclusion | `evaluation/stats.py` |
+1. **Oraculo sintetico rotulado como tal.** Un fixture sintetico (`fixture_sintetico_c229.json`, rotulado `sintetico: true` en su cabecera) con estratos, probabilidades de inclusion y aciertos fijados a mano, cuyos valores esperados (pesos, exactitud ponderada, DEFF) se calculan a mano en la prueba. No es un dato del estudio y MUST NOT citarse como resultado.
+2. **Control de sanidad sobre el corpus de 200.** Post-estratificar el corpus de 200 con **su propia** composicion por sector da pesos iguales: la exactitud ponderada SHALL reproducir la cruda `147/200 = 0,7350` y el DEFF SHALL ser `1`. Se leen `data/corpus_evaluacion_pseudonimizado.json` y `evaluation/data/campana/predicciones_in_sample.json`, no constantes. Este control prueba la implementacion; MUST NOT presentarse como estimacion poblacional ni como DEFF del diseno.
 
-**Anclaje que aborta antes de escribir:** la configuracion de post-estratificacion por la composicion
-del corpus de 200 sobre el corpus arbitrado DEBE reproducir `0,7489` y su bootstrap
-`[0,6822; 0,8099]`; si no, el script termina con codigo distinto de cero sin escribir salidas. La
-composicion se lee de `data/corpus_evaluacion_pseudonimizado.json` (vector `16/85/67/31/1`) y la
-lectura de `analisis_propagacion_arbitraje_c221.json`, no de constantes. Alternativa descartada:
-reportar solo el DEFF sin anclarlo, porque no dejaria comando reproducible ni verificacion de que la
-funcion de ponderacion no deriva.
+Si alguna falla, el script termina con codigo distinto de cero sin escribir. El script MUST NOT leer ningun artefacto que `c-235` retira (lista en la seccion de adaptacion del `proposal.md`).
 
-### D5 — Gobernanza y consentimiento
+| Funcion | Que calcula |
+|---|---|
+| `pesos_horvitz_thompson(estratos, tamanos_universo, tamanos_muestra)` | `w_i = 1 / pi_i` por estrato |
+| `post_estratificar(casos, totales_universo)` | Pesos calibrados a totales del universo |
+| `exactitud_ponderada(aciertos, pesos)` | Razon ponderada |
+| `efecto_diseno(pesos)` | DEFF de Kish |
+| `ic_bootstrap_universo(casos, pesos, estratos, semilla, remuestreos)` | IC percentil estratificado |
 
-El bloque A (protocolo con datos nuevos, etiquetado humano y consentimiento) es **HIGH**: se propone y
-se espera la revision de los autores antes de fijar cuotas, periodo y protocolo de consentimiento; NO
-se ejecuta ninguna recoleccion en este change. El bloque B (herramienta offline sobre artefactos
-versionados) es **MEDIUM**. Los bloques C y D (prosa y memo) son **MEDIUM** con checkpoint de los
-autores sobre la redaccion de la amenaza 5. No hay bloque CRITICAL: no se toca el capitulo legal; el
-protocolo cita sus requisitos de consentimiento y el capitulo 11 los desarrolla.
+### D5 — Compuerta de procedencia (K-01)
 
-### D6 — Ubicacion y forma en la tesis
+Antes de computar sobre datos nuevos, el director (o un tercero que los autores designen y el director acepte) verifica contra la evidencia primaria y firma un acta con fecha:
 
-- `04-marco-metodologico.tex` (`subsec:poblacion-muestra-corpus`): un parrafo que declara el diseno
-  probabilistico planificado, su estado `condicional` y que no eleva la exactitud sino que valida la
-  estimacion. No se agrega subseccion.
-- `07-resultados.tex` (subseccion de validacion fuera de muestra): se agrega, junto a la lectura
-  ponderada `0,7489`, el efecto de diseno rotulado como complementario y `condicional`; la cifra
-  primaria no cambia.
-- `08-discusion.tex` (amenaza 5 y limitacion de seleccion): una oracion que remite al diseno y precisa
-  que no elimina el sesgo sin datos.
-- `10-recomendaciones.tex` (`subsec:corpus-independiente`): remite al diseno probabilistico con cuotas
-  prefijadas por canal y sector y al IC sobre el universo completo.
-- Todas las citas de cifras usan la seccion del memo, no constantes inline.
+- **(a) Planillas crudas:** una por etiquetador, exportadas de la herramienta de etiquetado con las marcas temporales que la herramienta registra. Nunca reconstruidas ni completadas a mano. La herramienta y el formato de exportacion se declaran en el protocolo antes de etiquetar.
+- **(b) Constancias:** constancia firmada por cada etiquetador y constancia de la organizacion sobre la extraccion de los incidentes (fecha, periodo, sistema de origen, cantidad). Originales en custodia del director, fuera del repositorio. En el repositorio, el SHA-256 de cada planilla cruda y de la exportacion.
+- **(c) Independencia:** los etiquetadores no son autores ni operadores medidos; se declara su vinculo con los autores (ninguno, laboral, academico, familiar u otro).
+- **(d) Textos reales:** los textos son incidentes reales del registro de la organizacion, con constancia de extraccion. Ningun texto redactado por los autores, ni generado o asistido por IA, entra como dato. La pseudonimizacion se limita a reemplazar identificadores con un procedimiento declarado y su registro de cambios; no reescribe el texto.
+- **(e) Verificacion:** el director (o el tercero) coteja (a)–(d) contra la evidencia primaria antes de habilitar el analisis. Ninguna comprobacion estadistica de forma (distribucion de duraciones, pausas, longitud de textos) sustituye esa verificacion; puede complementarla.
 
-### D7 — Orden de las tareas
+Sin acta firmada, la estimacion sobre datos reales no se ejecuta.
 
-1. Linea de base y verificacion de estado (incluye fijar el numero libre del memo).
-2. Protocolo del diseno muestral (bloque HIGH; checkpoint de los autores antes de fijar cuotas).
-3. Herramienta TDD, salidas y SHA-256 con anclaje.
-4. Seccion aditiva del memo.
-5. Prosa de la tesis (04, 07, 08, 10).
-6. Trazabilidad y verificaciones; cierre.
+### D6 — Compuerta etica y legal (K-02)
+
+Antes de extraer:
+
+- **Autorizacion institucional escrita** de la organizacion para extraer y usar los incidentes del periodo, con su alcance (fines, publicacion, transferencias).
+- **Base de licitud** conforme a la Ley 25.326 y **consentimiento** de los sujetos que corresponda: etiquetadores (consentimiento escrito previo, no confirmacion posterior) y, segun la autorizacion, titulares de los datos de los incidentes.
+- **Envio a terceros:** clasificar con el hibrido envia el texto de cada caso a la Gemini API. Antes de clasificar SHALL decidirse por escrito si los textos se envian (y con que pseudonimizacion e instrumento de transferencia, dado que el instrumento del capitulo 7 no esta suscrito) o no. Si no se envian, el hibrido no puede medirse sobre la muestra y la estimacion se limita a lo que no requiere al proveedor; se declara. El capitulo 7 de la version posterior (§7.3 y la base de licitud) SHALL tratar estas transferencias con sus cantidades.
+- **Publicacion:** en el repositorio publico entra solo material pseudonimizado y autorizado; el resto queda en custodia del director, con su hash publicado.
+
+### D7 — Ubicacion en la tesis (solo version posterior a la defensa)
+
+Sin la campana ejecutada y las compuertas cerradas, la tesis no cambia: la menciones vigentes de `c-234` y `c-235` bastan. Con ellas:
+
+- `04-marco-metodologico.tex`, `subsec:poblacion-muestra-corpus`: un parrafo que describe la muestra probabilistica nueva como distinta del corpus de 200 (que sigue siendo por conveniencia) y la quinta amenaza de `subsec:amenazas-validez` precisa que la estimacion se refiere al universo del periodo de esa organizacion.
+- `07-resultados.tex`: subseccion nueva (etiqueta propuesta `subsec:muestra-probabilistica`), no la que `c-235` retira, con exactitud ponderada y cruda rotuladas, DEFF, IC, cuotas alcanzadas y clases no estimables.
+- `09-conclusiones.tex` (`subsec:aportes-generalizacion`) y `10-recomendaciones.tex` (`subsec:estudios-replicacion`): la remision pasa de "condicional y no ejecutado" a ejecutado, con su alcance. Requiere MODIFICAR el requisito de `c-234` (delta incluido).
+- `10-recomendaciones.tex` (`subsec:corpus-independiente`): **no se modifica el requisito de `c-235`**; se agrega una remision a la subseccion de resultados, conservando los elementos que ese requisito exige (lo que queda pendiente: comparacion con linea de base clasica y brazo de modelo solo). Si los autores prefieren reescribir esa subseccion, se agrega al aplicar un delta MODIFIED sobre el requisito de `c-235`, ya archivado para entonces.
+- `11-aspectos-legales.tex`: autorizacion, base de licitud, consentimiento de etiquetadores y transferencias nuevas.
+- La redaccion de la muestra nueva como "estratificada" choca con el requisito vigente "Seleccion de los casos por conveniencia declarada" (escenario sin "estratificad" afirmativo en `04`); se MODIFICA para permitirlo solo respecto de la muestra nueva.
+
+### D8 — Dependencia cruzada con `c-230`
+
+`c-230` define las funciones puras de mayoria y Fleiss y el protocolo de referencia; `c-229` define el diseno y extrae la muestra. Secuencia por grupos: `c-229` grupos 0–3 (diseno, compuertas preparadas, herramienta) → `c-230` grupos 0–2 (funciones y protocolo) → `c-229` grupo 4 (extraccion y seleccion, con compuertas cerradas) → `c-230` etiquetado y referencia → `c-229` grupo 5 (clasificacion y estimacion) → memo y prosa de ambos. El orden de inicio `c-229` → `c-230` se mantiene; la estimacion sobre datos reales de `c-229` queda bloqueada hasta la referencia de `c-230`. Alternativa descartada: que `c-229` defina su propia regla de etiquetado (dos etiquetadores y tercero en discordancia), porque reintroduce el arbitro unico que `c-230` elimina.
+
+### D9 — Cuotas minimas y clases no estimables
+
+La composicion del corpus de 200 no representa al universo, pero es la unica senal disponible para planificar: si la prevalencia de `Bases de Datos` en el universo se pareciera a `1/200`, un periodo trimestral (`N ≈ 2.646`) tendria del orden de una decena de incidentes de esa clase, y una asignacion proporcional de `n = 200` daria uno. Decision:
+
+- El protocolo fija, antes de reunir la muestra, una **cuota minima por sector** (por defecto 30 casos, OQ2) y sobremuestrea los sectores raros, con sus pesos de Horvitz-Thompson.
+- Si el universo del periodo tiene menos casos de un sector que la cuota minima, ese estrato se toma **completo** (censo, `pi = 1`), y si aun asi queda por debajo del minimo, sus metricas por clase se declaran **no estimables** de antemano. Con la senal actual, `Bases de Datos` es candidata a no estimable; `Sistemas` (16/200) requiere sobremuestreo.
+- La exactitud global ponderada si es estimable; el DEFF crece con el sobremuestreo y se informa.
+
+### D9b — Corpus probabilistico acreditado
+
+Termino de referencia comun con `c-228` y `c-232`: **corpus probabilistico acreditado** es la muestra seleccionada segun D2 y D9, con la compuerta de procedencia (D5) y la etica y legal (D6) cerradas por acta, y con la referencia por mayoria de `c-230` (D8). Se publica con un manifiesto (estrato, probabilidad de inclusion, referencia y `origen` por caso; fecha del acta) o, si la autorizacion no permite publicarlo, se custodia con su SHA-256 publicado. Es el unico conjunto retenido de evaluacion admisible para este change y sus consumidores; un conjunto al que le falte una condicion no lleva ese nombre (spec PS-009).
+
+### D10 — Gobernanza
+
+Compuertas, protocolo y campana: **ALTA** (datos de una organizacion, sujetos humanos, transferencia internacional); checkpoint de los autores y acta del director. Herramienta: **MEDIA**, TDD estricto. Memo y prosa: **MEDIA**, solo tras la campana.
 
 ## Risks / Trade-offs
 
 | Riesgo | Mitigacion |
 |---|---|
-| El diseno se lee como medicion realizada | Rotulo `condicional` y "diseno planificado" en protocolo, prosa y memo |
-| Se confunde el DEFF de la post-estratificacion con el del diseno | D3 declara el DEFF del diseno no computable sin la muestra; el del corpus se rotula ilustrativo |
-| La muestra de 200 se lee como probabilistica | Se declara no probabilistica por conveniencia en 4.4 y el resumen; el diseno es `condicional` |
-| La ponderacion duplica o reinterpreta `0,7489` | Se ancla y se cita desde el memo; solo se agrega el efecto de diseno |
-| Colision de numeracion del memo | Fijar el primer numero libre al aplicar (hoy `3.37`; esperado `3.40`) |
-| Crecer en paginas | Un parrafo por archivo; verificar `\@abspage@last` y compensar dentro del mismo bloque |
-| Dependencia externa no satisfecha | El change queda util como diseno + herramienta; las cifras del diseno quedan `condicional` |
+| Evidencia nueva no acreditable (repeticion de K-01) | D5; acta del director previa a todo computo |
+| Datos sin autorizacion o enviados a terceros sin base (K-02) | D6; decision escrita sobre la Gemini API antes de clasificar |
+| Control de sanidad leido como estimacion | D4: rotulado como verificacion de implementacion |
+| Oraculo sintetico leido como dato | Cabecera `sintetico: true` y rotulo en salidas |
+| Clases raras no estimables | D9: minimos y no estimables declarados antes |
+| Dependencia circular con `c-230` | D8: secuencia por grupos |
+| Organizacion no coopera | El change queda en diseno y herramienta; no se sustituye por conveniencia |
 
 ## Migration Plan
 
-1. Preparacion y linea de base (tareas 0).
-2. Protocolo del diseno muestral (tarea 1), con checkpoint HIGH de los autores.
-3. Herramienta TDD, salidas y SHA-256 (tarea 2).
-4. Seccion del memo (tarea 3).
-5. Prosa de la tesis (tarea 4).
-6. Trazabilidad y verificaciones (tarea 5).
-   Rollback: `git revert` del commit; todo es aditivo y no toca valores canonicos.
+1. Grupo 0: linea de base, verificacion de estado y de que `c-235`..`c-239` estan cerrados.
+2. Grupo 1: compuertas preparadas (listas de verificacion, modelos de constancia y autorizacion).
+3. Grupo 2: protocolo (checkpoint de autores).
+4. Grupo 3: herramienta TDD.
+5. Grupo 4: extraccion y seleccion (solo con compuertas cerradas).
+6. Grupo 5: clasificacion y estimacion (tras la referencia de `c-230`).
+7. Grupos 6–7: memo, prosa posterior a la defensa, trazabilidad, A-03, verificacion.
+
+Rollback: `git revert`; datos versionados se retiran en commit separado si se revoca la autorizacion.
 
 ## Open Questions
 
-- **OQ1 (autores, no bloquea el apply de B/C/D)**: confirmar el periodo del universo a muestrear (para
-  el protocolo) y la definicion operacional de complejidad. No cambia los specs ni la herramienta.
-- **OQ2 (externo, bloquea la ejecucion de la campana)**: la organizacion proveera el registro del
-  periodo y el consentimiento. Si no, el diseno queda `condicional` y no se ejecuta nada.
+- **OQ1 (autores):** periodo del universo y definicion operacional de complejidad.
+- **OQ2 (autores):** tamano objetivo y cuota minima por sector (por defecto 30).
+- **OQ3 (autores):** ¿la organizacion va a cooperar (registro del periodo, autorizacion escrita, constancia de extraccion)? Sin eso, la campana no se ejecuta.
+- **OQ4 (autores):** ¿se envian los textos de la muestra a la Gemini API? En caso afirmativo, ¿con que instrumento de transferencia y base de licitud?
+- **OQ5 (autores):** ¿quieren hacer algo de este change antes de la defensa? Por defecto, nada: se ejecuta despues de `c-239` y la tesis defendida solo lo menciona como trabajo futuro.
+- **OQ6 (autores):** ¿quien verifica las compuertas, el director o un tercero? ¿Quien custodia los originales?
+- **OQ7 (aplicacion):** nombres definitivos de `compuertas-c229.md` y de la carpeta de datos de la muestra.

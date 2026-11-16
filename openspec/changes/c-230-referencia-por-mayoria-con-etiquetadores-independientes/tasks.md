@@ -1,188 +1,79 @@
 # Tasks: Referencia por mayoria con etiquetadores independientes
 
-Al final de cada tarea, entre parentesis, el requisito del change que cumple, por nombre corto entre
-comillas angulares precedido de su capacidad: `DA` (`discordant-arbitration`), `EF`
-(`evaluation-framework`), `OOS` (`evaluation-out-of-sample-validation`), `TD` (`tesis-document`) y
-`NC` (`tesis-numeros-canonicos`). Nombres cortos: DA «Referencia por mayoria», DA «Registro y
-consentimiento», DA «Cobertura y cegado», DA «Artefactos versionados»; EF «Kappa de Fleiss»; OOS
-«Recompto y comparacion»; TD «Referencia por mayoria divulgada», TD «Registro y consentimiento», TD
-«Trabajo futuro actualizado»; NC «Registro aditivo». Las tareas de preparacion y las verificaciones
-transversales no llevan parentesis.
+Al final de cada tarea, entre parentesis, el requisito que cumple: `MR` (`evaluation-majority-reference`), `EF` (`evaluation-framework`), `TD` (`tesis-document`) y `NC` (`tesis-numeros-canonicos`). Nombres cortos: MR-001 «Funciones puras»; MR-002 «Protocolo constatado»; MR-003 «Compuerta de procedencia»; MR-004 «Compuerta etica y legal»; MR-005 «Registro»; MR-006 «Referencia de la muestra»; EF «Kappa de Fleiss», EF «Kappa de Cohen»; TD «Version posterior»; NC «Registro 3.39».
 
-Este change DEPENDE del trabajo de campo de los autores (convocatoria de `3` etiquetadores
-independientes y su consentimiento). Las tareas 2 a 6 se ejecutan una vez que el campo concluye;
-sin campo, el change queda bloqueado y se declara la limitacion. Este change SI escribe codigo
-ejecutable (kappa de Fleiss y constructor de la referencia): aplica el ciclo TDD estricto
-(RED -> GREEN -> TRIANGULATE -> REFACTOR) sobre las funciones puras, con la suite de `evaluation/`
-como red de seguridad. No mide de nuevo el clasificador: usa las predicciones congeladas.
+Reglas del change (adaptacion a la devolucion de tercera instancia, ver `proposal.md`):
+
+- Se aplica **despues del cierre de la entrega** (`c-239`) y depende de `c-229` (secuencia por grupos en `design.md`, D7). Ninguna tarea modifica el ejemplar que se defiende.
+- Ninguna cifra ni artefacto retirado por `c-235` se usa como ancla, insumo o comparador. Sin nombres reales de personas ni de la organizacion.
+- Las tareas **[COMPUERTA]** no se ejecutan sin el acta o la documentacion indicada, registrada con fecha en `docs/Tesis/Correcciones/dictamen-correcciones.md`.
+- TDD estricto en los grupos 1 y 2. Este change no envia textos a terceros.
 
 ## 0. Preparacion y linea de base
 
-- [ ] 0.1 Leer `proposal.md`, `design.md` (D1 a D10) y los cinco specs delta; cargar los `SKILL.md`
-      completos de `python-testing` y `python-design-patterns` antes de escribir codigo y registrar la
-      resolucion.
-- [ ] 0.2 Capturar la linea de base: `git status`, `git rev-parse HEAD` y `sha256sum` de
-      `evaluation/data/campana/doble_etiquetado_arbitrado.csv`,
-      `evaluation/data/campana/arbitraje_tres_vias.json`,
-      `evaluation/data/campana/corpus_independiente_arbitrado.json` y
-      `evaluation/data/campana/predicciones_arbitrado.json`; registrar los anclajes canonicos
-      (`142/206`, `0,6893`, macro-F1 `0,7024`, `64` arbitrados, `6` de tres vias, kappa `E3`/`E4`
-      `0,6055`). Registrar modificaciones preexistentes ajenas a este change y no tocarlas.
-- [ ] 0.3 **Red de seguridad:** correr `cd evaluation && pytest -q` (con las variables dummy del CI) y
-      registrar el resultado; si algo falla antes de empezar, detenerse y reportarlo como fallo
-      preexistente.
-- [ ] 0.4 Releer `evaluation/kappa.py`, `evaluation/arbitraje.py`, `evaluation/doble_etiquetado.py`,
-      `evaluation/campana.py::validar_registro_sujetos` y las claves de
-      `arbitraje_tres_vias.json`; confirmar que el modulo nuevo puede reutilizarlos sin cambiar sus
-      contratos.
-- [ ] 0.5 Releer el indice de `docs/Tesis/Correcciones/numeros-canonicos.md` y fijar el primer numero
-      de seccion libre (hoy la ultima es `3.37`; esperado `3.39`) y registrarlo. Verificar que no
-      existe ya.
-- [ ] 0.6 **[CHECKPOINT DE LOS AUTORES — BLOQUEA LA TAREA 1]** Resolver OQ1 y OQ2 del design: cantidad
-      de etiquetadores (`5` recomendado frente al minimo `3`) y cobertura (corpus completo `206`
-      frente a los `64` divergentes). Registrar la respuesta.
+- [ ] 0.1 Confirmar que la entrega esta cerrada (`c-235` a `c-239` archivados) y que `c-229` completo sus grupos 0 a 3; si no, detenerse.
+- [ ] 0.2 Leer `proposal.md`, `design.md` y los specs delta; cargar los `SKILL.md` de `python-testing` y `python-design-patterns` y registrar la resolucion.
+- [ ] 0.3 Linea base: `git status`, `git rev-parse HEAD`, `sha256sum evaluation/data/campana/doble_etiquetado.csv evaluation/data/campana/registro_sujetos.csv evaluation/kappa.py`; registrar kappa `E1`/`E2` `0,5569`, 62 discordantes y 29 entre `Sistemas` y `Soporte Tecnico Software`.
+- [ ] 0.4 **Red de seguridad:** `cd evaluation && pytest -q`; registrar el resultado y detenerse ante fallos preexistentes.
+- [ ] 0.5 Verificar en el memo que la seccion `3.39` sigue libre y reservada a este change.
+- [ ] 0.6 **[CHECKPOINT DE LOS AUTORES]** Registrar las respuestas a OQ1 (cinco o tres etiquetadores), OQ2 (`sin_mayoria`), OQ3 (quienes y que vinculo), OQ4 (personas ya registradas), OQ5 (herramienta) y OQ6 (nada antes de la defensa).
 
-## 1. Regla declarada antes de ver las etiquetas
+## 1. Kappa de Fleiss (TDD estricto)
 
-- [ ] 1.1 Fijar en `docs/campana-medicion/runbook-referencia-mayoria.md` la regla deterministica:
-      mayoria `>= 3` de `5`; tratamiento de los casos `sin_mayoria` con la regla de respaldo
-      (referencia vigente de arbitro unico, rotulada); conjunto laxo por `>= 3` de `5`; y confirmacion
-      de OQ3. Declarar la fecha, anterior al etiquetado de `E6`-`E8`. (DA «Referencia por mayoria»)
-- [ ] 1.2 Verificar con `git log`/fecha que la regla quedo fijada antes de cualquier etiqueta nueva y
-      registrar la evidencia. (DA «Referencia por mayoria»)
+- [ ] 1.1 **RED** `evaluation/tests/test_kappa_fleiss.py`: oraculo sintetico con `P_bar`, `P_e` y kappa calculados a mano; ejemplo publicado con su fuente citada y el valor tomado de la fuente; matriz por pares; confirmar que fallan por ausencia. (EF «Kappa de Fleiss»)
+- [ ] 1.2 **GREEN** `kappa_fleiss` y `matriz_acuerdo_por_pares` en `evaluation/kappa.py`, reutilizando `kappa_cohen` y las constantes de bootstrap de `evaluation/metrics.py`. (EF «Kappa de Fleiss»)
+- [ ] 1.3 **TRIANGULATE** cobertura variable por caso, `P_e = 1` (no estimable), tres y cinco etiquetadores. (EF «Kappa de Fleiss»)
+- [ ] 1.4 Actualizar el mensaje de `kappa_doble_etiquetado` para remitir a Fleiss sin cambiar su contrato de dos etiquetadores; correr sus pruebas existentes. (EF «Kappa de Cohen»)
+- [ ] 1.5 **REFACTOR** y suite de `evaluation/` en verde.
 
-## 2. Sujetos y consentimiento (bloque HIGH)
+## 2. Funciones de mayoria (TDD estricto)
 
-- [ ] 2.1 Agregar a `evaluation/data/campana/registro_sujetos.csv` las filas `E6,etiquetador,P12`,
-      `E7,etiquetador,P13`, `E8,etiquetador,P14`; verificar con `validar_registro_sujetos` que no hay
-      solape por `persona` ni alias con mas de un rol. Sin nombres, correos ni legajos. (DA «Registro y
-      consentimiento»)
-- [ ] 2.2 Extender `docs/campana-medicion/confirmacion-posterior-consentimiento.md` para admitir los
-      alias `E6`, `E7` y `E8` y registrar su informacion verbal, confirmacion escrita y custodia.
-      Verificar que no figura ningun nombre real ni la correspondencia alias-identidad. (TD «Registro y
-      consentimiento»)
-- [ ] 2.3 Confirmar que cada etiquetador nuevo tiene consentimiento registrado antes de usar sus
-      etiquetas; si falta, excluirlo de la referencia y declarar la limitacion. (DA «Registro y
-      consentimiento»)
+- [ ] 2.1 **RED** `evaluation/tests/test_mayoria.py`: mayoria absoluta, `2-2-1`, `2-1-1-1`, conjunto laxo sin repetir el principal, cobertura variable; confirmar que fallan por ausencia del modulo. (MR-001 «Funciones puras»)
+- [ ] 2.2 **GREEN** `evaluation/mayoria.py` con el minimo para pasar, sin E/S ni red y sin tocar `doble_etiquetado.py` ni `arbitraje.py`. (MR-001 «Funciones puras»)
+- [ ] 2.3 **TRIANGULATE** umbrales `2` y `3`, casos con un solo etiquetador, referencia de varios casos con `origen` y conteos. (MR-001 «Funciones puras»)
+- [ ] 2.4 **REFACTOR** y suite de `evaluation/` en verde.
 
-## 3. Modulos y pruebas (TDD estricto)
+## 3. Protocolo y constancia (ALTA)
 
-- [ ] 3.1 **RED** `evaluation/tests/test_kappa_fleiss.py`: pruebas sinteticas de `kappa_fleiss` (matriz
-      de conteos conocida) y de `matriz_acuerdo_por_pares`; ejecutar y confirmar que fallan por
-      ausencia de implementacion. (EF «Kappa de Fleiss»)
-- [ ] 3.2 **GREEN** implementar `kappa_fleiss` y `matriz_acuerdo_por_pares` en `evaluation/kappa.py`
-      con la minima logica; no modificar el contrato de `kappa_doble_etiquetado`. (EF «Kappa de
-      Fleiss»)
-- [ ] 3.3 **TRIANGULATE** agregar casos con cobertura variable por caso, con `P_e = 1` (no estimable)
-      y con los cinco etiquetadores; confirmar que generaliza. (EF «Kappa de Fleiss»)
-- [ ] 3.4 **REFACTOR** extraer constantes y nombres; correr las pruebas tras cada paso y confirmar
-      verde. (EF «Kappa de Fleiss»)
-- [ ] 3.5 **RED** `evaluation/tests/test_mayoria.py`: pruebas sinteticas de `mayoria` (mayoria absoluta,
-      empate `2-2-1`, `2-1-1-1`) antes de existir el modulo; ejecutar y confirmar que fallan. (DA
-      «Referencia por mayoria»)
-- [ ] 3.6 **GREEN** implementar `evaluation/mayoria.py` (`mayoria`, `construir_referencia_mayoria`,
-      `ensamblar_mayoria`) reutilizando `doble_etiquetado.py` y `arbitraje.py` sin cambiar sus
-      contratos; emitir `referencia_mayoria.json` y su sidecar. (DA «Referencia por mayoria»; DA
-      «Artefactos versionados»)
-- [ ] 3.7 **TRIANGULATE** cubrir mayoria completa, cobertura parcial y `sin_mayoria` con respaldo;
-      confirmar que generaliza. (DA «Referencia por mayoria»)
-- [ ] 3.8 **REFACTOR** limpiar y correr la suite de `evaluation/` completa como red de seguridad. (DA
-      «Referencia por mayoria»)
+- [ ] 3.1 Crear `docs/campana-medicion/protocolo-referencia-mayoria.md`: numero de etiquetadores, umbral, `sin_mayoria` sin arbitro unico (rango acotante por defecto), conjunto laxo, cegado, codebook congelado, herramienta y formato de exportacion con marcas propias, vinculo de cada etiquetador con los autores. (MR-002 «Protocolo constatado»)
+- [ ] 3.2 Crear la plantilla de consentimiento escrito previo para los etiquetadores nuevos, sin nombres, con originales en custodia del director. (MR-004 «Compuerta etica y legal»)
+- [ ] 3.3 **[CHECKPOINT DE LOS AUTORES]** Aprobacion del protocolo con fecha. (MR-002 «Protocolo constatado»)
+- [ ] 3.4 **[COMPUERTA]** Constancia firmada y fechada del director sobre el protocolo (o su SHA-256), antes de entregar cualquier paquete; versionar el hash del documento constatado. La fecha de commit no basta por si sola. (MR-002 «Protocolo constatado»)
 
-## 4. Campo ciego y artefactos
+## 4. Sujetos y etiquetado ciego (ALTA, despues de `c-229` grupo 4)
 
-- [ ] 4.1 Generar la hoja ciega con `python -m evaluation.arbitraje hoja-ciega` para los casos de la
-      cobertura decidida (corpus completo o los `64` divergentes); verificar encabezado
-      `id_caso,descripcion` y conteo. (DA «Cobertura y cegado»)
-- [ ] 4.2 Entregar el paquete ciego (`hoja ciega` + copia vacia de
-      `evaluation/data/plantilla_etiquetado.csv` + codebook congelado) a `E6`, `E7` y `E8`; registrar
-      que no vieron etiquetas de `E3`/`E4`/`E5`, la referencia ni predicciones. (DA «Cobertura y
-      cegado»)
-- [ ] 4.3 Unir las planillas en `evaluation/data/campana/doble_etiquetado_mayoria.csv` (un encabezado,
-      UTF-8 sin BOM, LF), validar con el validador correspondiente y ensamblar la referencia con
-      `ensamblar_mayoria`; registrar el conteo de `sin_mayoria` y los casos `tres_vias` remanentes.
-      (DA «Cobertura y cegado»; DA «Artefactos versionados»)
-- [ ] 4.4 Versionar `doble_etiquetado_mayoria.csv`, `referencia_mayoria.json` y su sidecar con SHA-256
-      en `evaluation/data/campana/README.md`; declarar la cobertura efectiva y el `estado_cegado`. (DA
-      «Artefactos versionados»)
+- [ ] 4.1 **[COMPUERTA K-02]** Confirmar que existe la autorizacion institucional y la base de licitud de `c-229` y que cada etiquetador firmo su consentimiento previo; registrar fechas por alias. (MR-004 «Compuerta etica y legal»)
+- [ ] 4.2 Agregar a `registro_sujetos.csv` los alias desde `E6` con codigos desde `P12`; verificar con `validar_registro_sujetos`; sin datos personales. (MR-005 «Registro»)
+- [ ] 4.3 Preparar el paquete ciego de la muestra de `c-229` (`id_caso`, texto pseudonimizado autorizado, plantilla vacia, codebook congelado) y entregarlo; registrar que ningun etiquetador vio etiquetas ajenas, referencia ni predicciones. (MR-006 «Referencia de la muestra»)
+- [ ] 4.4 Recibir las planillas crudas exportadas por la herramienta, sin editarlas; versionar su SHA-256 y custodiar los originales segun la autorizacion. (MR-003 «Compuerta de procedencia»)
 
-## 5. Recomputo y comparacion honesta
+## 5. Referencia y acuerdo (bloqueado por compuerta)
 
-- [ ] 5.1 **RED** `evaluation/data/campana/analisis/test_analisis_referencia_mayoria_c230.py`: pruebas
-      sinteticas de las funciones puras (lecturas de exactitud y metricas por clase, delta, veredicto
-      por lectura) antes del modulo; ejecutar y confirmar que fallan. (OOS «Recompto y comparacion»)
-- [ ] 5.2 **GREEN** implementar `analisis_referencia_mayoria_c230.py` reutilizando
-      `evaluation/metrics.py` y `evaluation/kappa.py` sin modificarlos. (OOS «Recompto y comparacion»)
-- [ ] 5.3 **TRIANGULATE** cubrir distintos casos conocidos (sin cambio, cambio de acierto a error,
-      cambio de error a acierto) y el Fleiss con cobertura parcial. (OOS «Recompto y comparacion»)
-- [ ] 5.4 **REFACTOR** limpiar y correr la suite de `evaluation/`. (OOS «Recompto y comparacion»)
-- [ ] 5.5 Implementar el `main()`: leer `referencia_mayoria.json`,
-      `corpus_independiente_arbitrado.json` y `predicciones_arbitrado.json`; reproducir los anclajes
-      `142/206` y `0,7024` (abortar sin escribir si no coinciden); emitir
-      `analisis_referencia_mayoria_c230.{json,md,SHA256SUMS.txt}` con las dos lecturas, el delta y el
-      veredicto por lectura. (OOS «Recompto y comparacion»)
-- [ ] 5.6 Correr el script dos veces y confirmar salidas identicas byte a byte; verificar que no hay
-      red, Gemini ni escritura fuera de los tres nombres fijos; registrar los SHA-256. (OOS «Recompto y
-      comparacion»)
+- [ ] 5.1 **[COMPUERTA K-01]** Acta del director (o tercero) que verifica planillas crudas, marcas de la herramienta, constancias, hashes, independencia y textos reales contra la evidencia primaria. Puede ser la misma acta de `c-229` si cubre el etiquetado. Sin acta, detenerse. (MR-003 «Compuerta de procedencia»)
+- [ ] 5.2 Construir la referencia con `evaluation/mayoria.py` y la regla constatada; versionar referencia y sidecar (`origen`, conteo de `sin_mayoria`) con SHA-256. (MR-006 «Referencia de la muestra»)
+- [ ] 5.3 Calcular el kappa de Fleiss con su IC y la matriz por pares sobre la muestra; versionar el resultado. (MR-006 «Referencia de la muestra», EF «Kappa de Fleiss»)
+- [ ] 5.4 Entregar la referencia a `c-229` (grupo 5), que con ella publica el manifiesto del corpus probabilistico acreditado y corre la estimacion. (MR-006 «Referencia de la muestra»)
 
-## 6. Memo canonico (NC)
+## 6. Memo, tesis y trazabilidad
 
-- [ ] 6.1 Agregar la seccion aditiva `### 3.N` (ver 0.5) con la composicion y el umbral de la
-      referencia, el conteo y los identificadores de `sin_mayoria`, el Fleiss y la matriz por pares, y
-      las dos lecturas (mayoria y vigente) de exactitud estricta y macro-F1 con IC de Wilson, el delta
-      y el veredicto por lectura; cada valor con procedencia, estado y comando. Declarar que la
-      referencia por mayoria reemplaza como primaria a la de arbitro unico en el `31 %` y que ambas
-      lecturas se conservan. (NC «Registro aditivo»)
-- [ ] 6.2 Verificar con `git diff` dirigido que la seccion es aditiva: solo lineas agregadas, sin
-      reescritura de las secciones anteriores. (NC «Registro aditivo»)
+- [ ] 6.1 Agregar la seccion `3.39` del memo (protocolo y fecha de la constancia, verificacion contra oraculos, estado de compuertas y, si existe, cobertura, `sin_mayoria`, Fleiss y matriz por pares); conservar por remision el kappa `0,5569`; verificar con `git diff` que es aditiva y con `rg` que no cita cifras `retirado`. (NC «Registro 3.39»)
+- [ ] 6.2 Solo si 5.1 a 5.3 se cumplieron y la muestra se incorpora por `c-229`, en una version posterior a la defensa: metodo, resultados, limitacion de fiabilidad (conserva `0,5569`) y `subsec:consentimiento-derechos` por alias. (TD «Version posterior»)
+- [ ] 6.3 Verificar en esa version: el `rg` de cifras y alias retirados de `c-235` sigue sin coincidencias fuera de la nota de versiones; sin nombres reales; sin `c-NNN` en el cuerpo; compilacion sin referencias indefinidas. (TD «Version posterior»)
+- [ ] 6.4 Agregar en `dictamen-correcciones.md` la entrada del change con modulos, pruebas, protocolo, constancia y actas (fechas, sin datos personales), seccion `3.39` y anclas de prosa. (NC «Registro 3.39»)
+- [ ] 6.5 **A-03:** registrar en `docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md` (de `c-237`) que partes de los modulos, pruebas, protocolo y prosa produjo un asistente de IA, con que herramienta y como se verifico cada resultado.
 
-## 7. Prosa de la tesis (TD)
+## 7. Verificacion de cierre
 
-- [ ] 7.1 `04-marco-metodologico.tex`: describir la referencia como mayoria de cinco con umbral, regla
-      de respaldo y conteo `sin_mayoria`; retirar la descripcion de la decision de un unico tercer
-      etiquetador. (TD «Referencia por mayoria divulgada»)
-- [ ] 7.2 `07-resultados.tex`: informar las dos lecturas con sus intervalos y el delta, el kappa de
-      Fleiss rotulado y el veredicto del umbral por lectura; no ocultar el cambio de la cifra primaria.
-      (TD «Referencia por mayoria divulgada»)
-- [ ] 7.3 `08-discusion.tex`: acotar la limitacion de la referencia (ya no depende de un unico arbitro
-      en el `31 %`, cobertura efectiva y `sin_mayoria`) sin sobreafirmar. (TD «Referencia por mayoria
-      divulgada»)
-- [ ] 7.4 `11-aspectos-legales.tex` (`subsec:consentimiento-derechos`): declarar `E6`, `E7` y `E8` por
-      alias, la informacion verbal, la confirmacion escrita y la custodia; sin nombres reales. (TD
-      «Registro y consentimiento»)
-- [ ] 7.5 `10-recomendaciones.tex`: retirar la linea que propone conseguir mas etiquetadores
-      independientes como trabajo futuro y reformularla con criterio de exito. (TD «Trabajo futuro
-      actualizado»)
-- [ ] 7.6 Verificar que `142/206`, `0,6893`, `0,7024` y el veredicto previo del umbral conservan su
-      valor como referencia vigente; que no se introdujeron identificadores `c-NNN` fuera de comentarios
-      (`rg -n "c-[0-9]{3}" sections/*.tex`) y que las remisiones resuelven. (TD «Referencia por mayoria
-      divulgada»)
-- [ ] 7.7 Compilar con XeLaTeX (`latexmk -xelatex main.tex`), verificar `\@abspage@last`, cero
-      referencias indefinidas y cero etiquetas duplicadas; si la tabla empuja una pagina, compensar
-      dentro del mismo bloque. Si el entorno no tiene LaTeX, registrar la compilacion como diferida al
-      release. (TD «Referencia por mayoria divulgada»)
-
-## 8. Trazabilidad y verificacion de cierre
-
-- [ ] 8.1 Agregar en `docs/Tesis/Correcciones/dictamen-correcciones.md` la seccion `C30/…` con el
-      modulo y las pruebas, las salidas, la seccion del memo, los pasajes de prosa y el estado de la
-      limitacion del arbitro unico. (NC «Registro aditivo»)
-- [ ] 8.2 Volver a correr `cd evaluation && pytest -q` y confirmar que no hay regresiones; correr el
-      script una vez mas y comparar SHA-256 con 5.6.
-- [ ] 8.3 Confirmar con `git diff --stat` que no cambiaron `App/`, `n8n/`, el clasificador, la
-      configuracion, el corpus de ajuste, las predicciones congeladas ni `evaluation/report.md`.
-- [ ] 8.4 Correr `openspec validate c-230-referencia-por-mayoria-con-etiquetadores-independientes
-      --strict` y verificar que pasa.
-- [ ] 8.5 Dejar a cargo del orquestador la actualizacion de `CHANGES.md` y el `engram sync`; no
-      pushear, no crear tag ni release.
-- [ ] 8.6 Guardar en Engram el resumen del change con el nombre, los artefactos, la seccion del memo,
-      los SHA-256 y el resultado de las verificaciones; reportar al orquestador con la tabla de
-      evidencia del ciclo TDD.
+- [ ] 7.1 `cd evaluation && pytest -q` sin regresiones; pruebas de `doble_etiquetado.py` y `arbitraje.py` sin cambios de contrato.
+- [ ] 7.2 `git diff --stat`: sin cambios en `App/`, `n8n/`, el clasificador, el corpus de 200, `doble_etiquetado.csv` ni artefactos congelados.
+- [ ] 7.3 Buscar con `rg` las cifras, alias y artefactos retirados que lista la seccion de adaptacion de `proposal.md` sobre los archivos nuevos del change: sin coincidencias.
+- [ ] 7.4 `openspec validate c-230-referencia-por-mayoria-con-etiquetadores-independientes --strict`.
+- [ ] 7.5 Dejar a cargo del orquestador `CHANGES.md` y `engram sync`; no pushear ni etiquetar.
+- [ ] 7.6 Guardar en Engram el resumen y reportar con la tabla de evidencia TDD.
 
 ## Evidencia del ciclo TDD (obligatoria al reportar)
 
 | Tarea | Archivo de prueba | Capa | Red de seguridad | RED | GREEN | TRIANGULATE | REFACTOR |
 |---|---|---|---|---|---|---|---|
-| 3.1-3.4 | `evaluation/tests/test_kappa_fleiss.py` | Unit | `pytest -q` de `evaluation/` | pendiente | pendiente | casos: cobertura variable, `P_e = 1`, cinco etiquetadores | pendiente |
-| 3.5-3.8 | `evaluation/tests/test_mayoria.py` | Unit | `pytest -q` de `evaluation/` | pendiente | pendiente | casos: mayoria absoluta, `2-2-1`, `2-1-1-1`, cobertura parcial | pendiente |
-| 5.1-5.4 | `evaluation/data/campana/analisis/test_analisis_referencia_mayoria_c230.py` | Unit | `pytest -q` de `evaluation/` | pendiente | pendiente | casos: sin cambio, acierto a error, error a acierto, Fleiss parcial | pendiente |
+| 1.1-1.5 | `evaluation/tests/test_kappa_fleiss.py` | Unit | `pytest -q` de `evaluation/` | pendiente | pendiente | cobertura variable, `P_e = 1`, tres y cinco etiquetadores, ejemplo publicado | pendiente |
+| 2.1-2.4 | `evaluation/tests/test_mayoria.py` | Unit | `pytest -q` de `evaluation/` | pendiente | pendiente | mayoria, `2-2-1`, `2-1-1-1`, laxo, cobertura parcial, umbrales 2 y 3 | pendiente |

@@ -47,7 +47,7 @@ Fuera de alcance: recompilar el PDF de entrega, bump y tag (`c-239`); balance ne
 | `evaluation/data/campana/README.md` (L99-258 y afines), README del canario | Modificado (texto) | Re-rotulado; bytes de los datos intactos |
 | `evaluation/data/campana/*independiente*`, `*arbitrad*`, `arbitraje_tres_vias.json`, `analisis/*`, `evaluation/data/canario/canario.json` | Sin cambio por defecto | Borrarlos rompe `evaluation/tests/test_linea_de_base.py`, `evaluation/tests/test_calibracion_gate.py` (L396-399), `evaluation/monitoreo/test_monitor_deriva.py` (L203-226) y `analisis/SHA256SUMS.txt` |
 | Extractos `tesis_para_agente.md`, `tesis_completa_extraida.txt`, `tesis_para_evaluacion.txt` | Regeneracion | Con `build_tesis_para_agente.py`; la regeneracion final puede quedar en `c-239` |
-| Changes activos `c-228`, `c-229`, `c-230`, `c-232` | **Impacto, no se tocan** | Anclan premisas en `0,6893` o en los 206 casos; decision de autores: reformular o archivar |
+| Changes activos `c-228`, `c-229`, `c-230`, `c-232` | **Impacto, no se tocan aqui** | Anclaban premisas en `0,6893` o en los 206 casos; reformulados el 16/11/2026 por indicacion de un coautor (seccion «Adaptacion a la devolucion de tercera instancia» de cada uno): sin anclas retiradas, con compuertas de procedencia (K-01) y etica y legal (K-02), y posteriores a la entrega. Falta la confirmacion de los tres autores |
 | `c-236` | Coordinacion | Este change quita de §9.5 la sensibilidad fuera de muestra (L119, L125) y modifica el requisito del balance solo en esa clausula; `c-236` construye sobre ese texto |
 
 Sin cambios en `App/`, `n8n/`, el clasificador, el corpus congelado de 200 casos ni sus cifras canonicas (`61,6 s`, `17,76 s`, `W = 363`, `73,5 %`, `0,6508`, `110/138`). Cero llamadas a Gemini.
@@ -72,7 +72,7 @@ Sin cambios en `App/`, `n8n/`, el clasificador, el corpus congelado de 200 casos
 
 - **Precondicion dura:** respuestas de los autores a las compuertas del grupo 1 de `tasks.md` antes de escribir la nota de versiones, §7.3, §7.5 y cualquier README con afirmaciones de procedencia.
 - Este change se aplica **primero** del conjunto `c-235` a `c-239`; `c-236` (balance), `c-237` (IA), `c-238` (legibilidad) y `c-239` (cierre, recompilacion, tag) dependen de su resultado.
-- Afecta, sin modificarlos, a `c-228`, `c-229`, `c-230` y `c-232`.
+- Afecta, sin modificarlos desde este change, a `c-228`, `c-229`, `c-230` y `c-232`, reformulados el 16/11/2026 por indicacion de un coautor (seccion «Adaptacion a la devolucion de tercera instancia» de cada uno).
 
 ## Success Criteria
 

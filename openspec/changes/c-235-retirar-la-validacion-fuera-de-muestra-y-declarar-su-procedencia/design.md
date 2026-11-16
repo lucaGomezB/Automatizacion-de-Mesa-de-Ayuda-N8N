@@ -10,7 +10,7 @@ Ver `proposal.md` - Why. Estado y restricciones que moldean el enfoque:
 - **Insumo confirmado de un autor (2026-11-16):** las descripciones del corpus independiente son descripciones genericas de incidentes, no incidentes extraidos de la compania. **No confirmado:** como se produjeron las etiquetas y las marcas temporales de `E3`/`E4`/`E5`; quien redacto los textos y con que medio; si los nombres de sucursal y el "sistema principal" refieren a una organizacion real.
 - Patron reproducido (hecho verificado): `evaluation/data/campana/doble_etiquetado_arbitrado.csv` (E3/E4/E5, 476 filas) tiene duraciones en [30, 90] s y pausas enteras de 1-5 s (E3, E5) y 1-8 s (E4); `doble_etiquetado.csv` (E1/E2) no lo muestra.
 - Los artefactos estan fijados por SHA-256 (`evaluation/data/campana/analisis/SHA256SUMS.txt`, `evaluation/data/canario/canario.SHA256SUMS.txt`, tablas del README de campana) y los leen pruebas de CI: `evaluation/tests/test_linea_de_base.py`, `evaluation/tests/test_calibracion_gate.py` (L396-399, `predicciones_independiente.json` con 103/69), `evaluation/monitoreo/test_monitor_deriva.py` (L203-226, canario de 103 casos `I*`).
-- Changes activos que anclan premisas en `0,6893` o en los 206 casos: `c-228`, `c-229`, `c-230`, `c-232`. Change activo `c-237` (solo metadatos). `c-236`, `c-238`, `c-239` se proponen despues de este.
+- Changes activos que anclaban premisas en `0,6893` o en los 206 casos: `c-228`, `c-229`, `c-230`, `c-232` (reformulados el 16/11/2026 por indicacion de un coautor (seccion «Adaptacion a la devolucion de tercera instancia» de cada uno)). Change activo `c-237` (solo metadatos). `c-236`, `c-238`, `c-239` se proponen despues de este.
 
 ## Goals / Non-Goals
 
@@ -120,7 +120,7 @@ El re-rotulado (requisito ADDED OOS-026) se hace en `evaluation/data/campana/REA
 
 ### D10 — Changes activos con premisas retiradas
 
-`c-228` (clasificador supervisado sobre el corpus acumulado), `c-229` (muestreo probabilistico), `c-230` (referencia por mayoria con etiquetadores independientes) y `c-232` (integrar el supervisado) citan `0,6893` o los 206 casos como linea de partida. No se editan aqui. Una tarea registra, por cada uno, la decision de los autores: **reformular** (cambiar la premisa al corpus de 200 casos) o **archivar sin aplicar**. `c-229` interesa ademas como remedio empirico declarado en las conclusiones por `c-234`.
+`c-228` (clasificador supervisado sobre el corpus acumulado), `c-229` (muestreo probabilistico), `c-230` (referencia por mayoria con etiquetadores independientes) y `c-232` (integrar el supervisado) citaban `0,6893` o los 206 casos como linea de partida. No se editan desde este change. Fueron reformulados el 16/11/2026 por indicacion de un coautor (seccion «Adaptacion a la devolucion de tercera instancia» de cada uno): ninguno usa ya una cifra o un artefacto retirado como ancla, insumo o comparador; todo dato nuevo queda sujeto a una compuerta de procedencia (K-01) y a una etica y legal (K-02); y ninguno modifica el ejemplar que se defiende (se ejecutan despues de `c-239`, en el orden `c-229`, `c-230`, `c-228`, `c-232`). Una tarea registra, por cada uno, la confirmacion de los tres autores de esa adaptacion o, en su defecto, **archivar sin aplicar**. `c-229` interesa ademas como remedio empirico declarado en las conclusiones por `c-234`.
 
 ### D11 — Gobernanza y red de seguridad
 
@@ -176,5 +176,5 @@ Decisiones abiertas:
 - **OQ5 (autores):** etiqueta del estado de la hipotesis de eficiencia; por defecto "sin contraste limpio". Si cambia, se actualiza el delta antes de aplicar.
 - **OQ6 (autores):** el canario de deriva sigue operando como insumo tecnico rotulado, o se reemplaza en un change posterior.
 - **OQ7 (aplicacion/autores):** si el marco teorico (§2: TF-IDF, regresion logistica) y el glosario conservan esos terminos tras retirar la linea de base; Brier y AUROC siguen en uso por la calibracion dentro de la muestra. `verify_citations.py` decide sobre las entradas sin cita.
-- **OQ8 (autores):** `c-228`, `c-229`, `c-230`, `c-232`: reformular o archivar (D10).
+- **OQ8 (autores):** `c-228`, `c-229`, `c-230`, `c-232`: confirmar la adaptacion ya propuesta (posterior a la entrega) o archivar (D10).
 - **OQ9 (aplicacion):** si `subsec:comparacion-alternativas` se conserva con solo el bloque descriptivo del modelo solo o se funde en otra subseccion; fijar el nuevo cardinal de apartados del capitulo 8.

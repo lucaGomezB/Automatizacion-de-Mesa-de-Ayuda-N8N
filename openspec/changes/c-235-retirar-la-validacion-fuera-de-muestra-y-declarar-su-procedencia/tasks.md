@@ -20,7 +20,7 @@ Gobernanza **ALTA**. Cada tarea marcada **[COMPUERTA]** no se ejecuta sin la res
 - [ ] 1.2 **[COMPUERTA]** Registrar la decision OQ2 sobre los artefactos: conservar y re-rotular (A, por defecto) o eliminar (B). (OOS «OOS-026»)
 - [ ] 1.3 **[COMPUERTA]** Registrar OQ3 (conservar la fila de 200 casos de `tab:gemini-solo` como descriptiva, o retirar la tabla) y OQ5 (etiqueta del estado de la hipotesis de eficiencia; por defecto "sin contraste limpio"). Si OQ5 cambia la etiqueta, actualizar los deltas de `tesis-document` y `tesis-dictamen-v1-3-0` y volver a correr `openspec validate --strict` antes de seguir. (TD «Eficiencia»)
 - [ ] 1.4 **[COMPUERTA]** Registrar OQ4 (mencionar o no las cifras retiradas en la nota de versiones) y aprobar la plantilla de D3.2 con la redaccion final. (TD «Procedencia»)
-- [ ] 1.5 **[COMPUERTA]** Registrar OQ8: para cada uno de `c-228`, `c-229`, `c-230` y `c-232`, la decision de los autores (reformular la premisa al corpus de 200 casos, o archivar sin aplicar). No editar esos changes en este change; solo registrar la decision y su responsable.
+- [ ] 1.5 **[COMPUERTA]** Registrar OQ8: para cada uno de `c-228`, `c-229`, `c-230` y `c-232`, la confirmacion de los tres autores sobre la adaptacion ya propuesta el 16/11/2026 (sin anclas retiradas, con compuertas K-01 y K-02, ejecucion posterior a la entrega) o, en su defecto, archivar sin aplicar. No editar esos changes en este change; solo registrar la decision y su responsable.
 - [ ] 1.6 Registrar OQ6 (canario de deriva) y OQ7 (terminos de la linea de base en el capitulo 2 y el glosario) con la decision de los autores o la propuesta por defecto (canario rotulado; terminos conservados solo si siguen citados). (OOS «OOS-026»)
 
 ## 2. Retiro en el marco metodologico (capitulo 4)

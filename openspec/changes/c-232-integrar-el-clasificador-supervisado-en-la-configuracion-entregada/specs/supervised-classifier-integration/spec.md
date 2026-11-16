@@ -14,8 +14,10 @@ El change SHALL consumir el mejor modelo del benchmark de
 de antemano y SHALL seleccionar exactamente un modelo. El modelo seleccionado SHALL
 publicarse como un artefacto versionado e **inmutable** que registre, como minimo: los pesos
 o un puntero con su hash SHA-256, el tokenizer y su version, la version del codebook de
-entrada, el hash del split de entrenamiento y la version de preprocesamiento, con un comando
-de evaluacion reproducible. El artefacto SHALL declarar que los criterios del benchmark no se
+entrada, el hash del split de entrenamiento, la version de preprocesamiento y la procedencia
+de los datos de entrenamiento (SHA-256 del export crudo y estado de las compuertas de
+procedencia y etica y legal registradas por `c-228`), con un comando de evaluacion
+reproducible. Si esas compuertas no constan cerradas, la seleccion SHALL quedar bloqueada. El artefacto SHALL declarar que los criterios del benchmark no se
 rediscuten ni se modifican y que el modelo MUST NOT re-entrenarse ni ajustarse despues de
 observar el contraste. Si `c-228` no entrego un modelo o un benchmark, la seleccion SHALL
 quedar bloqueada y registrada, y MUST NOT sustituirse por un modelo elegido a mano.
