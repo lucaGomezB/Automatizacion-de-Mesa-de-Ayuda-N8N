@@ -1,5 +1,7 @@
 # Runbook: arbitraje de los discordantes y refuerzo de las clases chicas (c-206)
 
+> **RETIRADO (c-235, 2026-11-16).** El arbitraje de `E5` y el refuerzo de clases que esta página documenta quedan **retirados de la tesis** junto con la validación fuera de muestra; no constituyen evidencia de la tesis y su procedencia no se acredita como registro primario de una organización. Se conserva como historia y como referencia operativa del repositorio. Remisión: `docs/Tesis/Correcciones/numeros-canonicos.md`, Sección 3.45, y la nota de versiones de la tesis.
+
 Procedimiento para resolver los **47 casos discordantes** entre `E3` y `E4` del corpus independiente con un **tercer etiquetador `E5`** (código `P11`), reforzar las clases de soporte chico (`Sistemas` y `Bases de Datos`) y clasificar el corpus resultante con el clasificador **congelado**, de modo que el resultado fuera de muestra se reporte sobre `150` casos y no sobre `103`.
 
 ## Para qué sirve

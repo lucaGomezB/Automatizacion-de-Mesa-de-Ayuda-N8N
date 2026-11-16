@@ -6338,3 +6338,96 @@ tarea.
 | C29/g | Rec 8: remedio empírico condicional y no ejecutado | c-234 | `09-conclusiones.tex:51` | `subsec:aportes-generalizacion` | `Ese diseño es, a la fecha de esta tesis, condicional y no ejecutado` | vigente (nuevo) |
 | C29/h | Rec 8: remisión sin duplicar `c-229` | c-234 | `10-recomendaciones.tex:34` | `subsec:estudios-replicacion` | `requeriría, además, un diseño de muestreo probabilístico de ese universo` | vigente (nuevo) |
 | C29/i | Memo: Sección `3.44` aditiva | c-234 | `docs/Tesis/Correcciones/numeros-canonicos.md:2854` | `-` | `3.44 Procedencia del corpus único y declaración de validez externa` | vigente (nuevo) |
+
+### c-235: retirar la validación fuera de muestra y declarar su procedencia (grupos 0 a 8 y 10)
+
+- **Change**: `c-235-retirar-la-validacion-fuera-de-muestra-y-declarar-su-procedencia` (árbol de trabajo;
+  sin commit ni push en este tramo).
+- **Fecha de registro**: 2026-11-16.
+- **Observaciones atendidas** (devolución de tercera instancia del tribunal sobre `v1.5.2`, 16-11-2026):
+  **K-01** (retiro, opción 2), **K-02** (sin datos de terceros: §4.4 deja de describir una compañía, §7.3 queda
+  exacta y §7.5 deja de tratar a `E3`/`E4`/`E5`), **A-02** y **B-02** («no aplica por retiro») y **M-02**
+  (conclusión de eficiencia acotada a «sin contraste limpio»). Es prosa LaTeX y documentación: no escribe código,
+  no mide de nuevo y hace cero llamadas a Gemini. **Grupos 0 a 8 y 10 aplicados**; el grupo 9 (artefactos de
+  `evaluation/data/campana/` y afines) se difiere a `c-240` (OQ2 = retirar los bytes del repositorio público);
+  la recompilación de entrega, el bump y el tag son de `c-239`.
+
+#### Compuertas de autores (resueltas el 2026-11-16)
+
+Respuestas de los autores a las preguntas P1..P8 y decisiones OQ2..OQ9 (aliases únicamente, sin nombres reales):
+
+| Compuerta | Pregunta | Respuesta registrada |
+|---|---|---|
+| P1 | ¿Quiénes son `E3`, `E4` y `E5`? | Etiquetadores externos al proyecto, personas distintas entre sí y de los autores, con formularios de consentimiento firmados; efectivamente etiquetaron. |
+| P2 | ¿Cómo se produjeron las marcas temporales y las etiquetas? | **No puede acreditarse** cómo se generaron las marcas temporales ni las etiquetas de `E3`, `E4` y `E5`. |
+| P3 | ¿Quién redactó los 56 de refuerzo? | Un autor los redactó el 13-11 a partir de una investigación en fuentes de internet sobre incidentes comunes de la clase `Sistemas`. |
+| P4 | ¿Quién redactó los 150 textos «originales»? | Un autor los elaboró sobre escenarios base generados por un asistente de IA (Gemini 3.1), curados y adaptados a mano; no contienen datos personales ni de terceros; se enviaron a la Gemini API en la corrida paga. |
+| P5 | ¿Quién asignó los sectores? | Los etiquetadores asignaron el sector al etiquetar. |
+| P6 | ¿Eran reales las fechas (2-11-2025 a 12-2-2026)? | No: eran parte de la construcción de los casos, no la ocurrencia de incidentes reales. |
+| P7 | ¿Redacción de la nota de versiones? | La redacción aprobada es la del Anexo I.1 (ver fragmento en `12-anexos.tex`, `subsec:nota-versiones`). |
+| P8 | ¿Consentimientos? | Las confirmaciones son reales; los formularios están firmados por etiquetadores y operadores. |
+| OQ2 | Destino de los artefactos públicos | **RETIRAR**; diferido a `c-240` (aquí solo se registra la decisión, no se actúa sobre `evaluation/data/`). |
+| OQ3 | `tab:gemini-solo` | **Retirar la tabla entera** (no conservar la fila de 200 como descriptiva). |
+| OQ4 | ¿Mencionar cifras retiradas en la nota? | Sí: la nota menciona las cifras retiradas (0,6893, 142/206). |
+| OQ5 | Estado de la hipótesis de eficiencia | **«sin contraste limpio»** (no se retira la hipótesis; se conserva con esa etiqueta). |
+| OQ6 | Canario de deriva (103 casos) | Conservarlo y re-rotularlo como insumo técnico sin referencia acreditada. |
+| OQ7 | Conceptos teóricos (Brier/AUROC) | Conservarlos solo si siguen citados; quitar toda afirmación de comparación con una línea de base clásica realizada. |
+| OQ8 | Changes activos `c-228`..`c-232` | Esperar (no actuar aquí). |
+| OQ9 | `subsec:comparacion-alternativas` | Retirar la subsección y recomputar el cardinal de apartados del capítulo 8. |
+
+#### Resultado
+
+- **K-01 (retiro)**: se retiran del ejemplar el párrafo del corpus independiente de §4.4, los párrafos de §4.7 (línea de
+  base, sensibilidad a la referencia, sesgo del vocabulario, diseño fuera de muestra y brazo de modelo solo), las
+  amenazas séptima y octava de §4.8 («ocho» pasa a «seis»), la parte fuera de muestra de la calibración (§8.4), las
+  subsecciones §8.6 (`subsec:sesgo-corpus-referencia`), §8.9 (`subsec:validacion-fuera-muestra`), §8.10
+  (`subsec:comparacion-alternativas`) y §8.12 (`subsec:ruido-referencia`), las frases fuera de muestra del Resumen, el
+  *Abstract*, §1.4, §1.7, §1.8, el capítulo 5, §7.5, el capítulo 9 y `tab:cumplimiento-objetivos`, los hitos del
+  cronograma (Anexo A) y los apartados 3.35 y 3.36 del Anexo J. El capítulo 8 pasa de «doce» a «ocho» apartados.
+- **K-02**: §4.4 deja de describir una compañía financiera; §7.3 declara las transferencias adicionales del 12 y 13-11;
+  §7.5 pierde el párrafo de `E3`/`E4`/`E5`.
+- **A-02, B-02**: «no aplica por retiro» (registrado).
+- **M-02**: la hipótesis de eficiencia queda «sin contraste limpio» en §1.4, §4.7, §9.1, §10 y §11.5
+  (`subsec:corpus-independiente` pasa a trabajo futuro con procedencia acreditable).
+- **Declaración de procedencia**: nueva entrada de la nota de versiones (Anexo I.1, `subsec:nota-versiones`) con la
+  redacción aprobada (P7), que menciona las cifras retiradas (OQ4) y declara que no puede acreditarse cómo se generaron
+  las marcas temporales ni las etiquetas de `E3`/`E4`/`E5` (P2).
+- **Memo**: sección aditiva `3.45` en `numeros-canonicos.md`; los valores de `3.19`, `3.20`, `3.22`, `3.23`, `3.25`,
+  `3.26`, `3.27`, `3.30`, `3.32`, `3.34`, `3.35`, `3.36` y la parte fuera de muestra de `3.14` (entrada d), `3.21`,
+  `3.24`, `3.28` (bloque primario) y `3.33` (sensibilidad) pasan a `retirado` sin cambiar su cifra.
+
+#### Archivos afectados
+
+`docs/Tesis/v10 (IA)/paper/sections/00-resumen.tex`, `01-introduccion.tex`, `04-marco-metodologico.tex`,
+`05-arquitectura.tex`, `07-resultados.tex`, `08-discusion.tex`, `09-conclusiones.tex`, `10-recomendaciones.tex`,
+`11-aspectos-legales.tex`, `12-anexos.tex`; `docs/diagrams/cronograma.md`;
+`docs/Tesis/Correcciones/numeros-canonicos.md` (Sección `3.45` + rótulos `retirado`); `knowledge-base/11_evaluacion_experimental.md`;
+`docs/campana-medicion/runbook-corpus-independiente.md`, `runbook-arbitraje-discordantes.md` y
+`confirmacion-posterior-consentimiento.md` (marcado como retirado); este registro.
+
+#### Sin cambios
+
+`App/`, `n8n/`, el clasificador, la configuración, el corpus de 200 casos, la campaña complementaria
+(`E1`/`E2`/`O1`/`O2`) ni sus cifras canónicas (`61,6 s`, `17,76 s`, `W = 363`, `73,5 %`, `0,6508`, `110/138`).
+`evaluation/` y `evaluation/data/` quedan intactos (grupo 9 a `c-240`). Cero llamadas a Gemini. Sin bump de versión ni
+tag (OQ8 y `c-239`).
+
+#### Verificación ejecutada
+
+`python3 verify_citations.py` con `STATUS: PASS`; batería `rg` sobre etiquetas retiradas sin coincidencias (7.3) y sobre
+cifras retiradas (7.6) con única coincidencia en `subsec:nota-versiones`; cifras canónicas presentes sin cambio;
+`openspec validate c-235… --strict` y `openspec validate --all --strict` (ver totales al cierre). La compilación de
+verificación (tarea 7.5) se difiere a `c-239`; el conteo de páginas queda provisorio.
+
+#### Matriz de trazabilidad (C30/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C30/a | K-01: retiro de la validación fuera de muestra | c-235 | `07-resultados.tex` | `sec:resultados` | `Los resultados se presentan en ocho apartados` | vigente (nuevo) |
+| C30/b | K-01: línea de base retirada (TLB-04) | c-235 | `08-discusion.tex:56` | `subsec:limitaciones-estudio` | `la línea de base clásica de TF-IDF y regresión logística se probó sobre el corpus fuera de muestra y se retiró con él` | vigente (nuevo) |
+| C30/c | K-02: §4.4 sin compañía financiera | c-235 | `04-marco-metodologico.tex` | `subsec:poblacion-muestra-corpus` | (párrafo `Corpus independiente de validación` eliminado) | vigente (nuevo) |
+| C30/d | K-02: §7.3 exacta | c-235 | `11-aspectos-legales.tex:30` | `subsec:transferencia-internacional` | `En las corridas pagas del 12 y el 13 de noviembre de 2026 se enviaron además los textos` | vigente (nuevo) |
+| C30/e | Procedencia: nota de versiones | c-235 | `12-anexos.tex` | `subsec:nota-versiones` | `No puede acreditarse cómo se generaron las marcas temporales ni las etiquetas de E3, E4 y E5` | vigente (nuevo) |
+| C30/f | M-02: eficiencia sin contraste limpio | c-235 | `09-conclusiones.tex:6` | `sec:conclusiones` | `La hipótesis subsidiaria de eficiencia queda sin contraste limpio` | vigente (nuevo) |
+| C30/g | Trabajo futuro con procedencia acreditable | c-235 | `10-recomendaciones.tex:26` | `subsec:corpus-independiente` | `una validación sobre un corpus de procedencia acreditable` | vigente (nuevo) |
+| C30/h | Memo: Sección `3.45` aditiva | c-235 | `docs/Tesis/Correcciones/numeros-canonicos.md` | `-` | `3.45 Retiro de la validación fuera de muestra y de sus análisis dependientes` | vigente (nuevo) |

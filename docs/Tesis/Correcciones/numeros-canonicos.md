@@ -719,6 +719,8 @@ procedencia de la evidencia. `.gitattributes` solo fija LF para el corpus.
 
 ### 3.14 Campaña de medición (c-165 a c-169)
 
+> **RETIRADO (c-235), entrada (d) únicamente.** La entrada (d) «Validación fuera de muestra (sin corpus independiente declarado)» pasa a `retirado` junto con la validación fuera de muestra (Sección 3.45); el resto de esta sección (campaña complementaria `E1`/`E2`/`O1`/`O2`) sigue `vigente`.
+
 **Fuente, alcance y estado.** Registro de los resultados de la **campaña
 complementaria de medición** (programa c-165 a c-168) analizados por c-167. El
 análisis es de solo lectura y sin red: reutiliza las funciones puras de
@@ -1089,6 +1091,8 @@ conservado") queda acotada al sidecar `data/corpus_resultados.json`.
 
 ### 3.19 Validación fuera de muestra con el corpus independiente (c-191)
 
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
+
 Validación del clasificador **congelado** `hybrid-v3` sobre el corpus independiente de la campaña
 (`evaluation/data/campana/corpus_independiente.json`, `103` casos con consenso `E3`/`E4`; los `47`
 discordantes quedan fuera de la referencia, design D6). Cifras reproducidas de solo lectura, sin red
@@ -1179,6 +1183,8 @@ rango declarado `>=2.20.0`) ni su commit de generación; la comparabilidad se ve
 in-sample y el pin vigente (`>=2.33,<3`) (`analisis/…c191.json`, `comparabilidad` y `limitaciones`).
 
 ### 3.20 Análisis ampliado fuera de muestra (c-205)
+
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
 
 Amplía la Sección 3.19 con métricas que c-191 no publicó, sobre el **mismo** n efectivo de `103`
 casos con consenso `E3`/`E4` (los `47` discordantes quedan fuera de la referencia). Cifras
@@ -1280,6 +1286,8 @@ Procedencia: `analisis/…c205.json` (`balance_neto`).
 
 ### 3.21 Dictamen CONEAU sobre v1.3.0: IC de la reducción, acuerdo `E3`/`E4` y balance neto con referencia común (c-207)
 
+> **RETIRADO (c-235), parcial.** El acuerdo y el kappa de `E3`/`E4` (0,6055) pasan a `retirado` con la validación fuera de muestra; el IC de la reducción y el balance neto con referencia común siguen `vigente` (Sección 3.45).
+
 Cifras nuevas que el dictamen CONEAU del 13-11-2026 sobre `v1.3.0` (recomendaciones 1, 5 y 6)
 exigió y que ningún artefacto previo contenía. Reproducidas de solo lectura, sin red ni Gemini,
 por `evaluation/data/campana/analisis/analisis_dictamen_c207.py`, que reutiliza
@@ -1378,6 +1386,8 @@ La tabla de supuestos de la Sección 3.11 se conserva como sensibilidad. Procede
 
 ### 3.22 Comparación con la línea de base clásica (c-210)
 
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
+
 Cifras aditivas de la comparación entre la línea de base clásica y el híbrido `hybrid-v3`
 sobre el mismo n efectivo de `103` casos con consenso `E3`/`E4` (los `47` discordantes quedan
 fuera de la referencia). La línea de base se entrenó con los `200` casos de ajuste y se evaluó
@@ -1432,6 +1442,8 @@ se presenta como un benchmark definitivo. Procedencia: `analisis/…c210.json` (
 
 ### 3.23 Contraste pareado del híbrido frente a la línea de base (c-213)
 
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
+
 Contraste pareado de la comparación de la Sección 3.22 (c-210), sobre los mismos `103` casos con
 consenso de `E3`/`E4`. **Aditiva**: no modifica ningún valor ni estado `vigente` de las Secciones 3.1 a
 3.22. No es el brazo solo-LLM: la hipótesis de eficiencia sigue sin contrastarse y el objetivo 2 conserva
@@ -1466,6 +1478,8 @@ superioridad general: ambos sistemas se desarrollaron con los mismos `200` casos
 `150` casos corriendo el mismo script con la referencia arbitrada (`--referencia`, `--n-esperado`).
 
 ### 3.24 Calibración y punto de operación del gate de confianza (c-214)
+
+> **RETIRADO (c-235), parcial.** La parte fuera de muestra de la calibración pasa a `retirado`; el resultado dentro de la muestra (AUROC 0,5168; ningún umbral alcanza el piso) sigue `vigente` (Sección 3.45).
 
 Cifras aditivas de la calibración (ECE, Brier, sobreconfianza) y la discriminación (AUROC) de la
 confianza por etapa, del barrido de umbral de la etapa Gemini y de dos señales alternativas de
@@ -1555,6 +1569,8 @@ PDF correspondientes a c-214 quedan según su propio estado (tareas 5.2 y 5.3 de
 
 ### 3.25 Validación fuera de muestra con el corpus independiente arbitrado (c-206)
 
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
+
 Resultado del clasificador **congelado** `hybrid-v3` sobre el corpus independiente **arbitrado**
 (`evaluation/data/campana/corpus_independiente_arbitrado.json`, `206` casos). A diferencia de la
 Sección 3.19 (**estimación con exclusión**), la referencia **no excluye** los discordantes entre
@@ -1620,6 +1636,8 @@ está en la Sección 3.19 (d). La incorporación de estas cifras a la prosa de l
 change posterior (design D8 de c-206).
 
 ### 3.26 Contraste pareado con la referencia arbitrada (c-213, c-206, n = 206)
+
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
 
 Segunda corrida del contraste pareado de la Sección 3.23 (c-213), esta vez **sobre la
 referencia arbitrada** de la Sección 3.25: el mismo híbrido congelado `hybrid-v3` frente a
@@ -1709,6 +1727,8 @@ ajuste en esa clase). Procedencia: `contraste_linea_de_base_c213_arbitrado.json`
 
 ### 3.27 Sensibilidad del clasificador a referencias alternativas plausibles (c-216)
 
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
+
 Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las
 secciones 3.1 a 3.26. Mide, de solo lectura y sin red, cuánto del error observado del
 clasificador congelado `hybrid-v3` sobre la referencia arbitrada de `206` casos es
@@ -1793,6 +1813,8 @@ mueve como máximo `1/206`. No se elige una etiqueta "verdadera": el rango es el
 Fuente: `analisis_ruido_referencia_c216.json` (`tres_vias`).
 
 ### 3.28 Brazo «Gemini solo» y contraste de la hipótesis de eficiencia (c-217; código y corrida de c-215)
+
+> **RETIRADO (c-235), parcial.** El bloque primario (103 casos fuera de muestra) pasa a `retirado`; el bloque dentro de la muestra conserva `condicional`. La hipótesis de eficiencia queda **«sin contraste limpio»** (Sección 3.45).
 
 Contraste pareado del híbrido congelado (H) frente a un brazo que clasifica cada caso solo con Gemini
 (L, sin etapa determinística), que contrasta la hipótesis subsidiaria de eficiencia. **Aditivo**: no
@@ -2034,6 +2056,8 @@ las secciones 1, 4, 7, 8 y 9 de la tesis.
 
 ### 3.30 Sesgo del vocabulario ajustado con el corpus y fragilidad de la referencia (c-219)
 
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
+
 Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las
 secciones 3.1 a 3.29. Mide, de solo lectura, sin red y sin Gemini, (a) cuánto cambian la
 cobertura, el cortocircuito y la precisión de la etapa determinística cuando el vocabulario del
@@ -2271,6 +2295,8 @@ balance neto de las Secciones 3.11/3.21 no se recalcula.
 
 ### 3.32 Propagación del arbitraje fuera de muestra: tres lecturas, desgloses, calibración descriptiva y sensibilidad del balance (c-221)
 
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
+
 Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
 3.1 a 3.31. Registra las cifras nuevas que el análisis de c-221 produce sobre artefactos ya
 versionados, de solo lectura, sin red, sin Gemini y sin base de datos. No cambia el umbral del 85 %,
@@ -2439,6 +2465,8 @@ balance neto conservan su cifra y su estado. La Sección `3.31` (c-220) no se re
 
 ### 3.33 Balance neto recalculado con el costo medido (c-222)
 
+> **RETIRADO (c-235), parcial.** La sensibilidad del balance con la tasa de error fuera de muestra (0,7489 y 64/206) pasa a `retirado`; la lectura central y la rejilla superada siguen `vigente`/`condicional` (Sección 3.45).
+
 Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
 3.1 a 3.32. Convierte el `c` medido de la Sección 3.31 (`69,51 s`) en el insumo central del balance
 neto `B` y de la exactitud mínima de equilibrio `a*` de la Sección 3.21, en lugar del costo supuesto
@@ -2553,6 +2581,8 @@ balance y queda sin cambios (ver `dictamen-correcciones.md`, c-222).
 
 ### 3.34 Preservación del commit de la corrida fuera de muestra por tag de archivo (c-223)
 
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
+
 Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
 3.1 a 3.33. Registra la preservación del commit de la primera corrida fuera de muestra mediante un
 tag anotado de archivo, publicado en `origin`, para que el objeto viaje con `clone` y `fetch`. No
@@ -2589,6 +2619,8 @@ muestra el árbol de fuentes; `git ls-remote --tags origin 'archivo/*'` devuelve
 diseño fuera de muestra (`04-marco-metodologico.tex`); el README de la campaña conserva su nota.
 
 ### 3.35 Acotación del arbitraje por mayoría de los tres etiquetadores (c-224)
+
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
 
 Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
 3.1 a 3.34. Registra que la regla vigente de arbitraje coincide con la mayoría de los tres
@@ -2660,6 +2692,8 @@ prosa vive en `07-resultados.tex` (párrafo del arbitraje), `08-discusion.tex` (
 `10-recomendaciones.tex` (`subsec:corpus-independiente`).
 
 ### 3.36 Robustez de la brecha híbrido menos línea de base frente a la referencia (c-225)
+
+> **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
 
 Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
 3.1 a 3.35. Registra la brecha híbrido menos línea de base clásica, con IC 95 %, sobre los tres
@@ -2900,6 +2934,39 @@ contenido.
 sección solo agrega el registro de procedencia y la declaración de validez externa. La numeración de
 la Sección 3 sigue consecutiva y sin duplicados (`3.44` sigue a `3.43`; `3.39`-`3.42` permanecen
 reservadas a `c-230`/`c-229`/`c-228`/`c-232`).
+
+### 3.45 Retiro de la validación fuera de muestra y de sus análisis dependientes (c-235)
+
+Sección **aditiva**: no renumera ni modifica ninguna sección `3.1` a `3.44`. No borra ni cambia el valor de ningún número canónico; los valores afectados pasan de `vigente`/`condicional` a **`retirado`** por upsert, con esta sección como remisión. Registra el **retiro de la validación fuera de muestra** y de todo lo que dependía de ella, decidido por los autores el **2026-11-16** en la devolución de tercera instancia del tribunal (K-01, opción 2: retiro).
+
+**Causa.** La procedencia del corpus fuera de muestra no puede acreditarse como registro primario de una organización: los 150 textos no provenían de una compañía financiera sino que eran descripciones de incidentes construidas por los autores (escenarios base generados por un asistente de IA, Gemini 3.1, curados y adaptados a mano; los 56 casos de refuerzo, redactados a partir de investigación), y no puede acreditarse cómo se generaron las marcas temporales ni las etiquetas de `E3`, `E4` y `E5`. La declaración completa consta en la nota de versiones de la tesis (`12-anexos.tex`, `subsec:nota-versiones`).
+
+**Secciones y valores afectados (pasan a `retirado`, sin cambiar su cifra).**
+
+| Sección | Alcance | Contenido retirado |
+|---|---|---|
+| `3.19` | completa | Validación fuera de muestra con el corpus independiente (n = 103; 0,8447 / 0,8738) |
+| `3.20` | completa | Análisis ampliado fuera de muestra |
+| `3.21` | parcial (acuerdo y kappa `E3`/`E4`) | Acuerdo y kappa 0,6055 de `E3`/`E4`; el IC de la reducción y el balance con referencia común quedan `vigente` |
+| `3.22` | completa | Comparación con la línea de base clásica |
+| `3.23` | completa | Contraste pareado del híbrido frente a la línea de base |
+| `3.24` | parcial (fuera de muestra) | Parte fuera de muestra de la calibración; dentro de la muestra (AUROC 0,5168) queda `vigente` |
+| `3.25` | completa | Validación fuera de muestra con el corpus independiente arbitrado (206; 0,6893) |
+| `3.26` | completa | Contraste pareado con la referencia arbitrada (n = 206) |
+| `3.27` | completa | Sensibilidad del clasificador a referencias alternativas (ruido de referencia) |
+| `3.28` | parcial (bloque primario) | Bloque primario (103 casos) del brazo Gemini solo; el bloque dentro de la muestra conserva `condicional` |
+| `3.30` | completa | Sesgo del vocabulario ajustado con el corpus y fragilidad de la referencia |
+| `3.32` | completa | Propagación del arbitraje fuera de muestra: tres lecturas, desgloses, calibración descriptiva y sensibilidad del balance |
+| `3.33` | parcial (sensibilidad) | Sensibilidad del balance con la tasa de error fuera de muestra (0,7489 y 64/206); la lectura central queda `vigente` |
+| `3.34` | completa | Preservación del commit de la corrida fuera de muestra por tag de archivo |
+| `3.35` | completa | Acotación del arbitraje por mayoría de los tres etiquetadores |
+| `3.36` | completa | Robustez de la brecha híbrido menos línea de base frente a la referencia |
+| `3.14` | parcial (entrada d) | Entrada (d) «Validación fuera de muestra (sin corpus independiente declarado)» |
+
+**Hipótesis de eficiencia.** La hipótesis subsidiaria de eficiencia del híbrido frente al brazo «Gemini solo» queda en estado **«sin contraste limpio»**: el bloque primario prerregistrado (103 casos) se retiró con la validación fuera de muestra y el único bloque que subsiste (200 casos dentro de la muestra) no es una prueba limpia. `tab:gemini-solo`, `tab:linea-base-clasica`, `tab:robustez-linea-base` y `subsec:comparacion-alternativas` se retiran de la tesis.
+
+**Cifras canónicas intactas.** `61,6 s`, `17,76 s`, `W = 363`, `73,5 %`, `0,6508` y `110/138` siguen `vigente` y sin cambio; dentro de `3.28`, el bloque dentro de la muestra conserva `condicional`. La numeración de la Sección 3 sigue consecutiva y sin duplicados (`3.45` sigue a `3.44`; `3.39`-`3.42` permanecen reservadas a `c-230`/`c-229`/`c-228`/`c-232`).
+
 
 ## 4. Contingencia del gate de intervención humana
 

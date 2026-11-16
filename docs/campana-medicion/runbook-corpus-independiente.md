@@ -1,5 +1,7 @@
 # Runbook: corpus independiente y validación fuera de muestra (c-166)
 
+> **RETIRADO (c-235, 2026-11-16).** El procedimiento de esta página y el corpus independiente que produce quedan **retirados de la tesis** junto con la validación fuera de muestra; no constituyen evidencia de la tesis y su procedencia no se acredita como registro primario de una organización. Se conserva como historia y como referencia operativa del repositorio. Remisión: `docs/Tesis/Correcciones/numeros-canonicos.md`, Sección 3.45, y la nota de versiones de la tesis.
+
 Procedimiento para construir un **corpus independiente** (sin solape con el corpus de ajuste), clasificarlo con el clasificador **congelado** y dejar las predicciones en artefactos aparte, sin tocar nada de la v9.
 
 ## Para qué sirve
