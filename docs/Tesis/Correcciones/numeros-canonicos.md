@@ -30,6 +30,7 @@ de las ramas consumidoras").
 - **Upsert c-206**: `c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas` (aplicado el 2026-11-13) agrega la Sección 3.25 (validación fuera de muestra con el corpus independiente **arbitrado** de `206` casos: el tercer etiquetador `E5` arbitra los `64` discordantes y el refuerzo de `56` casos sube el n efectivo de `103` a `206`, sin exclusión; exactitud estricta y laxa globales con IC de Wilson y métricas por clase con `Sistemas` y `Bases de Datos` estimables). Rota las Secciones 3.19 y 3.20 como **estimación con exclusión** (etapa previa sobre `103`). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.24. Fecha: 2026-11-13.
 - **Upsert c-213 (seguimiento n = 206)**: `c-213-integrar-la-linea-de-base-en-la-tesis` (aplicado el 2026-11-13) agrega la Sección 3.26 (repetición del contraste pareado de la Sección 3.23 sobre el corpus independiente arbitrado de c-206, `206` casos sin exclusión: tabla 2×2, McNemar exacta y corregida, diferencia de exactitudes con IC 95 % bootstrap pareado, y métricas globales y F1 por clase de la línea de base y del híbrido). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.25; la Sección 3.23 (contraste sobre `103`) queda intacta. Fecha: 2026-11-13.
 - **Upsert c-222**: `c-222-recalcular-el-balance-neto-con-el-costo-medido` (aplicado el 2026-11-14) agrega la Sección 3.33 (balance neto recalculado con el `c` medido de la Sección 3.31 sobre la referencia común de la Sección 3.21: insumos con procedencia, fórmulas de `B` y `a*`, escenario central con el intervalo condicional y la cota combinada, la grilla de 5, 10 y 15 minutos rotulada como sensibilidad del supuesto superado y la sensibilidad mixta de c-221 no promovida) y una remisión desde la Sección 3.21. No modifica ningún valor ni estado de las Secciones 3.1 a 3.32. Fecha: 2026-11-14.
+- **Upsert c-236**: `c-236-acotar-el-balance-neto-y-declarar-el-umbral-a-priori` (aplicado el 2026-11-16) agrega la Sección 3.46 (balance neto acotado con el término de revisión `rho x r`: insumos con procedencia y estado, fórmulas `B_r` y `a*_r`, lectura central como cota superior con su intervalo condicional y su cota combinada, rejilla de 5, 10 y 15 minutos con revisión rotulada como sensibilidad al tramo no medido, costo de equilibrio `c*` y sus sensibilidades) y notas de remisión en las Secciones 3.11, 3.31 (h) y 3.33. Declara retirada la cifra `+30,6` como lectura central y la expresión «signo fijado» de la Sección 3.33, sin editar esa sección. No modifica ningún valor ni estado de las Secciones 3.1 a 3.45. Fecha: 2026-11-16.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -583,6 +584,7 @@ Cálculo de solo lectura, sin invocar al clasificador (cero llamadas a Gemini).
 - Tasa de error automatizada máxima: `e_aut* = e_man + Δt / c`; exceso de error tolerable `Δe* = Δt / c` = `14,6 / 7,3 / 4,9` puntos porcentuales para `5 / 10 / 15 min`.
 - Propiedad: `a*` no depende de `N`; el universo escala el balance pero no su signo.
 - Supuestos: cada derivación errónea cuesta `c` en ambos flujos; el ahorro `Δt` aplica a todo `N`; la tasa automatizada es la del corpus; el flujo automatizado no agrega tiempo de revisión (el gate no derivó casos); relación lineal.
+- **Nota (c-236).** El supuesto de este bullet («el flujo automatizado no agrega tiempo de revisión») quedó **refutado por la Sección 3.31 (h)**, que registra que el flujo sí lo agrega, y se corrige en la Sección 3.46, que incorpora el término `rho x r` al balance. No cambia ninguna cifra ni estado de esta sección.
 
 **Tabla de escenarios** (`Δt = 43,82 s`, `N = 2.646`, `e_aut = 53/200`; una decimal, mitad hacia arriba; `condicional`):
 
@@ -2283,6 +2285,10 @@ tiempo de revisión: `r = 22,06` s de media sobre las `138` intervenciones. Se i
 a `B` ni reescribe `08`; el `B` canónico no se modifica. Fuente: idem (`termino_revision`). Estado:
 `vigente` (nuevo) como sensibilidad.
 
+**Nota (c-236).** `r` se **incorpora a `B`** desde la Sección 3.46, con `rho = 147/200`; la cifra de
+esta sección y su estado no cambian. Lo que en esta sección se informaba como sensibilidad separada
+pasa a ser término del balance en la Sección 3.46.
+
 **(i) Desviación del diseño (D3).** La tabla de valores esperados del `design.md` se reprodujo salvo el
 IC de la diferencia de medias: el diseño anticipaba `[4,19; 49,61]` y el análisis da `[3,42; 50,06]`
 (el punto `24,01` sí coincide). El IC de la mediana del grupo con cambio difiere en el redondeo
@@ -2466,6 +2472,8 @@ balance neto conservan su cifra y su estado. La Sección `3.31` (c-220) no se re
 ### 3.33 Balance neto recalculado con el costo medido (c-222)
 
 > **RETIRADO (c-235), parcial.** La sensibilidad del balance con la tasa de error fuera de muestra (0,7489 y 64/206) pasa a `retirado`; la lectura central y la rejilla superada siguen `vigente`/`condicional` (Sección 3.45).
+>
+> **Nota (c-236).** La cifra `+30,6` queda **retirada como lectura central** del balance y la expresión «el signo queda fijado por la muestra» queda retirada, por la Sección 3.46, que incorpora el término de revisión `rho x r` y presenta el balance como cota superior. La cifra y el estado de esta sección se conservan sin editarlos; solo se agrega esta nota.
 
 Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
 3.1 a 3.32. Convierte el `c` medido de la Sección 3.31 (`69,51 s`) en el insumo central del balance
@@ -2966,6 +2974,137 @@ Sección **aditiva**: no renumera ni modifica ninguna sección `3.1` a `3.44`. N
 **Hipótesis de eficiencia.** La hipótesis subsidiaria de eficiencia del híbrido frente al brazo «Gemini solo» queda en estado **«sin contraste limpio»**: el bloque primario prerregistrado (103 casos) se retiró con la validación fuera de muestra y el único bloque que subsiste (200 casos dentro de la muestra) no es una prueba limpia. `tab:gemini-solo`, `tab:linea-base-clasica`, `tab:robustez-linea-base` y `subsec:comparacion-alternativas` se retiran de la tesis.
 
 **Cifras canónicas intactas.** `61,6 s`, `17,76 s`, `W = 363`, `73,5 %`, `0,6508` y `110/138` siguen `vigente` y sin cambio; dentro de `3.28`, el bloque dentro de la muestra conserva `condicional`. La numeración de la Sección 3 sigue consecutiva y sin duplicados (`3.45` sigue a `3.44`; `3.39`-`3.42` permanecen reservadas a `c-230`/`c-229`/`c-228`/`c-232`).
+
+
+### 3.46 Balance neto acotado con el término de revisión y cota superior (c-236)
+
+Sección **aditiva**: no renumera ni modifica ninguna sección `3.1` a `3.45`. Incorpora a `B` el
+tiempo de revisión humana que el flujo automatizado sí agrega (`rho x r`), presenta el costo medido
+`c` como **cota inferior** del costo y el balance como **cota superior** del balance real. No cambia
+el umbral del `85 %`, el veredicto de ninguna sub-hipótesis, las categorías ni ningún artefacto
+congelado. Corrige la observación A-01 (balance neto) de la devolución de tercera instancia del
+tribunal. Corre offline, de solo lectura, sin red, sin Gemini y sin base de datos. Es **sucesora y
+aditiva** de la Sección 3.33 (c-222): esta sección no reescribe `analisis_balance_neto_c222.*` ni
+`analisis_costo_derivacion_c220.*`.
+
+**Causa.** El balance `+30,6` de la Sección 3.33 omitía el término de revisión `r` que el propio
+análisis de c-220 midió (`termino_revision`: media `22,06` s, `n = 138`) y usaba un costo `c` que solo
+cubre el tramo activo. Como la compuerta no detecta errores (AUROC `0,5168`), el error llega al sector
+receptor y el tramo de reanudación queda sin cota: `c` es una cota inferior y `B`, una cota superior.
+El tribunal recalculó `B = +18,7` con la tasa de revisión observada (`147/200`); esta sección lo
+reproduce y fija la regla antes de calcular.
+
+*Numeración.* Al aplicar c-235 el memo terminaba en la Sección `3.45`; esta sección es la `3.46`, la
+primera libre (releída al aplicar, 2026-11-16).
+
+Fuente única de las cifras: `evaluation/data/campana/analisis/analisis_balance_neto_c236.json`
+(y su vista `.md`), generado por el script de solo lectura
+`evaluation/data/campana/analisis/analisis_balance_neto_c236.py` (pruebas en
+`test_analisis_balance_neto_c236.py`, `42` pruebas). Comando (desde la raíz del repositorio):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_balance_neto_c236.py
+```
+
+SHA-256 de las salidas versionadas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte):
+`analisis_balance_neto_c236.json`
+`85d43c2135e372da8146ac2a10420fc2a96d10486dbf6ec6681bcbb3e5adaeb4`;
+`analisis_balance_neto_c236.md`
+`f74ae2c6df5f71ee2d3e92c11e82788fb0b17613067d6963f01c2f36a8bdc2b6`.
+
+Entradas leídas y su SHA-256: `analisis_costo_derivacion_c220.json`
+`2de287514832044ed6a29b5d17a7110ca10af81e5ffc2696f730e67e5c231d1c`; `analisis_balance_neto_c222.json`
+`6b600043ed6e6cea8853d3cf0dafe65d51ef35aa444a931a9c6fcabb2126ee0b`; `intervenciones.csv`
+`eccc094d46d5ad301296428885114e298f52efb0666be4f61c2e6a266d340ba3`; `plantilla_etiquetado.csv`
+`c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09`; `predicciones_in_sample.json`
+`89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede`. El script **aborta sin escribir**
+si no reproduce, antes de calcular, el balance sin revisión `+30,64` de c-222, el `c = 69,51` s de la
+Sección 3.31, la `r` media `22,06` s con `n = 138` y la tasa de revisión `147/200`. Los insumos
+(`N`, `dt`, `e_aut`, `e_man`, `c` y sus intervalos) se leen de los artefactos versionados, no de
+constantes. El método, la regla de elección de `r` (media) y los parámetros se fijaron en el docstring
+del generador antes de producir las salidas; el prerregistro **no es ciego** (el valor central ya lo
+publicó el tribunal).
+
+**(a) Insumos del balance (procedencia y estado).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| `N = 2.646` incidentes por trimestre | memo 3.11 / `analisis_balance_neto_c222.json` (`insumos.n`) | vigente |
+| `Δt = 43,82 s` (constante; su incertidumbre no entra en el IC) | idem (`insumos.delta_t_s`); memo 3.1 y 3.4 | vigente |
+| `e_aut = 28/138 = 0,2029` (consenso `E1`/`E2`, por caso) | idem (`insumos.e_aut`); memo 3.21 (c) | vigente |
+| `e_man = 26/151 = 0,1722` (consenso `E1`/`E2`, por derivación) | idem (`insumos.e_man`) | vigente |
+| `e_aut − e_man = +0,0307`, IC 95 % `[−0,0460; +0,1070]` | idem (`insumos.diferencia`, `insumos.diferencia_ic`) | vigente |
+| Proporción de casos revisados `rho = 147/200 = 0,735` | `07-resultados.tex` (regla VIS-005); memo 3.46 | vigente (nuevo) |
+| Tiempo medio por revisión `r = 22,06 s` (media de `138` duraciones) | `analisis_costo_derivacion_c220.json` (`termino_revision.media`); memo 3.31 (h) | vigente (nuevo) |
+| `c = 69,51 s`, IC 95 % `[33,42; 106,56] s`, **cota inferior** del tramo activo | `analisis_costo_derivacion_c220.json` (`composicion.escenarios.bajo`); memo 3.31 (e) | vigente (nuevo) |
+
+**(b) Fórmulas.** Balance neto con revisión:
+`B_r = (N / 3.600) × [Δt − rho × r − (e_aut − e_man) × c]`. Exactitud mínima de equilibrio con
+revisión: `a*_r = 1 − e_man − (Δt − rho × r) / c`. El término de revisión (`rho × r = 0,735 × 22,06`
+s) solo resta del lado automatizado: el flujo manual no tiene una revisión equivalente posterior al
+registro. Regla de elección de `r` (D2, fijada antes de calcular): **media**, porque `B` agrega tiempo
+sobre `N × rho` revisiones y el estimador del total es `N × rho × media`; la mediana (`9,96` s), con
+distribución sesgada a derecha, subestimaría el total y se informa solo como sensibilidad.
+
+**(c) Lectura central: cota superior con el tramo activo medido.** `B_r` es **cota superior** del
+balance respecto del tramo de reanudación no medido; el costo medido es una **cota inferior**. El
+signo del balance real **no** se declara fijado. El intervalo condicional (bootstrap percentil al
+95 %, `B = 2000`, semilla `20261021`; remuestrea de forma independiente los casos de la referencia
+común —emparejamiento de c-222— y las `138` duraciones) aísla la incertidumbre muestral de
+`e_aut − e_man` y de `r` con `c` y `rho` fijos. La cota combinada (suma de extremos sobre `rho` en
+Wilson `[0,6698; 0,7913]`, `r ∈ [15,49; 29,39]` s, `e_aut − e_man ∈ [−0,0460; +0,1070]` y
+`c ∈ [33,42; 106,56]` s: `16` esquinas) es la **cota del tramo activo medido**, no del balance real.
+
+| Magnitud | Valor | IC 95 % condicional (`c` y `rho` fijos) | Cota combinada 95 % | Estado |
+|---|---|---|---|---|
+| `B_r` (h-persona por trimestre) | `+18,7` | `[+12,9; +24,1]` | `[+6,7; +28,2]` | vigente como **cota superior** |
+| `a*_r` (%) | `43,1` | `[33,6; 53,7]` | — | vigente |
+
+**(d) Rejilla de 5, 10 y 15 minutos con revisión (sensibilidad al tramo no medido).** Recalculada con
+la referencia común **y** el término de revisión. Estado `condicional`: depende del tramo de
+reanudación no medido. Con `15` minutos el balance central se anula (`a*_r = 79,71 %` coincide con la
+exactitud estricta contra el consenso, `0,7971`).
+
+| `c` | `B_r` (h-persona por trimestre) | IC 95 % de `B_r` | `a*_r` (%) | IC 95 % de `a*_r` (%) |
+|---|---|---|---|---|
+| 5 min | `+13,52` | `[−3,41; +30,85]` | `73,58` | `[67,02; 79,89]` |
+| 10 min | `+6,74` | `[−26,91; +40,84]` | `78,18` | `[71,82; 84,24]` |
+| 15 min | `−0,03` | `[−50,52; +50,69]` | `79,71` | `[73,31; 85,83]` |
+
+**(e) Costo de equilibrio y margen del tramo no medido.** `c* = (Δt − rho × r) / (e_aut − e_man)`
+(`898,8` s, `15,0` min); el margen del tramo de reanudación que anularía la cota superior es
+`c* − c = 829,2` s (`13,8` min). Con el extremo desfavorable de la diferencia de errores
+(`e_aut − e_man = +0,1070`), `c* = 258,0` s (`4,3` min) y el margen baja a `188,5` s (`3,1` min). Si
+`e_aut − e_man ≤ 0` no existe un costo finito de equilibrio.
+
+**(f) Sensibilidades.** `r` mediana: `B_r = +25,26`; variante sin solapamiento (`r` de las
+confirmaciones, `17,89` s): `B_r = +20,98`; `rho = 1` (aplica `r` a todo `N`, sobreestima la
+revisión): `B_r = +14,42`. Ninguna cambia la lectura condicional. Estado: `vigente (sensibilidad)`.
+
+**(g) Retiro de la lectura central previa.** Queda **retirada como lectura central** la cifra
+`B = +30,6` de la Sección 3.33 y la expresión «el signo queda fijado por la muestra»; se conservan,
+sin editarlas, la cifra y el estado de esa sección, que recibe una nota de remisión. También queda
+retirada de la lectura central la «viabilidad económica y operativa positiva»: la viabilidad operativa
+es condicional al tramo de reanudación no medido.
+
+**(h) Comando reproducible y redondeo.** El comando de la cabecera reproduce `B_r` y `a*_r` de la
+lectura central y de cada celda de la rejilla; el `.json` conserva los valores con cuatro decimales.
+La convención de la tesis redondea `B_r` y `a*_r` a una decimal (mitad hacia arriba); esta sección
+registra las celdas de la rejilla con dos decimales para distinguir el cruce por cero del escenario de
+`15` minutos (`−0,03`). Reejecutar el comando desde la raíz regenera las salidas idénticas byte a byte.
+
+**(i) Valores previos intactos.** Ningún valor ni estado de las secciones `3.1` a `3.45` cambia. La
+Sección 3.33 conserva su cifra y su estado (solo recibe la nota). Este análisis es aditivo y **no
+incluye ninguna cifra fuera de muestra**: la validación externa fue retirada por c-235 (Sección 3.45)
+y no se restituye.
+
+**Notas de remisión (aditivas).** La Sección 3.11 recibe una nota junto a su supuesto sobre el tiempo
+de revisión; la Sección 3.31 (h) y la Sección 3.33 reciben notas que remiten a esta sección, sin
+reescribir su texto.
+
+**Remisión al cuerpo.** La subsección `subsec:balance-neto` de la discusión (`08-discusion.tex`) toma
+sus cifras de esta sección; el umbral del `85 %` se declara criterio a priori en la introducción
+(observación M-01), con las lecturas posteriores rotuladas en la discusión.
 
 
 ## 4. Contingencia del gate de intervención humana

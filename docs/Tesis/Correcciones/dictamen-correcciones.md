@@ -6431,3 +6431,71 @@ verificación (tarea 7.5) se difiere a `c-239`; el conteo de páginas queda prov
 | C30/f | M-02: eficiencia sin contraste limpio | c-235 | `09-conclusiones.tex:6` | `sec:conclusiones` | `La hipótesis subsidiaria de eficiencia queda sin contraste limpio` | vigente (nuevo) |
 | C30/g | Trabajo futuro con procedencia acreditable | c-235 | `10-recomendaciones.tex:26` | `subsec:corpus-independiente` | `una validación sobre un corpus de procedencia acreditable` | vigente (nuevo) |
 | C30/h | Memo: Sección `3.45` aditiva | c-235 | `docs/Tesis/Correcciones/numeros-canonicos.md` | `-` | `3.45 Retiro de la validación fuera de muestra y de sus análisis dependientes` | vigente (nuevo) |
+
+### c-236: acotar el balance neto y declarar el umbral a priori (compuertas de autores; grupos 3 a 5)
+
+- **Change**: `c-236-acotar-el-balance-neto-y-declarar-el-umbral-a-priori` (árbol de trabajo; sin commit
+  ni push en este tramo).
+- **Fecha de registro**: 2026-11-16.
+- **Observaciones atendidas** (devolución de tercera instancia del tribunal sobre `v1.5.2`, 16-11-2026):
+  **A-01** (incluir el término de revisión en `B`; `c` como cota inferior y `B` como cota superior; retirar
+  «signo fijado» y «viabilidad ... positiva»; restituir la lectura condicional) y **M-01** (el 85 % como
+  criterio a priori y los argumentos posteriores trasladados a la discusión). Los grupos 0 a 2 ya están
+  aplicados (script `analisis_balance_neto_c236.*` y Sección `3.46` del memo); este tramo aplica el grupo 3
+  (prosa del balance), el grupo 4 (umbral, Resumen y conclusiones) y el grupo 5 (verificación de cierre). Es
+  prosa LaTeX y documentación: no escribe código nuevo, no mide de nuevo y hace cero llamadas a Gemini. La
+  compilación final, el bump y el tag son de `c-239`.
+
+#### Compuertas de autores (checkpoint 0.4) — APROBADO el 2026-11-16
+
+Respuestas de los autores a las decisiones P1..P4 y a las Open Questions OQ1..OQ3 (aliases únicamente, sin nombres reales):
+
+| Compuerta | Pregunta | Decisión registrada |
+|---|---|---|
+| P1 | Lectura central del balance | **ADOPTAR** `B_r = +18,7` h-persona por trimestre como **cota superior** (IC condicional `[+12,9; +24,1]`; cota combinada `[+6,7; +28,2]`); `a*_r = 43,1 %`. |
+| P2 | «Signo fijado» y viabilidad | **RETIRAR** «el signo queda así fijado por la muestra» y «viabilidad económica y operativa ... positiva». Declarar la **viabilidad operativa como CONDICIONAL**, con el margen junto a ella (≈ 13,8 min en el punto; ≈ 3,1 min con el extremo desfavorable `e_aut − e_man = +0,1070`). «Viabilidad económica» = **costo monetario marginal**, separada del balance de tiempo. |
+| P3 | Resumen y Abstract | **Aprobar** los borradores: ES «Los hallazgos respaldan la viabilidad técnica y económica; la operativa es condicional: el balance neto, revisión incluida, es a lo sumo +18,7 horas-persona trimestrales.» / EN «The findings support technical and economic feasibility; operational viability is conditional: the net balance, including review, is at most +18.7 person-hours per quarter.» Párrafos ≤ 34 (ES) y ≤ 31 (EN) palabras; cada resumen ≤ 250. |
+| P4 | Umbral del 85 % a priori | Declarar el 85 % como criterio fijado **A PRIORI** por los autores; conservar solo argumentos previos a la medición (literatura; estimación propia de 10 a 15 min por reasignación y tasa preliminar del 15 %, declaradas como estimaciones sin registro cuantitativo; margen del intervalo). Mover a §9.5, rotulados «lecturas posteriores (medidas en noviembre de 2026), que no fundamentan el umbral»: el `c` medido, la paridad 82,78 %, el «0,5 h por punto» y `a*_r`. Retirar «una exactitud inferior al 85 % resultaría en tiempos de resolución comparables a los del flujo manual». |
+| OQ1 | «Viabilidad económica» en el Resumen | **SÍ**: conservarla como costo monetario marginal, definida en §9.5 y §10. |
+| OQ2 | Rejilla histórica (`e_aut = 53/200`, `−18,5 / −43,9`) | **RETIRARLA** de `tab:balance-neto`; no queda en la tabla de §9.5. Se deja una oración que la presenta como lectura de la versión anterior, con remisión al memo; se incorporará al anexo de robustez de `c-238` (no se referencia todavía una etiqueta de `c-238`, que aún no existe). |
+| OQ3 | Variante central de `r` | La variante **CENTRAL** es `r` total (22,06 s) → `B_r = +18,7`. La variante sin solapamiento (+21,0), la mediana y `rho = 1` van al memo como sensibilidades, sin cambiar la lectura condicional. |
+
+#### Resultado aplicado en la prosa (grupos 3 y 4)
+
+- `08-discusion.tex` (`subsec:balance-neto`, §9.5): fórmula con el término de revisión `rho x r`, `c` como
+  cota inferior y `B` como cota superior; `tab:balance-neto` con el panel central (`B_r = +18,7`; `a*_r =
+  43,1 %`) y el panel de sensibilidad al tramo no medido (rejilla 5/10/15 min con revisión y referencia
+  común: `B_r = +13,52 / +6,74 / −0,03`; `a*_r = 73,58 / 78,18 / 79,71 %`, con sus intervalos); la rejilla
+  histórica sale de la tabla y queda como una oración de remisión al memo; retiro de «signo fijado» y de
+  «viabilidad ... positiva»; la paridad 82,78 %, el «0,5 h por punto» y `a*_r` rotulados como lecturas
+  posteriores que no fundamentan el umbral; la síntesis remite al cronometraje de la reanudación.
+- `04-marco-metodologico.tex`: el umbral del 85 % no se modifica; el balance usa `c` como cota inferior del
+  costo y descuenta el tiempo de revisión.
+- `10-recomendaciones.tex`: el cronometraje de la reanudación (advertir el error y devolver el ticket)
+  vuelve a presentarse como la medición que fijaría el signo del balance, no como un mero refinamiento.
+- `01-introduccion.tex`: §1.6 declara el 85 % como criterio a priori (solo argumentos previos a la
+  medición, con remisión a §9.5 para las lecturas posteriores); §1.2 declara el saldo neto condicional al
+  tramo de reanudación no medido.
+- `00-resumen.tex` (ES y EN): frase de viabilidad técnica y económica sostenida, viabilidad operativa
+  condicional y balance a lo sumo `+18,7` con revisión incluida.
+- `09-conclusiones.tex`: viabilidad técnica sostenida, costo monetario marginal y viabilidad operativa
+  condicional, con remisión a `subsec:balance-neto`, en el párrafo inicial y en la fila del objetivo
+  general de `tab:cumplimiento-objetivos`.
+- `12-anexos.tex` (Anexo J, valores): filas del balance con `B_r`, `a*_r`, `r` y `rho`, la rejilla con
+  revisión y las claves reales de `analisis_balance_neto_c236.json`; paridad y costo marginal rotulados
+  como lecturas posteriores. El formato de la tabla sigue a cargo de `c-238`.
+
+#### Verificación ejecutada
+
+Batería `rg` de la tarea 5.1 sin coincidencias de las expresiones retiradas («signo queda así fijado»,
+«fijado por la muestra», «operativa positiva/resulta», «viabilidad económica y operativa», «no es condición
+para cerrarlo», «equivale a la paridad con el 15», «cuya justificación es la paridad», «supuesto superado»)
+ni de cifras fuera de muestra del balance; `+18,7`, `43,1` y las cifras de la rejilla coinciden entre `08`,
+`00`, `09`, `12` y la Sección `3.46` del memo bajo el redondeo declarado; las etiquetas `subsec:balance-neto`
+y `tab:balance-neto` son únicas. La compilación XeLaTeX (tarea 5.3) se difiere a `c-239`;
+`openspec validate c-236… --strict` y `openspec validate --all --strict` (ver totales al cierre).
+
+#### Sin cambios
+
+`App/`, `n8n/`, el corpus de 200 casos, las predicciones, los artefactos de c-220 y c-222, `.engram/`,
+`CHANGES.md` y `docs/defensa/`. Cero llamadas a Gemini. Sin bump de versión ni tag (`c-239`).

@@ -244,7 +244,7 @@ La redacción de esta tesis contó con asistencia de un modelo de lenguaje para 
 
 \section{Números canónicos citados}\label{sec:anexo-numeros-canonicos}
 
-Este anexo reúne, condensados, los números canónicos que el cuerpo cita de las secciones 3.31 y 3.33 del memo interno de números canónicos del proyecto. Cada valor conserva su cifra, su procedencia verificable y su estado; el memo sigue siendo la fuente interna de verdad y este anexo no introduce valores ausentes de él ni modifica ningún valor ni estado. Las cifras se transcriben con la convención de redondeo de la tesis.
+Este anexo reúne, condensados, los números canónicos que el cuerpo cita de las secciones 3.31, 3.33 y 3.46 del memo interno de números canónicos del proyecto. Cada valor conserva su cifra, su procedencia verificable y su estado; el memo sigue siendo la fuente interna de verdad y este anexo no introduce valores ausentes de él ni modifica ningún valor ni estado. Las cifras se transcriben con la convención de redondeo de la tesis.
 
 \paragraph{Costo de la derivación errónea \(c\) (memo, sección 3.31).}
 
@@ -260,15 +260,15 @@ Valor & Procedencia & Estado \\
 Costo \(c = 69{,}51\)~s; IC 95~\% \([33{,}42; 106{,}56]\)~s & \path{...c220.json} (\texttt{composicion.escenarios.bajo}) & vigente (nuevo) \\
 Corrección en la compuerta: \(24{,}01\)~s; IC bootstrap \([3{,}42; 50{,}06]\)~s & idem (\texttt{diferencia\_de\_medias}) & vigente (nuevo) \\
 Re-decisión de sector (mediana del brazo manual): \(45{,}50\)~s & idem (\texttt{brazo\_manual}) & vigente (nuevo) \\
-Paridad con la tasa manual medida: \(1 - e_{\mathrm{man}} = 0{,}8278\) & idem (\texttt{justificacion\_umbral.paridad\_manual}) & vigente (nuevo) \\
-Costo marginal por punto de exactitud: \(0{,}51\)~h-persona por trimestre & idem (\texttt{costo\_marginal\_por\_punto\_horas\_trimestre}) & vigente (nuevo) \\
+Paridad con la tasa manual medida: \(1 - e_{\mathrm{man}} = 0{,}8278\) (lectura posterior) & idem (\texttt{justificacion\_umbral.paridad\_manual}) & vigente (lectura posterior; no fundamenta el umbral) \\
+Costo marginal por punto de exactitud: \(0{,}51\)~h-persona por trimestre (lectura posterior) & idem (\texttt{costo\_marginal\_por\_punto\_horas\_trimestre}) & vigente (lectura posterior) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Balance neto y umbral de equilibrio (memo, sección 3.33).}
+\paragraph{Balance neto y umbral de equilibrio (memo, sección 3.46).}
 
-La lectura central usa el costo medido y las tasas de error medidas contra la referencia común. La rejilla de 5, 10 y 15 minutos se conserva como sensibilidad del supuesto superado y no es insumo vigente. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_balance_neto_c222.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_balance_neto_c222.py}.
+La lectura central usa el costo medido como cota inferior, el término de revisión y las tasas de error medidas contra la referencia común; el balance se presenta como cota superior respecto del tramo de reanudación no medido. La rejilla de 5, 10 y 15 minutos se conserva como sensibilidad al tramo no medido y no es la lectura central. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_balance_neto_c236.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_balance_neto_c236.py}.
 
 \begin{table}[htbp]
 \small
@@ -277,15 +277,19 @@ La lectura central usa el costo medido y las tasas de error medidas contra la re
 \toprule
 Valor & Procedencia & Estado \\
 \midrule
-\(B = +30{,}6\)~h-persona por trimestre; IC condicional \([+26{,}7; +34{,}6]\); cota combinada \([+23{,}8; +35{,}8]\) & \path{...c222.json} (\texttt{escenario\_central}) & vigente (nuevo) \\
-\(a^{*} = 19{,}7\)~\%; IC condicional \([13{,}4; 25{,}8]\)~\% & idem & vigente (nuevo) \\
-\(N = 2.646\) incidentes por trimestre & \path{analisis_dictamen_c207.json} (\texttt{...insumos.n\_trimestral}); memo 3.11 & vigente \\
-\(\Delta t = 43{,}82\)~s & idem (\texttt{...insumos.delta\_t\_s}); memo 3.1 y 3.4 & vigente \\
-\(e_{\mathrm{aut}} = 28/138 = 0{,}2029\) & idem (\texttt{...referencia\_consenso.e\_aut}); memo 3.21 (c) & vigente \\
-\(e_{\mathrm{man}} = 26/151 = 0{,}1722\) & idem (\texttt{...referencia\_consenso.e\_man}) & vigente \\
-\(e_{\mathrm{aut}} - e_{\mathrm{man}} = +0{,}0307\); IC 95~\% \([-0{,}0460; +0{,}1070]\) & idem (\texttt{...diferencia}, \texttt{...diferencia\_ic}) & vigente \\
-Rejilla 5, 10 y 15 min: \(B = +25{,}4 / +18{,}7 / +11{,}9\); IC \( [+8{,}6; +42{,}4]\), \([-15{,}0; +52{,}5]\), \([-38{,}6; +62{,}7]\) & idem (\texttt{grilla\_minutos}) & condicional \\
-Rejilla 5, 10 y 15 min: \(a^{*} = 68{,}2 / 75{,}5 / 77{,}9\)~\% & idem (\texttt{grilla\_minutos}) & condicional \\
+\(B_r = +18{,}7\)~h-persona por trimestre (cota superior); IC condicional \([+12{,}9; +24{,}1]\); cota combinada \([+6{,}7; +28{,}2]\) & \path{...c236.json} (\texttt{lectura\_central.balance}, \texttt{.balance\_ic}, \texttt{.cota\_combinada}) & vigente como cota superior \\
+\(a^{*}_r = 43{,}1\)~\%; IC condicional \([33{,}6; 53{,}7]\)~\% & idem (\texttt{lectura\_central.a\_estrella}, \texttt{.a\_estrella\_ic}) & vigente \\
+\(r = 22{,}06\)~s (media de 138 duraciones) & idem (\texttt{insumos.r\_s}); memo 3.31 (h) & vigente (nuevo) \\
+\(\rho = 147/200 = 0{,}735\) (proporción de casos revisados) & idem (\texttt{insumos.rho}); memo 3.46 & vigente (nuevo) \\
+\(c = 69{,}51\)~s; IC 95~\% \([33{,}42; 106{,}56]\)~s (cota inferior del tramo activo) & idem (\texttt{insumos.c\_s}, \texttt{.c\_ic}) & vigente \\
+\(N = 2.646\) incidentes por trimestre & idem (\texttt{insumos.n}); memo 3.11 & vigente \\
+\(\Delta t = 43{,}82\)~s & idem (\texttt{insumos.delta\_t\_s}); memo 3.1 y 3.4 & vigente \\
+\(e_{\mathrm{aut}} = 28/138 = 0{,}2029\) & idem (\texttt{insumos.e\_aut}); memo 3.21 (c) & vigente \\
+\(e_{\mathrm{man}} = 26/151 = 0{,}1722\) & idem (\texttt{insumos.e\_man}) & vigente \\
+\(e_{\mathrm{aut}} - e_{\mathrm{man}} = +0{,}0307\); IC 95~\% \([-0{,}0460; +0{,}1070]\) & idem (\texttt{insumos.diferencia}, \texttt{.diferencia\_ic}) & vigente \\
+Costo de equilibrio \(c^{*} = 898{,}8\)~s (15,0 min); margen del tramo no medido \(829{,}2\)~s (13,8 min); con \(e_{\mathrm{aut}} - e_{\mathrm{man}} = +0{,}1070\): \(c^{*} = 258{,}0\)~s, margen \(188{,}5\)~s (3,1 min) & idem (\texttt{costo\_equilibrio}) & vigente \\
+Rejilla 5, 10 y 15 min (con revisión y referencia común): \(B_r = +13{,}52 / +6{,}74 / -0{,}03\); IC \([-3{,}41; +30{,}85]\), \([-26{,}91; +40{,}84]\), \([-50{,}52; +50{,}69]\) & idem (\texttt{sensibilidad\_al\_tramo\_no\_medido}) & condicional \\
+Rejilla 5, 10 y 15 min: \(a^{*}_r = 73{,}58 / 78{,}18 / 79{,}71\)~\%; IC \([67{,}02; 79{,}89]\), \([71{,}82; 84{,}24]\), \([73{,}31; 85{,}83]\)~\% & idem & condicional \\
 \bottomrule
 \end{tabular}
 \end{table}
