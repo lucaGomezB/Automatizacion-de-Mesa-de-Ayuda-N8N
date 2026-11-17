@@ -4,6 +4,11 @@ Pruebas del ejecutor del brazo «Gemini solo» (c-215).
 Strict TDD. Todas las pruebas usan un cliente simulado: sin red, sin API de Gemini, sin
 credenciales reales y sin escribir fuera de `tmp_path`.
 """
+# Nota (c-240): se retiraron de este modulo las pruebas que leian los archivos
+# `evaluation/data/campana/corpus_independiente.json` y/o `corpus_independiente_arbitrado.json`,
+# eliminados del repositorio publico por la decision de los autores (c-240, OOS-027). Las pruebas
+# restantes no dependen de esos archivos. El nuevo estado se verifica en
+# `evaluation/tests/test_retiro_corpus_independiente_c240.py`.
 
 from __future__ import annotations
 
@@ -18,7 +23,6 @@ import pytest
 
 import evaluation.brazo_gemini_solo as bgs
 from evaluation.corpus import CasoEvaluacion
-from evaluation.run_evaluation import PaidRunNotConfirmedError
 
 SECTOR_OK = "Seguridad Informatica"
 CLAVE_FALSA = "clave-falsa-de-prueba-no-real"  # gitleaks:allow (ficticia)
@@ -599,14 +603,6 @@ def test_dry_run_informa_la_version_del_sdk_y_si_incumple_el_pin(corpora, capsys
     _, cumple = ejecutar(["--dry-run", *corpora], capsys, entorno={}, version_sdk=lambda: "2.34.0")
     assert "2.8.0" in incumple and "NO cumple" in incumple
     assert "2.34.0" in cumple and "NO cumple" not in cumple
-
-
-def test_dry_run_sobre_los_corpus_reales_cuenta_303_casos(tmp_path, capsys):
-    codigo, texto = ejecutar(
-        ["--dry-run", "--cache", str(tmp_path / "c.jsonl")], capsys, entorno={}, version_sdk=lambda: "2.34.0"
-    )
-    assert codigo == 0
-    assert "pendientes: 303" in texto and "dentro_muestra: 200" in texto and "fuera_muestra: 103" in texto
 
 
 def test_dry_run_descuenta_los_casos_ya_registrados(corpora, tmp_path, capsys):

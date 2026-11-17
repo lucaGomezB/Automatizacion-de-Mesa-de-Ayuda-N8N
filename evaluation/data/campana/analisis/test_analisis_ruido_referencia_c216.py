@@ -3,10 +3,14 @@
 Casos sinteticos, sin I/O ni red. Cubren kernel fila-estocastico, calibracion de
 lambda, cotas distribution-free, rango de tres vias y verificacion de anclajes.
 """
+# Nota (c-240): se retiraron de este modulo las pruebas que leian los archivos
+# `evaluation/data/campana/corpus_independiente.json` y/o `corpus_independiente_arbitrado.json`,
+# eliminados del repositorio publico por la decision de los autores (c-240, OOS-027). Las pruebas
+# restantes no dependen de esos archivos. El nuevo estado se verifica en
+# `evaluation/tests/test_retiro_corpus_independiente_c240.py`.
 
 from __future__ import annotations
 
-import math
 import pathlib
 import sys
 
@@ -456,37 +460,5 @@ def test_simular_referencias_informa_distribucion_completa_y_ordenada():
 # ---------------------------------------------------------------------------
 # Integracion con los artefactos versionados (tarea 2.5)
 # ---------------------------------------------------------------------------
-def test_cargar_entradas_valida_conteos_y_hashes():
-    entradas = c216.cargar_entradas()
-    assert entradas["conteos"] == {
-        "casos": 206,
-        "filas_etiquetado": 476,
-        "arbitrados_e5": 64,
-        "tres_vias": 6,
-        "predicciones": 206,
-    }
-    assert set(entradas["entradas_sha256"]) == {
-        "corpus_independiente_arbitrado.json",
-        "predicciones_arbitrado.json",
-        "doble_etiquetado_arbitrado.csv",
-        "arbitraje_tres_vias.json",
-    }
-    assert entradas["entradas_sha256"]["corpus_independiente_arbitrado.json"] == (
-        "cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e"
-    )
 
 
-def test_documento_real_reproduce_anclajes_y_declara_caracter_aditivo():
-    doc = c216.construir_documento(replicas=20, semilla=20261021)
-    assert doc["anclajes"]["n"] == 206
-    assert doc["anclajes"]["aciertos_estrictos"] == 142
-    assert doc["anclajes"]["macro_f1"] == pytest.approx(0.7024, abs=1e-4)
-    assert doc["anclajes"]["acuerdo_e3_e4"]["p_o"] == pytest.approx(0.6867, abs=1e-4)
-    assert doc["anclajes"]["acuerdo_e3_e4"]["kappa"] == pytest.approx(0.6055, abs=1e-4)
-    assert doc["aditivo"]["reemplaza_numeros_canonicos"] is False
-    assert doc["calibracion"]["lambda"] > 0.0
-    assert abs(doc["calibracion"]["kappa_esperado"] - 0.6055) <= 0.005
-    assert doc["cotas"]["inferior"] <= 142 / 206 <= doc["cotas"]["superior"]
-    assert doc["tres_vias"]["n"] == 6
-    assert len(doc["tres_vias"]["casos"]) == 6
-    assert doc["tres_vias"]["exactitud_min"] <= doc["tres_vias"]["exactitud_max"]

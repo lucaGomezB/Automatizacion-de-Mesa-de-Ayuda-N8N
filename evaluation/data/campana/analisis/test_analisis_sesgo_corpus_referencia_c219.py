@@ -9,6 +9,11 @@ valores esperados se calcularon a mano con la formula del backend:
     density      = min(1, 200 / largo_del_texto)
     cortocircuita si hay ganador unico y score >= 0,5166
 """
+# Nota (c-240): se retiraron de este modulo las pruebas que leian los archivos
+# `evaluation/data/campana/corpus_independiente.json` y/o `corpus_independiente_arbitrado.json`,
+# eliminados del repositorio publico por la decision de los autores (c-240, OOS-027). Las pruebas
+# restantes no dependen de esos archivos. El nuevo estado se verifica en
+# `evaluation/tests/test_retiro_corpus_independiente_c240.py`.
 
 from __future__ import annotations
 
@@ -290,45 +295,3 @@ def documento(entradas):
     return c219.construir_documento(entradas)
 
 
-def test_entradas_reproducen_los_conteos_y_los_subconjuntos_de_referencia(entradas):
-    assert entradas["conteos"] == {
-        "casos": 206,
-        "filas_etiquetado": 476,
-        "consenso": 142,
-        "arbitrados_e5": 64,
-        "tres_vias": 6,
-        "predicciones": 206,
-    }
-    sub = entradas["subconjuntos"]
-    assert len(sub["consenso"]) + len(sub["arbitrado"]) == 206
-    assert c219.conjunto_e3_e4_e5(entradas["etiquetas"]) == []
-
-
-def test_ancla_incumplida_aborta_sin_escribir_salidas(entradas, tmp_path, monkeypatch):
-    monkeypatch.setattr(c219, "ANCLA_CORTOCIRCUITO", 116)
-    with pytest.raises(c219.AnclaNoReproducida):
-        c219.ejecutar(tmp_path)
-    assert list(tmp_path.iterdir()) == []
-
-
-def test_el_documento_reproduce_los_anclajes_del_diseno(documento):
-    ancla = documento["anclajes"]
-    assert (ancla["cortocircuito_v1"], ancla["aciertos_det_v1"]) == (115, 88)
-    assert (ancla["aciertos_hibrido"], ancla["casos"]) == (142, 206)
-    assert ancla["patrones"] == {"v1": 151, "v0": 89, "derivados_del_corpus": 62}
-    sub = documento["subconjuntos"]
-    assert (sub["consenso"]["aciertos"], sub["consenso"]["casos"]) == (109, 142)
-    assert (sub["arbitrado"]["aciertos"], sub["arbitrado"]["casos"]) == (33, 64)
-    assert documento["conjunto_literal_e3_e4_e5"]["casos"] == 0
-
-
-def test_dos_construcciones_y_escrituras_son_identicas_byte_a_byte(entradas, tmp_path):
-    uno, dos = tmp_path / "uno", tmp_path / "dos"
-    c219.escribir(c219.construir_documento(entradas), uno)
-    c219.escribir(c219.construir_documento(entradas), dos)
-    nombres = sorted(p.name for p in uno.iterdir())
-    assert len(nombres) == 3
-    for nombre in nombres:
-        contenido = (uno / nombre).read_bytes()
-        assert contenido == (dos / nombre).read_bytes()
-        assert b"\r" not in contenido and not contenido.startswith(b"\xef\xbb\xbf")

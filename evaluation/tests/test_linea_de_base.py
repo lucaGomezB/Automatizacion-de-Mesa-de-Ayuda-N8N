@@ -8,11 +8,15 @@ por clase, el determinismo byte a byte y la ausencia de red, Gemini y API paga.
 Las cifras ancla del conjunto fuera de muestra (n efectivo 103, 47 excluidos)
 provienen de c-191/c-205 y NO se recalculan ni se reinterpretan aqui.
 """
+# Nota (c-240): se retiraron de este modulo las pruebas que leian los archivos
+# `evaluation/data/campana/corpus_independiente.json` y/o `corpus_independiente_arbitrado.json`,
+# eliminados del repositorio publico por la decision de los autores (c-240, OOS-027). Las pruebas
+# restantes no dependen de esos archivos. El nuevo estado se verifica en
+# `evaluation/tests/test_retiro_corpus_independiente_c240.py`.
 
 from __future__ import annotations
 
 import ast
-import json
 import pathlib
 import socket
 
@@ -36,34 +40,6 @@ def documento() -> dict:
 # ---------------------------------------------------------------------------
 # 1.1 / 1.2 — estructura del documento
 # ---------------------------------------------------------------------------
-def test_documento_estructura_entrenamiento_prueba_y_metricas(documento):
-    assert documento["change"] == "c-210-medicion-de-la-linea-de-base"
-    assert documento["n_entrenamiento"] == 200
-    assert documento["n_prueba"] == 103
-    assert documento["excluidos"] == 47
-    assert set(documento["variantes"]) == {"balanceada", "sin_repoderacion"}
-    for variante in documento["variantes"].values():
-        metricas = variante["lectura_muestral"]["metricas"]
-        assert {"exactitud_estricta", "exactitud_laxa", "macro_f1", "balanced_accuracy"} <= set(
-            metricas
-        )
-        assert set(metricas["por_clase"]) == set(SECTORES)
-        assert sum(d["soporte"] for d in metricas["por_clase"].values()) == 103
-    assert documento["aditivo"]["reemplaza_numeros_canonicos"] is False
-    assert documento["n_prueba_efectivo_declarado"] == 103
-    assert documento["discordantes_excluidos"] == 47
-
-
-def test_documento_incluye_comparacion_con_el_hibrido_c205(documento):
-    comparacion = documento["comparacion_hibrido"]
-    assert comparacion["procedencia"].endswith("analisis_fuera_de_muestra_c205.json")
-    assert comparacion["n"] == 103
-    assert round(comparacion["exactitud_estricta"]["valor"], 4) == 0.8447
-    assert round(comparacion["macro_f1"], 4) == 0.7447
-    assert round(comparacion["por_clase"]["Sistemas"]["f1"], 4) == 0.2222
-    assert round(comparacion["por_clase"]["Bases de Datos"]["f1"], 4) == 0.963
-    assert comparacion["por_clase"]["Sistemas"]["soporte"] == 5
-    assert comparacion["por_clase"]["Bases de Datos"]["soporte"] == 13
 
 
 # ---------------------------------------------------------------------------
@@ -130,21 +106,6 @@ def test_metricas_exactitud_laxa_usa_conjunto_de_verdad():
 # ---------------------------------------------------------------------------
 # 1.4 — determinismo byte a byte
 # ---------------------------------------------------------------------------
-def test_salidas_deterministas_byte_a_byte(documento, tmp_path):
-    h1 = linea_de_base.escribir_salidas(documento, tmp_path)
-    bytes_1 = {nombre: (tmp_path / nombre).read_bytes() for nombre in h1}
-    h2 = linea_de_base.escribir_salidas(documento, tmp_path)
-    assert h1 == h2
-    for nombre, contenido in bytes_1.items():
-        assert (tmp_path / nombre).read_bytes() == contenido
-        assert b"\r\n" not in contenido
-        assert not contenido.startswith(b"\xef\xbb\xbf")
-
-
-def test_dos_construcciones_del_documento_son_identicas():
-    a = linea_de_base.construir_documento()
-    b = linea_de_base.construir_documento()
-    assert json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
 
 
 def test_sha256_de_archivo_coincide_con_hashlib(tmp_path):
@@ -200,14 +161,6 @@ def test_ejecucion_no_abre_sockets(monkeypatch):
 # ---------------------------------------------------------------------------
 # 2.x — prevalencia natural y lectura ponderada
 # ---------------------------------------------------------------------------
-def test_prevalencia_natural_del_corpus_de_ajuste(documento):
-    prevalencia = documento["prevalencia_natural"]
-    assert prevalencia["Soporte Tecnico Hardware"] == pytest.approx(85 / 200)
-    assert prevalencia["Soporte Tecnico Software"] == pytest.approx(67 / 200)
-    assert prevalencia["Seguridad Informatica"] == pytest.approx(31 / 200)
-    assert prevalencia["Sistemas"] == pytest.approx(16 / 200)
-    assert prevalencia["Bases de Datos"] == pytest.approx(1 / 200)
-    assert sum(prevalencia.values()) == pytest.approx(1.0)
 
 
 def test_lectura_ponderada_repondera_por_prevalencia():
@@ -230,25 +183,6 @@ def test_lectura_ponderada_repondera_por_prevalencia():
     assert ponderada["precision"] == pytest.approx(0.75 * 0.5 + 0.25 * 1.0)
 
 
-def test_documento_trae_ambas_lecturas_rotuladas(documento):
-    for variante in documento["variantes"].values():
-        muestral = variante["lectura_muestral"]
-        ponderada = variante["lectura_ponderada_prevalencia_natural"]
-        assert muestral["rotulo"]
-        assert muestral["procedencia"]
-        assert ponderada["rotulo"]
-        assert ponderada["procedencia"]
-
-
 # ---------------------------------------------------------------------------
 # 2.4 — CLI
 # ---------------------------------------------------------------------------
-def test_cli_escribe_json_markdown_y_sums(tmp_path):
-    codigo = linea_de_base.main(["--salida", str(tmp_path)])
-    assert codigo == 0
-    assert (tmp_path / "linea_de_base_clasica_c210.json").exists()
-    assert (tmp_path / "linea_de_base_clasica_c210.md").exists()
-    assert (tmp_path / "SHA256SUMS.txt").exists()
-    sums = (tmp_path / "SHA256SUMS.txt").read_text(encoding="utf-8")
-    assert "linea_de_base_clasica_c210.json" in sums
-    assert "linea_de_base_clasica_c210.md" in sums

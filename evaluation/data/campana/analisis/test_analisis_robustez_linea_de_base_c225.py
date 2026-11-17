@@ -5,10 +5,14 @@ integracion con los artefactos versionados. Cubre la derivacion de los tres subc
 de referencia, el contraste pareado por subconjunto y variante, la verificacion de anclas
 que aborta antes de escribir y la escritura determinista byte a byte.
 """
+# Nota (c-240): se retiraron de este modulo las pruebas que leian los archivos
+# `evaluation/data/campana/corpus_independiente.json` y/o `corpus_independiente_arbitrado.json`,
+# eliminados del repositorio publico por la decision de los autores (c-240, OOS-027). Las pruebas
+# restantes no dependen de esos archivos. El nuevo estado se verifica en
+# `evaluation/tests/test_retiro_corpus_independiente_c240.py`.
 
 from __future__ import annotations
 
-import json
 import pathlib
 import sys
 
@@ -186,139 +190,8 @@ def documento_real():
     return c225.construir_documento()
 
 
-def test_construir_documento_reproduce_anclas_y_reporta_los_tres_subconjuntos(documento_real):
-    assert documento_real["anclas_verificadas"] == c225.ANCLAS_ESPERADAS
-    assert documento_real["variante_primaria"] == "balanceada"
-    assert documento_real["n_entrenamiento"] == 200
-    assert documento_real["contexto"] == {
-        "arbitraje_e5": 64,
-        "tres_vias": 6,
-        "nota": "particiones de contexto; no son subconjuntos de contraste",
-    }
-
-    subconjuntos = documento_real["subconjuntos"]
-    assert set(subconjuntos) == {"consenso_e3_e4", "original_150", "arbitrado_completo"}
-    assert {nombre: datos["n"] for nombre, datos in subconjuntos.items()} == {
-        "consenso_e3_e4": 142,
-        "original_150": 150,
-        "arbitrado_completo": 206,
-    }
-    assert subconjuntos["consenso_e3_e4"]["aciertos"] == {
-        "hibrido": 109,
-        "balanceada": 76,
-        "sin_repoderacion": 63,
-    }
-    assert subconjuntos["original_150"]["aciertos"] == {
-        "hibrido": 112,
-        "balanceada": 87,
-        "sin_repoderacion": 80,
-    }
-    assert subconjuntos["arbitrado_completo"]["aciertos"] == {
-        "hibrido": 142,
-        "balanceada": 101,
-        "sin_repoderacion": 88,
-    }
-
-
-def test_construir_documento_reporta_la_brecha_y_su_ic_por_variante(documento_real):
-    subconjuntos = documento_real["subconjuntos"]
-
-    balanceada_142 = subconjuntos["consenso_e3_e4"]["contrastes"]["balanceada"]
-    assert balanceada_142["diferencia_exactitud"]["valor"] == pytest.approx(33 / 142)
-    assert balanceada_142["tabla_2x2"]["solo_hibrido"] == 43
-    assert balanceada_142["tabla_2x2"]["solo_linea_de_base"] == 10
-    assert balanceada_142["diferencia_exactitud"]["ic95"][0] == pytest.approx(0.1408, abs=1e-4)
-    assert balanceada_142["diferencia_exactitud"]["ic95"][1] == pytest.approx(0.3239, abs=1e-4)
-
-    balanceada_150 = subconjuntos["original_150"]["contrastes"]["balanceada"]
-    assert balanceada_150["diferencia_exactitud"]["valor"] == pytest.approx(25 / 150)
-    assert balanceada_150["diferencia_exactitud"]["ic95"][0] == pytest.approx(0.0733, abs=1e-4)
-    assert balanceada_150["diferencia_exactitud"]["ic95"][1] == pytest.approx(0.2600, abs=1e-4)
-
-    balanceada_206 = subconjuntos["arbitrado_completo"]["contrastes"]["balanceada"]
-    assert balanceada_206["diferencia_exactitud"]["valor"] == pytest.approx(41 / 206)
-    assert balanceada_206["diferencia_exactitud"]["ic95"][0] == pytest.approx(0.1165, abs=1e-4)
-    assert balanceada_206["diferencia_exactitud"]["ic95"][1] == pytest.approx(0.2767, abs=1e-4)
-
-    sin_repoderacion_206 = subconjuntos["arbitrado_completo"]["contrastes"][
-        "sin_repoderacion"
-    ]
-    assert sin_repoderacion_206["diferencia_exactitud"]["valor"] == pytest.approx(54 / 206)
-    assert sin_repoderacion_206["diferencia_exactitud"]["ic95"][0] == pytest.approx(
-        0.1845, abs=1e-4
-    )
-    assert sin_repoderacion_206["diferencia_exactitud"]["ic95"][1] == pytest.approx(
-        0.3398, abs=1e-4
-    )
-
-
-def test_ninguna_brecha_por_subconjunto_cruza_el_cero(documento_real):
-    for nombre, datos in documento_real["subconjuntos"].items():
-        for variante in ("balanceada", "sin_repoderacion"):
-            diferencia = datos["contrastes"][variante]["diferencia_exactitud"]
-            assert diferencia["valor"] > 0, (nombre, variante)
-            assert diferencia["ic95"][0] > 0, (nombre, variante)
-            assert diferencia["ic95"][1] > diferencia["ic95"][0], (nombre, variante)
-
-
-def test_construir_documento_aborta_si_un_ancla_no_coincide():
-    anclas = {sistema: dict(valores) for sistema, valores in c225.ANCLAS_ESPERADAS.items()}
-    anclas["hibrido"]["original_150"] = 111
-
-    with pytest.raises(c225.AnclaNoReproducida, match="original_150"):
-        c225.construir_documento(anclas_esperadas=anclas)
-
-
 # ---------------------------------------------------------------------------
 # Salidas: aborto sin escribir, declaracion aditiva y determinismo
 # ---------------------------------------------------------------------------
-def test_ancla_rota_aborta_sin_escribir(tmp_path, monkeypatch):
-    def _falla(*_args, **_kwargs):
-        raise c225.AnclaNoReproducida("ancla rota")
-
-    monkeypatch.setattr(c225, "verificar_anclas", _falla)
-
-    with pytest.raises(c225.AnclaNoReproducida):
-        c225.ejecutar(salida=tmp_path)
-
-    assert list(tmp_path.iterdir()) == []
 
 
-def test_escribir_declara_sensibilidad_y_conserva_las_cifras_canonicas(tmp_path, documento_real):
-    c225.escribir(documento_real, tmp_path)
-    datos = json.loads((tmp_path / c225.SALIDA_JSON).read_text(encoding="utf-8"))
-    texto_md = (tmp_path / c225.SALIDA_MD).read_text(encoding="utf-8")
-
-    assert datos["aditivo"]["reemplaza_numeros_canonicos"] is False
-    assert "0,6893" in datos["aditivo"]["declaracion"]
-    assert "0,7024" in datos["aditivo"]["declaracion"]
-    assert "0,85" in datos["aditivo"]["declaracion"]
-    assert "multiplicidad" in datos["aditivo"]["declaracion"]
-    assert "sensibilidad" in texto_md.lower()
-    for nombre in ("consenso_e3_e4", "original_150", "arbitrado_completo"):
-        assert nombre in texto_md
-    assert "IC 95" in texto_md
-
-
-def test_sha256sums_lista_las_dos_salidas(tmp_path, documento_real):
-    c225.escribir(documento_real, tmp_path)
-    lineas = (tmp_path / c225.SALIDA_SHA).read_text(encoding="utf-8").splitlines()
-
-    assert len(lineas) == 2
-    assert {linea.split("  ", 1)[1] for linea in lineas} == {
-        c225.SALIDA_JSON,
-        c225.SALIDA_MD,
-    }
-
-
-def test_dos_corridas_producen_bytes_identicos(tmp_path):
-    primera = tmp_path / "primera"
-    segunda = tmp_path / "segunda"
-    primera.mkdir()
-    segunda.mkdir()
-
-    c225.ejecutar(salida=primera)
-    c225.ejecutar(salida=segunda)
-
-    for nombre in (c225.SALIDA_JSON, c225.SALIDA_MD, c225.SALIDA_SHA):
-        assert (primera / nombre).read_bytes() == (segunda / nombre).read_bytes()

@@ -6,6 +6,11 @@ la regla vigente y la mayoria, la coincidencia 200/206, los 6 casos sin mayoria,
 rango de exactitud 142-147, las metricas por clase en ambos extremos, los anclajes
 que abortan antes de escribir y la escritura determinista byte a byte.
 """
+# Nota (c-240): se retiraron de este modulo las pruebas que leian los archivos
+# `evaluation/data/campana/corpus_independiente.json` y/o `corpus_independiente_arbitrado.json`,
+# eliminados del repositorio publico por la decision de los autores (c-240, OOS-027). Las pruebas
+# restantes no dependen de esos archivos. El nuevo estado se verifica en
+# `evaluation/tests/test_retiro_corpus_independiente_c240.py`.
 
 from __future__ import annotations
 
@@ -13,7 +18,6 @@ import json
 import pathlib
 import sys
 
-import pytest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
@@ -260,18 +264,6 @@ def test_rango_exactitud_calcula_minimo_maximo_y_reasignables():
     assert resultado["no_reasignables"] == ["C2"]
 
 
-def test_rango_exactitud_anclaje_real_142_147():
-    referencia = c224.cargar_referencia(c224.CAMPANA / "corpus_independiente_arbitrado.json")
-    predicciones = c224.cargar_predicciones(c224.CAMPANA / "predicciones_arbitrado.json")
-
-    resultado = c224.rango_exactitud(referencia, predicciones, _seis_reales())
-
-    assert resultado["aciertos"] == 142
-    assert resultado["total"] == 206
-    assert resultado["k"] == 5
-    assert resultado["max"] == 147
-
-
 # ---------------------------------------------------------------------------
 # Metricas por clase bajo extremos
 # ---------------------------------------------------------------------------
@@ -309,107 +301,8 @@ def test_metricas_por_clase_bajo_extremos_devuelve_ambos_extremos():
     assert resultado["maximo"]["matriz"]["Soporte Tecnico Hardware"]["Soporte Tecnico Hardware"] == 2
 
 
-def test_metricas_por_clase_anclaje_real_vigente_0_7024():
-    referencia = c224.cargar_referencia(c224.CAMPANA / "corpus_independiente_arbitrado.json")
-    predicciones = c224.cargar_predicciones(c224.CAMPANA / "predicciones_arbitrado.json")
-
-    resultado = c224.metricas_por_clase_bajo_extremos(referencia, predicciones, _seis_reales())
-
-    assert round(resultado["vigente"]["macro_f1"], 4) == 0.7024
-    assert resultado["vigente"]["matriz"]["Sistemas"]["Sistemas"] == 31
-    assert resultado["maximo"]["matriz"]["Sistemas"]["Sistemas"] == 34
-
-
-def test_metricas_por_clase_maximo_solo_cambia_celdas_reasignadas():
-    referencia = c224.cargar_referencia(c224.CAMPANA / "corpus_independiente_arbitrado.json")
-    predicciones = c224.cargar_predicciones(c224.CAMPANA / "predicciones_arbitrado.json")
-
-    resultado = c224.metricas_por_clase_bajo_extremos(referencia, predicciones, _seis_reales())
-
-    vigente = resultado["vigente"]["matriz"]
-    maximo = resultado["maximo"]["matriz"]
-    celdas_distintas = {
-        (real, predicho)
-        for real in vigente
-        for predicho in vigente[real]
-        if vigente[real][predicho] != maximo[real][predicho]
-    }
-    assert celdas_distintas == {
-        ("Seguridad Informatica", "Soporte Tecnico Software"),
-        ("Seguridad Informatica", "Sistemas"),
-        ("Soporte Tecnico Hardware", "Sistemas"),
-        ("Soporte Tecnico Software", "Soporte Tecnico Software"),
-        ("Sistemas", "Sistemas"),
-    }
-
-
 # ---------------------------------------------------------------------------
 # Anclajes y salidas
 # ---------------------------------------------------------------------------
-def test_anclajes_reales_arbitraje_64_y_consenso_142():
-    reporte = c224.construir_reporte(c224.CAMPANA)
-
-    assert reporte["arbitraje"] == {"consenso": 142, "arbitrados": 64}
-    assert reporte["identidad"] == {
-        "consenso": 142,
-        "arbitrados_con_mayoria": 58,
-        "suma": 200,
-    }
 
 
-def test_verificar_anclajes_acepta_reporte_real():
-    c224.verificar_anclajes(c224.construir_reporte(c224.CAMPANA))
-
-
-def test_verificar_anclajes_rechaza_coincidencia_distinta():
-    reporte = c224.construir_reporte(c224.CAMPANA)
-    reporte["coincidencia"]["n"] = 199
-
-    with pytest.raises(c224.AnclajeError):
-        c224.verificar_anclajes(reporte)
-
-
-def test_anclaje_roto_aborta_sin_escribir(tmp_path, monkeypatch):
-    def _falla(_reporte):
-        raise c224.AnclajeError("anclaje roto")
-
-    monkeypatch.setattr(c224, "verificar_anclajes", _falla)
-
-    with pytest.raises(c224.AnclajeError):
-        c224.ejecutar(campana=c224.CAMPANA, salida=tmp_path)
-
-    assert list(tmp_path.iterdir()) == []
-
-
-def test_salidas_se_escriben_y_el_json_declara_los_anclajes(tmp_path):
-    reporte = c224.ejecutar(campana=c224.CAMPANA, salida=tmp_path)
-    datos = json.loads((tmp_path / c224.SALIDA_JSON).read_text(encoding="utf-8"))
-
-    assert datos["coincidencia"]["n"] == 200
-    assert datos["exactitud"]["max"] == 147
-    assert datos["anclajes"]["verificados"] is True
-    assert reporte["coincidencia"]["n"] == 200
-    assert (tmp_path / c224.SALIDA_MD).exists()
-    assert (tmp_path / c224.SALIDA_SHA).exists()
-
-
-def test_sha256sums_lista_las_dos_salidas(tmp_path):
-    c224.ejecutar(campana=c224.CAMPANA, salida=tmp_path)
-    lineas = (tmp_path / c224.SALIDA_SHA).read_text(encoding="utf-8").splitlines()
-
-    assert len(lineas) == 2
-    nombres = {linea.split("  ", 1)[1] for linea in lineas}
-    assert nombres == {c224.SALIDA_JSON, c224.SALIDA_MD}
-
-
-def test_dos_corridas_producen_bytes_identicos(tmp_path):
-    primera = tmp_path / "primera"
-    segunda = tmp_path / "segunda"
-    primera.mkdir()
-    segunda.mkdir()
-
-    c224.ejecutar(campana=c224.CAMPANA, salida=primera)
-    c224.ejecutar(campana=c224.CAMPANA, salida=segunda)
-
-    for nombre in (c224.SALIDA_JSON, c224.SALIDA_MD, c224.SALIDA_SHA):
-        assert (primera / nombre).read_bytes() == (segunda / nombre).read_bytes()

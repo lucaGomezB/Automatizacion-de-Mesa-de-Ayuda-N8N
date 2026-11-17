@@ -3,6 +3,11 @@
 Cifras ancla (artefactos versionados): linea de base balanceada 67/103 y sin
 re-ponderacion 60/103 (c-210); hibrido 87/103 (c-205).
 """
+# Nota (c-240): se retiraron de este modulo las pruebas que leian los archivos
+# `evaluation/data/campana/corpus_independiente.json` y/o `corpus_independiente_arbitrado.json`,
+# eliminados del repositorio publico por la decision de los autores (c-240, OOS-027). Las pruebas
+# restantes no dependen de esos archivos. El nuevo estado se verifica en
+# `evaluation/tests/test_retiro_corpus_independiente_c240.py`.
 
 from __future__ import annotations
 
@@ -151,45 +156,6 @@ def doc_real():
     return c213.construir_documento()
 
 
-def test_documento_real_reproduce_las_anclas(doc_real):
-    assert doc_real["n"] == 103
-    assert doc_real["aciertos"] == {"hibrido": 87, "balanceada": 67, "sin_repoderacion": 60}
-    for variante in ("balanceada", "sin_repoderacion"):
-        tabla = doc_real["contrastes"][variante]["tabla_2x2"]
-        assert sum(tabla.values()) == 103
-        assert tabla["ambos_aciertan"] + tabla["solo_hibrido"] == 87
-
-
-def test_documento_real_trae_predicciones_por_caso_y_hashes(doc_real):
-    assert len(doc_real["casos"]) == 103
-    fila = doc_real["casos"][0]
-    assert {"caso_id", "referencia", "hibrido", "balanceada", "sin_repoderacion",
-            "acierto_hibrido", "acierto_balanceada", "acierto_sin_repoderacion"} <= set(fila)
-    assert doc_real["aditivo"]["reemplaza_numeros_canonicos"] is False
-    assert all(len(h) == 64 for h in doc_real["entradas_sha256"].values())
-
-
-def test_referencia_alternativa_con_n_esperado_distinto_aborta():
-    with pytest.raises(ValueError, match="n esperado"):
-        c213.construir_documento(n_esperado=150)
-
-
-def test_escritura_es_determinista_byte_a_byte(tmp_path, doc_real):
-    c213.escribir(doc_real, tmp_path / "a")
-    c213.escribir(doc_real, tmp_path / "b")
-    for nombre in (c213.NOMBRE_JSON, c213.NOMBRE_MD):
-        a = (tmp_path / "a" / nombre).read_bytes()
-        b = (tmp_path / "b" / nombre).read_bytes()
-        assert a == b
-        assert b"\r" not in a and not a.startswith(b"\xef\xbb\xbf")
-
-
-def test_anclas_no_reproducidas_no_escribe_artefactos(tmp_path):
-    with pytest.raises(c213.AnclaNoReproducida):
-        c213.ejecutar(salida=tmp_path, anclas_esperadas={"balanceada": 1, "sin_repoderacion": 60, "hibrido": 87})
-    assert list(tmp_path.iterdir()) == []
-
-
 # ---------------------------------------------------------------------------
 # Anclas declaradas por CLI (--anclas SISTEMA=N)
 # ---------------------------------------------------------------------------
@@ -228,25 +194,11 @@ def test_parsear_anclas_valor_no_entero_aborta():
 # ---------------------------------------------------------------------------
 # Nombre base parametrizable (--nombre)
 # ---------------------------------------------------------------------------
-def test_escribir_usa_el_nombre_base(tmp_path, doc_real):
-    rutas = c213.escribir(doc_real, tmp_path, nombre_base="otro_nombre")
-    assert sorted(r.name for r in rutas) == [
-        "otro_nombre.SHA256SUMS.txt",
-        "otro_nombre.json",
-        "otro_nombre.md",
-    ]
 
 
 # ---------------------------------------------------------------------------
 # Metricas globales (bloque aditivo de la corrida arbitrada)
 # ---------------------------------------------------------------------------
-def test_documento_por_defecto_no_incluye_metricas_globales(doc_real):
-    assert "metricas_globales" not in doc_real
-
-
-def test_declaracion_aditiva_interpola_el_conteo(doc_real, doc_arbitrado):
-    assert "103 casos con consenso" in doc_real["aditivo"]["declaracion"]
-    assert "206 casos con consenso" in doc_arbitrado["aditivo"]["declaracion"]
 
 
 @pytest.fixture(scope="module")
@@ -260,65 +212,3 @@ def doc_arbitrado():
     )
 
 
-def test_documento_arbitrado_reproduce_el_ancla_y_el_contraste(doc_arbitrado):
-    assert doc_arbitrado["n"] == 206
-    assert doc_arbitrado["aciertos"] == {
-        "hibrido": 142,
-        "balanceada": 101,
-        "sin_repoderacion": 88,
-    }
-    balanceada = doc_arbitrado["contrastes"]["balanceada"]
-    assert balanceada["tabla_2x2"] == {
-        "ambos_aciertan": 81,
-        "solo_hibrido": 61,
-        "solo_linea_de_base": 20,
-        "ninguno": 44,
-    }
-    assert balanceada["mcnemar"]["p_exacto"] == pytest.approx(5.656214894965935e-06)
-    assert balanceada["mcnemar"]["p_corregido"] == pytest.approx(8.811927405178393e-06)
-    assert balanceada["diferencia_exactitud"]["valor"] == pytest.approx(0.19902912621359223)
-
-    sin_rep = doc_arbitrado["contrastes"]["sin_repoderacion"]
-    assert sin_rep["tabla_2x2"] == {
-        "ambos_aciertan": 73,
-        "solo_hibrido": 69,
-        "solo_linea_de_base": 15,
-        "ninguno": 49,
-    }
-    assert sin_rep["mcnemar"]["p_exacto"] == pytest.approx(1.938192405161976e-09)
-    assert sin_rep["mcnemar"]["p_corregido"] == pytest.approx(7.347870976139131e-09)
-    assert sin_rep["diferencia_exactitud"]["valor"] == pytest.approx(0.2621359223300971)
-
-
-def test_documento_arbitrado_trae_metricas_globales(doc_arbitrado):
-    metricas = doc_arbitrado["metricas_globales"]
-    assert set(metricas) == {"hibrido", "balanceada", "sin_repoderacion"}
-    for nombre in ("hibrido", "balanceada", "sin_repoderacion"):
-        assert metricas[nombre]["n"] == 206
-        assert metricas[nombre]["exactitud_estricta"]["n"] == 206
-        assert set(metricas[nombre]["por_clase"]) == set(c213.CLASES)
-    assert metricas["hibrido"]["exactitud_estricta"]["aciertos"] == 142
-    assert metricas["hibrido"]["exactitud_estricta"]["valor"] == pytest.approx(142 / 206)
-    assert metricas["hibrido"]["exactitud_laxa"]["aciertos"] == 162
-    assert metricas["hibrido"]["macro_f1"] == pytest.approx(0.7024265685465428)
-    assert metricas["hibrido"]["balanced_accuracy"] == pytest.approx(0.7176666247397034)
-    assert metricas["balanceada"]["exactitud_estricta"]["aciertos"] == 101
-    assert metricas["balanceada"]["macro_f1"] == pytest.approx(0.38842401584018116)
-    assert metricas["balanceada"]["balanced_accuracy"] == pytest.approx(0.4475300651265496)
-    assert metricas["sin_repoderacion"]["exactitud_estricta"]["aciertos"] == 88
-    assert metricas["sin_repoderacion"]["macro_f1"] == pytest.approx(0.2934539007092199)
-    hibrido_bd = metricas["hibrido"]["por_clase"]["Bases de Datos"]
-    assert hibrido_bd["f1"] == pytest.approx(0.823529411764706)
-    assert hibrido_bd["soporte"] == 16
-    assert metricas["balanceada"]["por_clase"]["Bases de Datos"]["f1"] == 0.0
-    assert metricas["balanceada"]["por_clase"]["Sistemas"]["soporte"] == 61
-
-
-def test_arbitrado_es_determinista_byte_a_byte(tmp_path, doc_arbitrado):
-    for carpeta in ("a", "b"):
-        c213.escribir(doc_arbitrado, tmp_path / carpeta, nombre_base="contraste_arbitrado")
-    for nombre in ("contraste_arbitrado.json", "contraste_arbitrado.md"):
-        a = (tmp_path / "a" / nombre).read_bytes()
-        b = (tmp_path / "b" / nombre).read_bytes()
-        assert a == b
-        assert b"\r" not in a and not a.startswith(b"\xef\xbb\xbf")

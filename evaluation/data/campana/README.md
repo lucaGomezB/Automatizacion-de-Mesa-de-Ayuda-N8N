@@ -211,7 +211,6 @@ de esta carpeta):
 | Archivo | SHA-256 |
 |---|---|
 | `doble_etiquetado_arbitrado.csv` | 7993f3ffda7ae7b380833a41b226ed3a6b4f6aaa36f3fbed66fb52682a61d2a4 |
-| `corpus_independiente_arbitrado.json` | cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e |
 | `arbitraje_tres_vias.json` | 4c85ab43bf28cac228caa35a6aaf3863deb327767cba31fbe850b43d2efe6a61 |
 | `predicciones_arbitrado.json` | cb8aba6089dde9868c61740fba713fb75923ee32317370c46e0daeb52a01d5d5 |
 | `reporte_arbitrado.md` | 139d104379568d092bd10afaeba0ff8352dfefc7e11966017282aebb98c0435e |
@@ -236,7 +235,6 @@ Esta carpeta también aloja, desde c-166, los artefactos de la campaña contraba
 | `corpus_campana.json` | Copia de campaña del corpus canónico con `tiempo_automatizado_s` y `tiempo_manual_s` en `null`: es el `--json` de las corridas con `--plan` | `python -m evaluation.plan_campana preparar-corpus` |
 | `sidecar_<id_corrida>.json` | Sidecar propio de una corrida (sin descripciones), con `orden`, `posicion`, `mitad`, `brazo_primero` e `id_corrida` por caso | `--sidecar` de los harnesses |
 | `sidecar_<id_corrida>.json.plan.csv` | Plan que dejó `--orden` junto al sidecar (solo si se usó ese atajo) | `--orden` de los harnesses |
-| `corpus_independiente.json` | Corpus independiente pseudonimizado (ids `I001..`) con la referencia por consenso de `E3`/`E4` (103 casos; los 47 discordantes quedan excluidos y declarados), solo en su forma pseudonimizada; ruta recomendada | runbook del corpus independiente |
 | `predicciones_independiente.json` | Cache de predicciones del corpus independiente; su `cache_meta` trae `corpus_hash`, `corpus_count`, `classifier_version`, `generated_at`, `commit` y `pines` | `python -m evaluation.run_evaluation --corpus ... --predicciones ... --reporte ...` |
 | `reporte_independiente.md` | Reporte propio de esa corrida (ruta recomendada de `--reporte`) | idem |
 
@@ -252,7 +250,6 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 | `registro_sujetos.csv` | 711373ecf74350ec81e49b0c11c760cf67f90994afcbb95c3a10ff82611c4d2e |
 | `corpus_campana.json` | 99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5 |
 | `doble_etiquetado_independiente.csv` | 94dc2d739390a4c874e4ecfa70bf8b52266b752ec20d1e47801f2a93a562f6f7 |
-| `corpus_independiente.json` | 8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d |
 | `predicciones_independiente.json` | d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4 |
 | `reporte_independiente.md` | 304dffcf4afdf1655c4ff7d9a6906d2ba8e134b6926281d65ca0465c629fbf92 |
 | `plantilla_etiquetado.csv` | c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09 |
@@ -419,3 +416,7 @@ Se regenera con
 `python evaluation/data/campana/analisis/analisis_calibracion_gate_c214.py --recomputar-senales`.
 
 - sha256: a7d4a703e2c5b70c3fc898a1c55c50fbad971255285b5e3630cf65f0c983c56a
+
+## Retiro del corpus independiente (c-240)
+
+Por decision de los autores (2026-11-16), `corpus_independiente.json` y `corpus_independiente_arbitrado.json` se retiraron del repositorio publico (c-240, OOS-027). Los textos que contenian permanecen copiados en `predicciones_independiente.json`, `predicciones_arbitrado.json`, `../canario/canario.json` y `../canario/canario_predicciones.json`, conservados como insumo tecnico sin referencia acreditada. Las menciones de esos dos archivos en el resto de este README, en `analisis/` y en los scripts de analisis son historicas: describen artefactos de versiones anteriores y no se pueden reproducir desde el repositorio vigente.
