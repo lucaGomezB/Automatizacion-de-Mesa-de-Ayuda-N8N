@@ -5,7 +5,7 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 
 | Concepto | Valor |
 |---|---|
-| Fuente compilada | arbol de trabajo sobre c-239 (entrega v1.6.0; hash del tag y copia de entrega pendientes) |
+| Fuente compilada | arbol de trabajo sobre c-239 (entrega v1.6.0, hash del tag en el Anexo B) |
 | Motor | XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026) |
 | Biber | 2.22 |
 | Paginas | 149 |
@@ -16,4 +16,4 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 | Overfull \hbox (maximo) | 8 (6,9 pt) |
 | Lineas WARN de biber | 0 |
 | Lineas ERROR de biber | 0 |
-| SHA-256 de main.pdf | `1c2c67f01af24b14ee3a4e6e926164c2e8c93a8890db37652564f7ae28260e20` |
+| SHA-256 de main.pdf | `f23c078f4d5f856e635c333ef7bf4d65ee5889fd53e3df2f34f2a6c7c00dec5b` |
