@@ -6612,3 +6612,35 @@ La sección de tiempos conserva la cifra primaria (71,2~\% y su intervalo) y rem
 **Foto de cifras (D7).** `foto-cifras-c238-antes.txt` / `-despues.txt` (patrón de `C/foto-cifras-c197.txt` ampliado a las cifras de la síntesis y del Anexo J). Cotejo por multiconjunto: **ninguna cifra de la tesis cambia ni desaparece**; las diferencias de cantidad son +1 por la tabla de síntesis. Los únicos tokens ausentes son números de sección del memo (`3.11`, `3.21`, `3.31`, `3.33`, `3.46`) y anchos de columna LaTeX (`4.4`, `7.2`), ambos retirados por D3: no son cifras.
 
 **Guardarraíles (D7/D9).** `rg "\b[cC]-[0-9]{2,3}[ab]?\b"` sobre `sections/` (fuera del Anexo I y de comentarios) = **0**; `rg "Sección[~ ]3\.[0-9]{2}"` sobre `sections/` = **0**; sin cambios en `Bibliography_base.bib`, `numeros-canonicos.md`, `App/`, `n8n/` ni `evaluation/`; los pasajes §4.5 y §9.1 se re-puntuaron para cumplir la compuerta de «0 oraciones de más de 60 palabras» (en §9.1 además se aplicaron macros de sector y se reemplazó «las cotas de alcance se informan» por «Las demás lecturas se informan»); §4.8 no se tocó; las cifras, los veredictos y las afirmaciones causales de esos pasajes se conservan, y los pasajes de recitación de llamadas de N-06 (§4.8 y «Sexto, la procedencia de las llamadas» en §9.1) no se alteraron. `openspec validate c-238-mejorar-la-legibilidad-de-resultados-y-anexos --strict`: **pasa**. `tesis_para_agente.md` regenerado con `build_tesis_para_agente.py v1.5.2` (contiene "Lecturas de sensibilidad y robustez").
+
+### c-242: reencuadrar el origen y la licitud del corpus (compuertas de autores y director)
+
+Propuesto el 2026-11-17 (absorbe y supersede a `c-241`). **Sin `.tex` escrito**: el apply queda bloqueado por las compuertas de autores (OQ-01 a OQ-05) y el visto bueno del director (D6 del design).
+
+#### Compuertas de autores (ratificadas el 2026-11-17)
+
+| Compuerta | Pregunta | Respuesta ratificada | Fecha | Responsable |
+|---|---|---|---|---|
+| OQ-01 | Reencuadre del origen: no hay organizacion real; el corpus es mezcla de los regimenes (a) y (b) | Ratificado | 2026-11-17 | Autores |
+| OQ-02 | Base de licitud por regimen y redaccion de §7.2/§7.5 | Regimen (a): consentimiento informado del grupo (art. 5, inc. 1) + pseudonimizacion; regimen (b): sin datos personales, sin base | 2026-11-17 | Autores |
+| OQ-03 | Transferencia del art. 12 sin instrumento suscrito | Opciones (ii)+(iii): base = consentimiento del titular (art. 12) + minimizacion/pseudonimizacion como refuerzo; extender el acta T2 al consentimiento expreso de transferencia | 2026-11-17 | Autores |
+| OQ-04 | Validez externa / escenario representativo | Opcion (4) combinada: §1.1/§4.1/§8.1 escenario de referencia; §1.8/§8.2/§9.1 sin marco poblacional | 2026-11-17 | Autores |
+| OQ-05 | Cifras del escenario (42/dia, universo 2.646, ~120 usuarios) | C ahora (balance condicional a N asumido); B (recta B_r(N)) como follow-up | 2026-11-17 | Autores |
+
+#### Compuerta del director
+
+| Compuerta | Pregunta | Respuesta | Fecha | Responsable |
+|---|---|---|---|---|
+| Director | Visto bueno al reencuadre (el change altera lo que la tesis afirma sobre la procedencia de sus datos) | **PENDIENTE** (consulta redactada) | - | Director |
+
+#### Composicion del corpus
+
+La mezcla de los regimenes (a) y (b) se da en **ambos canales**: los 119 textos (66 correo + 53 formulario) y los 81 telefonos. La proporcion no esta codificada en el corpus, por lo que se declara de forma cualitativa (D5 del design).
+
+#### Acta de consentimiento T2
+
+`docs/seguridad/acta-consentimiento-t2.md` (revisada el 2026-11-17; pendiente de firma). Documenta el consentimiento del grupo para el corpus (regimen a) y su transferencia (art. 12), con el original firmado en custodia del director.
+
+#### Nota
+
+`c-242` supersede a `c-241-precisar-la-base-de-licitud-en-la-seccion-7-5` (retirado por el orquestador). No se escribe prosa hasta el visto bueno del director.

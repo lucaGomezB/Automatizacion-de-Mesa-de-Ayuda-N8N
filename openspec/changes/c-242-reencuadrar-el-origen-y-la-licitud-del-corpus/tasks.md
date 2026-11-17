@@ -11,7 +11,7 @@ nunca nombres reales ni la correspondencia alias-identidad; no tocar `App/`, `n8
 
 ## 1. Guardas y lectura
 
-- [ ] 1.1 Leer `proposal.md`, `design.md` (D1-D5 + OQ-01 a OQ-05), los deltas
+- [ ] 1.1 Leer `proposal.md`, `design.md` (D1-D6 + OQ-01 a OQ-05), los deltas
   `specs/tesis-document/spec.md` y `specs/security-governance-docs/spec.md`, y el estado actual
   de los `.tex`. Verificacion (linea base): `rg -n "organizaci.n mediana|120 usuarios|cartade autorizaci|empleadora|una sola organizaci" "S/"` muestra las afirmaciones a corregir.
 - [ ] 1.2 Confirmar que c-238 esta aplicado sobre `S/01-introduccion.tex` y `S/11-aspectos-legales.tex`.

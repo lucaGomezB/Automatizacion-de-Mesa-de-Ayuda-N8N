@@ -5,8 +5,9 @@
 > los 11 documentos de gobernanza: es el acta que respalda el tratamiento **T2** (régimen a) y
 > su transferencia.
 > **Estado**: v1 — información entregada el 2026-10-01; consentimiento prestado el
-> 2026-10-02; confirmación escrita firmada con posterioridad (custodia del director), del
-> mismo modo que los colaboradores de la campaña.
+> 2026-10-02; la confirmación escrita se firma con posterioridad y queda en custodia del
+> director, sin fecha de firma consignada aquí, del mismo modo que la de los colaboradores
+> de la campaña (ver §5).
 > **Alcance**: consentimiento del propio grupo para el tratamiento T2 (corpus), régimen (a).
 > **Encuadre**: documento alineado con la Ley 25.326; no constituye certificación ni auditoría.
 
@@ -49,9 +50,11 @@ Se informa a las partes:
   medir su desempeño (trabajo final de la tesis).
 - **Datos tratados:** descripciones textuales de los incidentes, pseudonimizadas (sin nombre,
   correo, teléfono ni legajo).
-- **Minimización:** solo se transfieren las descripciones, sin identificadores directos; las
-  grabaciones de telefonía transmitidas durante el estudio fueron la voz de uno de los
-  autores.
+- **Minimización:** solo se transfieren las descripciones de los incidentes, sin
+  identificadores directos (sin nombre, correo, teléfono ni legajo).
+- **Naturaleza del audio:** las grabaciones de telefonía transmitidas durante el estudio
+  (81 casos) fueron recitadas por uno de los autores a partir de las descripciones; no
+  contienen voz de terceros.
 - **Destinatarios/encargados:** N8N (orquestación), Google Gemini (inferencia, texto
   pseudonimizado y transcripción de audio), Twilio (telefonía), Microsoft Outlook (correo).
 - **Transferencia internacional:** los proveedores de inferencia y telefonía tienen sede en
@@ -61,8 +64,9 @@ Se informa a las partes:
   consecuencias negativas.
 - **Derechos:** acceso (10 días corridos, art. 14) y rectificación/actualización/supresión
   (5 días hábiles, art. 16).
-- **No se usan datos ficticios:** el régimen (a) opera con los incidentes reales del propio
-  equipo.
+- **Procedencia:** el régimen (a) opera con los incidentes reales del propio equipo; el
+  régimen (b) son reconstrucciones de tipos de incidente, sin datos de terceros, y no
+  integran este consentimiento.
 
 ## 4. Manifestación
 
@@ -90,4 +94,5 @@ su transferencia. La organización adoptante (T3) es un rol futuro y genérico: 
 licitud y su instrumento de transferencia son propios y no se activan sin su aprobación.
 
 Esta acta se referencia desde `registro-actividades-tratamiento.md` (T2) y desde la tesis
-(§7.2, §7.3 y §7.5), en reemplazo de la referencia previa a una organización adoptante real.
+(§7.2, §7.3 y §7.5) una vez que esos documentos se actualicen conforme a este encuadre;
+sustituye la referencia previa a una organización adoptante real.

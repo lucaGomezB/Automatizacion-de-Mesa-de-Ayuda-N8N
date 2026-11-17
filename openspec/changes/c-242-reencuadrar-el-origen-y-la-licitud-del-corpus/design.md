@@ -96,7 +96,21 @@ El encuadre NO es un retiro de resultados: el sistema, las campanas, los partici
 pseudonimizacion se preservan y se declaran verdaderos. Las cifras del escenario (120 usuarios,
 42 incidentes diarios, 2.646) y su tratamiento quedan en OQ-05.
 
-### D5 — Politica de compuertas
+### D5 — Composicion del corpus: mezcla en ambos canales
+
+La mezcla de los regimenes (a) y (b) **no se distribuye por canal**: tanto los 119 casos de
+texto (66 de correo electronico y 53 de formulario web, corrida del 2-10-2026) como los 81
+telefonicos (5 y 6-10-2026) contienen casos de **ambos** regimenes. La procedencia real vs
+reconstruccion **no esta codificada** en el corpus (`data/corpus_evaluacion_pseudonimizado.json`,
+su CSV pseudonimizado ni los originales `Corpus Tesis.xlsx` / `Corpus Tesis - Hoja 1.csv`, que
+ademas estan fuera del control de versiones), y `data/README.md` describe el corpus como "real"
+sin distinguir regimenes. Por eso el documento SHALL declarar la mezcla de forma **cualitativa**
+(ambos regimenes presentes en ambos canales) y MUST NOT declarar una proporcion numerica que no
+este respaldada por un registro primario. Esto satisface el minimo del requisito "Corpus
+declarado como mezcla de dos regimenes" (declarar la mezcla y el caracter de cada regimen) sin
+inventar un conteo.
+
+### D6 — Politica de compuertas
 
 Toda escritura de `.tex` y de `docs/seguridad/` queda bloqueada hasta la ratificacion escrita
 de los autores (OQ-01 a OQ-05) y el visto bueno del director. Las compuertas se registran con
