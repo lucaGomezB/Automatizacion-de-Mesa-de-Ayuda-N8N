@@ -6,8 +6,12 @@ correos de personas: los autores figuran solo como T1, T2 y T3.
 
 ## 1. Alcance y ref
 
-- **Ref de conteo:** tag `v1.5.2` (la version evaluada en tercera instancia). El conteo se
-  puede re-ejecutar sobre cualquier ref; c-239 lo hara sobre la ref de la release siguiente.
+- **Ref de conteo:** tag `v1.5.2` (la version evaluada en tercera instancia). El conteo se puede
+  re-ejecutar sobre cualquier ref. **Re-ejecucion de c-239 (2026-11-17):** sobre la ref de la
+  entrega (commit `3f03597`, previo al commit de contenido de la version `v1.6.0`) el historial
+  da **162 de 1199** commits con marca de asistente y el rango `v1.2.18..3f03597` da **49 de 282**
+  (unico modelo: Claude Fable 5.2). Es el conteo que el Anexo I.3 declara para la entrega
+  `v1.6.0`; la serie de `v1.5.2` de mas abajo se conserva como historia.
 - **Ref del arbol de trabajo al levantar este inventario:** `e52276e` (`v1.5.2-15`), con el
   arbol limpio.
 - **Herramienta:** `docs/Tesis/Correcciones/contar_uso_asistentes.py`, con su prueba

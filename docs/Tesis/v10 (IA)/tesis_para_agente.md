@@ -1,6 +1,6 @@
-# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.5.2)
+# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.6.0)
 
-> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.5.2`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
+> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.6.0`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
 
 ---
 
@@ -34,7 +34,7 @@
 
  14 de noviembre de 2026
 
- Versión 1.5.2
+ Versión 1.6.0
 
 ## Resumen
 
@@ -1317,11 +1317,11 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md
 
 ## Repositorio de código fuente
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio`, accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N]. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.5.2`, que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior consigna en este anexo ese hash: ` 5509cbf6b308478e1e132c09837946d3389c895f`, que constituye la referencia verificable de la versión entregada.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio`, accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N]. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.6.0`, que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior consigna en este anexo ese hash, que constituye la referencia verificable de la versión entregada.
 
 La verificación de la compilación se conserva en paper/compilacion.md`, que registra las páginas, los errores y el SHA-256 del PDF, y la de la matriz de trazabilidad de las correcciones, en docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py; ambos artefactos corresponden a este anexo de repositorio.
 
-La *versión entregada* designa el tag del manuscrito de tesis (`v1.5.2`), distinto de la *configuración entregada*, que designa el tag del software desplegado (`v1.3.0`). La versión entregada no es la que se evaluó. La *configuración evaluada* es la del commit `bf5e099` (7-10-2026), primera revisión que versiona la cascada `hybrid-v3`; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (§`subsec:protocolo-pruebas`). La *configuración entregada* es la del tag `v1.3.0`. La *configuración de la campaña complementaria* no es un único commit. El brazo automatizado de correo y formulario web corrió desde `cda7712` (5-11-2026), y el de telefonía desde el 6-11-2026, tras ajustar el bloqueo de la llamada siguiente en el softphone y el aviso de voz. Las intervenciones se validaron entre el 7 y el 8-11-2026 (ajustes de la interfaz y de la codificación del correo), todas con `hybrid-v3`, la instrumentación de intervención y la derivación por reportante activas (§`subsec:resultados-campana-medicion`). La §`tab:configuracion-evaluada-entregada` consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella. La procedencia de cada familia de cifras (corrida, configuración y artefacto de origen) se resume en la Tabla `tab:procedencia-numeros` del marco metodológico.
+La *versión entregada* designa el tag del manuscrito de tesis (`v1.6.0`), distinto de la *configuración entregada*, que designa el tag del software desplegado (`v1.3.0`). La versión entregada no es la que se evaluó. La *configuración evaluada* es la del commit `bf5e099` (7-10-2026), primera revisión que versiona la cascada `hybrid-v3`; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (§`subsec:protocolo-pruebas`). La *configuración entregada* es la del tag `v1.3.0`. La *configuración de la campaña complementaria* no es un único commit. El brazo automatizado de correo y formulario web corrió desde `cda7712` (5-11-2026), y el de telefonía desde el 6-11-2026, tras ajustar el bloqueo de la llamada siguiente en el softphone y el aviso de voz. Las intervenciones se validaron entre el 7 y el 8-11-2026 (ajustes de la interfaz y de la codificación del correo), todas con `hybrid-v3`, la instrumentación de intervención y la derivación por reportante activas (§`subsec:resultados-campana-medicion`). La §`tab:configuracion-evaluada-entregada` consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella. La procedencia de cada familia de cifras (corrida, configuración y artefacto de origen) se resume en la Tabla `tab:procedencia-numeros` del marco metodológico.
 
 **Tabla: Configuración evaluada, configuración entregada y configuración de la campaña complementaria**
 
@@ -1467,19 +1467,20 @@ Entre las versiones 1.3.0 y 1.5.2 se informó además una validación «fuera de
 
 ### Revisiones que originaron las correcciones
 
-Las correcciones de la tesis responden a la auditoría integral del tribunal del 4 de agosto de 2026, a una serie de autoevaluaciones internas frente a criterios de la CONEAU y a la devolución de segunda instancia del tribunal del 11 de noviembre de 2026. El detalle de cada observación, el cambio responsable y la sección donde se atendió se conserva como trazabilidad operativa del proyecto y no se reproduce en este anexo.
+Las correcciones de la tesis responden a la auditoría integral del tribunal del 4 de agosto de 2026, a una serie de autoevaluaciones internas frente a criterios de la CONEAU, a la devolución de segunda instancia del tribunal del 11 de noviembre de 2026 y a la devolución de tercera instancia del tribunal del 16 de noviembre de 2026. El detalle de cada observación, el cambio responsable y la sección donde se atendió se conserva como trazabilidad operativa del proyecto y no se reproduce en este anexo.
 
 ### Declaración de uso de asistentes de inteligencia artificial
 
-El desarrollo del sistema, los scripts de análisis y evaluación y la redacción de esta tesis se realizaron con asistencia sistemática de agentes de código basados en modelos de lenguaje. El trabajo se organizó en changes con especificación previa (propuesta, diseño y tareas) que los autores definían y revisaban; el agente implementaba las tareas y los autores aceptaban o rechazaban el resultado. El inventario versionado docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md reproduce los conteos: en la versión `v1.5.2`, 154 de 1170 commits llevan la marca de coautoría de un asistente, cifra que es una cota inferior porque la marca solo se registra con una de las herramientas en uso.
+El desarrollo del sistema, los scripts de análisis y evaluación y la redacción de esta tesis se realizaron con asistencia sistemática de agentes de código basados en modelos de lenguaje. El trabajo se organizó en changes con especificación previa (propuesta, diseño y tareas) que los autores definían y revisaban; el agente implementaba las tareas y los autores aceptaban o rechazaban el resultado. El inventario versionado docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md reproduce los conteos: en la ref de la entrega (el commit previo al commit de contenido de la versión `v1.6.0`), 162 de 1199 commits llevan la marca de coautoría de un asistente, cifra que es una cota inferior porque la marca solo se registra con una de las herramientas en uso.
 
 **Tabla: Herramienta y modelo, producción y verificación por ámbito**
 
-4pt
+3pt
+0.92
 | Ámbito | Herramienta y modelo | Qué produjo el asistente | Verificación de los autores |
 | — | — | — | — |
 | Código del sistema (backend, frontend y flujo N8N) | Claude Code y opencode; modelos registrados en los *trailers* del repositorio: Claude Fable 5, 5.1 y 5.2, Claude Opus 5.5 y Claude Sonnet 4.6 | Implementación de rutas, servicios, repositorios y componentes de interfaz, y del flujo N8N, a partir de tareas especificadas y revisadas por los autores | Suite de pruebas del backend con `pytest`; revisión de cada cambio antes de archivarlo |
-| Scripts de análisis y evaluación | Idem | Scripts de análisis y evaluación, y el recálculo de las cifras que citan | Suite de pruebas de evaluation/ con `pytest`; recálculo de las cifras desde los artefactos versionados y su registro en el memo docs/Tesis/Correcciones/numeros-canonicos.md; recontar_errores_frontera.py, sent_c197.py y list_long_c197.py |
+| Scripts de análisis y evaluación | Idem | Scripts de análisis y evaluación, y el recálculo de las cifras que citan | Suite de pruebas de evaluation/ con `pytest`; recálculo de las cifras desde los artefactos versionados y el memo numeros-canonicos.md; recontar_errores_frontera.py, sent_c197.py y list_long_c197.py |
 | Texto de la tesis | Idem | Borradores de prosa a partir de tareas especificadas por los autores (redacción, además de corrección de estilo y edición) | verify_citations.py; verificar_matriz_trazabilidad.py; resumir_registro_compilacion.py; contraste con el memo de números canónicos; revisión de cada cambio antes de archivarlo |
 | Diagramas | Un modelo de lenguaje, sin individualizar el modelo; fuentes Mermaid versionadas en docs/diagrams/ | Diagramas de flujo y de arquitectura a partir de la estructura planteada por los autores, en fuentes Mermaid versionadas como texto y renderizadas a PNG | Revisión de cada cambio antes de archivarlo; las fuentes Mermaid se versionan como texto y se revisan como diferencias |
 | Autoevaluaciones estilo CONEAU | Asistente de lenguaje con el perfil de evaluador docs/Tesis/Correcciones/Prompt2.docx | Informes de autoevaluación frente a criterios de la CONEAU; no son una revisión por pares | Revisión de los autores |

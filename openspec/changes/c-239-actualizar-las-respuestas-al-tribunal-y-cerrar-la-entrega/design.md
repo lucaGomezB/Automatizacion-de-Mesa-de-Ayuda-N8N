@@ -107,3 +107,13 @@ Reversion: todo es texto versionado; antes del tag basta `git restore`; despues,
 - **OQ5.** Versionar en git la devolucion de tercera instancia (`.md` y `.pdf`, con nombres reales en la ficha), como se hizo con la de segunda instancia, o mantenerla fuera del repositorio publico.
 - **OQ6.** Comunicacion al director de K-01 y K-02 resueltas: fecha y medio, para el checklist (dato de autores).
 - **OQ7.** `knowledge-base/11_evaluacion_experimental.md` declara la release `v1.2.0`: ¿se actualiza a la version nueva completa (alcance mayor) o solo se retiran las cifras fuera de muestra y se rotula la release?
+
+## Resoluciones de autores (2026-11-17)
+
+- **OQ1 = `v1.6.0`.** El retiro de una familia de evidencia y el cambio de lectura del balance alteran el contenido sustantivo, no solo la forma.
+- **OQ2 = A.** Se conservan `c-228`, `c-229`, `c-230` y `c-232` adaptados y posteriores a la entrega (D11), con las compuertas K-01/K-02; orden c-229 -> c-230 -> c-228 -> c-232.
+- **OQ3 = resuelto (2026-11-17).** P1-P5 se redactan desde las compuertas P1-P8 de c-235 (registradas en la entrada `c-235` de `dictamen-correcciones.md`): `E3`/`E4`/`E5` son etiquetadores externos con consentimiento firmado, sin acreditacion de las marcas temporales; los 56 del refuerzo los redacto un autor desde fuentes de internet; los 150 textos los construyo un autor sobre escenarios base de IA sin datos de terceros; no hay compania que autorice ni areas que mapear (el escenario es narrativo). P11 se redacta desde la declaracion de IA (`subsec:declaracion-uso-ia`, c-237) y su inventario, sin citar el conteo de commits. P12 va **por alias** (`T1`/`T2`/`T3`), con el reparto igual al de la version evaluada.
+- **OQ4 = esperar el insumo.** No se corta la entrega adivinando: se aguarda el insumo de autores para las P que lo requieran.
+- **OQ5 = versionar.** La devolucion de tercera instancia (`.md` y `.pdf`) se versiona en el commit de contenido de la entrega, con el OK de los autores por los nombres reales de la ficha.
+- **OQ6 = resuelto (2026-11-17).** El autor comunico al director la consulta por WhatsApp el 2026-11-17; queda registrado (fecha y medio) para el checklist.
+- **OQ7 = A.** `knowledge-base/11_evaluacion_experimental.md` se actualiza a la version nueva completa (alcance mayor).

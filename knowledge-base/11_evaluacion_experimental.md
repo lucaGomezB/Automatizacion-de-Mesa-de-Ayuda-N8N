@@ -2,13 +2,13 @@
 
 Síntesis del marco metodológico (tesis §4) y de los resultados vigentes (§7) para reproducir la evaluación.
 
-> **Nota C-27:** el corpus sintético de 200 casos (82 Sistemas / 64 Operaciones / 54 Soporte Técnico) y sus resultados (exactitud 92 %, F1 macro 0,919, Tabla 7, 3×3) fueron **descartados por los revisores y eliminados del repositorio**. Quedan declarados **superados** y se conservan solo como historia; la evaluación se realiza sobre el corpus real JSON multietiqueta y sus resultados vigentes figuran en el bloque «Resultados vigentes (release v1.2.0)» de más abajo.
+> **Nota C-27:** el corpus sintético de 200 casos (82 Sistemas / 64 Operaciones / 54 Soporte Técnico) y sus resultados (exactitud 92 %, F1 macro 0,919, Tabla 7, 3×3) fueron **descartados por los revisores y eliminados del repositorio**. Quedan declarados **superados** y se conservan solo como historia; la evaluación se realiza sobre el corpus real JSON multietiqueta y sus resultados vigentes figuran en el bloque «Resultados vigentes (release v1.6.0)» de más abajo.
 
 > **Nota c-235 (2026-11-16):** la **validación fuera de muestra** (150 textos + 56 de refuerzo, etiquetados por `E3`/`E4` y arbitrados por `E5`; exactitud estricta cruda 0,6893 = 142/206) y todos los análisis que dependían de ella (línea de base clásica, bloque primario del brazo «Gemini solo», calibración y sensibilidad fuera de muestra, sesgo del vocabulario sobre el corpus arbitrado, arbitraje por mayoría) quedan **retirados de la tesis**; no constituyen evidencia de la tesis y su procedencia no se acredita como registro primario de una organización. Se conservan como historia la Runbook y los artefactos del repositorio, rotulados como retirados (remisión: `docs/Tesis/Correcciones/numeros-canonicos.md`, Sección 3.45, y la nota de versiones de la tesis, Anexo I.1). La hipótesis de eficiencia frente al brazo «Gemini solo» queda **sin contraste limpio**. Los resultados vigentes de esta página (corpus de 200 casos y campaña complementaria `E1`/`E2`/`O1`/`O2`) no cambian.
 
-## Resultados vigentes (release v1.2.0)
+## Resultados vigentes (release v1.6.0)
 
-**Fuente única:** `docs/Tesis/Correcciones/numeros-canonicos.md` (memo de números canónicos, versión de trabajo v10, release `v1.2.0`). Si este bloque y el memo difieren, vale el memo; ningún valor de aquí se define por separado. Corpus: `n = 200` casos, SHA-256 `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (Sección 3.5). Corrida oficial de predicciones: `hybrid-v3` (Sección 3.9). Kappa de Cohen del doble etiquetado: `0,87` (contexto de validez, no es una métrica del clasificador).
+**Fuente única:** `docs/Tesis/Correcciones/numeros-canonicos.md` (memo de números canónicos, versión de trabajo v10, release `v1.6.0`). Si este bloque y el memo difieren, vale el memo; ningún valor de aquí se define por separado. Corpus: `n = 200` casos, SHA-256 `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (Sección 3.5). Corrida oficial de predicciones: `hybrid-v3` (Sección 3.9). Kappa de Cohen del doble etiquetado (campaña complementaria, `E1`/`E2`): `0,5569` (moderado); el valor `0,87` de versiones anteriores está retirado y no se presenta como evidencia (cf. la nota c-235 y la Sección 3.14 del memo).
 
 **Tiempos de registro** (Secciones 3.1 y 3.8; contraste Wilcoxon **bilateral**, conservador frente a `H1` direccional):
 
@@ -36,7 +36,7 @@ Síntesis del marco metodológico (tesis §4) y de los resultados vigentes (§7)
 | Confianza | bandas `98 / 26 / 6 / 31 / 39`; tramo `≥ 0,90`: `46` casos, `13` errores; `124/200` (`62,0 %`) con confianza `< 0,70`, todos de la etapa determinística; punto de operación del cortocircuito `0,5166` sobre el `score_correctitud` |
 | Determinística frente a Gemini sobre `S` | `97/131` frente a `88/130` (`0,6769`); McNemar `b = 16`, `c = 8`, `p` exacto `0,1516` (no significativo) |
 
-**Intervención humana, universo y proyección** (Sección 3.4): la tasa de intervención humana **no se midió** sobre el corpus real; el valor heredado del corpus sintético está retirado en el memo y no es citable. Universo trimestral `≈ 2.646 = 42 × 63` incidentes (días hábiles); ahorro bruto proyectado `≈ 32,2` horas-persona por trimestre.
+**Intervención humana, universo y proyección** (Sección 3.4): la tasa de intervención humana de la campaña 2026-10 **no se midió** (sin registro por caso); la campaña complementaria registró `147` intervenciones en `200` casos (`73,5 %`), de las cuales `25` cambiaron la derivación (`17,0 %`); el valor heredado del corpus sintético está retirado en el memo y no es citable. Universo trimestral `≈ 2.646 = 42 × 63` incidentes (días hábiles); ahorro bruto proyectado `≈ 32,2` horas-persona por trimestre.
 
 **Sensibilidad frente al ajuste del clasificador con el corpus** (Sección 3.10; tesis `subsec:sensibilidad-ajustes`). Son mediciones de sensibilidad, no reemplazan los valores de arriba:
 
@@ -48,7 +48,7 @@ Síntesis del marco metodológico (tesis §4) y de los resultados vigentes (§7)
 | Prompt, nivel a | etapa Gemini `50/69` = `0,7246` con todos los casos y `48/66` = `0,7273` sin los tres casos motivadores de c-72 |
 | Prompt, nivel b / nivel c | nivel b: la comparación pareada no aplica; nivel c (ablación paga): no computado, sin autorización |
 
-**Balance neto de las derivaciones erróneas** (Sección 3.11; `condicional`, son supuestos y no mediciones): con `e_man = 15 %` y un costo de `10` a `15 min` por derivación errónea, el balance es `−18,5 h` y `−43,9 h` por trimestre y la exactitud mínima de equilibrio `77,7 %` y `80,1 %`; con la exactitud laxa como cota favorable el balance es positivo (`+52,1 h` y `+62,0 h`). El balance es **indeterminado** con el diseño actual: la viabilidad técnica y económica se confirma y la operativa queda **condicional**.
+**Balance neto de las derivaciones erróneas** (Sección 3.46; cota superior condicional): con el costo medido `c = 69,51 s` como cota inferior del tramo activo, el término de revisión `ρ·r = 0,735 × 22,06 s` y las tasas de error medidas contra la referencia común (`e_aut = 28/138`, `e_man = 26/151`), el balance neto trimestral es `B_r = +18,7 h-persona`, IC condicional `[+12,9; +24,1]` y cota combinada `[+6,7; +28,2]`; la exactitud mínima de equilibrio es `a*_r = 43,1 %` (IC condicional `[33,6; 53,7] %`). Es una cota superior del tramo activo medido, no del balance real: el tramo de reanudación no se midió y queda sin cota. La lectura histórica de `−18,5` a `−43,9 h-persona` (costo supuesto y sin término de revisión) queda superada. La viabilidad técnica y el costo monetario marginal se confirman; la operativa queda condicional.
 
 **Lectura retirada:** la «calibración invertida» del clasificador en su conjunto es un efecto de composición entre etapas (Sección 3.9); dentro de Gemini la confianza autodeclarada no discrimina aciertos de errores en el rango observado (`0,85` a `1,00`).
 
@@ -86,7 +86,7 @@ El corpus es un documento JSON con `schema_version`, `metadata` (`descripcion`, 
 | Wilcoxon rangos con signo (tiempos pareados) | scipy.stats | comparación manual vs automatizado |
 | Tamaño del efecto rank-biserial | manual: r = 1 − 2W/(n(n+1)) | sobre los tiempos |
 
-> Valores esperados previos (92 % de exactitud; F1 macro 0,919; Sistemas 0,933 · Operaciones 0,906 · Soporte Técnico 0,917) pertenecen al corpus sintético y quedan **superados**; los valores vigentes sobre el corpus real están en «Resultados vigentes (release v1.2.0)».
+> Valores esperados previos (92 % de exactitud; F1 macro 0,919; Sistemas 0,933 · Operaciones 0,906 · Soporte Técnico 0,917) pertenecen al corpus sintético y quedan **superados**; los valores vigentes sobre el corpus real están en «Resultados vigentes (release v1.6.0)».
 
 ## Matriz de confusión primaria (5×5)
 

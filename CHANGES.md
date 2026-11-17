@@ -2981,6 +2981,36 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+### [C-235] `retirar-la-validacion-fuera-de-muestra-y-declarar-su-procedencia` — APLICADO/ARCHIVADO (2026-11-16, MEDIUM)
+
+- **Estado**: aplicado (grupos 0 a 8 y 10) y **archivado** el 2026-11-17 (`openspec/changes/archive/2026-11-17-c-235-retirar-la-validacion-fuera-de-muestra-y-declarar-su-procedencia/`); el grupo 9 (`evaluation/data/`) se difirió a `c-240`. Prosa y documentación; sin código nuevo, cero llamadas a Gemini.
+- **Objetivo**: atender **K-01** (retiro de la validación fuera de muestra y de todo lo que dependía de ella), **K-02** (§4.4 sin compañía, §7.3 exacta, §7.5 sin `E3`/`E4`/`E5`), **A-02** y **B-02** («no aplica por retiro») y **M-02** (hipótesis de eficiencia «sin contraste limpio»).
+- **Scope**: `docs/Tesis/v10 (IA)/paper/sections/{00-resumen,01-introduccion,04-marco-metodologico,05-arquitectura,07-resultados,08-discusion,09-conclusiones,10-recomendaciones,11-aspectos-legales,12-anexos}.tex`; memo aditivo `3.45`; `dictamen-correcciones.md`.
+- **Specs**: `tesis-document`, `tesis-defensa` (cifras retiradas) y `tesis-numeros-canonicos` (rótulos `retirado` + `3.45`).
+- **Dependencias**: **primera** de la familia; **antes** de `c-236`, `c-237`, `c-238` y `c-239`. Los changes `c-228`/`c-229`/`c-230`/`c-232` dependen de su retiro.
+- **Governance**: MEDIUM (prosa y documentación). **Leer antes**: `openspec/changes/archive/2026-11-17-c-235-.../{proposal,design,tasks}.md` y `auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md` (K-01 y K-02).
+
+---
+
+### [C-236] `acotar-el-balance-neto-y-declarar-el-umbral-a-priori` — APLICADO/ARCHIVADO (2026-11-16, MEDIUM)
+
+- **Estado**: aplicado (grupos 0 a 5) y **archivado** el 2026-11-17 (`openspec/changes/archive/2026-11-17-c-236-acotar-el-balance-neto-y-declarar-el-umbral-a-priori/`). Prosa LaTeX y documentación; sin código de aplicación, cero llamadas a Gemini. El script `analisis_balance_neto_c236.*` y la Sección `3.46` del memo se registran en la entrada de `c-236` del dictamen.
+- **Objetivo**: atender **A-01** (incorporar el término de revisión a `B`; `c` como cota inferior y `B` como cota superior; restituir la lectura condicional) y **M-01** (el 85 % como criterio a priori; lecturas posteriores trasladadas a la discusión).
+- **Scope**: `docs/Tesis/v10 (IA)/paper/sections/{00-resumen,01-introduccion,04-marco-metodologico,08-discusion,09-conclusiones,10-recomendaciones,12-anexos}.tex`; memo aditivo `3.46`; `dictamen-correcciones.md`.
+- **Specs**: `tesis-document`, `tesis-defensa` (balance como cota superior) y `tesis-numeros-canonicos`.
+- **Dependencias**: **después** de `c-235`; **antes** de `c-238` y `c-239`. **Governance**: MEDIUM. **Leer antes**: `openspec/changes/archive/2026-11-17-c-236-.../{proposal,design,tasks}.md` y la devolución (A-01, M-01).
+
+---
+
+### [C-237] `declarar-de-forma-completa-el-uso-de-asistentes-de-ia` — APLICADO/ARCHIVADO (2026-11-16, MEDIUM)
+
+- **Estado**: aplicado y **archivado** el 2026-11-17 (`openspec/changes/archive/2026-11-17-c-237-declarar-de-forma-completa-el-uso-de-asistentes-de-ia/`). Prosa LaTeX, documentación y un script de conteo; cero llamadas a Gemini.
+- **Objetivo**: atender **A-03** (la declaración del Anexo I era más acotada que lo que registra el repositorio). Crea la subsección `subsec:declaracion-uso-ia`, el inventario `docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md` y el script `contar_uso_asistentes.py`; retira el párrafo de la declaración previa de I.2.
+- **Scope**: `docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex`; `docs/Tesis/Correcciones/{inventario-uso-asistentes-ia.md,contar_uso_asistentes.py,test_contar_uso_asistentes.py}`; `dictamen-correcciones.md`.
+- **Specs**: `tesis-document` (declaración completa de uso de IA). **Dependencias**: **después** de `c-235`; **antes** de `c-239` (que re-ejecuta el conteo sobre la ref de la entrega). **Governance**: MEDIUM. **Leer antes**: `openspec/changes/archive/2026-11-17-c-237-.../{proposal,design,tasks}.md` y la devolución (A-03).
+
+---
+
 ### [C-238] `mejorar-la-legibilidad-de-resultados-y-anexos` — APLICADO (2026-11-17, MEDIUM)
 
 - **Estado**: aplicado (42/42 tareas), pendiente de verificar y archivar; **sin commitear** (a pedido). Prosa y tipografía; sin datos nuevos, sin código de aplicación, sin llamadas a Gemini. Se aplica sobre `c-235`, `c-236`, `c-237` y `c-240` ya presentes en `main`. Recompilación de verificación en directorio temporal (149 pp, 126 pp de cuerpo, anexos desde la p. 127); el PDF versionado y `compilacion.md` los regenera `c-239`.
@@ -2990,6 +3020,17 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `c-235`, `c-236` y `c-237` **antes**; `c-239` **después** (respuestas al tribunal, bump de versión, recompilación versionada y tag).
 - **Governance**: MEDIUM (prosa y documentación). No cambia cifras, intervalos, veredictos, citas ni conclusiones; no renombra etiquetas; no toca 4.5, 4.8 ni 9.1 (N-06).
 - **Leer antes**: `openspec/changes/c-238-mejorar-la-legibilidad-de-resultados-y-anexos/{proposal,design,tasks}.md` y `auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md` (sección 5, M-03, B-01, B-03).
+
+---
+
+### [C-239] `actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega` — APLICADO (2026-11-17, MEDIUM + ALTA por el tag)
+
+- **Estado**: aplicado (grupos 0 a 5; el tag anotado y el commit del hash quedan para la autorización expresa de los autores), **sin commitear, sin tag y sin push**. Documentación y prosa, más el script de cotejo (Strict TDD) y la recompilación; cero llamadas a Gemini. Se aplica **al final**, sobre `c-235`, `c-236`, `c-237`, `c-238` y `c-240` ya presentes. Recompilación de entrega: 149 páginas (126 de cuerpo), 0 errores, 0 referencias o citas indefinidas.
+- **Objetivo**: atender **M-04** (el documento de respuestas al tribunal contradecía el ejemplar corregido) y cerrar la entrega posterior a la tercera instancia: reescribir `docs/defensa/respuestas-tribunal.md` (Q1 a Q16 actualizadas y P1 a P12 nuevas), cotejar mecánicamente cada cifra con el ejemplar corregido (`cotejar_cifras_respuestas.py`), asentar la trazabilidad de la devolución de tercera instancia y cerrar versión, compilación, derivados y registro.
+- **Scope**: `docs/defensa/{respuestas-tribunal.md,cotejo-lista-blanca.tsv}`; `docs/Tesis/Correcciones/{cotejar_cifras_respuestas.py,test_cotejar_cifras_respuestas.py,dictamen-correcciones.md,inventario-uso-asistentes-ia.md}`; `docs/Tesis/v10 (IA)/paper/sections/{00-portada,12-anexos}.tex` y `Bibliography_base.bib`; `paper/compilacion.md` y extractos; `README.md`; `knowledge-base/`; `CHANGES.md`.
+- **Specs**: `tesis-defensa` (documento de respuestas y cotejo automatizado) y `tesis-document` (trazabilidad T3, cierre de versión y compilación, condiciones del tribunal).
+- **Dependencias**: **después** de `c-235`, `c-236`, `c-237` y `c-238`. Destino de `c-228`, `c-229`, `c-230` y `c-232`: confirmados como **adaptados y posteriores a la entrega** (OQ2 = A; orden `c-229` -> `c-230` -> `c-228` -> `c-232`), sin tareas aplicadas ni cambios en el ejemplar.
+- **Governance**: MEDIUM (documentación y prosa) + ALTA (tag anotado, push y publicación, con OK expreso de los autores y tras el checklist de K-01/K-02). **Leer antes**: `openspec/changes/c-239-actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega/{proposal,design,tasks}.md` y `auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md` (secciones 5, 7 y 8).
 
 ---
 
@@ -3071,6 +3112,8 @@ Actualizacion 2026-11-15 (c-223, reproducibilidad): C-223 `preservar-el-commit-d
 Actualizacion 2026-11-15 (c-224, arbitraje por mayoria): C-224 `acotar-el-arbitraje-por-mayoria` (27/27, MEDIUM) agrego el analisis offline `analisis_arbitraje_mayoria_c224.py` (25 pruebas TDD) y la seccion aditiva `3.35` del memo. La regla vigente coincide con la mayoria de `{E3, E4, E5}` en `200` de `206` casos; solo `6` casos con tres etiquetas distintas carecen de mayoria. Reasignar los `5` reasignables mueve la exactitud estricta de `142/206` (`0,6893`) a `147/206` (`0,7136`) y el macro-F1 de `0,7024` a `0,7249`; ningun extremo alcanza el umbral de `0,85` y la cifra primaria no cambia. La prosa de `07`, `08` y `10` incorpora la lectura y el trabajo futuro se reformula hacia mas etiquetadores independientes. El change queda aplicado y sin archivar.
 
 Actualizacion 2026-11-16 (devolucion de tercera instancia sobre la `v1.5.2`): el tribunal dictamino «apta para defensa, condicionada a K-01 y K-02» (`auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md`; 6,7/10, proyeccion 7,4 con las correcciones). Se propusieron cinco changes para las doce observaciones, que se aplican en este orden: C-235 `retirar-la-validacion-fuera-de-muestra-y-declarar-su-procedencia` (0/57; K-01, K-02, M-02), C-236 `acotar-el-balance-neto-y-declarar-el-umbral-a-priori` (0/34; A-01, M-01), C-237 `declarar-de-forma-completa-el-uso-de-asistentes-de-ia` (0/29; A-03), C-238 `mejorar-la-legibilidad-de-resultados-y-anexos` (0/42; M-03, B-01, B-03) y C-239 `actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega` (0/53; M-04 y cierre de version); cada uno agrega su entrada a este indice al aplicarse. El mismo dia se adaptaron los cuatro changes propuestos el 2026-11-15, cuyas premisas anclaban en la validacion fuera de muestra que se retira: C-229 (0/44), C-230 (0/38, reformulado), C-228 (0/46) y C-232 (0/48). Ninguno usa ya cifras ni artefactos retirados, todo dato nuevo queda sujeto a una compuerta de procedencia y a una compuerta etica y legal, y ninguno modifica el ejemplar que se defiende: se ejecutan despues de C-239, en el orden C-229 -> C-230 -> C-228 -> C-232, porque la devolucion no exige esa evidencia y atribuye la baja de la nota a evidencia nueva que no pudo acreditar. Queda pendiente la confirmacion de los tres autores (C-239 OQ2). Estado: 9 changes ACTIVOS (C-228, C-229, C-230, C-232 y C-235 a C-239), todos validos con `openspec validate --strict` y con 0 tareas aplicadas; release vigente `v1.5.2`.
+
+Actualizacion 2026-11-17 (entrega `v1.6.0`, tercera instancia): C-239 `actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega` quedo APLICADO (grupos 0 a 5; sin commit, tag ni push, a la espera de la autorizacion expresa de los autores) y se aplicaron y archivaron C-235, C-236, C-237 y C-238 (mas C-240, que cerro el residual de K-02 y la omision de A-02 en §1.8),sincronizando la `tesis-defensa` y la `tesis-document`. La entrega `v1.6.0` retira la validacion fuera de muestra, acota el balance neto como cota superior condicional, declara de forma completa el uso de asistentes de IA y mejora la legibilidad; el ejemplar recompila en 149 paginas (126 de cuerpo), con 0 errores, 0 referencias o citas indefinidas; `docs/defensa/respuestas-tribunal.md` queda coherente con el ejemplar (Q1 a Q16 actualizadas y P1 a P12 nuevas; cotejo de cifras con 0 fallas). Destino de C-228, C-229, C-230 y C-232: confirmados por los autores como **adaptados y posteriores a la entrega** (OQ2 = A), con 0 tareas aplicadas, en el orden C-229 -> C-230 -> C-228 -> C-232; no se archivan. Pendiente de la autorizacion de los autores: el tag anotado `v1.6.0` (gobernanza ALTA), el commit de contenido, el commit del hash en el Anexo B y la publicacion; la copia de entrega `docs/Tesis/tesis_ultima_version.pdf` se regenera en ese tramo. Release vigente de la tesis: `v1.5.2` hasta el tag de `v1.6.0`.
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
