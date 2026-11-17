@@ -94,7 +94,7 @@ Ver `proposal.md` para la motivacion. Fuente: `auditorias/Devolucion_Tercera_Ins
 ### D6 — Meta de extension (M-03)
 
 - **Metodo unico, aplicado a `v1.5.2` y al cierre:** (A) palabras de prosa con la limpieza D1 de `sent_c197` (`word_count(clean(texto))` por archivo) sobre `S/01` a `S/11`; (B) `wc -w` crudo de los mismos fuentes; (C) paginas del PDF y paginas hasta el inicio de los anexos, de la compilacion de verificacion. Linea base `v1.5.2`: A = 43.241, B = 50.532, C = 164 (registrar tambien la pagina de inicio de los anexos al compilar `v1.5.2` o tomarla de `main.toc`). El apply registra ademas A y B al empezar (texto post-`c-237`) para separar el aporte de `c-235`/`c-236` del de `c-238`.
-- **Meta.** (1) Aporte propio de `c-238`: A al cierre <= 0,96 x A al empezar (al menos 4 % menos en el cuerpo), por traslado al Anexo K, remisiones en lugar de cifras repetidas y partido sin redundancias. (2) Meta conjunta con `c-235` frente a `v1.5.2`: A <= 38.900 (-10 %) y paginas del cuerpo menores que en `v1.5.2`. Si (2) no se alcanza por el alcance real de `c-235`, se registra la cifra y su causa; (1) es bloqueante. Los anexos pueden crecer (el traslado los engrosa) y se informan aparte.
+- **Meta.** (1) Reduccion bloqueante frente a la linea base `v1.5.2`: A al cierre al menos 4 % menor que A en `v1.5.2` (A <= 0,96 x 43.241 = 41.511, redondeado), medida con el mismo metodo. Esta reduccion queda subsumida por la meta conjunta con `c-235` frente a `v1.5.2`: A <= 38.900 (-10 %) y paginas del cuerpo menores que en `v1.5.2`. (2) El aporte propio de `c-238` (A al cierre respecto del estado al comenzar, registrado en 1.4) se informa como referencia, NO como umbral bloqueante: exigir otro 4 % sobre el estado post-`c-235` duplicaria el retiro de lo fuera de muestra que ya hizo `c-235`, y la version de referencia para el tribunal es `v1.5.2`. Si la meta conjunta no se alcanza por el alcance real de `c-235`/`c-238`, se registra la cifra y su causa. Los anexos pueden crecer (el traslado los engrosa) y se informan aparte.
 
 ### D7 — Guardarrailes
 
@@ -121,7 +121,7 @@ Ver `proposal.md` para la motivacion. Fuente: `auditorias/Devolucion_Tercera_Ins
 - [La tabla de sintesis repite cifras que el tribunal ya ve en cada seccion] -> la regla de no repeticion de D1 retira las repeticiones en prosa; la tabla es el unico lugar de lectura conjunta.
 - [La migracion a macros introduce un error de cadena] -> la clave desconocida falla la compilacion; `rg` de cadenas literales y cotejo del PDF extraido contra `constants.py`.
 - [Mover rotulos cambia el sentido de una salvedad] -> el vocabulario minimo conserva "cota superior/inferior" cuando describe la direccion de un sesgo; solo se retira el rotulo de categoria.
-- [La meta conjunta de extension depende de `c-235`] -> la meta propia (4 %) es bloqueante y la conjunta se registra con su causa si no se alcanza.
+- [La meta de extension se mide contra `v1.5.2`] -> la reduccion bloqueante de 4 % se mide contra la linea base `v1.5.2` (subsumida por la meta conjunta A <= 38.900); el aporte propio de `c-238` respecto del estado al comenzar es informativo, no bloqueante; la conjunta se registra con su causa si no se alcanza.
 - [La compilacion de verificacion pisa `main.pdf`] -> `-outdir` temporal fuera del repo.
 
 ## Migration Plan

@@ -28,6 +28,12 @@
 \setlength{\parindent}{1.27cm}
 \setlength{\parskip}{0pt}
 
+% --- Tolerancia de justificado (c-238) ---
+% Las cadenas de sector en monoespaciado (\sectorcad) son mas anchas que la
+% fuente del cuerpo; esta tolerancia evita desbordes menores al justificar
+% parrafos que las enumeran, sin alterar el contenido.
+\setlength{\emergencystretch}{2em}
+
 % --- Encabezados y pies de pagina ---
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -186,6 +192,39 @@
 % --- Comandos personalizados ---
 \newcommand{\doi}[1]{\href{https://doi.org/#1}{#1}}
 \newcommand{\urlref}[1]{\href{#1}{#1}}
+
+% --- Nombres canonicos de sector (c-238, B-01, design D5) ---
+% Claves: si, hw, sw, bd, sis.
+% \sectorcad{<clave>}: cadena exacta del sistema, monoespaciado y sin tilde,
+%   byte a byte con App/Backend/app/constants.py.
+% \sectorprosa{<clave>}: nombre en la prosa, fuente del cuerpo, con tilde.
+% Una clave desconocida produce un error de compilacion (no texto vacio).
+\makeatletter
+\@namedef{sectorcad@si}{Seguridad Informatica}
+\@namedef{sectorcad@hw}{Soporte Tecnico Hardware}
+\@namedef{sectorcad@sw}{Soporte Tecnico Software}
+\@namedef{sectorcad@bd}{Bases de Datos}
+\@namedef{sectorcad@sis}{Sistemas}
+\@namedef{sectorprosa@si}{Seguridad Informática}
+\@namedef{sectorprosa@hw}{Soporte Técnico Hardware}
+\@namedef{sectorprosa@sw}{Soporte Técnico Software}
+\@namedef{sectorprosa@bd}{Bases de Datos}
+\@namedef{sectorprosa@sis}{Sistemas}
+\newcommand{\sectorcad}[1]{%
+  \ifcsname sectorcad@#1\endcsname
+    \texttt{\@nameuse{sectorcad@#1}}%
+  \else
+    \PackageError{c-238}{Clave de sector desconocida: #1}%
+      {Claves validas: si, hw, sw, bd, sis.}%
+  \fi}
+\newcommand{\sectorprosa}[1]{%
+  \ifcsname sectorprosa@#1\endcsname
+    \@nameuse{sectorprosa@#1}%
+  \else
+    \PackageError{c-238}{Clave de sector desconocida: #1}%
+      {Claves validas: si, hw, sw, bd, sis.}%
+  \fi}
+\makeatother
 
 % --- Metadatos del documento ---
 \title{Automatización inteligente del registro de incidentes\\en mesas de ayuda empresariales mediante\\orquestación de flujos con N8N y procesamiento\\de lenguaje natural basado en modelos\\de lenguaje grandes}

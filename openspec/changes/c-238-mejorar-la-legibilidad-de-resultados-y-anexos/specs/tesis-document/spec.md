@@ -51,13 +51,13 @@ El capitulo de resultados (`07-resultados.tex`) SHALL abrir, despues de su parra
 
 ### Requirement: Reduccion medible de la extension del cuerpo
 
-Las correcciones de legibilidad SHALL reducir de forma medible la extension del cuerpo (capitulos 1 a 11, `01-introduccion.tex` a `11-aspectos-legales.tex`) con un metodo de conteo unico aplicado igual a la linea base `v1.5.2` y al cierre: palabras de prosa con la limpieza de `docs/Tesis/Correcciones/sent_c197.py` (metodo principal), `wc -w` crudo de los mismos fuentes y paginas del PDF de una compilacion de verificacion (devolucion de tercera instancia, M-03). El conteo de prosa al cierre SHALL ser al menos 4 % menor que el medido al comenzar el change. La linea base, el conteo al comenzar, el resultado y la meta conjunta con el retiro de lo fuera de muestra SHALL registrarse en `docs/Tesis/Correcciones/dictamen-correcciones.md`; si la meta conjunta no se alcanza, SHALL registrarse su causa. La reduccion MUST NOT lograrse borrando contenido sustantivo, cifras ni salvedades: solo por traslado a anexos, remision en lugar de repeticion y partido de oraciones.
+Las correcciones de legibilidad SHALL reducir de forma medible la extension del cuerpo (capitulos 1 a 11, `01-introduccion.tex` a `11-aspectos-legales.tex`) con un metodo de conteo unico aplicado igual a la linea base `v1.5.2` y al cierre: palabras de prosa con la limpieza de `docs/Tesis/Correcciones/sent_c197.py` (metodo principal), `wc -w` crudo de los mismos fuentes y paginas del PDF de una compilacion de verificacion (devolucion de tercera instancia, M-03). El conteo de prosa al cierre SHALL ser al menos 4 % menor que la linea base `v1.5.2`, medida con el mismo metodo. La linea base, el conteo al comenzar, el resultado y la meta conjunta con el retiro de lo fuera de muestra SHALL registrarse en `docs/Tesis/Correcciones/dictamen-correcciones.md`; si la meta conjunta no se alcanza, SHALL registrarse su causa. La reduccion MUST NOT lograrse borrando contenido sustantivo, cifras ni salvedades: solo por traslado a anexos, remision en lugar de repeticion y partido de oraciones.
 
 #### Scenario: Reduccion registrada con el mismo metodo
 
 - **WHEN** se ejecuta el metodo de conteo sobre `v1.5.2` y sobre el estado final
 - **THEN** ambos conteos usan el mismo comando y los mismos archivos
-- **AND** el conteo de prosa final es al menos 4 % menor que el del comienzo del change
+- **AND** el conteo de prosa final es al menos 4 % menor que la linea base `v1.5.2`
 
 #### Scenario: Sin perdida de contenido sustantivo
 

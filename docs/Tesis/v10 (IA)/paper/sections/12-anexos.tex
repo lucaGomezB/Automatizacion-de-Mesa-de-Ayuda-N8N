@@ -90,7 +90,7 @@ Sin cambios & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.7cm}}{Python 3.1
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show bf5e099:}\emph{archivo}, \texttt{git show v1.3.0:}\emph{archivo} y \texttt{git show bf5e099:App/Backend/app/constants.py} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de las especificaciones archivadas de los cambios, y de \texttt{git diff --stat cda7712 v1.3.0 -- App/ n8n/ docker/ docker-compose.yml} (24 archivos; no cambian \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json} ni \texttt{settings.py}; cambian \texttt{docker-compose.yml} y \texttt{docker/n8n/}, por la imagen derivada de N8N, y archivos del backend y del frontend que no intervienen en la clasificación). La campaña complementaria usó \texttt{hybrid-v3} sobre un \emph{backend} posterior, con la derivación por reportante y la propagación de su contacto activas; \emph{no registrado} señala lo que los artefactos no permiten recuperar.\par}
+{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show bf5e099:}\emph{archivo}, \texttt{git show v1.3.0:}\emph{archivo} y \texttt{git show bf5e099:App/Backend/app/constants.py} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de las especificaciones archivadas de los cambios, y de \texttt{git diff --stat cda7712 v1.3.0 -- App/ n8n/ docker/ docker-compose.yml} (24 archivos. No cambian \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json} ni \texttt{settings.py}. Cambian \texttt{docker-compose.yml} y \texttt{docker/n8n/}, por la imagen derivada de N8N, y archivos del backend y del frontend que no intervienen en la clasificación). La campaña complementaria usó \texttt{hybrid-v3} sobre un \emph{backend} posterior, con la derivación por reportante y la propagación de su contacto activas; \emph{no registrado} señala lo que los artefactos no permiten recuperar.\par}
 \end{table}
 
 La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}). A esa organización se suman las especificaciones de los cambios (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos; por eso constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
@@ -169,7 +169,7 @@ El prompt sigue una estructura fija en español organizada en cinco componentes 
   \item \textbf{Formato de respuesta}: solicita un JSON válido con exactamente dos campos, \texttt{categoría} (uno de los cinco valores canónicos) y \texttt{confianza} (número entre 0,0 y 1,0), sin texto adicional, comentarios ni explicaciones.
   \item \textbf{Lógica de decisión}: indica analizar la descripción y asignar una categoría única entre las cinco opciones; ante elementos de múltiples categorías, elegir la dominante.
   \item \textbf{Validación sintáctica}: exige validar la corrección sintáctica del JSON antes de devolverlo y reducir la confianza cuando no sea posible clasificar con seguridad.
-  \item \textbf{Reglas de desambiguación de frontera}: las acciones sobre aplicaciones o sistemas operativos (acceder, iniciar sesión, abrir una aplicación) se orientan a \texttt{Soporte Tecnico Software}; los dispositivos físicos y su digitalización (escáner, impresora, periférico, error de digitalización) a \texttt{Soporte Tecnico Hardware}; y la infraestructura y los servicios de plataforma (servidor, red, SMTP, VM) a \texttt{Sistemas}. Estas reglas corrigen casos de frontera medidos sobre el corpus.
+  \item \textbf{Reglas de desambiguación de frontera}: las acciones sobre aplicaciones o sistemas operativos (acceder, iniciar sesión, abrir una aplicación) se orientan a \sectorcad{sw}; los dispositivos físicos y su digitalización (escáner, impresora, periférico, error de digitalización) a \sectorcad{hw}; y la infraestructura y los servicios de plataforma (servidor, red, SMTP, VM) a \sectorcad{sis}. Estas reglas corrigen casos de frontera medidos sobre el corpus.
 \end{enumerate}
 
 \subsection{Parámetros de configuración}\label{subsec:anexo-parametros-config}
@@ -269,52 +269,121 @@ El diseño metodológico, la recolección de datos ---que comprende las medicion
 
 \section{Números canónicos citados}\label{sec:anexo-numeros-canonicos}
 
-Este anexo reúne, condensados, los números canónicos que el cuerpo cita de las secciones 3.31, 3.33 y 3.46 del memo interno de números canónicos del proyecto. Cada valor conserva su cifra, su procedencia verificable y su estado; el memo sigue siendo la fuente interna de verdad y este anexo no introduce valores ausentes de él ni modifica ningún valor ni estado. Las cifras se transcriben con la convención de redondeo de la tesis.
+Este anexo reúne, condensados, los números canónicos que el cuerpo cita. Para cada valor se indica el artefacto versionado que lo contiene, la clave dentro de ese artefacto y el comando que lo reproduce; cuando corresponde, se remite a la tabla de la tesis que lo muestra. El anexo no introduce valores ausentes del registro interno de números canónicos del proyecto ni modifica ningún valor. Las cifras se transcriben con la convención de redondeo de la tesis.
 
-\paragraph{Costo de la derivación errónea \(c\) (memo, sección 3.31).}
+\paragraph{Costo de la derivación errónea \(c\).}
 
 El costo medido se compone de la corrección en la compuerta de revisión y de la re-decisión de sector tomada como proxy del rediagnóstico; el tramo de reanudación tras la interrupción no se mide y queda sin cota disponible. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_costo_derivacion_c220.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py}.
 
 \begin{table}[htbp]
-\small
 \centering
-\begin{tabular}{@{}p{4.4cm} p{7.2cm} p{2.2cm}@{}}
+\caption{Costo de la derivación errónea: valores canónicos citados}
+\label{tab:anexo-nc-costo}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.6cm} >{\raggedright\arraybackslash}p{9.8cm}@{}}
 \toprule
-Valor & Procedencia & Estado \\
+\textbf{Valor} & \textbf{Procedencia (clave del artefacto)} \\
 \midrule
-Costo \(c = 69{,}51\)~s; IC 95~\% \([33{,}42; 106{,}56]\)~s & \path{...c220.json} (\texttt{composicion.escenarios.bajo}) & vigente (nuevo) \\
-Corrección en la compuerta: \(24{,}01\)~s; IC bootstrap \([3{,}42; 50{,}06]\)~s & idem (\texttt{diferencia\_de\_medias}) & vigente (nuevo) \\
-Re-decisión de sector (mediana del brazo manual): \(45{,}50\)~s & idem (\texttt{brazo\_manual}) & vigente (nuevo) \\
-Paridad con la tasa manual medida: \(1 - e_{\mathrm{man}} = 0{,}8278\) (lectura posterior) & idem (\texttt{justificacion\_umbral.paridad\_manual}) & vigente (lectura posterior; no fundamenta el umbral) \\
-Costo marginal por punto de exactitud: \(0{,}51\)~h-persona por trimestre (lectura posterior) & idem (\texttt{costo\_marginal\_por\_punto\_horas\_trimestre}) & vigente (lectura posterior) \\
+Costo \(c = 69{,}51\)~s; IC 95~\% \([33{,}42; 106{,}56]\)~s & \path{composicion.escenarios.bajo} \\
+Corrección en la compuerta: \(24{,}01\)~s; IC bootstrap \([3{,}42; 50{,}06]\)~s & \path{diferencia_de_medias} \\
+Re-decisión de sector (mediana del brazo manual): \(45{,}50\)~s & \path{brazo_manual} \\
+Paridad con la tasa manual medida: \(1 - e_{\mathrm{man}} = 0{,}8278\) (lectura posterior; no fundamenta el umbral) & \path{justificacion_umbral.paridad_manual} \\
+Costo marginal por punto de exactitud: \(0{,}51\)~h-persona por trimestre (lectura posterior) & \path{costo_marginal_por_punto_horas_trimestre} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Balance neto y umbral de equilibrio (memo, sección 3.46).}
+\paragraph{Balance neto y umbral de equilibrio.}
 
 La lectura central usa el costo medido como cota inferior, el término de revisión y las tasas de error medidas contra la referencia común; el balance se presenta como cota superior respecto del tramo de reanudación no medido. La rejilla de 5, 10 y 15 minutos se conserva como sensibilidad al tramo no medido y no es la lectura central. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_balance_neto_c236.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_balance_neto_c236.py}.
 
 \begin{table}[htbp]
-\small
 \centering
-\begin{tabular}{@{}p{4.4cm} p{7.2cm} p{2.2cm}@{}}
+\caption{Balance neto y umbral de equilibrio: valores canónicos citados}
+\label{tab:anexo-nc-balance}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.6cm} >{\raggedright\arraybackslash}p{9.8cm}@{}}
 \toprule
-Valor & Procedencia & Estado \\
+\textbf{Valor} & \textbf{Procedencia (clave del artefacto)} \\
 \midrule
-\(B_r = +18{,}7\)~h-persona por trimestre (cota superior); IC condicional \([+12{,}9; +24{,}1]\); cota combinada \([+6{,}7; +28{,}2]\) & \path{...c236.json} (\texttt{lectura\_central.balance}, \texttt{.balance\_ic}, \texttt{.cota\_combinada}) & vigente como cota superior \\
-\(a^{*}_r = 43{,}1\)~\%; IC condicional \([33{,}6; 53{,}7]\)~\% & idem (\texttt{lectura\_central.a\_estrella}, \texttt{.a\_estrella\_ic}) & vigente \\
-\(r = 22{,}06\)~s (media de 138 duraciones) & idem (\texttt{insumos.r\_s}); memo 3.31 (h) & vigente (nuevo) \\
-\(\rho = 147/200 = 0{,}735\) (proporción de casos revisados) & idem (\texttt{insumos.rho}); memo 3.46 & vigente (nuevo) \\
-\(c = 69{,}51\)~s; IC 95~\% \([33{,}42; 106{,}56]\)~s (cota inferior del tramo activo) & idem (\texttt{insumos.c\_s}, \texttt{.c\_ic}) & vigente \\
-\(N = 2.646\) incidentes por trimestre & idem (\texttt{insumos.n}); memo 3.11 & vigente \\
-\(\Delta t = 43{,}82\)~s & idem (\texttt{insumos.delta\_t\_s}); memo 3.1 y 3.4 & vigente \\
-\(e_{\mathrm{aut}} = 28/138 = 0{,}2029\) & idem (\texttt{insumos.e\_aut}); memo 3.21 (c) & vigente \\
-\(e_{\mathrm{man}} = 26/151 = 0{,}1722\) & idem (\texttt{insumos.e\_man}) & vigente \\
-\(e_{\mathrm{aut}} - e_{\mathrm{man}} = +0{,}0307\); IC 95~\% \([-0{,}0460; +0{,}1070]\) & idem (\texttt{insumos.diferencia}, \texttt{.diferencia\_ic}) & vigente \\
-Costo de equilibrio \(c^{*} = 898{,}8\)~s (15,0 min); margen del tramo no medido \(829{,}2\)~s (13,8 min); con \(e_{\mathrm{aut}} - e_{\mathrm{man}} = +0{,}1070\): \(c^{*} = 258{,}0\)~s, margen \(188{,}5\)~s (3,1 min) & idem (\texttt{costo\_equilibrio}) & vigente \\
-Rejilla 5, 10 y 15 min (con revisión y referencia común): \(B_r = +13{,}52 / +6{,}74 / -0{,}03\); IC \([-3{,}41; +30{,}85]\), \([-26{,}91; +40{,}84]\), \([-50{,}52; +50{,}69]\) & idem (\texttt{sensibilidad\_al\_tramo\_no\_medido}) & condicional \\
-Rejilla 5, 10 y 15 min: \(a^{*}_r = 73{,}58 / 78{,}18 / 79{,}71\)~\%; IC \([67{,}02; 79{,}89]\), \([71{,}82; 84{,}24]\), \([73{,}31; 85{,}83]\)~\% & idem & condicional \\
+\(B_r = +18{,}7\)~h-persona por trimestre (cota superior); IC condicional \([+12{,}9; +24{,}1]\); cota combinada \([+6{,}7; +28{,}2]\) & \path{lectura_central.balance}; \path{lectura_central.balance_ic}; \path{lectura_central.cota_combinada} \\
+\(a^{*}_r = 43{,}1\)~\%; IC condicional \([33{,}6; 53{,}7]\)~\% & \path{lectura_central.a_estrella}; \path{lectura_central.a_estrella_ic} \\
+\(r = 22{,}06\)~s (media de 138 duraciones) & \path{insumos.r_s} \\
+\(\rho = 147/200 = 0{,}735\) (proporción de casos revisados) & \path{insumos.rho} \\
+\(c = 69{,}51\)~s; IC 95~\% \([33{,}42; 106{,}56]\)~s (cota inferior del tramo activo) & \path{insumos.c_s}; \path{insumos.c_ic} \\
+\(N = 2.646\) incidentes por trimestre & \path{insumos.n} \\
+\(\Delta t = 43{,}82\)~s & \path{insumos.delta_t_s} \\
+\(e_{\mathrm{aut}} = 28/138 = 0{,}2029\) & \path{insumos.e_aut} \\
+\(e_{\mathrm{man}} = 26/151 = 0{,}1722\) & \path{insumos.e_man} \\
+\(e_{\mathrm{aut}} - e_{\mathrm{man}} = +0{,}0307\); IC 95~\% \([-0{,}0460; +0{,}1070]\) & \path{insumos.diferencia}; \path{insumos.diferencia_ic} \\
+Costo de equilibrio \(c^{*} = 898{,}8\)~s (15,0 min); margen del tramo no medido \(829{,}2\)~s (13,8 min); con \(e_{\mathrm{aut}} - e_{\mathrm{man}} = +0{,}1070\): \(c^{*} = 258{,}0\)~s, margen \(188{,}5\)~s (3,1 min) & \path{costo_equilibrio} \\
+Rejilla 5, 10 y 15 min (con revisión y referencia común): \(B_r = +13{,}52 / +6{,}74 / -0{,}03\); IC \([-3{,}41; +30{,}85]\), \([-26{,}91; +40{,}84]\), \([-50{,}52; +50{,}69]\) (sensibilidad) & \path{sensibilidad_al_tramo_no_medido} \\
+Rejilla 5, 10 y 15 min: \(a^{*}_r = 73{,}58 / 78{,}18 / 79{,}71\)~\%; IC \([67{,}02; 79{,}89]\), \([71{,}82; 84{,}24]\), \([73{,}31; 85{,}83]\)~\% (sensibilidad) & \path{sensibilidad_al_tramo_no_medido} \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\section{Lecturas de sensibilidad y robustez}\label{sec:anexo-sensibilidad}
+
+Este anexo reúne las relecturas de valores ya calculados del capítulo de resultados bajo un supuesto o un ámbito alternativo. No deciden ninguna hipótesis ni objetivo y por eso no integran su síntesis. Se conservan las etiquetas de origen para que las remisiones del cuerpo resuelvan, y no se modifica ningún valor, intervalo ni lectura.
+
+\subsection{Tiempos de registro}\label{subsec:anexo-sensibilidad-tiempos}
+
+El tiempo manual se registró con redondeo hacia arriba (véase la \autoref{subsec:diseno-experimental}), un sesgo de medición sistemático que infla la línea base manual. Por ese motivo la reducción del 71,2~\% debe leerse como cota superior. Un análisis de sensibilidad que descuenta 5~s y 10~s a cada medición manual reduce la media manual a 56,6~s y 51,6~s, respectivamente, y sitúa la reducción en el 68,6~\% y en el 65,6~\% como cota inferior conservadora. Aun en el escenario más desfavorable la reducción de tiempo permanece sustancial y estadísticamente significativa (\(p = 1{,}8 \times 10^{-26}\) bilateral, \(r = 0{,}8683\)).
+
+La \autoref{tab:rango-robustez-tiempos} reúne la sensibilidad de este apartado ---los descuentos de redondeo--- con los escenarios de alcance que acotan la magnitud de la reducción: el desagregado por canal, las reducciones por operador de la campaña complementaria, el efecto de posición y la cota inferior del instrumento. El objeto de la síntesis es la reducción de la media del tiempo de registro de la campaña 2026-10; sobre ese estimando, el rango va del 65,6~\% (descontando 10~s a cada medición manual) al 71,2~\% (sin descuento, la cifra primaria), y el escenario que lo minimiza es el descuento de 10~s. Las demás lecturas tienen otro ámbito y no son comparables entre sí ni con el mínimo del estimando primario. La reducción intra-canal menor es la del correo electrónico (51,1~\%). Las reducciones por operador de la campaña complementaria van del 33,8~\% (operador más rápido) al 79,7~\% (más lento), con un agregado del 69,3~\%. El efecto de posición fue significativo para uno de los dos operadores y acotado por su efecto mínimo detectable. La telefonía, cuya grabación está acotada a 45~s, constituye una cota inferior de la duración real de la llamada. La tabla es una lectura de sensibilidad y reinterpretación de escenarios ya calculados, no una medición nueva, y no cambia la cifra primaria (71,2~\%) ni su intervalo ([67,2~\%; 74,6~\%]).
+
+\begin{table}[htbp]
+\centering
+\caption{Sensibilidad y rango de robustez de la reducción de tiempos (escenarios ya calculados)}
+\label{tab:rango-robustez-tiempos}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.9cm} >{\centering\arraybackslash}p{2.7cm} >{\raggedright\arraybackslash}p{5.8cm}@{}}
+\toprule
+\textbf{Ámbito del escenario} & \textbf{Reducción de la media} & \textbf{Rol o lectura} \\
+\midrule
+Sin descuento (media manual 61,585~s) & 71,2~\% & cifra primaria (cota superior) \\
+Descuento de 5~s (media manual 56,585~s) & 68,6~\% & cota inferior conservadora \\
+Descuento de 10~s (media manual 51,585~s) & 65,6~\% & \textbf{mínimo del estimando primario} \\
+\midrule
+\multicolumn{3}{@{}l}{\textbf{Otros ámbitos (no comparables con la cifra primaria)}} \\
+Por canal (intra-canal) & 51,1--93,4~\% & mínimo: correo electrónico 51,1~\% \\
+Por operador (campaña complementaria) & 33,8--79,7~\% & O1 33,8~\%, O2 79,7~\%, agregado 69,3~\% \\
+Efecto de posición (Spearman) & --- & O2 significativo; O1 no; MDE \(\rho = 0{,}276\) \\
+Cota inferior del instrumento & --- & 199/200 múltiplos de 5~s; 180/200 de 10~s; telefonía \(\leq 45\)~s \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Nota:} sensibilidad y reinterpretación de escenarios ya calculados; la cifra primaria sigue siendo 71,2~\% con intervalo [67,2~\%; 74,6~\%]. Las demás lecturas tienen otro ámbito y no se comparan entre sí. \textit{Fuente:} \texttt{analisis\_rango\_robustez\_tiempos\_c226.json}.\par}
+\end{table}
+
+\subsection{Sensibilidad al ajuste del clasificador con el corpus}\label{subsec:sensibilidad-ajustes}
+
+Las métricas del capítulo de resultados son estimaciones dentro de la muestra (\autoref{subsec:interpretacion-resultados}). Para acotar el sesgo atribuible al vocabulario del filtro, ampliado a partir de errores observados en el corpus, se repitió sin invocar al modelo la etapa determinística con el vocabulario previo a esa ampliación (89 de los 151 patrones). Se conservaron la lógica de decisión y el punto de operación evaluados. Con la lógica de decisión de entonces, la repetición reprodujo la medición registrada antes del ajuste. La reconstrucción del vocabulario por pliegues no es factible, porque el repositorio no registra qué casos motivaron cada patrón. La \autoref{tab:sensibilidad-ajustes} resume los resultados.
+
+\begin{table}[htbp]
+\centering
+\caption{Sensibilidad de la exactitud al vocabulario ajustado con el corpus}
+\label{tab:sensibilidad-ajustes}
+\footnotesize
+\begin{tabular}{@{}l c c c@{}}
+\toprule
+\textbf{Filtro determinístico} & \textbf{Casos} & \textbf{Exactitud (IC 95~\%)} & \textbf{Global\textsuperscript{a}} \\
+\midrule
+Evaluado (vocabulario ampliado) & 131 & 0,7405 [0,6593; 0,8079] & 146/200 \\
+Vocabulario previo, lógica vigente & 74 & 0,5270 [0,4148; 0,6366] & 128/200 \\
+Vocabulario y lógica previos & 72 & 0,5139 [0,4007; 0,6257] & --- \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)) y de \texttt{evaluation/report\_sensibilidad\_ajustes.md}. Casos y exactitud de la etapa determinística. \textsuperscript{a}Aciertos con las predicciones de la etapa Gemini fijas (caché de calibración); la exactitud global oficial es 147/200.\par}
+\end{table}
+
+El efecto de la ampliación del vocabulario admite dos lecturas que conviene separar. Por un lado, un efecto de \emph{cobertura}, que es el dominante: el filtro determinístico pasó de resolver 74 casos a resolver 131. Por otro, un efecto de \emph{exactitud} sobre los casos que ambas configuraciones resuelven: en los 67 casos comunes, el vocabulario ampliado acertó 38 frente a los 37 del vocabulario previo, por lo que la ampliación no deterioró la exactitud sobre los casos que ya resolvía. La diferencia de 21,3 puntos entre las exactitudes de la etapa determinística (0,7405 sobre 131 casos frente a 0,5270 sobre 74) puede leerse como señal del sesgo, y entonces es una \emph{cota pesimista}. Es una interpretación de los autores, no una medición, porque las dos cifras se calculan sobre conjuntos de casos distintos. Además, el vocabulario previo carece del conocimiento del dominio que una ampliación hecha con datos independientes habría aportado. Con las predicciones de la etapa Gemini fijas, la exactitud global pasa de 146 a 128 aciertos sobre 200 casos (McNemar exacto \parencite{McNemar1947_sampling_error}, \(p < 0{,}001\)). El efecto de las reglas de frontera del prompt, limitado a los 69 casos de la etapa Gemini, se acotó con una ablación controlada de dos brazos sobre los mismos casos y en una misma sesión. Con el prompt vigente esa etapa acertó 50 de 69, y sin las reglas de frontera, 46 de 69 (reservas contadas como error: 0 en ambos brazos). Esa diferencia no alcanza significación (McNemar exacto entre brazos, \(p = 0{,}3438\)). Sin los casos que motivaron las reglas, la etapa con el prompt vigente acertó 48 de 66 (nivel a; \texttt{evaluation/report\_sensibilidad\_ajustes.md}, línea~95). El análisis estima la sensibilidad de las métricas y no sustituye la medición del sistema evaluado.
+
+\subsection{Relecturas de la campaña complementaria}\label{subsec:anexo-sensibilidad-campana}
+
+Estas relecturas aplican otros ámbitos a las reducciones por operador de la campaña complementaria. Con los tiempos automatizados del corpus canónico de la campaña 2026-10 sobre los mismos casos, las reducciones serían del 19,6~\% para \texttt{O1}, del 75,9~\% para \texttt{O2} y del 62,7~\% en el agregado por caso; la diferencia con la \autoref{tab:tiempos-manual-complementaria} proviene solo del brazo automatizado. La variante sin el registro de \texttt{O1} (R025), que dura 0~s porque el instante de inicio coincide con el de asignación, da 20,3~s para \texttt{O1} y una reducción del 34,3~\%. El tiempo manual por caso casi no correlaciona entre campañas (Spearman de 0,15 para \texttt{O1} y de \(-0{,}05\) para \texttt{O2}), mientras que los tiempos automatizados de las dos campañas sí correlacionan (\(\rho = 0{,}70\)).

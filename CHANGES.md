@@ -2981,6 +2981,18 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+### [C-238] `mejorar-la-legibilidad-de-resultados-y-anexos` — APLICADO (2026-11-17, MEDIUM)
+
+- **Estado**: aplicado (42/42 tareas), pendiente de verificar y archivar; **sin commitear** (a pedido). Prosa y tipografía; sin datos nuevos, sin código de aplicación, sin llamadas a Gemini. Se aplica sobre `c-235`, `c-236`, `c-237` y `c-240` ya presentes en `main`. Recompilación de verificación en directorio temporal (149 pp, 126 pp de cuerpo, anexos desde la p. 127); el PDF versionado y `compilacion.md` los regenera `c-239`.
+- **Objetivo**: atender **M-03** (tabla de síntesis de cifras primarias al abrir el capítulo de resultados; anexo de lecturas de sensibilidad y robustez; Anexo J depurado; oraciones acotadas a 60 palabras), **B-01** (nombres de sector con las macros `\sectorcad` y `\sectorprosa`) y **B-03** (formato del Anexo J sin desbordes).
+- **Scope**: `docs/Tesis/v10 (IA)/paper/sections/{01-introduccion,04-marco-metodologico,05-arquitectura,07-resultados,08-discusion,09-conclusiones,10-recomendaciones,11-aspectos-legales,12-anexos}.tex` y `preambles/preamble.tex`; `docs/Tesis/Correcciones/{dictamen-correcciones.md,foto-cifras-c238-antes.txt,foto-cifras-c238-despues.txt}`; `docs/Tesis/v10 (IA)/tesis_para_agente.md`.
+- **Specs**: `tesis-document` (AGREGA tabla de síntesis, anexo K con vocabulario mínimo de rótulos y reducción medible de la extensión; MODIFICA nomenclatura de sectores, Anexo J y oraciones acotadas; RETIRA la nomenclatura sin tilde).
+- **Dependencias**: `c-235`, `c-236` y `c-237` **antes**; `c-239` **después** (respuestas al tribunal, bump de versión, recompilación versionada y tag).
+- **Governance**: MEDIUM (prosa y documentación). No cambia cifras, intervalos, veredictos, citas ni conclusiones; no renombra etiquetas; no toca 4.5, 4.8 ni 9.1 (N-06).
+- **Leer antes**: `openspec/changes/c-238-mejorar-la-legibilidad-de-resultados-y-anexos/{proposal,design,tasks}.md` y `auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md` (sección 5, M-03, B-01, B-03).
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
