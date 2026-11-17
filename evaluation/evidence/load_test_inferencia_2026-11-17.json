@@ -1,0 +1,489 @@
+{
+  "capas": {
+    "backend": {
+      "criterio": {
+        "control_escalado": {
+          "cumple": true,
+          "razon": 1.789878521913544
+        },
+        "motivo": "",
+        "veredicto": "no sostenida",
+        "violaciones": [
+          {
+            "concurrencia": 1,
+            "condicion": "inferencia"
+          },
+          {
+            "concurrencia": 5,
+            "condicion": "inferencia"
+          }
+        ]
+      },
+      "niveles": [
+        {
+          "completo": true,
+          "concurrencia": 1,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 10,
+              "gemini": 10
+            },
+            "escalados": 10,
+            "fraccion_escalada": 0.5,
+            "total": 20
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 10,
+              "p50_ms": 119.32866500137607,
+              "p95_ms": 171.13938340098684
+            },
+            "escalado": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 10,
+              "p50_ms": 1621.7947759996605,
+              "p95_ms": 1929.058757949315
+            },
+            "razon_p95": 11.27185759124449
+          },
+          "media_ms": 895.3342628503378,
+          "ok": 20,
+          "p50_ms": 815.9312460011279,
+          "p95_ms": 1913.0991534479108,
+          "p99_ms": 1937.357752290045,
+          "repeticiones": [
+            {
+              "ok": 20,
+              "p95_ms": 1913.0991534479108,
+              "segundos": 17.91149045599741,
+              "throughput_rps": 1.1166016613264744,
+              "total": 20
+            }
+          ],
+          "segundos": 17.91149045599741,
+          "tasa_error": 0.0,
+          "throughput_rps": 1.1166016613264744,
+          "total": 20
+        },
+        {
+          "completo": true,
+          "concurrencia": 5,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 10,
+              "gemini": 10
+            },
+            "escalados": 10,
+            "fraccion_escalada": 0.5,
+            "total": 20
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 10,
+              "p50_ms": 169.3298185000458,
+              "p95_ms": 395.6062501483758
+            },
+            "escalado": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 10,
+              "p50_ms": 1754.0799560010782,
+              "p95_ms": 1993.695093252427
+            },
+            "razon_p95": 5.0395945273985765
+          },
+          "media_ms": 981.9643487002395,
+          "ok": 20,
+          "p50_ms": 946.2735509987397,
+          "p95_ms": 1982.7344357518086,
+          "p99_ms": 1999.3946351527484,
+          "repeticiones": [
+            {
+              "ok": 20,
+              "p95_ms": 1982.7344357518086,
+              "segundos": 4.537334562999604,
+              "throughput_rps": 4.4078742094737935,
+              "total": 20
+            }
+          ],
+          "segundos": 4.537334562999604,
+          "tasa_error": 0.0,
+          "throughput_rps": 4.4078742094737935,
+          "total": 20
+        },
+        {
+          "completo": true,
+          "concurrencia": 10,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 10,
+              "gemini": 10
+            },
+            "escalados": 10,
+            "fraccion_escalada": 0.5,
+            "total": 20
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 10,
+              "p50_ms": 499.54750000142667,
+              "p95_ms": 779.0274648999913
+            },
+            "escalado": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 10,
+              "p50_ms": 2028.9484840013756,
+              "p95_ms": 2762.4547459492533
+            },
+            "razon_p95": 3.546029980218845
+          },
+          "media_ms": 1302.8593279503184,
+          "ok": 20,
+          "p50_ms": 1182.9049384996324,
+          "p95_ms": 2759.637531448061,
+          "p99_ms": 2763.919697489873,
+          "repeticiones": [
+            {
+              "ok": 20,
+              "p95_ms": 2759.637531448061,
+              "segundos": 3.3184477540016815,
+              "throughput_rps": 6.026914232982035,
+              "total": 20
+            }
+          ],
+          "segundos": 3.3184477540016815,
+          "tasa_error": 0.0,
+          "throughput_rps": 6.026914232982035,
+          "total": 20
+        },
+        {
+          "completo": true,
+          "concurrencia": 20,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 10,
+              "gemini": 10
+            },
+            "escalados": 10,
+            "fraccion_escalada": 0.5,
+            "total": 20
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 10,
+              "p50_ms": 1207.3900414998207,
+              "p95_ms": 1782.9075793008087
+            },
+            "escalado": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 10,
+              "p50_ms": 2742.257222498665,
+              "p95_ms": 3438.425875548637
+            },
+            "razon_p95": 1.9285496990803428
+          },
+          "media_ms": 2038.5803131996,
+          "ok": 20,
+          "p50_ms": 2185.3253440003755,
+          "p95_ms": 3424.215085047399,
+          "p99_ms": 3445.815486609281,
+          "repeticiones": [
+            {
+              "ok": 20,
+              "p95_ms": 3424.215085047399,
+              "segundos": 3.4751287170001888,
+              "throughput_rps": 5.75518250652438,
+              "total": 20
+            }
+          ],
+          "segundos": 3.4751287170001888,
+          "tasa_error": 0.0,
+          "throughput_rps": 5.75518250652438,
+          "total": 20
+        }
+      ]
+    },
+    "n8n": {
+      "criterio": {
+        "control_escalado": {
+          "cumple": true,
+          "razon": 4.737645591824869
+        },
+        "motivo": "",
+        "veredicto": "no sostenida",
+        "violaciones": [
+          {
+            "concurrencia": 10,
+            "condicion": "p95_techo"
+          },
+          {
+            "concurrencia": 20,
+            "condicion": "p95_techo"
+          }
+        ]
+      },
+      "niveles": [
+        {
+          "completo": true,
+          "concurrencia": 1,
+          "e2e_n": 20,
+          "e2e_p50_ms": 1124.5,
+          "e2e_p95_ms": 1966.35,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 10,
+              "gemini": 10
+            },
+            "escalados": 10,
+            "fraccion_escalada": 0.5,
+            "total": 20
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": 396.0,
+              "e2e_p95_ms": 435.65,
+              "n": 10,
+              "p50_ms": 575.3453004999756,
+              "p95_ms": 622.3779972495322
+            },
+            "escalado": {
+              "e2e_p50_ms": 1901.0,
+              "e2e_p95_ms": 1969.85,
+              "n": 10,
+              "p50_ms": 2091.0239904987975,
+              "p95_ms": 2158.4901720521884
+            },
+            "razon_p95": 3.4681338054866635
+          },
+          "media_ms": 1335.7135743999606,
+          "ok": 20,
+          "p50_ms": 1314.5851624994975,
+          "p95_ms": 2149.5142865529488,
+          "p99_ms": 2163.157632511793,
+          "repeticiones": [
+            {
+              "ok": 20,
+              "p95_ms": 2149.5142865529488,
+              "segundos": 26.718564538001374,
+              "throughput_rps": 0.7485432075347584,
+              "total": 20
+            }
+          ],
+          "segundos": 26.718564538001374,
+          "tasa_error": 0.0,
+          "throughput_rps": 0.7485432075347584,
+          "total": 20
+        },
+        {
+          "completo": true,
+          "concurrencia": 5,
+          "e2e_n": 20,
+          "e2e_p50_ms": 1771.0,
+          "e2e_p95_ms": 3227.55,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 10,
+              "gemini": 10
+            },
+            "escalados": 10,
+            "fraccion_escalada": 0.5,
+            "total": 20
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": 1272.0,
+              "e2e_p95_ms": 1751.15,
+              "n": 10,
+              "p50_ms": 1771.584863499811,
+              "p95_ms": 2087.8890323987434
+            },
+            "escalado": {
+              "e2e_p50_ms": 2824.5,
+              "e2e_p95_ms": 3263.05,
+              "n": 10,
+              "p50_ms": 3350.9628914998757,
+              "p95_ms": 3669.849073849582
+            },
+            "razon_p95": 1.757683965432468
+          },
+          "media_ms": 2485.91761689986,
+          "ok": 20,
+          "p50_ms": 2129.771953499585,
+          "p95_ms": 3660.372400349479,
+          "p99_ms": 3674.7769440696356,
+          "repeticiones": [
+            {
+              "ok": 20,
+              "p95_ms": 3660.372400349479,
+              "segundos": 10.977678626997658,
+              "throughput_rps": 1.8218788033030533,
+              "total": 20
+            }
+          ],
+          "segundos": 10.977678626997658,
+          "tasa_error": 0.0,
+          "throughput_rps": 1.8218788033030533,
+          "total": 20
+        },
+        {
+          "completo": true,
+          "concurrencia": 10,
+          "e2e_n": 20,
+          "e2e_p50_ms": 3483.0,
+          "e2e_p95_ms": 6914.55,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 10,
+              "gemini": 10
+            },
+            "escalados": 10,
+            "fraccion_escalada": 0.5,
+            "total": 20
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": 2492.0,
+              "e2e_p95_ms": 4281.550000000001,
+              "n": 10,
+              "p50_ms": 3413.2308309999644,
+              "p95_ms": 5376.894941048705
+            },
+            "escalado": {
+              "e2e_p50_ms": 4718.0,
+              "e2e_p95_ms": 6930.05,
+              "n": 10,
+              "p50_ms": 5387.21625350081,
+              "p95_ms": 8513.245166151319
+            },
+            "razon_p95": 1.583301377372812
+          },
+          "media_ms": 4643.574319050458,
+          "ok": 20,
+          "p50_ms": 4519.825737001156,
+          "p95_ms": 8352.71056965139,
+          "p99_ms": 8596.723156331282,
+          "repeticiones": [
+            {
+              "ok": 20,
+              "p95_ms": 8352.71056965139,
+              "segundos": 10.936802815002011,
+              "throughput_rps": 1.8286879939506637,
+              "total": 20
+            }
+          ],
+          "segundos": 10.936802815002011,
+          "tasa_error": 0.0,
+          "throughput_rps": 1.8286879939506637,
+          "total": 20
+        },
+        {
+          "completo": true,
+          "concurrencia": 20,
+          "e2e_n": 20,
+          "e2e_p50_ms": 7398.0,
+          "e2e_p95_ms": 8999.2,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 10,
+              "gemini": 10
+            },
+            "escalados": 10,
+            "fraccion_escalada": 0.5,
+            "total": 20
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": 5914.5,
+              "e2e_p95_ms": 7157.95,
+              "n": 10,
+              "p50_ms": 7397.818141500466,
+              "p95_ms": 8382.867706901197
+            },
+            "escalado": {
+              "e2e_p50_ms": 8706.5,
+              "e2e_p95_ms": 9071.2,
+              "n": 10,
+              "p50_ms": 9698.221559001468,
+              "p95_ms": 10192.835016752542
+            },
+            "razon_p95": 1.2159126653473595
+          },
+          "media_ms": 8413.147045150617,
+          "ok": 20,
+          "p50_ms": 8378.22191000123,
+          "p95_ms": 10183.636884252155,
+          "p99_ms": 10197.618045652744,
+          "repeticiones": [
+            {
+              "ok": 20,
+              "p95_ms": 10183.636884252155,
+              "segundos": 10.215603853001085,
+              "throughput_rps": 1.9577893081792233,
+              "total": 20
+            }
+          ],
+          "segundos": 10.215603853001085,
+          "tasa_error": 0.0,
+          "throughput_rps": 1.9577893081792233,
+          "total": 20
+        }
+      ]
+    }
+  },
+  "commit": "bbc5865",
+  "constantes": {
+    "control_escalado_max": 20.0,
+    "mezcla_escalada_esperada": 0.5,
+    "niveles": [
+      1,
+      5,
+      10,
+      20
+    ],
+    "repeticiones": 1,
+    "solicitudes_por_nivel": 20,
+    "tasa_error_max": 0.0,
+    "techo_p95_ms": 5000.0,
+    "tolerancia_inferencia": 4.0,
+    "tolerancia_throughput": 0.1,
+    "tope_presupuesto_usd": 1.0
+  },
+  "corrida_id": "6d1917ed",
+  "exclusiones": [
+    "correo: sondeo IMAP por minuto, no apto para inyeccion concurrente; la convergencia en POST /api/v1/incidentes/ es agnostica al canal",
+    "telefonia: canal pago (Twilio); no se invoca ni se mide"
+  ],
+  "fecha_utc": "2026-11-17T22:51:41Z",
+  "fixture_sha256": "88cab8788273ed9df21dad03b1a653c855e31c2fd3294ee94869098f1935e163",
+  "n8n_version": "2.11.2",
+  "perfil": "corpus (postgres-corpus, backend-corpus, n8n-corpus) con override de corrida paga acotada",
+  "prerregistro": {
+    "mezcla_escalada_esperada": 0.5,
+    "tolerancia_inferencia": 4.0,
+    "tope_presupuesto_usd": 1.0
+  },
+  "veredicto": "no sostenida"
+}

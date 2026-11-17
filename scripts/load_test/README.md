@@ -105,3 +105,43 @@ fallido.
 Una sola maquina, perfil desechable y camino determinístico (sin inferencia
 paga): el resultado no se extrapola a produccion ni a la latencia con Gemini.
 La complejidad operativa percibida no se mide aqui.
+
+## Corrida paga acotada CON inferencia (TASK B, seguimiento de c-218)
+
+Camino INDEPENDIENTE del de costo cero (`load_test.py` NO se modifica y su guarda
+sigue exigiendo clave ficticia y presupuesto cero). Mide la latencia e2e del
+mismo tramo compartido CUANDO una fraccion preregistrada de solicitudes escala a
+Gemini real, y cuantifica la contribucion de la inferencia (comparacion pareada
+escalado vs deterministico por nivel).
+
+Archivos:
+
+- `load_test_inference.py` — arnes pago; reutiliza `load_test.py` como biblioteca
+  y aporta la guarda paga, el registro de etapas y las metricas de inferencia.
+- `compose.load-test-inference.yml` — override que HEREDA la `GEMINI_API_KEY` real
+  de `App/Backend/.env` (NO la redefine) y fija un presupuesto POSITIVO acotado.
+- `fixture_descripciones_inferencia.json` — fixture mixta 1:1 (cortocircuito vs
+  escalada), verificada contra `DeterministicClassifier`.
+- `PRERREGISTRO_latencia_con_inferencia.md` — criterio y metricas fijados ANTES
+  de observar datos.
+
+Guardas del camino pago: exige `--confirm-paid` (sin confirmacion aborta con
+codigo `6`), una clave real (rechaza la ficticia) y `COST_GUARD_BUDGET_USD`
+positivo NO mayor que `--tope-usd` (por defecto USD 1.00). La clave real nunca se
+escribe en el reporte.
+
+Ejecucion:
+
+```bash
+docker compose -f docker-compose.yml -f scripts/load_test/compose.load-test-inference.yml \
+  --profile corpus up -d postgres-corpus backend-corpus n8n-corpus
+python scripts/load_test/preparar_n8n.py
+python scripts/load_test/load_test_inference.py --confirm-paid \
+  --json-out evaluation/evidence/load_test_inferencia_<YYYY-MM-DD>.json
+```
+
+Costo estimado: 20 solicitudes x 4 niveles x 2 capas = 160 solicitudes con ~50 %
+de escaladas => del orden de USD 0.05-0.30, muy por debajo del tope de USD 1.00.
+Cierre acotado (igual que el camino de costo cero): `make load-test-stop` o
+`docker compose ... stop/rm -f postgres-corpus backend-corpus n8n-corpus`.
+

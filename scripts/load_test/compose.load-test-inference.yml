@@ -1,0 +1,29 @@
+# compose.load-test-inference.yml — Override de CORRIDA PAGA ACOTADA (TASK B).
+#
+# Seguimiento de c-218. A diferencia de `compose.load-test.yml` (camino de COSTO
+# CERO), este override NO inyecta la clave ficticia: `backend-corpus` hereda la
+# `GEMINI_API_KEY` REAL de `env_file: ./App/Backend/.env`. Lo unico que cambia es
+# el presupuesto de la guarda de costo (positivo y acotado) y la tasa (relajada),
+# de modo que una fraccion preregistrada de solicitudes pueda escalar a Gemini.
+#
+# REGLA DURA: el camino por DEFECTO (sin este override) sigue siendo costo cero;
+# `verificar_costo_cero` en `load_test.py` NO se modifica ni se debilita. El
+# camino pago vive en `load_test_inference.py`, que exige `--confirm-paid` y una
+# guarda propia (clave real + presupuesto positivo <= tope). Al NO redefinir
+# `GEMINI_API_KEY` aqui, se conserva la clave real de `.env` sin versionarla.
+#
+# Uso (siempre con la forma ACOTADA; nombrar los tres servicios del perfil):
+#   docker compose -f docker-compose.yml -f scripts/load_test/compose.load-test-inference.yml \
+#       --profile corpus up -d postgres-corpus backend-corpus n8n-corpus
+services:
+  backend-corpus:
+    environment:
+      # Presupuesto POSITIVO acotado (por defecto USD 1.00). El tope autorizado
+      # lo reafirma la guarda paga del arnes leyendo el valor DENTRO del contenedor.
+      COST_GUARD_BUDGET_USD: "${LOAD_TEST_BUDGET_USD:-1.00}"
+      # Tasa relajada: alcanza para las solicitudes acotadas de la corrida paga.
+      COST_GUARD_RATE_LIMIT_CALLS: "${LOAD_TEST_RATE_LIMIT_CALLS:-200}"
+      COST_GUARD_CALLER_RATE_LIMIT_CALLS: "${LOAD_TEST_RATE_LIMIT_CALLS:-200}"
+      # La clave de indice ciego del directorio se exige al arrancar; la base del
+      # perfil `corpus` es DESCARTABLE y el test no consulta datos reales.
+      DIRECTORY_BLIND_INDEX_KEY: "load-test-dummy-directory-blind-index-key"  # gitleaks:allow

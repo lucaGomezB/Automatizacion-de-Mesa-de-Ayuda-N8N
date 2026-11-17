@@ -1,0 +1,77 @@
+{
+  "descripcion": "Fixture MIXTA para la corrida paga acotada (TASK B, c-218). Alterna casos que cortocircuitan en la etapa determinística (escala_esperada=false) con casos AMBIGUOS o sin señal que escalan a Gemini (escala_esperada=true). El orden alterna 1:1 de modo que la rotación del arnés produce una mezcla preregistrada del 50 %. Las descripciones de escalada fueron verificadas contra DeterministicClassifier (ambiguo=True o sin_prediccion=True): un empate en el puntaje máximo (p. ej. Sistemas/Soporte Tecnico Software) o la ausencia total de señal escalan al modelo semántico.",
+  "casos": [
+    {
+      "id": "B01",
+      "sector_esperado": "Seguridad Informatica",
+      "escala_esperada": false,
+      "descripcion": "Recibi un correo de phishing y el antivirus detecto malware en mi equipo"
+    },
+    {
+      "id": "B02",
+      "sector_esperado": "ambiguo: Sistemas/Soporte Tecnico Software",
+      "escala_esperada": true,
+      "descripcion": "El servidor esta muy lento"
+    },
+    {
+      "id": "B03",
+      "sector_esperado": "Soporte Tecnico Hardware",
+      "escala_esperada": false,
+      "descripcion": "La impresora del sector no enciende y la pantalla del equipo falla"
+    },
+    {
+      "id": "B04",
+      "sector_esperado": "ambiguo: Soporte Tecnico Software/Sistemas",
+      "escala_esperada": true,
+      "descripcion": "La aplicacion no funciona y el servidor esta caido"
+    },
+    {
+      "id": "B05",
+      "sector_esperado": "Soporte Tecnico Software",
+      "escala_esperada": false,
+      "descripcion": "No puedo instalar la aplicacion y el programa de escritorio se cierra solo"
+    },
+    {
+      "id": "B06",
+      "sector_esperado": "ambiguo: Soporte Tecnico Hardware/Sistemas",
+      "escala_esperada": true,
+      "descripcion": "El monitor se cayo de repente"
+    },
+    {
+      "id": "B07",
+      "sector_esperado": "Bases de Datos",
+      "escala_esperada": false,
+      "descripcion": "La consulta SQL tarda demasiado y la base de datos no responde"
+    },
+    {
+      "id": "B08",
+      "sector_esperado": "ambiguo: Soporte Tecnico Hardware/Soporte Tecnico Software",
+      "escala_esperada": true,
+      "descripcion": "El mouse no funciona"
+    },
+    {
+      "id": "B09",
+      "sector_esperado": "Sistemas",
+      "escala_esperada": false,
+      "descripcion": "El servidor de produccion esta caido y la red de la oficina no tiene conexion"
+    },
+    {
+      "id": "B10",
+      "sector_esperado": "ambiguo: Seguridad Informatica/Soporte Tecnico Hardware",
+      "escala_esperada": true,
+      "descripcion": "La camara tiene un problema de permisos de acceso"
+    },
+    {
+      "id": "B11",
+      "sector_esperado": "Soporte Tecnico Hardware",
+      "escala_esperada": false,
+      "descripcion": "El teclado y el mouse fallan y la impresora muestra error de papel"
+    },
+    {
+      "id": "B12",
+      "sector_esperado": "sin prediccion deterministica",
+      "escala_esperada": true,
+      "descripcion": "Tenemos un inconveniente general que requiere atencion"
+    }
+  ]
+}
