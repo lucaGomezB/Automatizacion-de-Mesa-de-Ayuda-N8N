@@ -240,7 +240,32 @@ Entre las versiones 1.3.0 y 1.5.2 se informó además una validación «fuera de
 
 Las correcciones de la tesis responden a la auditoría integral del tribunal del 4 de agosto de 2026, a una serie de autoevaluaciones internas frente a criterios de la CONEAU y a la devolución de segunda instancia del tribunal del 11 de noviembre de 2026. El detalle de cada observación, el cambio responsable y la sección donde se atendió se conserva como trazabilidad operativa del proyecto y no se reproduce en este anexo.
 
-La redacción de esta tesis contó con asistencia de un modelo de lenguaje para la corrección de estilo y la edición del texto, y para la generación de diagramas de flujo a partir de la estructura planteada previamente. El diseño metodológico, la recolección y verificación de datos, las decisiones de contenido y la responsabilidad final del texto son de los autores.
+\subsection{Declaración de uso de asistentes de inteligencia artificial}\label{subsec:declaracion-uso-ia}
+
+El desarrollo del sistema, los scripts de análisis y evaluación y la redacción de esta tesis se realizaron con asistencia sistemática de agentes de código basados en modelos de lenguaje. El trabajo se organizó en changes con especificación previa (propuesta, diseño y tareas) que los autores definían y revisaban; el agente implementaba las tareas y los autores aceptaban o rechazaban el resultado. El inventario versionado \path{docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md} reproduce los conteos: en la versión \texttt{v1.5.2}, 154 de 1170 commits llevan la marca de coautoría de un asistente, cifra que es una cota inferior porque la marca solo se registra con una de las herramientas en uso.
+
+\begin{table}[htbp]
+\footnotesize
+\centering
+\caption[Uso de asistentes de IA por ámbito]{Herramienta y modelo, producción y verificación por ámbito}
+\label{tab:declaracion-uso-ia}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{5.2cm} >{\raggedright\arraybackslash}p{3.4cm}@{}}
+\toprule
+Ámbito & Herramienta y modelo & Qué produjo el asistente & Verificación de los autores \\
+\midrule
+Código del sistema (backend, frontend y flujo N8N) & Claude Code y opencode; modelos registrados en los \emph{trailers} del repositorio: Claude Fable 5, 5.1 y 5.2, Claude Opus 5.5 y Claude Sonnet 4.6 & Implementación de rutas, servicios, repositorios y componentes de interfaz, y del flujo N8N, a partir de tareas especificadas y revisadas por los autores & Suite de pruebas del backend con \texttt{pytest}; revisión de cada cambio antes de archivarlo \\
+Scripts de análisis y evaluación & Idem & Scripts de análisis y evaluación, y el recálculo de las cifras que citan & Suite de pruebas de \path{evaluation/} con \texttt{pytest}; recálculo de las cifras desde los artefactos versionados y su registro en el memo \path{docs/Tesis/Correcciones/numeros-canonicos.md}; \path{recontar_errores_frontera.py}, \path{sent_c197.py} y \path{list_long_c197.py} \\
+Texto de la tesis & Idem & Borradores de prosa a partir de tareas especificadas por los autores (redacción, además de corrección de estilo y edición) & \path{verify_citations.py}; \path{verificar_matriz_trazabilidad.py}; \path{resumir_registro_compilacion.py}; contraste con el memo de números canónicos; revisión de cada cambio antes de archivarlo \\
+Diagramas & Un modelo de lenguaje, sin individualizar el modelo; fuentes Mermaid versionadas en \path{docs/diagrams/} & Diagramas de flujo y de arquitectura a partir de la estructura planteada por los autores, en fuentes Mermaid versionadas como texto y renderizadas a PNG & Revisión de cada cambio antes de archivarlo; las fuentes Mermaid se versionan como texto y se revisan como diferencias \\
+Autoevaluaciones estilo CONEAU & Asistente de lenguaje con el perfil de evaluador \path{docs/Tesis/Correcciones/Prompt2.docx} & Informes de autoevaluación frente a criterios de la CONEAU; no son una revisión por pares & Revisión de los autores \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} inventario del uso de asistentes \path{docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md}, con las respuestas de los autores registradas allí (sección 5).\par}
+\end{table}
+
+El diseño metodológico, la recolección de datos ---que comprende las mediciones de tiempo y el etiquetado de los datos--- y las decisiones de contenido son de los autores, que asumen la responsabilidad final de cada cifra y cada afirmación. El uso de asistentes de inteligencia artificial fue autorizado por el director de la carrera en una reunión virtual del 7 de mayo de 2026; no existe una norma escrita de la facultad (UTN-FRM) sobre su uso en trabajos finales.
 
 \section{Números canónicos citados}\label{sec:anexo-numeros-canonicos}
 
