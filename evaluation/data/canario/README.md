@@ -6,10 +6,13 @@ la tesis, no cambia ningun numero canonico y no reemplaza ninguna medicion.
 
 ## Procedencia
 
-Tomado del corpus **independiente** de la validacion fuera de muestra
-(`evaluation/data/campana/corpus_independiente.json`), disjunto del corpus de ajuste
-de 200 casos. NO apto para ajustar, calibrar ni seleccionar el vocabulario, el prompt
-ni el punto de operacion. Ids `I001..I103`.
+**Insumo tecnico sin referencia acreditada** (c-235; decisión OQ6): su procedencia no se
+acredita como registro primario de una organización. Proviene del corpus **independiente**
+de la (hoy retirada) validación fuera de muestra
+(`evaluation/data/campana/corpus_independiente.json`, retirado del repositorio público por
+c-240); sus textos permanecen copiados en los artefactos del canario. Es disjunto del
+corpus de ajuste de 200 casos. NO apto para ajustar, calibrar ni seleccionar el vocabulario,
+el prompt ni el punto de operacion. Ids `I001..I103`.
 
 ## Composicion estable
 

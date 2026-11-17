@@ -98,6 +98,8 @@ Significado de cada campo:
 
 ## Procedencia de la tabla primaria del corpus independiente (c-191)
 
+> **Retirado de la tesis (c-235; c-240).** Material no evidencia, procedencia no acreditada como registro primario de una organización; el retiro de la validación fuera de muestra es de c-235 y la eliminación de los archivos del corpus del repositorio público, de c-240 (ver "Retiro del corpus independiente (c-240)", al final). No se alteró ningún byte fijado por SHA-256.
+
 Tabla primaria del doble etiquetado `E3`/`E4` sobre los 150 casos del corpus independiente
 (campaña de validación fuera de muestra, c-191). Mismo formato `- campo: valor` que la sección
 anterior; el test de integridad de c-168 lee solo el primer `- sha256:` del README, que sigue
@@ -122,6 +124,8 @@ El `codebook_sha256` es el del codebook entregado a `E3`/`E4`; difiere del de `E
 únicamente en el encabezado que identifica la campaña.
 
 ### Corrida del clasificador congelado sobre el corpus independiente (c-191)
+
+> **Retirado de la tesis (c-235; c-240).** La corrida fuera de muestra que describe esta sección se retiró con la validación fuera de muestra; se conserva como historia. Material no evidencia, procedencia no acreditada como registro primario de una organización.
 
 La corrida paga de c-191 clasificó `corpus_independiente.json` (103 casos) con el clasificador
 `hybrid-v3` congelado y escribió `predicciones_independiente.json` y `reporte_independiente.md`.
@@ -179,6 +183,8 @@ corresponde a esta re-ejecución.
 
 ## Artefactos del arbitraje del corpus independiente (c-206)
 
+> **Retirado de la tesis (c-235; c-240).** El arbitraje de `E5` y sus análisis dependientes se retiraron con la validación fuera de muestra; se conservan como historia. Material no evidencia, procedencia no acreditada como registro primario de una organización. No se alteró ningún byte fijado por SHA-256.
+
 El arbitraje de los casos discordantes entre `E3` y `E4` por el tercer etiquetador `E5`
 (código `P11`) sube la referencia del corpus independiente de `103` a **`206`** casos: los
 `150` originales más los `56` del refuerzo de clases chicas (`I151`..`I206`). Con esto el n
@@ -225,6 +231,8 @@ exclusión): 206` con `Sistemas` (`n=61`) y `Bases de Datos` (`n=16`) estimables
 quedaron sin cambios.
 
 ## Artefactos de la campaña contrabalanceada y del corpus independiente (c-166)
+
+> **Retirado de la tesis (c-235; c-240).** De esta sección, solo los artefactos del **corpus independiente** (la clasificación fuera de muestra, `predicciones_independiente.json` y `reporte_independiente.md`) se retiraron de la tesis; no son evidencia y su procedencia no se acredita como registro primario de una organización. La campaña contrabalanceada (`E1`/`E2`/`O1`/`O2`) no forma parte del retiro. Ver "Retiro del corpus independiente (c-240)", al final.
 
 Esta carpeta también aloja, desde c-166, los artefactos de la campaña contrabalanceada y de la clasificación del corpus independiente. Ninguno contiene datos personales ni sobrescribe un artefacto de la v9: los harnesses y el runner abortan antes de escribir si se los apunta a `data/corpus_evaluacion_pseudonimizado.json`, a `data/corpus_resultados*.json`, a `evaluation/predicciones.json` o a `evaluation/report.md`. Los protocolos están en `docs/campana-medicion/runbook-campana-contrabalanceada.md` y `docs/campana-medicion/runbook-corpus-independiente.md`.
 
@@ -293,6 +301,8 @@ empezar, una **submuestra con doble cobertura**:
   cobertura se generan fuera del repositorio, igual que el resto de las hojas de campo.
 
 ## Referencia in-sample de la validación fuera de muestra (c-166)
+
+> **Retirado de la tesis (c-235; c-240).** La validación fuera de muestra para la que esta referencia in-sample servía se retiró de la tesis; se conserva como historia. El artefacto `predicciones_in_sample.json` es copia byte a byte del cache congelado de v9 y sigue vigente para el análisis in-sample de la campaña. Material no evidencia, procedencia no acreditada como registro primario de una organización.
 
 La corrida in-sample de referencia es la de `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`, copia congelada del cache de v9 (`generated_at` `2026-10-07T22:22:01Z`; evidencia publicada en `384d23f`, c-143). El análisis de c-167 la compara con `predicciones_independiente.json` y recibe estos valores como parámetro (`pines_in_sample`). Esta sección usa el formato `- campo: valor`, con nombres distintos de los de la procedencia de la tabla primaria.
 

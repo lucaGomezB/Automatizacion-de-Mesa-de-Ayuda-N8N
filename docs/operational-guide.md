@@ -840,7 +840,10 @@ de nuevo la tesis, no cambia ningun numero canonico y no toca `evaluation/eviden
 ### 12.1 Que mide
 
 Un **conjunto canario** fijo y versionado (`evaluation/data/canario/canario.json`,
-103 casos, ids `I*`), disjunto del corpus de ajuste y **no apto para ajustar**. Su
+103 casos, ids `I*`), disjunto del corpus de ajuste y **no apto para ajustar**. Es un
+**insumo tecnico sin referencia acreditada**: su procedencia no se acredita como registro
+primario de una organizacion y el conjunto quedo retirado de la tesis junto con la
+validacion fuera de muestra (c-235; ver el README de `evaluation/data/canario/`). Su
 **linea de base congelada** (`evaluation/data/canario/canario_baseline.json`) registra
 las metricas calculadas una sola vez desde los artefactos versionados:
 
