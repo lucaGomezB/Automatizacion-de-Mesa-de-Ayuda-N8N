@@ -6499,3 +6499,80 @@ y `tab:balance-neto` son únicas. La compilación XeLaTeX (tarea 5.3) se difiere
 
 `App/`, `n8n/`, el corpus de 200 casos, las predicciones, los artefactos de c-220 y c-222, `.engram/`,
 `CHANGES.md` y `docs/defensa/`. Cero llamadas a Gemini. Sin bump de versión ni tag (`c-239`).
+
+### c-240: cerrar el residual de K-02 y la omisión de A-02 en §1.8 (grupos 0 a 5)
+
+- **Change**: `c-240-cerrar-el-residual-de-k-02` (árbol de trabajo; sin commit ni push en este tramo).
+- **Fecha de registro**: 2026-11-17.
+- **Observaciones atendidas** (devolución de tercera instancia del tribunal sobre `v1.5.2`, 16-11-2026):
+  **K-02** (párrafo de licitud y alcance en §7.5 y retiro de los archivos del corpus del repositorio público) y
+  **A-02** (§1.8 presenta la validación como dentro de la muestra sobre una sola organización). Es prosa LaTeX,
+  documentación y un retiro con ajuste de pruebas de `evaluation/`: no cambia lógica de producción, no mide de
+  nuevo y hace cero llamadas a Gemini. La recompilación de entrega, el bump y el tag son de `c-239`.
+
+#### Compuertas de autores
+
+Aliases únicamente, sin nombres reales:
+
+| Compuerta | Pregunta | Respuesta registrada | Fecha |
+|---|---|---|---|
+| P4 | ¿Los textos del corpus retirado contienen datos personales o de terceros? | Los autores los elaboraron sobre escenarios base generados por un asistente de IA (Gemini 3.1), curados y adaptados a mano; no contienen datos personales ni de terceros (respuesta registrada en c-235). | 2026-11-16 |
+| P8 | ¿Los consentimientos son reales? | Las confirmaciones son reales; los formularios están firmados por etiquetadores y operadores (respuesta registrada en c-235). | 2026-11-16 |
+| DP-01 | Disposición del repositorio público | **RETIRAR** (alineado con OQ2 de c-235). | 2026-11-16 |
+| DP-02 | Redacción del párrafo de §7.5 y de la frase de §1.8 | Contenido fijado por los autores; la redacción final queda sujeta a revisión de los autores antes del commit. | 2026-11-17 |
+| Alcance del retiro | ¿Qué se elimina del repositorio? | Decisión de un autor: se eliminan **solo** `evaluation/data/campana/corpus_independiente.json` y `evaluation/data/campana/corpus_independiente_arbitrado.json`. Los mismos textos permanecen copiados en `evaluation/data/campana/predicciones_independiente.json`, `evaluation/data/campana/predicciones_arbitrado.json`, `evaluation/data/canario/canario.json` y `evaluation/data/canario/canario_predicciones.json`, que no se tocan (insumo técnico sin referencia acreditada). | 2026-11-17 |
+
+Consecuencia sobre la redacción: ningún texto de este change afirma que «los textos se retiraron del repositorio»;
+lo que se retira son los dos archivos del corpus.
+
+#### SHA-256 de los archivos eliminados
+
+Calculados antes de borrarlos (coinciden entre el árbol de trabajo y el blob versionado):
+
+| Archivo | Bytes | SHA-256 |
+|---|---|---|
+| `evaluation/data/campana/corpus_independiente.json` | 35839 | `8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d` |
+| `evaluation/data/campana/corpus_independiente_arbitrado.json` | 73693 | `cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e` |
+
+La tarea 4.2 (archivo privado y cita de los SHA-256 en la tesis) **no aplica**: los autores no conservan archivo
+privado. Los SHA-256 constan solo en este registro y la tesis no los cita.
+
+#### Resultado
+
+- **K-02 (§7.5)**: nuevo párrafo en `subsec:consentimiento-derechos`: los textos del corpus retirado no contenían datos
+  personales ni de terceros, por lo que no corresponde autorización de una tercera organización; se retiran la
+  validación fuera de muestra de la tesis y los dos archivos del corpus de la versión vigente del repositorio público;
+  permanecen copias en los archivos de predicciones y en el canario de deriva como insumo técnico sin referencia
+  acreditada; el envío a la Gemini API consta en §7.3; la licitud de lo que se conserva (corpus de 200 casos y campaña
+  complementaria) se funda en el artículo 5 de la Ley 25.326, que el capítulo ya invoca.
+- **K-02 (repositorio)**: eliminación de los dos archivos con `git rm`; se retiran de `test_linea_de_base.py`, de los
+  módulos de pruebas de los análisis retirados (`evaluation/data/campana/analisis/test_*_c213/c216/c219/c221/c224/c225`
+  y `test_analisis_fuera_de_muestra_c205.py`) y de `test_brazo_gemini_solo.py` las pruebas que leían esos archivos
+  reales; se agrega `evaluation/tests/test_retiro_corpus_independiente_c240.py`, que comprueba el nuevo estado. Se
+  quitan del README de la campaña las filas de descripción y de SHA-256 de los dos archivos y se agrega una nota de
+  retiro. `SHA256SUMS.txt` no listaba esos archivos y no cambia. `test_calibracion_gate.py` y
+  `monitoreo/test_monitor_deriva.py` solo leen archivos que se conservan y no requirieron ajuste.
+- **A-02 (§1.8)**: la oración de la validación pasa a «se realiza dentro de la muestra, sobre un corpus de 200 casos ...
+  recolectado en una única organización mediana ...»; la delimitación geográfica no se toca.
+
+#### Archivos afectados
+
+Commit de contenido: `docs/Tesis/v10 (IA)/paper/sections/01-introduccion.tex`, `11-aspectos-legales.tex`; este
+registro; `openspec/changes/c-240-cerrar-el-residual-de-k-02/tasks.md`.
+Commit de retiro: los dos archivos eliminados, `evaluation/data/campana/README.md`, los módulos de pruebas indicados y
+`evaluation/tests/test_retiro_corpus_independiente_c240.py`.
+
+#### Sin cambios
+
+`App/`, `n8n/`, el corpus de 200 casos, `.engram/`, `CHANGES.md`, los directorios de c-228 a c-239, los archivos de
+predicciones y el canario. Cero llamadas a Gemini.
+
+#### Matriz de trazabilidad (C31/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C31/a | K-02: párrafo de licitud y alcance | c-240 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `no contenían datos personales ni de terceros: eran descripciones de incidentes construidas por ellos` | vigente (nuevo) |
+| C31/b | K-02: retiro de los dos archivos del corpus | c-240 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `se retiran la validación fuera de muestra de la tesis y los dos archivos del corpus de esa validación` | vigente (nuevo) |
+| C31/c | K-02: base de licitud de lo conservado | c-240 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `se funda en el artículo~5 de la Ley~25.326` | vigente (nuevo) |
+| C31/d | A-02: §1.8 dentro de la muestra | c-240 | `01-introduccion.tex:72` | `subsec:alcance-delimitaciones` | `La validación experimental se realiza dentro de la muestra, sobre un corpus de 200 casos` | vigente (nuevo) |
+| C31/e | OOS-027: retiro del repositorio | c-240 | `evaluation/tests/test_retiro_corpus_independiente_c240.py` | `-` | `test_los_dos_archivos_del_corpus_independiente_ya_no_estan_en_el_repositorio` | vigente (nuevo) |
