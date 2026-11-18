@@ -6,8 +6,13 @@ Esta carpeta contiene el corpus de evaluación del clasificador híbrido.
 
 ### `corpus_evaluacion_pseudonimizado.json`
 
-El corpus real de evaluación (200 casos), pseudonimizado por el módulo de C-03.
+El corpus de evaluación (200 casos), pseudonimizado por el módulo de C-03.
 **SI se versiona** (descripciones genéricas, sin PII residual).
+
+> **Procedencia (c-242).** El corpus de 200 casos es una mezcla cualitativa de dos regímenes:
+> (a) incidentes reales del entorno operativo del propio equipo, pseudonimizados, y (b)
+> reconstrucciones de tipos de incidente reales sin datos de terceros. La procedencia no está
+> codificada por caso en el corpus.
 
 ### `Corpus Tesis - Hoja 1 (pseudonimizado).csv`
 

@@ -4,7 +4,7 @@
 
 | Actor | Descripción | Cómo interactúa |
 |---|---|---|
-| Usuario interno | Empleado (~120 en la organización) que reporta un incidente | Correo, formulario web (React) o llamada a número Twilio |
+| Usuario interno | Empleado (~120 en la organización de referencia) que reporta un incidente | Correo, formulario web (React) o llamada a número Twilio |
 | Mesa de ayuda (función) | Personal técnico que atiende los incidentes y supervisa la cola de revisión | Frontend → pestaña Administración → modal "Validación Humana" |
 | Sector responsable (función) | Seguridad Informatica / Soporte Tecnico Hardware / Soporte Tecnico Software / Bases de Datos / Sistemas; recibe y puede corregir la derivación de su sector | `PATCH /clasificaciones/{id}/validar` |
 | Administrador del directorio (función) | Administra el padrón de empleados (alta, edición, baja, ARCO, purga) | API del directorio |
@@ -12,7 +12,7 @@
 | N8N (actor sistema) | Orquestador que normaliza canales e invoca la API | HTTP REST contra el módulo Python |
 | Clasificador híbrido (actor sistema) | Decide el sector con confianza asociada | Interno: `HybridClassifier` en `app/classifiers/` |
 
-Estos actores describen FUNCIONES de la organización. No todos los actores de negocio son roles del sistema: el "sector responsable" es una función organizacional (el sector es la categoría de clasificación del incidente), NO un rol de autorización.
+Estos actores describen FUNCIONES de la organización de referencia. Esa organización es un escenario narrativo construido a partir del entorno operativo de los propios autores: los ~120 usuarios y los ~42 incidentes diarios son premisas del escenario, no mediciones. No todos los actores de negocio son roles del sistema: el "sector responsable" es una función organizacional (el sector es la categoría de clasificación del incidente), NO un rol de autorización.
 
 ## Roles del sistema (RBAC implementado)
 

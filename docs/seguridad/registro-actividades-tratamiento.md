@@ -73,8 +73,9 @@ organizacion adoptante.
   corporativas vinculantes (Resolucion AAIP 159/2018).
 - La **pseudonimizacion** previa mitiga el riesgo, pero **no sustituye** el instrumento.
 - **T2 (corpus, regimen (a))**: el instrumento aplicado es el **consentimiento expreso de los
-  titulares**, prestado el 2026-10-02 y documentado en `acta-consentimiento-t2.md`, con
-  anterioridad a las transferencias; no se suscribieron clausulas contractuales modelo. La
+  titulares**, prestado el 2026-10-02 y documentado en `acta-consentimiento-t2.md`, y las
+  transferencias de audio del 5 y 6 de octubre y las corridas pagas del 12 y 13 de noviembre
+  son posteriores al consentimiento; no se suscribieron clausulas contractuales modelo. La
   pseudonimizacion y la minimizacion refuerzan la salvaguarda, pero no sustituyen el
   instrumento. El regimen (b) no contiene datos personales y no implica transferencia de datos
   personales.
