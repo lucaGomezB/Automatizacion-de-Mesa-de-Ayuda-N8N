@@ -4572,7 +4572,7 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-11/11c | Componentes dividido en dos figuras | c-196 | `12-anexos.tex:44` | `fig:componentes_b` | `{componentes_b}` | cerrada |
 | N-11/11d | Flujo N8N dividido en tres figuras | c-196 | `12-anexos.tex:140` | `fig:anexo_flujo_n8n_c` | `{flujo_n8n_c}` | cerrada |
 | N-12/12 | 10.1: valoraciones retiradas y remisión a las llamadas recitadas | c-196 | `09-conclusiones.tex:6` | `subsec:cumplimiento-objetivos` | `Hay, en suma, una sub-hipótesis corroborada` | cerrada |
-| N-13/13 | 7.3: el instrumento está documentado pero no suscrito | c-196 | `11-aspectos-legales.tex:22` | `subsec:transferencia-internacional` | `pero no está suscrito` | cerrada |
+| N-13/13 | 7.3: el instrumento documentado; no se suscribieron cláusulas modelo (instrumento aplicado = consentimiento del titular; c-242) | c-196 | `11-aspectos-legales.tex:30` | `subsec:transferencia-internacional` | `no se suscribieron cláusulas contractuales modelo` | cerrada (reescrita por c-242) |
 | N-14/14 | Anexo I: la recomendación A1 fue atendida el 10-11-2026 | c-196 | `12-anexos.tex:239` | `tab:anexo-trazabilidad-0911-v1216` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
 | N-15/15 | Tabla de variables: cadena canónica en `\texttt{}` | c-196 | `04-marco-metodologico.tex:36` | `tab:variables` | `\texttt{Seguridad Informatica}` | SUPERADA por c-239 |
 | N-16/16a | Mayor-Rocher et al.: versión de revista declarada en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:341` | `-` | `Versión de revista` | cerrada (41f8d79, 2026-11-11) |
@@ -6577,7 +6577,7 @@ predicciones y el canario. Cero llamadas a Gemini.
 |---|---|---|---|---|---|---|
 | C31/a | K-02: párrafo de licitud y alcance | c-240 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `no contenían datos personales ni de terceros: eran descripciones de incidentes construidas por ellos` | vigente (nuevo) |
 | C31/b | K-02: retiro de los dos archivos del corpus | c-240 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `se retiran la validación fuera de muestra de la tesis y los dos archivos del corpus de esa validación` | vigente (nuevo) |
-| C31/c | K-02: base de licitud de lo conservado | c-240 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `se funda en el artículo~5 de la Ley~25.326` | vigente (nuevo) |
+| C31/c | K-02: base de licitud de lo conservado por régimen | c-240 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `se fundan en el consentimiento informado del grupo` | vigente (reescrito por c-242) |
 | C31/d | A-02: §1.8 dentro de la muestra | c-240 | `01-introduccion.tex:72` | `subsec:alcance-delimitaciones` | `La validación experimental se realiza dentro de la muestra, sobre un corpus de 200 casos` | vigente (nuevo) |
 | C31/e | OOS-027: retiro del repositorio | c-240 | `evaluation/tests/test_retiro_corpus_independiente_c240.py` | `-` | `test_los_dos_archivos_del_corpus_independiente_ya_no_estan_en_el_repositorio` | SUPERADA por c-239 |
 
@@ -6775,3 +6775,25 @@ Se detiene `c-229-muestreo-probabilistico-del-universo-de-incidentes` (0/44) y s
 **Motivo.** No existe hoy un marco poblacional completo. Los activos versionados son subconjuntos de la misma muestra por conveniencia de 200 casos: el corpus congelado (`R001`-`R200`, sin fechas), los sidecars de corrida (200 / 118 / 81, con fechas de octubre) y los dumps de la base del prototipo (alrededor de 150 filas en 18 dias, filas de prototipo/campana, no intake de una mesa de ayuda real). La tesis ya declara que no se dispone de un marco poblacional y que `N = 2.646` es una proyeccion, no un universo medido. Por la regla de parada del change, no se sustituye por conveniencia ni se inventa un universo.
 
 **Reapertura.** Solo si el equipo opera el prototipo como su propia mesa de ayuda durante un periodo declarado y exporta la tabla `incidente` completa (`id`, `created_at`, `ingresado_en`, `persistido_en`, `sector_id`, `canal_origen_id`, `descripcion_pseudonimizada`), con control de completitud, SHA-256, acta K-01 y consentimiento K-02 (acta T2).
+
+## c-243: integrar la latencia con inferencia en la tesis — APLICADO (2026-11-18)
+
+**Change.** `c-243-integrar-la-latencia-con-inferencia-en-la-tesis`.
+
+**Motivo.** El ejemplar afirmaba que «la latencia con inferencia no se midió» y que el backend no tiene cuello de botella en el punto de convergencia del backend; ambas cosas son verdaderas solo para el camino determinístico de costo cero. Existían dos corridas pagas acotadas versionadas de la sonda de latencia del tramo compartido con inferencia real incluida. La decisión editorial de los autores es la **opción A**: informar una tabla combinada de 8 filas (niveles 1 y 5 desde la corrida ampliada; 10 y 20 desde la original), cada fila con su corrida de origen y su n escalado.
+
+**Archivos afectados.** `07-resultados.tex` (subsección `subsec:latencia-con-inferencia` y tabla `tab:carga-inferencia`; dos correcciones de afirmaciones), `08-discusion.tex` (dos correcciones y remisión), `09-conclusiones.tex` (acotamiento al camino determinístico y remisión), `04-marco-metodologico.tex` (oración de remisión), `docs/Tesis/Correcciones/numeros-canonicos.md` (sección aditiva `3.47` y nota de remisión en `3.29`), `docs/Tesis/Correcciones/cotejar_carga_inferencia.py` y `docs/Tesis/Correcciones/test_cotejar_carga_inferencia.py`.
+
+**Lo que no cambia.** La evidencia primaria de capacidad (`tab:carga-multicanal` y la sección `3.29` del memo de números canónicos), el arnés (`scripts/load_test/`), la guarda de costo cero, `App/`, `n8n/`, `evaluation/` y `data/`. No se reejecuta la sonda paga.
+
+**Evidencia.** `evaluation/evidence/load_test_inferencia_ampliada_2026-11-18.json` (niveles 1 y 5; n = 90 escalados por subconjunto, 3 repeticiones) y `evaluation/evidence/load_test_inferencia_2026-11-17.json` (niveles 10 y 20; n = 10, 1 repetición).
+
+**Veredictos.** Backend `no sostenida` solo por la degradación relativa por inferencia en el nivel de 1 concurrente (r = 5,05 frente a T = 4; el nivel 5 cumple, r = 3,74); N8N `no sostenida` por el techo absoluto de p95 en los niveles 5 (7545,7 ms), 10 (8352,7 ms) y 20 (10183,6 ms); global `no sostenida` (el de la peor capa). No es saturación del backend.
+
+**Límites.** Siete: dos corridas complementarias con su n y repeticiones por fila, una sola máquina, entorno desechable, gasto solo en la corrida ampliada con procedencia `tokens_calculado`, deriva posible de proveedor y modelo, potencia no comparable con la corrida canónica de capacidad y no extrapolación a producción.
+
+**Verificación.** `cotejar_carga_inferencia.py` sobre `07-resultados.tex` contra los dos JSON: 8 filas, 0 fallas; test `test_cotejar_carga_inferencia.py` en verde (21 pruebas más la tabla real). `verify_citations.py` PASS. Matriz de trazabilidad con el baseline. Recompilación de verificación sin errores fatales, sin referencias ni citas indefinidas y sin etiquetas duplicadas.
+
+**Libro mayor de páginas y palabras.** Método declarado: `B` = `wc -w` crudo de los fuentes `01` a `11`; `C` = páginas del PDF. `B` (before, árbol de trabajo sobre c-242 sin c-243): 42.834 palabras; `B` (after, con c-243): 44.048 (+1.214; +2,8 %). `C` (before): 151 páginas; `C` (after): 155 (+4; +2,6 %). La variación se atribuye a la subsección nueva `subsec:latencia-con-inferencia` y a las correcciones de remisión: `07-resultados.tex` +1.029 palabras, `08-discusion.tex` +73, `04-marco-metodologico.tex` +79, `09-conclusiones.tex` +33. Compilación: XeLaTeX/latexmk, 155 páginas, 0 errores fatales, 0 referencias indefinidas, 0 citas indefinidas, 0 etiquetas duplicadas, 8 `Overfull \hbox` (máximo 6,9 pt), ninguno originado en `tab:carga-inferencia`.
+
+**Compuertas.** G1 (veredicto del backend como violación relativa, no saturación) resuelta; G2 (opción A) resuelta; G3 (`gemini-3.6-flash`; 274920 de entrada / 6648 de salida / 281568 totales; USD 0,23112; `gasto_origen = tokens_calculado`) resuelta; G4 (release `v1.6.1`) resuelta. Release pendiente de autorización expresa; sin commit, push ni tag en esta fase.
