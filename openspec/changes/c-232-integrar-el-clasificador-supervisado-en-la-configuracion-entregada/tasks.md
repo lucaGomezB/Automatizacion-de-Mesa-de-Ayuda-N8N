@@ -8,6 +8,10 @@ Este change SI escribe codigo ejecutable: aplica el ciclo TDD estricto (RED → 
 
 Gobernanza **ALTA**. Checkpoints: **A** antes de consumir `c-228` y congelar; **B** antes de cambiar el default; **C** antes de emitir el veredicto; **D** antes de cualquier envio de texto a terceros (incluida la Gemini API).
 
+## Estado: DETENIDO (18/11/2026)
+
+El change queda **detenido** y se conserva como trabajo futuro lo autocontenido del grupo A: el validador del manifiesto, el adaptador offline detras del contrato de `c-227` y las funciones puras del contraste pareado y de la regla de tres vias. Las tareas quedan **sin marcar**; nada se aplico. Faltan los dos insumos de la familia post-entrega (marco poblacional completo y `clasificacion_log` real acumulado) y las condiciones de consentimiento de etiquetadores nuevos (desde `E6`) y K-02. Reapertura solo con un periodo real de operacion, la exportacion completa de la tabla `incidente` (marco para `c-229` y log real para `c-228`), el consentimiento escrito de los etiquetadores independientes y la decision K-02.
+
 ## 0. Preparacion, compuertas y linea de base
 
 - [ ] 0.1 Leer `proposal.md`, `design.md` (D0 a D10) y los cinco specs delta; cargar los `SKILL.md` de `python-testing`, `python-design-patterns` y `pytest-coverage` y registrar la resolucion.

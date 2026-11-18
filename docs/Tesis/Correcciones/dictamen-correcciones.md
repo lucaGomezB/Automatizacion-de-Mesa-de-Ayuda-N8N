@@ -6813,3 +6813,13 @@ Se detiene `c-229-muestreo-probabilistico-del-universo-de-incidentes` (0/44) y s
 **Verificación.** ANTES/DESPUÉS por `rg`: la oración no existía y ahora figura en `08-discusion.tex:82`; la sección `3.48` no existía y ahora figura en `numeros-canonicos.md:3234`. Multiconjunto de cifras de `08-discusion.tex`: 6 tokens agregados, 0 eliminados; `+18,7` y todos los valores previos intactos. `pytest docs/Tesis/Correcciones "docs/Tesis/v10 (IA)"`: 488 passed. `verify_citations.py`: PASS. Recompilación en copia temporal: 155 páginas, 0 errores fatales, 0 referencias/citas indefinidas, 0 etiquetas duplicadas (la oración no cambia el recuento de páginas). `openspec validate --all --strict`: 92/0.
 
 **Alcance.** No modifica resultados, cifras canónicas, tablas, `App/`, `n8n/`, `evaluation/` ni `scripts/load_test/`. Release pendiente (tareas 4.3-4.5); sin commit, push ni tag en esta fase.
+
+## c-228, c-230 y c-232: familia post-entrega — DETENIDOS (2026-11-18)
+
+Se detienen `c-228-clasificador-supervisado-sobre-el-corpus-acumulado` (0/46), `c-230-referencia-por-mayoria-con-etiquetadores-independientes` (0/38) y `c-232-integrar-el-clasificador-supervisado-en-la-configuracion-entregada` (0/48), en linea con la detencion ya aplicada a `c-229`. Ninguno se aplico y sus tareas quedan sin marcar.
+
+**Motivo (compartido).** Los tres dependen de los dos insumos que tampoco tiene `c-229`: un marco poblacional completo (por el que `c-229` quedo detenido) y un `clasificacion_log` real acumulado (el repositorio tiene alrededor de 153 filas de prototipo y campana, 3 validadas). A eso se suman el consentimiento escrito de etiquetadores independientes nuevos (alias desde `E6`) y una decision explicita K-02 sobre el envio de textos nuevos a la Gemini API.
+
+**Lo que se conserva (autocontenido, trabajo futuro).** `c-230`: las funciones puras `evaluation/mayoria.py` y `kappa_fleiss` y el protocolo de referencia por mayoria. `c-228`: la maquinaria offline del horizonte 1 (curacion y benchmark con fixtures sinteticos rotulados). `c-232`: el grupo A (validador del manifiesto, adaptador offline detras del contrato de `c-227` y funciones puras del contraste pareado y de la regla de tres vias).
+
+**Reapertura (unica condicion).** Solo si el equipo opera el prototipo como su propia mesa de ayuda durante un periodo declarado y exporta la tabla `incidente` completa (que aporta el marco para `c-229` y el log real acumulado para `c-228`), con el consentimiento escrito de los etiquetadores independientes y la decision K-02.

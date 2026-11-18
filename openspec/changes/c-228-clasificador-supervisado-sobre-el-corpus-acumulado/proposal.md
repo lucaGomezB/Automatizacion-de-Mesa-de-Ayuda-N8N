@@ -55,6 +55,14 @@ muestra propuesta como trabajo futuro con procedencia acreditable»). El tribuna
 no pidió un clasificador supervisado y declaró que ninguna corrección exige código
 nuevo; este change no responde a ninguna observación de la devolución.
 
+## Estado: DETENIDO (18/11/2026)
+
+El change queda **detenido** y se conserva como trabajo futuro la maquinaria offline del horizonte 1 (funciones puras de curacion y de particion, arnes con fixtures sinteticos rotulados), documentada y sin entrenamiento ni medicion. Las tareas quedan **sin marcar**; nada se aplico.
+
+**Motivo.** Faltan los dos insumos que comparte la familia post-entrega: un marco poblacional completo (por el que `c-229` quedo detenido) y un `clasificacion_log` real acumulado (el repositorio tiene alrededor de 153 filas de prototipo y campana, 3 validadas). A eso se suman el consentimiento escrito de etiquetadores independientes nuevos (alias desde `E6`) y una decision explicita K-02 sobre el envio de textos nuevos a la Gemini API. Sin esos insumos, la curacion y el benchmark no tienen datos de operacion real que consumir.
+
+**Reapertura.** Solo si el equipo opera el prototipo como su propia mesa de ayuda durante un periodo declarado y exporta la tabla `incidente` completa (que aporta el marco para `c-229` y el log real acumulado para este change), con el consentimiento escrito de los etiquetadores independientes y la decision K-02. Hasta entonces, el change no se aplica.
+
 ## Why
 
 La tesis enuncia como trabajo futuro un clasificador supervisado entrenado con las

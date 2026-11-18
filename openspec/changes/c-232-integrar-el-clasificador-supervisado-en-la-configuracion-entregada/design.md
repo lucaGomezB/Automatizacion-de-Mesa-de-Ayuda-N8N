@@ -8,6 +8,14 @@
 - **Que cambia.** D0 (compuertas, nuevo), D4 (contraste solo sobre el corpus acreditado), D5 (lugar de ejecucion y envios a terceros, reemplaza al anterior), D6 (pre-registro con constancia del director), D7 (memo `3.42` y tesis posterior), D9 (grupos y orden), D10 (A-03).
 - **Alcance respecto de la entrega.** Por defecto no se modifica el ejemplar ni el default entregado; el change queda bloqueado hasta `c-228`, `c-229` y `c-230`, y se ejecuta despues de `c-239` (OQ6). El destino que confirmen los autores lo registra `c-239` (D11); esta reformulacion no presupone la decision (OQ7).
 
+## Estado: DETENIDO (18/11/2026)
+
+El change queda **detenido** y se conserva como trabajo futuro lo autocontenido del grupo A: el validador del manifiesto, el adaptador offline detras del contrato de `c-227` y las funciones puras del contraste pareado y de la regla de tres vias. Las tareas quedan **sin marcar**; nada se aplico.
+
+**Motivo.** Faltan los dos insumos que comparte la familia post-entrega: un marco poblacional completo (por el que `c-229` quedo detenido) y un `clasificacion_log` real acumulado (alrededor de 153 filas de prototipo y campana, 3 validadas en el repositorio), mas el consentimiento escrito de los etiquetadores independientes nuevos (desde `E6`) y la decision K-02 sobre el envio de textos nuevos a la Gemini API.
+
+**Reapertura.** Solo con un periodo real de operacion del prototipo como mesa de ayuda del equipo y la exportacion completa de la tabla `incidente` (marco para `c-229` y log real para `c-228`), con el consentimiento escrito de los etiquetadores independientes y la decision K-02.
+
 ## Context
 
 - El clasificador vigente es el **hibrido** detras de la abstraccion de `c-227`: `App/Backend/app/classifiers/provider.py` (`InferenceProvider`, registro, `PROVEEDOR_POR_DEFECTO = "gemini"`), `base.py` (`BaseClassifier`), `hybrid.py` y `inference_provider`/`inference_model` en `Settings`. El default es neutral.

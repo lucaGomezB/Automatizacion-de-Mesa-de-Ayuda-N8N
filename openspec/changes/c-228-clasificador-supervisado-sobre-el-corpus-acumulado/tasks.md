@@ -8,6 +8,10 @@ Este change SI escribe codigo ejecutable: aplica el ciclo TDD estricto (RED → 
 
 Gobernanza **ALTA**. Checkpoints humanos: **CHECKPOINT A** antes de tocar el esquema de `clasificacion_log`; **CHECKPOINT B** compuertas K-01 y K-02 antes de exportar o etiquetar datos reales; **CHECKPOINT C** antes de entrenar o publicar un modelo; **CHECKPOINT D** antes de cualquier envio de texto a terceros.
 
+## Estado: DETENIDO (18/11/2026)
+
+El change queda **detenido** y se conserva como trabajo futuro la maquinaria offline del horizonte 1 (funciones puras de curacion y particion, arnes con fixtures sinteticos rotulados). Las tareas quedan **sin marcar**; nada se aplico. Faltan los dos insumos de la familia post-entrega (marco poblacional completo y `clasificacion_log` real acumulado) y las condiciones de consentimiento de etiquetadores nuevos (desde `E6`) y K-02. Reapertura solo con un periodo real de operacion, la exportacion completa de la tabla `incidente` (marco para `c-229` y log real para este change), el consentimiento escrito de los etiquetadores independientes y la decision K-02.
+
 ## 0. Preparacion, compuertas y linea de base
 
 - [ ] 0.1 Leer `proposal.md`, `design.md` (D0 a D10) y los seis specs delta; cargar los `SKILL.md` de `python-testing` y `pytest-coverage` antes de escribir codigo y registrar la resolucion.

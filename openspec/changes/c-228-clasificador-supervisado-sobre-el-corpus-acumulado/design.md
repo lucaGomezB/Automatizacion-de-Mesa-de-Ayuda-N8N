@@ -26,6 +26,14 @@
   clasificador supervisado ni código nuevo. Este change no agrega evidencia al
   ejemplar de la defensa.
 
+## Estado: DETENIDO (18/11/2026)
+
+El change queda **detenido** y se conserva como trabajo futuro la maquinaria offline del horizonte 1 (curacion, particion y arnes con fixtures sinteticos rotulados), documentada y sin entrenamiento ni medicion. Las tareas quedan **sin marcar**; nada se aplico.
+
+**Motivo.** Faltan los dos insumos que comparte la familia post-entrega: un marco poblacional completo (por el que `c-229` quedo detenido) y un `clasificacion_log` real acumulado (alrededor de 153 filas de prototipo y campana, 3 validadas en el repositorio), mas el consentimiento escrito de etiquetadores independientes nuevos (desde `E6`) y la decision K-02 sobre el envio de textos nuevos a la Gemini API.
+
+**Reapertura.** Solo con un periodo real de operacion del prototipo como mesa de ayuda del equipo y la exportacion completa de la tabla `incidente` (marco para `c-229` y log real para este change), con el consentimiento escrito de los etiquetadores independientes y la decision K-02.
+
 ## Context
 
 La organización acumula decisiones validadas en `clasificacion_log`

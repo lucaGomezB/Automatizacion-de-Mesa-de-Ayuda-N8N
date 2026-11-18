@@ -9,6 +9,10 @@ Reglas del change (adaptacion a la devolucion de tercera instancia, ver `proposa
 - Las tareas **[COMPUERTA]** no se ejecutan sin el acta o la documentacion indicada, registrada con fecha en `docs/Tesis/Correcciones/dictamen-correcciones.md`.
 - TDD estricto en los grupos 1 y 2. Este change no envia textos a terceros.
 
+## Estado: DETENIDO (18/11/2026)
+
+El change queda **detenido** y se conserva como trabajo futuro lo autocontenido: las funciones puras `evaluation/mayoria.py` y `kappa_fleiss` y el protocolo de referencia por mayoria. Las tareas quedan **sin marcar**; nada se aplico. Faltan los dos insumos de la familia post-entrega (marco poblacional completo y `clasificacion_log` real acumulado) y las condiciones de consentimiento de etiquetadores nuevos (desde `E6`) y K-02. Reapertura solo con un periodo real de operacion, la exportacion completa de la tabla `incidente` (marco para `c-229` y log real acumulado), el consentimiento escrito de los etiquetadores independientes y la decision K-02.
+
 ## 0. Preparacion y linea de base
 
 - [ ] 0.1 Confirmar que la entrega esta cerrada (`c-235` a `c-239` archivados) y que `c-229` completo sus grupos 0 a 3; si no, detenerse.

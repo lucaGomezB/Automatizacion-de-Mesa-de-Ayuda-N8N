@@ -8,6 +8,14 @@
 - **Que cambia.** Sin arbitro unico de respaldo; destino: la muestra probabilistica de `c-229`; compuertas K-01/K-02; constancia de la regla en custodia del director; consentimiento escrito previo con plantilla nueva (la de confirmacion posterior se retira con la validacion); alias nuevos desde `E6`.
 - **Alcance respecto de la entrega.** Ningun paso modifica el ejemplar que se defiende; se ejecuta despues de `c-239` y de `c-229`.
 
+## Estado: DETENIDO (18/11/2026)
+
+El change queda **detenido** y se conserva como trabajo futuro lo autocontenido: las funciones puras `evaluation/mayoria.py` y `kappa_fleiss` y el protocolo de referencia por mayoria. Las tareas quedan **sin marcar**; nada se aplico.
+
+**Motivo.** Faltan los dos insumos que comparte la familia post-entrega: un marco poblacional completo (por el que `c-229` quedo detenido) y un `clasificacion_log` real acumulado (alrededor de 153 filas de prototipo y campana, 3 validadas en el repositorio), mas el consentimiento escrito de los etiquetadores independientes nuevos (desde `E6`) y la decision K-02 sobre el envio de textos nuevos a la Gemini API.
+
+**Reapertura.** Solo con un periodo real de operacion del prototipo como mesa de ayuda del equipo y la exportacion completa de la tabla `incidente` (marco para `c-229` y log real acumulado), con el consentimiento escrito de los etiquetadores independientes y la decision K-02.
+
 ## Context
 
 - **Linea base que sobrevive (verificada en esta adaptacion).** `evaluation/data/campana/doble_etiquetado.csv`: 400 filas, `E1` y `E2` con 200 casos cada uno (`tarea = doble_etiquetado`). Coinciden en 138 casos y discrepan en **62**; las discordancias por par de sectores son: `Sistemas`/`Soporte Tecnico Software` **29**, `Soporte Tecnico Hardware`/`Soporte Tecnico Software` 15, `Seguridad Informatica`/`Soporte Tecnico Software` 8, `Sistemas`/`Soporte Tecnico Hardware` 4, `Seguridad Informatica`/`Sistemas` 4, `Bases de Datos`/`Soporte Tecnico Software` 1, `Seguridad Informatica`/`Soporte Tecnico Hardware` 1. Kappa de Cohen recalculado: `p_o = 0,69`, `p_e = 0,30045`, kappa `= 0,5569` (coincide con el canonico). Codebook: `evaluation/data/campana/codebook_doble_etiquetado.md`.

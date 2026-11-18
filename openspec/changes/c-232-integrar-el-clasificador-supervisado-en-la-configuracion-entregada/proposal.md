@@ -22,6 +22,14 @@ Este change lo propuso un coautor el 15/11/2026, un dia antes de la devolucion d
 
 **Busqueda de control de cifras y alias retirados** (criterio de aceptacion): `rg -n "206|0,6893|0,7489|0,7024|0,835|142/206|16 de 64|E3|E4|E5|arbitrado|fuera de muestra|corpus independiente" <ruta>`. Sobre este change solo debe devolver lineas de esta seccion o del bloque equivalente de `design.md`.
 
+## Estado: DETENIDO (18/11/2026)
+
+El change queda **detenido** y se conserva como trabajo futuro lo autocontenido del grupo A: el validador del manifiesto, el adaptador offline detras del contrato de `c-227` y las funciones puras del contraste pareado y de la regla de tres vias. Las tareas quedan **sin marcar**; nada se aplico.
+
+**Motivo.** Faltan los dos insumos que comparte la familia post-entrega: un marco poblacional completo (por el que `c-229` quedo detenido) y un `clasificacion_log` real acumulado (el repositorio tiene alrededor de 153 filas de prototipo y campana, 3 validadas). A eso se suman el consentimiento escrito de los etiquetadores independientes nuevos (alias desde `E6`) y una decision explicita K-02 sobre el envio de textos nuevos a la Gemini API. Sin el modelo de `c-228`, el corpus acreditado de `c-229` y la referencia de `c-230`, no hay insumo que congelar ni contrastar.
+
+**Reapertura.** Solo si el equipo opera el prototipo como su propia mesa de ayuda durante un periodo declarado y exporta la tabla `incidente` completa (que aporta el marco para `c-229` y el log real acumulado para `c-228`), con el consentimiento escrito de los etiquetadores independientes y la decision K-02. Hasta entonces, el change no se aplica.
+
 ## Why
 
 `c-228` entrega la maquinaria del clasificador supervisado y no toca el clasificador de produccion. Queda abierta la pregunta practica: el mejor modelo del benchmark de `c-228`, ¿reemplaza o complementa al **hibrido vigente** (filtro deterministico + Gemini) en la configuracion entregada, o no lo supera? Esa pregunta solo puede responderse sobre un conjunto de prueba cuya procedencia se pueda acreditar y que no se haya usado para ajustar ninguno de los dos sistemas. El corpus de 200 casos no sirve: el hibrido se ajusto, en parte, con el (`10-recomendaciones.tex:26`). El unico conjunto admisible es el corpus probabilistico acreditado de `c-229` con la referencia por mayoria de `c-230`.
