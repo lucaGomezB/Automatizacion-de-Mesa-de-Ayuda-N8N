@@ -103,6 +103,7 @@ Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 | Documento | Proposito | Estado |
 |-----------|-----------|--------|
 | `acta-consentimiento-t1.md` | Acta de consentimiento informado del grupo para el tratamiento T1 | v1 (aprobada/firmada 2026-10-01) |
+| `acta-consentimiento-t2.md` | Acta de consentimiento informado del grupo para el tratamiento T2 (corpus de investigacion, regimen a) y su transferencia internacional | v1 (consentimiento 2026-10-02; confirmacion escrita pendiente) |
 
 ## 6. Mapa de trazabilidad control -> documento -> requisito
 
@@ -159,7 +160,7 @@ parcialmente; su cierre tecnico esta en los changes **archivados** C-62 a C-67.
 | SGD-009 Privacidad en runtime | `politica-privacidad-runtime.md` |
 | SGD-010 ROPA | `registro-actividades-tratamiento.md` |
 | SGD-011 Regla de lenguaje y encuadre | transversal (§2 y §3); aplica a todos |
-| SGD-012 Responsable y los tres tratamientos | `registro-actividades-tratamiento.md`, `registro-requisitos-legales.md`, `acta-consentimiento-t1.md` |
+| SGD-012 Responsable y los tres tratamientos | `registro-actividades-tratamiento.md`, `registro-requisitos-legales.md`, `acta-consentimiento-t1.md`, `acta-consentimiento-t2.md` |
 | SGD-013 Procedimiento ARCO documentado con plazos | `procedimiento-arco.md` |
 | SGD-014 Instrumento de transferencia internacional documentado | `instrumento-transferencia-internacional.md` |
 | SGD-015 Politica de retencion de logs | `politica-retencion-logs.md` |
