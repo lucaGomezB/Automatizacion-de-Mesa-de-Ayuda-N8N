@@ -291,3 +291,116 @@ def test_parser_paga_acepta_las_banderas_del_camino_pago():
     assert args.confirm_paid is True
     assert args.tope_usd == pytest.approx(0.75)
     assert args.fixture == "x.json"
+
+
+# ── uso de tokens, costo y parseo de logs (c-243, G3) ─────────────────────────
+
+
+def _evento(entrada=None, salida=None, total=None, origen="api", version=None):
+    return {
+        "event": "gemini_classified",
+        "modelo_solicitado": "gemini-3.6-flash",
+        "model_version": version,
+        "tokens_entrada": entrada,
+        "tokens_salida": salida,
+        "tokens_total": total,
+        "tokens_origen": origen,
+    }
+
+
+def test_parsear_eventos_gemini_ignora_lineas_no_json_y_otros_eventos():
+    texto = "\n".join(
+        [
+            'backend-corpus  | {"event": "otro", "x": 1}',
+            '{"event": "gemini_classified", "tokens_entrada": 10, "tokens_salida": 2, '
+            '"tokens_total": 12, "tokens_origen": "api"}',
+            "no es json",
+            "",
+            '  {"event": "gemini_classified", "tokens_origen": "ausente"}  ',
+        ]
+    )
+    eventos = lti.parsear_eventos_gemini(texto)
+    assert len(eventos) == 2
+    assert eventos[0]["tokens_entrada"] == 10
+    assert eventos[1]["tokens_origen"] == "ausente"
+
+
+def test_resumen_uso_suma_tokens_de_la_api():
+    eventos = [
+        _evento(10, 2, 12, version="gemini-3.6-flash-001"),
+        _evento(20, 3, 23, version="gemini-3.6-flash-001"),
+    ]
+    r = lti.resumen_uso(eventos)
+    assert r["eventos"] == 2
+    assert r["eventos_con_uso"] == 2
+    assert r["tokens_entrada"] == 30
+    assert r["tokens_salida"] == 5
+    assert r["tokens_total"] == 35
+    assert r["tokens_origen"] == "api"
+    assert r["modelo_solicitado"] == "gemini-3.6-flash"
+    assert r["model_version"] == "gemini-3.6-flash-001"
+
+
+def test_resumen_uso_sin_uso_marca_ausente():
+    r = lti.resumen_uso([_evento(origen="ausente")])
+    assert r["tokens_origen"] == "ausente"
+    assert r["tokens_entrada"] is None
+    assert r["model_version"] is None
+
+
+def test_resumen_uso_vacio_es_ausente():
+    r = lti.resumen_uso([])
+    assert r["eventos"] == 0
+    assert r["tokens_origen"] == "ausente"
+
+
+def test_resumen_uso_mixto_lo_declara():
+    r = lti.resumen_uso([_evento(10, 1, 11), _evento(origen="ausente")])
+    assert r["tokens_origen"] == "mixto"
+
+
+def test_calcular_costo_usd_escenario_introductorio():
+    # 1e6 de entrada a 0.75 + 1e6 de salida a 3.75 = 4.50 USD.
+    assert lti.calcular_costo_usd(1_000_000, 1_000_000, "introductorio") == pytest.approx(4.50)
+
+
+def test_calcular_costo_usd_sin_tokens_es_none():
+    assert lti.calcular_costo_usd(None, 10, "introductorio") is None
+    assert lti.calcular_costo_usd(10, None, "introductorio") is None
+
+
+def test_calcular_costo_usd_escenario_desconocido_falla():
+    with pytest.raises(KeyError):
+        lti.calcular_costo_usd(1, 1, "inexistente")
+
+
+def test_origen_gasto_distingue_calculado_de_no_registrado():
+    assert lti.origen_gasto({"tokens_entrada": 10, "tokens_salida": 2}) == "tokens_calculado"
+    assert lti.origen_gasto({"tokens_entrada": None, "tokens_salida": None}) == "no_registrado"
+
+
+# ── configuracion de la corrida ampliada (c-243) ──────────────────────────────
+
+
+def test_override_inferencia_eleva_el_rate_limit():
+    texto = OVERRIDE_INF.read_text(encoding="utf-8")
+    assert "COST_GUARD_RATE_LIMIT_CALLS" in texto
+    # El default debe alcanzar las ~360 llamadas escaladas de la corrida ampliada.
+    assert "${LOAD_TEST_RATE_LIMIT_CALLS:-600}" in texto
+
+
+def test_prerregistro_ampliado_fija_las_constantes():
+    ruta = AQUI / "PRERREGISTRO_latencia_con_inferencia_ampliada.md"
+    texto = ruta.read_text(encoding="utf-8")
+    for aguja in (
+        "1 y 5",
+        "60",
+        "3 repeticiones",
+        "720",
+        "360",
+        "1.25",
+        "sostenida",
+        "no sostenida",
+    ):
+        assert aguja in texto, "falta %r en el prerregistro ampliado" % aguja
+

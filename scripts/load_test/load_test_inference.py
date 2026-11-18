@@ -43,6 +43,26 @@ ETAPA_SIN_REGISTRO = "sin_registro"
 _AQUI = Path(__file__).resolve().parent
 _REPO_ROOT = lt._REPO_ROOT
 
+# Precios declarados por la tesis (seccion 8, consultados 2026-10-19), en USD por
+# millon de tokens. Fuente unica: evaluation/brazo_gemini_solo.PRECIOS_USD_POR_MILLON.
+# La estimacion de costo del arnes es DECLARADA, no facturacion del proveedor.
+PRECIO_FUENTE = (
+    "precios de lista declarados por la tesis (seccion 8, consultados 2026-10-19); "
+    "fuente unica evaluation/brazo_gemini_solo.py:PRECIOS_USD_POR_MILLON"
+)
+ESCENARIO_PRECIO_POR_DEFECTO = "introductorio"
+
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.append(str(_REPO_ROOT))
+try:  # fuente unica de precios; el fallback replica la tabla declarada
+    from evaluation.brazo_gemini_solo import PRECIOS_USD_POR_MILLON
+except Exception:  # pragma: no cover - defensa si `evaluation` no esta disponible
+    PRECIOS_USD_POR_MILLON = {
+        "introductorio": {"entrada": 0.75, "salida": 3.75},
+        "estandar": {"entrada": 1.50, "salida": 7.50},
+    }
+
+
 # Constantes del criterio prerregistrado de la corrida paga. Se fijan ANTES de
 # observar datos y NO se reajustan despues (ver PRERREGISTRO del modulo).
 CONSTANTES_INFERENCIA = {
@@ -240,6 +260,115 @@ def evaluar_criterio_inferencia(niveles, constantes=None):
     }
 
 
+# ── uso de tokens, version del modelo y costo declarado (c-243, G3) ──────────
+
+
+def parsear_eventos_gemini(texto):
+    """Extrae los eventos ``gemini_classified`` de una salida de logs.
+
+    Cada linea es un JSON de structlog (posiblemente prefijada por Compose con
+    ``servicio | ``). Las lineas que no son JSON o que no son el evento de
+    clasificacion se ignoran. No interpreta el texto del prompt ni datos de PII.
+    """
+    eventos = []
+    for linea in texto.splitlines():
+        inicio = linea.find("{")
+        if inicio == -1:
+            continue
+        try:
+            dato = json.loads(linea[inicio:])
+        except ValueError:
+            continue
+        if isinstance(dato, dict) and dato.get("event") == "gemini_classified":
+            eventos.append(dato)
+    return eventos
+
+
+def leer_eventos_gemini(servicio, compose=None):
+    """Lee los eventos de uso de los logs del backend (``docker compose logs``).
+
+    Devuelve ``[]`` si no se pueden leer los logs (no aborta la corrida): en ese
+    caso la evidencia lo declara con ``tokens_origen="ausente"`` y
+    ``gasto_origen="no_registrado"``.
+    """
+    try:
+        salida = subprocess.run(
+            [*(compose or COMPOSE_INFERENCE), "logs", servicio],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            check=True, cwd=str(_REPO_ROOT),
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as exc:
+        print(
+            "AVISO: no se pudieron leer los logs de %s: %s" % (servicio, exc),
+            file=sys.stderr,
+        )
+        return []
+    return parsear_eventos_gemini(salida)
+
+
+def resumen_uso(eventos):
+    """Agrega tokens y version del modelo a partir de los eventos de uso.
+
+    Suma solo los eventos con conteo de la API (``tokens_origen == "api"``). El
+    campo ``tokens_origen`` resume: ``api`` si TODOS los eventos traen uso,
+    ``mixto`` si solo algunos, ``ausente`` si ninguno (o si no hay eventos).
+    """
+    entrada = salida = total = 0
+    con_uso = 0
+    modelo_solicitado = None
+    model_version = None
+    for evento in eventos:
+        if evento.get("tokens_origen") == "api":
+            con_uso += 1
+            entrada += int(evento.get("tokens_entrada") or 0)
+            salida += int(evento.get("tokens_salida") or 0)
+            total += int(evento.get("tokens_total") or 0)
+        if modelo_solicitado is None and evento.get("modelo_solicitado"):
+            modelo_solicitado = evento["modelo_solicitado"]
+        if model_version is None and evento.get("model_version"):
+            model_version = evento["model_version"]
+    if con_uso and con_uso == len(eventos):
+        origen = "api"
+    elif con_uso:
+        origen = "mixto"
+    else:
+        origen = "ausente"
+    return {
+        "eventos": len(eventos),
+        "eventos_con_uso": con_uso,
+        "modelo_solicitado": modelo_solicitado,
+        "model_version": model_version,
+        "tokens_entrada": entrada if con_uso else None,
+        "tokens_salida": salida if con_uso else None,
+        "tokens_total": total if con_uso else None,
+        "tokens_origen": origen,
+    }
+
+
+def calcular_costo_usd(
+    tokens_entrada, tokens_salida, escenario=ESCENARIO_PRECIO_POR_DEFECTO, precios=None
+):
+    """Costo en USD de los tokens con el precio DECLARADO del escenario.
+
+    Devuelve ``None`` si falta algun conteo (no se estima a ciegas). El escenario
+    desconocido falla con ``KeyError`` (no se inventa un precio).
+    """
+    if tokens_entrada is None or tokens_salida is None:
+        return None
+    precio = (precios or PRECIOS_USD_POR_MILLON)[escenario]
+    return (
+        tokens_entrada * 1e-6 * precio["entrada"]
+        + tokens_salida * 1e-6 * precio["salida"]
+    )
+
+
+def origen_gasto(uso):
+    """Procedencia del gasto: calculado desde tokens, o no registrado."""
+    if uso.get("tokens_entrada") is not None and uso.get("tokens_salida") is not None:
+        return "tokens_calculado"
+    return "no_registrado"
+
+
 # ── fixture mixta ────────────────────────────────────────────────────────────
 
 
@@ -368,6 +497,26 @@ def renderizar_markdown_inferencia(datos):
         "",
     ]
     lineas += ["- %s" % e for e in datos["exclusiones"]]
+    inf = datos.get("inferencia")
+    if inf:
+        lineas += [
+            "",
+            "## Uso de tokens y costo declarado",
+            "",
+            "- Modelo solicitado: %s" % inf.get("modelo_solicitado"),
+            "- Version del modelo (API): %s" % inf.get("model_version"),
+            "- Eventos de clasificacion: %s (con uso: %s)" % (
+                inf.get("eventos"), inf.get("eventos_con_uso")
+            ),
+            "- Tokens de entrada: %s" % inf.get("tokens_entrada"),
+            "- Tokens de salida: %s" % inf.get("tokens_salida"),
+            "- Tokens totales: %s" % inf.get("tokens_total"),
+            "- Origen de tokens: %s" % inf.get("tokens_origen"),
+            "- Costo estimado (USD): %s" % inf.get("costo_usd"),
+            "- Escenario de precio: %s" % inf.get("precio_escenario"),
+            "- Fuente del precio: %s" % inf.get("precio_fuente"),
+            "- Origen del gasto: %s" % inf.get("gasto_origen"),
+        ]
     for nombre, capa in sorted(datos["capas"].items()):
         lineas += [
             "",
@@ -378,9 +527,9 @@ def renderizar_markdown_inferencia(datos):
             "|---|---|---|---|---|---|---|---|---|---|",
         ]
         for n in capa["niveles"]:
-            inf = n.get("inferencia") or {}
-            det = inf.get("deterministico") or {}
-            esc = inf.get("escalado") or {}
+            inf_nivel = n.get("inferencia") or {}
+            det = inf_nivel.get("deterministico") or {}
+            esc = inf_nivel.get("escalado") or {}
             lineas.append(
                 "| %d | %.1f | %.1f | %.1f | %.2f | %.4f | %d/%d | %s | %s | %s |"
                 % (
@@ -388,7 +537,22 @@ def renderizar_markdown_inferencia(datos):
                     n["throughput_rps"], n["tasa_error"],
                     (n.get("etapas") or {}).get("escalados", 0),
                     (n.get("etapas") or {}).get("total", 0),
-                    _fmt(esc.get("p95_ms")), _fmt(det.get("p95_ms")), _fmt(inf.get("razon_p95")),
+                    _fmt(esc.get("p95_ms")), _fmt(det.get("p95_ms")), _fmt(inf_nivel.get("razon_p95")),
+                )
+            )
+        lineas += [
+            "",
+            "| Concurrencia | Eventos | Con uso | Tokens entrada | Tokens salida | Tokens total | Origen |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for n in capa["niveles"]:
+            t = n.get("tokens") or {}
+            lineas.append(
+                "| %d | %s | %s | %s | %s | %s | %s |"
+                % (
+                    n["concurrencia"], t.get("eventos"), t.get("eventos_con_uso"),
+                    t.get("tokens_entrada"), t.get("tokens_salida"), t.get("tokens_total"),
+                    t.get("tokens_origen"),
                 )
             )
         for v in capa["criterio"].get("violaciones", []):
@@ -441,6 +605,10 @@ def correr_carga_inferencia(args):
             lt.payload_webhook,
         ),
     }
+    # Baseline de eventos de uso ANTES de la primera solicitud: la evidencia solo
+    # cuenta lo producido por ESTA corrida (los logs pueden traer corridas previas).
+    eventos_previos = len(leer_eventos_gemini(args.servicio_backend))
+    eventos_run = []
     capas = {}
     for nombre, (enviar, construir) in destinos.items():
         filas = []
@@ -451,15 +619,33 @@ def correr_carga_inferencia(args):
             ]
             detalles = _recolectar_detalles(args.backend_url, token, repeticiones, args.timeout)
             fila = _nivel_reporte_inferencia(c, repeticiones, detalles, args.solicitudes * args.repeticiones)
+            # Uso de tokens del nivel: delta de eventos desde la ultima lectura.
+            eventos = leer_eventos_gemini(args.servicio_backend)
+            nuevos = eventos[eventos_previos:]
+            eventos_previos = len(eventos)
+            eventos_run.extend(nuevos)
+            fila["tokens"] = resumen_uso(nuevos)
             filas.append(fila)
             print(
-                "capa %s nivel %d: p95 %.1f ms, error %.4f, escalados %d/%d"
+                "capa %s nivel %d: p95 %.1f ms, error %.4f, escalados %d/%d, tokens %s"
                 % (nombre, c, fila["p95_ms"], fila["tasa_error"],
-                   fila["etapas"]["escalados"], fila["etapas"]["total"])
+                   fila["etapas"]["escalados"], fila["etapas"]["total"],
+                   fila["tokens"]["tokens_total"])
             )
         constantes = dict(CONSTANTES_INFERENCIA, niveles=tuple(niveles))
         capas[nombre] = {"niveles": filas, "criterio": evaluar_criterio_inferencia(filas, constantes)}
     por_capa = {n: c["criterio"]["veredicto"] for n, c in capas.items()}
+    uso_global = resumen_uso(eventos_run)
+    costo = calcular_costo_usd(
+        uso_global["tokens_entrada"], uso_global["tokens_salida"], args.precio_escenario
+    )
+    uso_global.update(
+        costo_usd=costo,
+        precio_fuente=PRECIO_FUENTE,
+        precio_escenario=args.precio_escenario,
+        precios_usd_por_millon=PRECIOS_USD_POR_MILLON,
+        gasto_origen=origen_gasto(uso_global),
+    )
     datos = {
         "commit": lt.obtener_commit(),
         "fecha_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -478,6 +664,7 @@ def correr_carga_inferencia(args):
             "tope_presupuesto_usd": args.tope_usd,
             "mezcla_escalada_esperada": CONSTANTES_INFERENCIA["mezcla_escalada_esperada"],
         },
+        "inferencia": uso_global,
         "exclusiones": lt.EXCLUSIONES,
         "capas": capas,
         "veredicto": lt.veredicto_global(por_capa),
@@ -516,6 +703,11 @@ def _parser():
     p.add_argument(
         "--tope-usd", type=float, default=CONSTANTES_INFERENCIA["tope_presupuesto_usd"],
         help="tope autorizado del presupuesto de la guarda de costo (USD)",
+    )
+    p.add_argument(
+        "--precio-escenario", default=ESCENARIO_PRECIO_POR_DEFECTO,
+        choices=sorted(PRECIOS_USD_POR_MILLON),
+        help="escenario de precio declarado para estimar el costo desde tokens",
     )
     return p
 

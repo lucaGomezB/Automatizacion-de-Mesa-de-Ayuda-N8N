@@ -22,8 +22,10 @@ services:
       # lo reafirma la guarda paga del arnes leyendo el valor DENTRO del contenedor.
       COST_GUARD_BUDGET_USD: "${LOAD_TEST_BUDGET_USD:-1.00}"
       # Tasa relajada: alcanza para las solicitudes acotadas de la corrida paga.
-      COST_GUARD_RATE_LIMIT_CALLS: "${LOAD_TEST_RATE_LIMIT_CALLS:-200}"
-      COST_GUARD_CALLER_RATE_LIMIT_CALLS: "${LOAD_TEST_RATE_LIMIT_CALLS:-200}"
+      # Default 600: la corrida AMPLIADA (c-243) emite ~360 llamadas escaladas
+      # (720 solicitudes con ~50 % de escalada); 200 no alcanzaba.
+      COST_GUARD_RATE_LIMIT_CALLS: "${LOAD_TEST_RATE_LIMIT_CALLS:-600}"
+      COST_GUARD_CALLER_RATE_LIMIT_CALLS: "${LOAD_TEST_RATE_LIMIT_CALLS:-600}"
       # La clave de indice ciego del directorio se exige al arrancar; la base del
       # perfil `corpus` es DESCARTABLE y el test no consulta datos reales.
       DIRECTORY_BLIND_INDEX_KEY: "load-test-dummy-directory-blind-index-key"  # gitleaks:allow

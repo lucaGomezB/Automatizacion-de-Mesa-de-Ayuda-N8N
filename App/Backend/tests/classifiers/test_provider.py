@@ -29,6 +29,7 @@ from app.classifiers import hybrid as hybrid_module
 from app.classifiers.gemini_classifier import GeminiClassifier, GeminiProvider
 from app.classifiers.hybrid import HybridClassifier
 from app.classifiers.provider import (
+    GenerationResult,
     InferenceParams,
     InferenceProvider,
     InferenceTerminalError,
@@ -107,14 +108,14 @@ class _ProveedorFalso:
         self.llamadas = 0
         self.ultimo_params: InferenceParams | None = None
 
-    async def generate(self, *, prompt: str, params: InferenceParams) -> str:
+    async def generate(self, *, prompt: str, params: InferenceParams) -> GenerationResult:
         self.llamadas += 1
         self.ultimo_params = params
         if self._error is not None:
             raise self._error
         if self._respuestas:
-            return self._respuestas.pop(0)
-        return _VALID_JSON
+            return GenerationResult(text=self._respuestas.pop(0))
+        return GenerationResult(text=_VALID_JSON)
 
 
 # ---------------------------------------------------------------------------
@@ -158,7 +159,7 @@ def test_interface_no_filtra_tipos_del_proveedor() -> None:
     anotaciones = InferenceProvider.generate.__annotations__
     assert anotaciones["prompt"] == "str"
     assert anotaciones["params"] == "InferenceParams"
-    assert anotaciones["return"] == "str"
+    assert anotaciones["return"] == "GenerationResult"
 
 
 def test_un_proveedor_falso_cumple_la_interfaz() -> None:
@@ -207,7 +208,7 @@ async def _generar_con(outcome) -> str:
         candidate_count=1,
         timeout=30.0,
     )
-    return await proveedor.generate(prompt="p", params=params)
+    return (await proveedor.generate(prompt="p", params=params)).text
 
 
 @pytest.mark.asyncio

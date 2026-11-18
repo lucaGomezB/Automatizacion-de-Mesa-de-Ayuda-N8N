@@ -43,6 +43,36 @@ class InferenceParams:
     timeout: float
 
 
+@dataclass(frozen=True)
+class TokenUsage:
+    """Conteo de tokens que el proveedor expone por respuesta (puede faltar).
+
+    Es ADITIVO y de solo lectura: cuando la API no devuelve ``usage_metadata`` (o
+    no trae conteos), la implementacion reporta ``None`` en vez de inventar
+    numeros. Los nombres de campo siguen el contrato de google-genai
+    (``prompt_token_count``, ``candidates_token_count``, ``total_token_count``).
+    """
+
+    prompt_tokens: int | None = None
+    candidates_tokens: int | None = None
+    total_tokens: int | None = None
+
+
+@dataclass(frozen=True)
+class GenerationResult:
+    """Resultado de una generacion: texto crudo MAS metadatos de uso y version.
+
+    El texto es el contrato historico de ``generate``; el uso de tokens y la
+    version del modelo son ADITIVOS y opcionales (el proveedor puede no
+    exponerlos). Ninguno de los campos contiene la clave de API ni el texto del
+    prompt: la observabilidad de la etapa semantica sigue siendo libre de PII.
+    """
+
+    text: str
+    usage: TokenUsage | None = None
+    model_version: str | None = None
+
+
 class InferenceProviderError(Exception):
     """Falla canonica del proveedor de inferencia (base de la taxonomia)."""
 
@@ -79,7 +109,7 @@ class InferenceProvider(Protocol):
     implementacion falsa que cumpla la firma se inyecta sin importar el SDK.
     """
 
-    async def generate(self, *, prompt: str, params: InferenceParams) -> str:
+    async def generate(self, *, prompt: str, params: InferenceParams) -> GenerationResult:
         """Genera y devuelve el texto crudo de la respuesta para `prompt`.
 
         Args:
@@ -87,8 +117,9 @@ class InferenceProvider(Protocol):
             params: parametros de inferencia independientes del proveedor.
 
         Returns:
-            El texto crudo de la respuesta (sin parsear ni validar: eso es
-            responsabilidad de la etapa semantica).
+            ``GenerationResult`` con el texto crudo (sin parsear ni validar: eso
+            es responsabilidad de la etapa semantica) y, cuando la API los
+            expone, el uso de tokens y la version del modelo.
 
         Raises:
             InferenceTransientError: falla reintentable del proveedor.

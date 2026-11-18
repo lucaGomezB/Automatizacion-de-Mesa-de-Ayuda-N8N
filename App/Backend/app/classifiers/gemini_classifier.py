@@ -42,11 +42,13 @@ from google.genai import types as genai_types
 
 from app.classifiers.base import BaseClassifier
 from app.classifiers.provider import (
+    GenerationResult,
     InferenceParams,
     InferenceProvider,
     InferenceTerminalError,
     InferenceTimeoutError,
     InferenceTransientError,
+    TokenUsage,
 )
 from app.config.settings import get_settings
 from app.constants import SECTORES_CANONICOS
@@ -124,6 +126,49 @@ def _is_transient_error(exc: BaseException) -> bool:
             return False
     return False
 
+
+
+def _extraer_uso(response) -> TokenUsage | None:
+    """
+    Lee ``usage_metadata`` de una respuesta del SDK (helper puro, aditivo).
+
+    Devuelve ``None`` cuando la respuesta no expone ``usage_metadata`` o cuando no
+    trae ningun conteo (no se inventan tokens). Los conteos presentes se copian
+    como enteros. Es de solo lectura: no altera la respuesta ni el camino de costo
+    cero.
+    """
+    uso = getattr(response, "usage_metadata", None)
+    if uso is None:
+        return None
+    entrada = getattr(uso, "prompt_token_count", None)
+    candidatos = getattr(uso, "candidates_token_count", None)
+    total = getattr(uso, "total_token_count", None)
+    if entrada is None and candidatos is None and total is None:
+        return None
+    return TokenUsage(
+        prompt_tokens=None if entrada is None else int(entrada),
+        candidates_tokens=None if candidatos is None else int(candidatos),
+        total_tokens=None if total is None else int(total),
+    )
+
+
+def _campos_uso(generacion: GenerationResult | None) -> dict:
+    """
+    Campos aditivos de uso/version para el evento ``gemini_classified`` (helper puro).
+
+    ``tokens_origen`` distingue el conteo devuelto por la API (``api``) de su
+    ausencia (``ausente``); cuando falta el uso, los conteos quedan en ``None``
+    (no se inventan tokens). No incluye el texto del prompt ni la clave: la
+    observabilidad sigue siendo libre de PII.
+    """
+    uso = generacion.usage if generacion is not None else None
+    return {
+        "model_version": generacion.model_version if generacion is not None else None,
+        "tokens_entrada": uso.prompt_tokens if uso is not None else None,
+        "tokens_salida": uso.candidates_tokens if uso is not None else None,
+        "tokens_total": uso.total_tokens if uso is not None else None,
+        "tokens_origen": "api" if uso is not None else "ausente",
+    }
 
 
 async def close_genai_client() -> None:
@@ -393,9 +438,14 @@ class GeminiProvider:
         """Usa el cliente compartido (o uno inyectado en tests, sin red ni costo)."""
         self._client = client if client is not None else get_genai_client()
 
-    async def generate(self, *, prompt: str, params: InferenceParams) -> str:
+    async def generate(self, *, prompt: str, params: InferenceParams) -> GenerationResult:
         """
-        Ejecuta la generacion y devuelve el texto crudo; traduce los errores.
+        Ejecuta la generacion y devuelve el texto crudo mas el uso de tokens.
+
+        El texto crudo es el contrato historico; ``usage_metadata`` (conteo de
+        tokens) y ``model_version`` (instantanea del modelo devuelta por la API)
+        son ADITIVOS y opcionales: se leen de forma defensiva y quedan en ``None``
+        cuando la respuesta no los expone. No se altera el camino de costo cero.
 
         Raises:
             InferenceTimeoutError: la llamada supero `params.timeout` (transitorio).
@@ -425,7 +475,11 @@ class GeminiProvider:
             raise InferenceTerminalError(
                 f"falla terminal del proveedor ({type(exc).__name__})."
             ) from exc
-        return response.text.strip()
+        return GenerationResult(
+            text=response.text.strip(),
+            usage=_extraer_uso(response),
+            model_version=getattr(response, "model_version", None),
+        )
 
 
 
@@ -563,14 +617,16 @@ class GeminiClassifier(BaseClassifier):
 
         while attempt < max_attempts:
             attempt += 1
+            generacion: GenerationResult | None = None
             raw_response: str | None = None
 
             try:
                 # El proveedor (interfaz) ejecuta la llamada con su limite de latencia
                 # por intento y traduce los errores de su SDK a la taxonomia canonica.
-                raw_response = await self._provider.generate(
+                generacion = await self._provider.generate(
                     prompt=prompt, params=self._params
                 )
+                raw_response = generacion.text
 
                 # Validar la respuesta según el protocolo del Anexo H §H.3
                 validated = _validate_gemini_response(raw_response)
@@ -626,6 +682,9 @@ class GeminiClassifier(BaseClassifier):
                     # identifica proveedor y modelo SIN la clave de API ni el texto.
                     proveedor=self._provider_name,
                     modelo=self._model_name,
+                    # Uso y version del modelo (c-243, G3): aditivo y de solo lectura.
+                    modelo_solicitado=self._model_name,
+                    **_campos_uso(generacion),
                 )
                 return ClasificacionResult(
                     sector_predicho=validated["categoría"],

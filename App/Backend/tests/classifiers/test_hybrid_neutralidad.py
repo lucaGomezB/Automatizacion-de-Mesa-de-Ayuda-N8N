@@ -62,7 +62,9 @@ class _ProveedorDesdeEvidencia:
         self._por_descripcion = por_descripcion
         self.llamadas = 0
 
-    async def generate(self, *, prompt: str, params) -> str:
+    async def generate(self, *, prompt: str, params) -> "GenerationResult":
+        from app.classifiers.provider import GenerationResult
+
         self.llamadas += 1
         descripcion = prompt.split(_DELIMITADOR, 1)[1]
         pred = self._por_descripcion[descripcion]
@@ -70,8 +72,10 @@ class _ProveedorDesdeEvidencia:
             from app.classifiers.provider import InferenceTerminalError
 
             raise InferenceTerminalError("fallback simulado de la evidencia")
-        return json.dumps(
-            {"categoría": pred["sector_predicho"], "confianza": pred["confianza"]}
+        return GenerationResult(
+            text=json.dumps(
+                {"categoría": pred["sector_predicho"], "confianza": pred["confianza"]}
+            )
         )
 
 

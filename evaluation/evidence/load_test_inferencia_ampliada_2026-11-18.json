@@ -1,0 +1,395 @@
+{
+  "capas": {
+    "backend": {
+      "criterio": {
+        "control_escalado": {
+          "cumple": true,
+          "razon": 1.2963569763308822
+        },
+        "motivo": "",
+        "veredicto": "no sostenida",
+        "violaciones": [
+          {
+            "concurrencia": 1,
+            "condicion": "inferencia"
+          }
+        ]
+      },
+      "niveles": [
+        {
+          "completo": true,
+          "concurrencia": 1,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 90,
+              "gemini": 90
+            },
+            "escalados": 90,
+            "fraccion_escalada": 0.5,
+            "total": 180
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 90,
+              "p50_ms": 200.4095705005966,
+              "p95_ms": 431.0002786988661
+            },
+            "escalado": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 90,
+              "p50_ms": 1771.6401030011184,
+              "p95_ms": 2177.1601184993415
+            },
+            "razon_p95": 5.051412321755117
+          },
+          "media_ms": 1075.495346077868,
+          "ok": 180,
+          "p50_ms": 1007.5981635000062,
+          "p95_ms": 2089.27187750096,
+          "p99_ms": 2330.609408271069,
+          "repeticiones": [
+            {
+              "ok": 60,
+              "p95_ms": 2152.4172734991225,
+              "segundos": 62.9221593580005,
+              "throughput_rps": 0.9535591373879169,
+              "total": 60
+            },
+            {
+              "ok": 60,
+              "p95_ms": 2057.928833499227,
+              "segundos": 71.82887954099897,
+              "throughput_rps": 0.8353186125610215,
+              "total": 60
+            },
+            {
+              "ok": 60,
+              "p95_ms": 2024.8399803000211,
+              "segundos": 58.98476657300125,
+              "throughput_rps": 1.0172117901957325,
+              "total": 60
+            }
+          ],
+          "segundos": 193.73580547200072,
+          "tasa_error": 0.0,
+          "throughput_rps": 0.9291003258869158,
+          "tokens": {
+            "eventos": 90,
+            "eventos_con_uso": 90,
+            "model_version": "gemini-3.6-flash",
+            "modelo_solicitado": "gemini-3.6-flash",
+            "tokens_entrada": 68730,
+            "tokens_origen": "api",
+            "tokens_salida": 1648,
+            "tokens_total": 70378
+          },
+          "total": 180
+        },
+        {
+          "completo": true,
+          "concurrencia": 5,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 90,
+              "gemini": 90
+            },
+            "escalados": 90,
+            "fraccion_escalada": 0.5,
+            "total": 180
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 90,
+              "p50_ms": 429.3278784989525,
+              "p95_ms": 827.8329275501164
+            },
+            "escalado": {
+              "e2e_p50_ms": null,
+              "e2e_p95_ms": null,
+              "n": 90,
+              "p50_ms": 2132.600003499647,
+              "p95_ms": 3092.1130547496427
+            },
+            "razon_p95": 3.7351897367750553
+          },
+          "media_ms": 1344.5409825055424,
+          "ok": 180,
+          "p50_ms": 1221.9497955002225,
+          "p95_ms": 2708.4421738502897,
+          "p99_ms": 3968.1254585690695,
+          "repeticiones": [
+            {
+              "ok": 60,
+              "p95_ms": 3193.5955692493726,
+              "segundos": 18.252390300000116,
+              "throughput_rps": 3.2872406854021534,
+              "total": 60
+            },
+            {
+              "ok": 60,
+              "p95_ms": 2455.2332791011395,
+              "segundos": 17.35083049000059,
+              "throughput_rps": 3.4580477306016237,
+              "total": 60
+            },
+            {
+              "ok": 60,
+              "p95_ms": 2294.584155949542,
+              "segundos": 15.856346526999914,
+              "throughput_rps": 3.7839738112328103,
+              "total": 60
+            }
+          ],
+          "segundos": 51.45956731700062,
+          "tasa_error": 0.0,
+          "throughput_rps": 3.497891828183594,
+          "tokens": {
+            "eventos": 90,
+            "eventos_con_uso": 90,
+            "model_version": "gemini-3.6-flash",
+            "modelo_solicitado": "gemini-3.6-flash",
+            "tokens_entrada": 68730,
+            "tokens_origen": "api",
+            "tokens_salida": 1648,
+            "tokens_total": 70378
+          },
+          "total": 180
+        }
+      ]
+    },
+    "n8n": {
+      "criterio": {
+        "control_escalado": {
+          "cumple": true,
+          "razon": 2.5843718128475417
+        },
+        "motivo": "",
+        "veredicto": "no sostenida",
+        "violaciones": [
+          {
+            "concurrencia": 5,
+            "condicion": "p95_techo"
+          }
+        ]
+      },
+      "niveles": [
+        {
+          "completo": true,
+          "concurrencia": 1,
+          "e2e_n": 180,
+          "e2e_p50_ms": 1442.5,
+          "e2e_p95_ms": 2532.1500000000005,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 90,
+              "gemini": 90
+            },
+            "escalados": 90,
+            "fraccion_escalada": 0.5,
+            "total": 180
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": 584.0,
+              "e2e_p95_ms": 965.65,
+              "n": 90,
+              "p50_ms": 899.5991995006989,
+              "p95_ms": 1445.1516180497492
+            },
+            "escalado": {
+              "e2e_p50_ms": 2132.0,
+              "e2e_p95_ms": 2689.7499999999995,
+              "n": 90,
+              "p50_ms": 2484.8380859993995,
+              "p95_ms": 3389.98099474993
+            },
+            "razon_p95": 2.345761477487568
+          },
+          "media_ms": 1777.673060455537,
+          "ok": 180,
+          "p50_ms": 1757.8506339996238,
+          "p95_ms": 2919.7545292006002,
+          "p99_ms": 5033.398614100427,
+          "repeticiones": [
+            {
+              "ok": 60,
+              "p95_ms": 2956.867527450322,
+              "segundos": 108.68640209100158,
+              "throughput_rps": 0.552046979619059,
+              "total": 60
+            },
+            {
+              "ok": 60,
+              "p95_ms": 2806.400769950323,
+              "segundos": 100.46495792999849,
+              "throughput_rps": 0.5972231635413268,
+              "total": 60
+            },
+            {
+              "ok": 60,
+              "p95_ms": 2900.850026551325,
+              "segundos": 111.0439113199991,
+              "throughput_rps": 0.540326788625951,
+              "total": 60
+            }
+          ],
+          "segundos": 320.19527134099917,
+          "tasa_error": 0.0,
+          "throughput_rps": 0.562156958927432,
+          "tokens": {
+            "eventos": 90,
+            "eventos_con_uso": 90,
+            "model_version": "gemini-3.6-flash",
+            "modelo_solicitado": "gemini-3.6-flash",
+            "tokens_entrada": 68730,
+            "tokens_origen": "api",
+            "tokens_salida": 1675,
+            "tokens_total": 70405
+          },
+          "total": 180
+        },
+        {
+          "completo": true,
+          "concurrencia": 5,
+          "e2e_n": 180,
+          "e2e_p50_ms": 3031.0,
+          "e2e_p95_ms": 6274.000000000001,
+          "etapas": {
+            "conteo_por_etapa": {
+              "deterministic": 90,
+              "gemini": 90
+            },
+            "escalados": 90,
+            "fraccion_escalada": 0.5,
+            "total": 180
+          },
+          "inferencia": {
+            "deterministico": {
+              "e2e_p50_ms": 2239.5,
+              "e2e_p95_ms": 3214.1499999999996,
+              "n": 90,
+              "p50_ms": 3254.407146999256,
+              "p95_ms": 5024.679929149534
+            },
+            "escalado": {
+              "e2e_p50_ms": 4384.5,
+              "e2e_p95_ms": 6884.049999999999,
+              "n": 90,
+              "p50_ms": 5649.162570500266,
+              "p95_ms": 8531.865143999676
+            },
+            "razon_p95": 1.6979917655060988
+          },
+          "media_ms": 4521.753612950063,
+          "ok": 180,
+          "p50_ms": 4307.69550200057,
+          "p95_ms": 7545.731305699976,
+          "p99_ms": 8684.363136220074,
+          "repeticiones": [
+            {
+              "ok": 60,
+              "p95_ms": 6805.377480700644,
+              "segundos": 54.63963601700016,
+              "throughput_rps": 1.0981039474957714,
+              "total": 60
+            },
+            {
+              "ok": 60,
+              "p95_ms": 6805.758305349717,
+              "segundos": 52.54228046299977,
+              "throughput_rps": 1.1419374924590864,
+              "total": 60
+            },
+            {
+              "ok": 60,
+              "p95_ms": 8600.522792899756,
+              "segundos": 61.04022331399938,
+              "throughput_rps": 0.9829583959965493,
+              "total": 60
+            }
+          ],
+          "segundos": 168.2221397939993,
+          "tasa_error": 0.0,
+          "throughput_rps": 1.0700137343421239,
+          "tokens": {
+            "eventos": 90,
+            "eventos_con_uso": 90,
+            "model_version": "gemini-3.6-flash",
+            "modelo_solicitado": "gemini-3.6-flash",
+            "tokens_entrada": 68730,
+            "tokens_origen": "api",
+            "tokens_salida": 1677,
+            "tokens_total": 70407
+          },
+          "total": 180
+        }
+      ]
+    }
+  },
+  "commit": "d0592d3",
+  "constantes": {
+    "control_escalado_max": 20.0,
+    "mezcla_escalada_esperada": 0.5,
+    "niveles": [
+      1,
+      5
+    ],
+    "repeticiones": 3,
+    "solicitudes_por_nivel": 60,
+    "tasa_error_max": 0.0,
+    "techo_p95_ms": 5000.0,
+    "tolerancia_inferencia": 4.0,
+    "tolerancia_throughput": 0.1,
+    "tope_presupuesto_usd": 1.0
+  },
+  "corrida_id": "6ad5e32d",
+  "exclusiones": [
+    "correo: sondeo IMAP por minuto, no apto para inyeccion concurrente; la convergencia en POST /api/v1/incidentes/ es agnostica al canal",
+    "telefonia: canal pago (Twilio); no se invoca ni se mide"
+  ],
+  "fecha_utc": "2026-11-18T20:04:46Z",
+  "fixture_sha256": "88cab8788273ed9df21dad03b1a653c855e31c2fd3294ee94869098f1935e163",
+  "inferencia": {
+    "costo_usd": 0.23112,
+    "eventos": 360,
+    "eventos_con_uso": 360,
+    "gasto_origen": "tokens_calculado",
+    "model_version": "gemini-3.6-flash",
+    "modelo_solicitado": "gemini-3.6-flash",
+    "precio_escenario": "introductorio",
+    "precio_fuente": "precios de lista declarados por la tesis (seccion 8, consultados 2026-10-19); fuente unica evaluation/brazo_gemini_solo.py:PRECIOS_USD_POR_MILLON",
+    "precios_usd_por_millon": {
+      "estandar": {
+        "entrada": 1.5,
+        "salida": 7.5
+      },
+      "introductorio": {
+        "entrada": 0.75,
+        "salida": 3.75
+      }
+    },
+    "tokens_entrada": 274920,
+    "tokens_origen": "api",
+    "tokens_salida": 6648,
+    "tokens_total": 281568
+  },
+  "n8n_version": "2.11.2",
+  "perfil": "corpus (postgres-corpus, backend-corpus, n8n-corpus) con override de corrida paga acotada",
+  "prerregistro": {
+    "mezcla_escalada_esperada": 0.5,
+    "tolerancia_inferencia": 4.0,
+    "tope_presupuesto_usd": 1.25
+  },
+  "veredicto": "no sostenida"
+}
