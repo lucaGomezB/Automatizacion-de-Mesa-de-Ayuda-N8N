@@ -655,6 +655,7 @@ def correr_carga_inferencia(args):
         "fixture_sha256": lt.hash_fixture(args.fixture),
         "constantes": dict(
             CONSTANTES_INFERENCIA,
+            tope_presupuesto_usd=args.tope_usd,
             niveles=list(constantes["niveles"]),
             solicitudes_por_nivel=args.solicitudes,
             repeticiones=args.repeticiones,
