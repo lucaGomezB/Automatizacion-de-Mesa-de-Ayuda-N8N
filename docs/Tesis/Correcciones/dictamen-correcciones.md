@@ -6745,3 +6745,11 @@ La cifra que el tribunal informo para `v1.5.2` (cuerpo de aproximadamente 51.900
 #### Verificacion ejecutada
 
 `cotejar_cifras_respuestas.py` (pruebas: 28 en verde; corre sobre el documento y el extracto regenerado: ver el grupo 5); `verificar_matriz_trazabilidad.py` (0 fallas, incluidas las filas T3 y la reconciliacion); `verify_citations.py` (PASS). La recompilacion, los conteos y el cotejo final se registran al cerrar la entrega.
+
+## c-229: muestreo probabilistico del universo — DETENIDO (2026-11-18)
+
+Se detiene `c-229-muestreo-probabilistico-del-universo-de-incidentes` (0/44) y se conserva como trabajo futuro el protocolo, las compuertas K-01/K-02 y el estimador (Horvitz-Thompson, post-estratificacion, DEFF de Kish, bootstrap y control de sanidad con oraculo sintetico). No hay campana ni medicion.
+
+**Motivo.** No existe hoy un marco poblacional completo. Los activos versionados son subconjuntos de la misma muestra por conveniencia de 200 casos: el corpus congelado (`R001`-`R200`, sin fechas), los sidecars de corrida (200 / 118 / 81, con fechas de octubre) y los dumps de la base del prototipo (alrededor de 150 filas en 18 dias, filas de prototipo/campana, no intake de una mesa de ayuda real). La tesis ya declara que no se dispone de un marco poblacional y que `N = 2.646` es una proyeccion, no un universo medido. Por la regla de parada del change, no se sustituye por conveniencia ni se inventa un universo.
+
+**Reapertura.** Solo si el equipo opera el prototipo como su propia mesa de ayuda durante un periodo declarado y exporta la tabla `incidente` completa (`id`, `created_at`, `ingresado_en`, `persistido_en`, `sector_id`, `canal_origen_id`, `descripcion_pseudonimizada`), con control de completitud, SHA-256, acta K-01 y consentimiento K-02 (acta T2).

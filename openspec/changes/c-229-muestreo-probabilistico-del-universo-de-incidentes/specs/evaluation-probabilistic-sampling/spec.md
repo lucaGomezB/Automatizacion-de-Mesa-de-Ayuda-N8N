@@ -1,33 +1,44 @@
 ## Purpose
 
-Definir el muestreo probabilistico estratificado del universo de incidentes de la organizacion
-(marco, estratos, cuotas prefijadas por canal y sector, denominadores y reglas de decision), las
-compuertas de procedencia y etica/legal que deben cerrarse antes de cualquier computo sobre datos
-nuevos, y la estimacion ponderada referida al universo (Horvitz-Thompson / post-estratificacion)
-con su efecto de diseno, sin cambiar ningun valor canonico y sin usar evidencia retirada del
-ejemplar.
+Definir el muestreo probabilistico estratificado del universo de incidentes del entorno operativo
+del propio equipo (marco, estratos, cuotas prefijadas por canal y sector, denominadores y reglas de
+decision), las compuertas de procedencia y etica/legal que deben cerrarse antes de cualquier computo
+sobre datos nuevos, y la estimacion ponderada referida al universo (Horvitz-Thompson /
+post-estratificacion) con su efecto de diseno, sin cambiar ningun valor canonico y sin usar evidencia
+retirada del ejemplar.
 
 ## ADDED Requirements
 
 ### Requirement: PS-001 — Universo y marco muestral definidos
 
-El diseno SHALL definir el universo como la poblacion de incidentes informaticos registrados por la
-mesa de ayuda de la organizacion en un periodo declarado, con su tamano `N` confirmado contra el
-registro del periodo (el valor proyectado `N ≈ 2.646` del memo es solo punto de partida y, si
-difiere, se informan ambos). SHALL definir el marco muestral como el registro operativo de
-incidentes del periodo, con el procedimiento de inclusion verificable. El universo SHALL declararse
-con sus estratos: sector responsable, canal de origen y complejidad, cada uno con su definicion
-operacional, y con la regla de colapso de estratos escasos. Estratos, marco y regla de colapso
-SHALL registrarse ANTES de reunir la muestra en `docs/campana-medicion/protocolo-muestreo-probabilistico.md`.
-El diseno MUST NOT usar la composicion del corpus de 200 casos como la del universo ni como peso.
-El protocolo SHALL declarar que, para el canal telefonico, el insumo del clasificador es el texto
-registrado y no una transcripcion de audio.
+El diseno SHALL verificar o construir, como primer paso sustantivo, un marco poblacional real a partir
+de los registros de incidentes del **entorno operativo del propio equipo** (sistema de tickets / base
+de datos) en un periodo declarado. El marco SHALL ser enumerable por identificador, con probabilidad
+de inclusion conocida y mayor que cero, y SHALL documentarse con su completitud, sus campos
+disponibles y sus exclusiones. El universo SHALL definirse como la poblacion de incidentes del
+entorno operativo del propio equipo en ese periodo, con su tamano `N` confirmado contra el marco: el
+valor proyectado `N ≈ 2.646` del memo es solo punto de partida y, si difiere, se informan ambos, y no
+constituye un marco medido. Si no existe un marco completo (identificador y contenido clasificable
+para todo el periodo y los campos necesarios), la campana SHALL detenerse y el diseno SHALL declarar
+que el muestreo probabilistico no es posible; MUST NOT sustituirse por una muestra por conveniencia
+ni inventarse un universo. El universo SHALL declararse con sus estratos: sector responsable, canal de
+origen y complejidad, cada uno con su definicion operacional, y con la regla de colapso de estratos
+escasos. Marco, universo y regla de colapso SHALL registrarse ANTES de reunir la muestra en
+`docs/campana-medicion/protocolo-muestreo-probabilistico.md`. El diseno MUST NOT usar la composicion
+del corpus de 200 casos como la del universo ni como peso. El protocolo SHALL declarar que, para el
+canal telefonico, el insumo del clasificador es el texto registrado y no una transcripcion de audio.
 
-#### Scenario: Universo, marco y estratos declarados
+#### Scenario: Marco, universo y estratos declarados
 
 - **WHEN** se lee el protocolo de muestreo probabilistico
-- **THEN** figuran el universo con su periodo y su `N` confirmado, el marco con su procedimiento de inclusion, los estratos con su definicion operacional y la regla de colapso
+- **THEN** figuran el marco con su procedimiento de inclusion y su completitud, el universo con su periodo y su `N` confirmado contra el marco, los estratos con su definicion operacional y la regla de colapso
 - **AND** estan fijados antes de reunir la muestra
+
+#### Scenario: Marco incompleto: la campana se detiene
+
+- **WHEN** se verifica que no existe un marco completo para el periodo
+- **THEN** la campana se detiene y el diseno declara que el muestreo probabilistico no es posible
+- **AND** no se sustituye por una muestra por conveniencia ni se inventa un universo
 
 #### Scenario: Composicion del corpus no tomada como la del universo
 
@@ -66,11 +77,12 @@ director de la tesis (o por un tercero que los autores designen y el director ac
 contra la evidencia primaria: (a) una planilla cruda por etiquetador, exportada de la herramienta de
 etiquetado declarada en el protocolo, con las marcas temporales que la herramienta registra, nunca
 reconstruidas ni completadas a mano; (b) una constancia firmada por cada etiquetador y una constancia
-de la organizacion sobre la extraccion de los incidentes (fecha, periodo, sistema de origen y
-cantidad), con los originales en custodia del director fuera del repositorio y el SHA-256 de cada
-planilla cruda y de la exportacion versionado en el repositorio; (c) que los etiquetadores no son
-autores ni operadores medidos, con su vinculo con los autores declarado; y (d) que cada texto es un
-incidente real del registro de la organizacion, cubierto por la constancia de extraccion. Ningun texto
+del equipo sobre la exportacion del marco desde su propio registro (fecha, periodo, sistema de origen
+y cantidad), con los originales en custodia del director fuera del repositorio y el SHA-256 de cada
+planilla cruda y de la exportacion del marco versionado en el repositorio; (c) que los etiquetadores
+no son autores ni operadores medidos, con su vinculo con los autores declarado; y (d) que cada texto
+es un incidente real del registro del entorno operativo del propio equipo, cubierto por la constancia
+de exportacion del marco. Ningun texto
 redactado por los autores, ni generado o asistido por IA, MUST entrar como dato; la pseudonimizacion
 SHALL limitarse a reemplazar identificadores con un procedimiento declarado y su registro de cambios.
 Ninguna comprobacion estadistica de forma (duraciones, pausas, longitudes) MUST sustituir la
@@ -90,8 +102,8 @@ verificacion contra la evidencia primaria.
 
 #### Scenario: Ningun texto redactado o generado
 
-- **WHEN** se coteja la muestra con la constancia de extraccion
-- **THEN** cada texto corresponde a un incidente del registro de la organizacion
+- **WHEN** se coteja la muestra con la constancia de exportacion del marco
+- **THEN** cada texto corresponde a un incidente del registro del entorno operativo del propio equipo
 - **AND** ningun texto fue redactado por los autores ni generado o asistido por IA, y los cambios de pseudonimizacion constan en su registro
 
 #### Scenario: Forma estadistica no sustituye la evidencia
@@ -101,21 +113,23 @@ verificacion contra la evidencia primaria.
 
 ### Requirement: PS-004 — Compuerta etica y legal previa a la extraccion y al envio a terceros
 
-Antes de extraer incidentes, la organizacion SHALL haber otorgado una autorizacion institucional
-escrita con su alcance (fines, publicacion y transferencias), y el protocolo SHALL declarar la base de
-licitud conforme a la Ley 25.326 y el consentimiento que corresponda: consentimiento escrito previo
-de cada etiquetador y, segun la autorizacion, el tratamiento de los titulares de los datos de los
-incidentes. Antes de clasificar la muestra con el hibrido, los autores SHALL decidir por escrito si
-los textos se envian a la Gemini API u otro tercero, con que pseudonimizacion y con que instrumento de
-transferencia y base de licitud; sin esa decision, ningun texto MUST enviarse. Si se decide no
-enviarlos, la estimacion del hibrido sobre la muestra SHALL declararse no realizada. El repositorio
-publico SHALL contener solo material pseudonimizado y autorizado; el resto queda en custodia del
-director con su hash publicado.
+Antes de extraer incidentes, el protocolo SHALL declarar la base de licitud por regimen conforme a la
+Ley 25.326: el **regimen (a)** (incidentes reales del entorno operativo del propio equipo,
+pseudonimizados) se funda en el **consentimiento informado del grupo** (acta T2, articulo 5 inciso 1)
+y en la pseudonimizacion; el **regimen (b)** (reconstrucciones de tipos de incidente reales, sin datos
+personales) no requiere base de licitud. El consentimiento escrito previo de cada etiquetador SHALL
+obtenerse antes de etiquetar. No hay organizacion adoptante ni autorizacion institucional de terceros:
+el tratamiento se realiza en el entorno operativo del propio equipo y su marco. Antes de clasificar la
+muestra con el hibrido, los autores SHALL decidir por escrito si los textos se envian a la Gemini API
+u otro tercero, con que pseudonimizacion y con que instrumento de transferencia y base de licitud; sin
+esa decision, ningun texto MUST enviarse. Si se decide no enviarlos, la estimacion del hibrido sobre
+la muestra SHALL declararse no realizada. El repositorio publico SHALL contener solo material
+pseudonimizado y consentido; el resto queda en custodia del director con su hash publicado.
 
-#### Scenario: Autorizacion antes de extraer
+#### Scenario: Consentimiento del grupo antes de extraer
 
-- **WHEN** se solicita la exportacion del registro del periodo
-- **THEN** existe la autorizacion escrita de la organizacion con su alcance y la base de licitud declarada
+- **WHEN** se solicita la exportacion del marco del periodo
+- **THEN** existe el acta T2 con el consentimiento informado del grupo y la base de licitud por regimen declarada
 - **AND** cada etiquetador firmo su consentimiento antes de etiquetar
 
 #### Scenario: Envio a la Gemini API decidido antes de clasificar
@@ -127,7 +141,7 @@ director con su hash publicado.
 #### Scenario: Publicacion limitada
 
 - **WHEN** se versiona material de la muestra
-- **THEN** solo entra material pseudonimizado y cubierto por la autorizacion
+- **THEN** solo entra material pseudonimizado y consentido
 - **AND** el resto queda fuera del repositorio con su SHA-256 publicado
 
 ### Requirement: PS-005 — Referencia de la muestra por el protocolo de mayoria
@@ -156,8 +170,8 @@ y el registro MUST NOT contener nombres, correos ni legajos.
 Se SHALL denominar **corpus probabilistico acreditado** al conjunto de casos de la muestra
 probabilistica que cumple a la vez: seleccion conforme a PS-001 y PS-002; compuerta de procedencia
 (PS-003) cerrada con acta; compuerta etica y legal (PS-004) cerrada; y referencia construida por el
-protocolo de mayoria (PS-005, `evaluation-majority-reference`). El corpus SHALL versionarse (o, si la
-autorizacion no permite publicarlo, custodiarse con su SHA-256 publicado) con un manifiesto que
+protocolo de mayoria (PS-005, `evaluation-majority-reference`). El corpus SHALL versionarse (o, si el
+consentimiento del grupo no permite publicarlo, custodiarse con su SHA-256 publicado) con un manifiesto que
 declare, por caso, su estrato, su probabilidad de inclusion, su referencia y su `origen`, y la fecha
 del acta. Solo ese corpus MAY usarse como conjunto retenido de evaluacion por este change y por los
 changes que lo consumen; un conjunto al que le falte alguna condicion MUST NOT llamarse ni usarse
@@ -179,9 +193,9 @@ como corpus probabilistico acreditado.
 
 La estimacion de las metricas de clasificacion sobre el corpus probabilistico acreditado (PS-009) SHALL ponderarse por el inverso de la probabilidad de
 inclusion (Horvitz-Thompson) y, cuando se disponga de los totales del universo, por
-post-estratificacion a ellos. Las metricas ponderadas SHALL referirse al universo del periodo de la
-organizacion e informarse con un IC bootstrap estratificado sobre el universo completo, sin excluir
-casos (los `sin_mayoria` entran con su tratamiento declarado). La lectura sin ponderar SHALL
+post-estratificacion a ellos. Las metricas ponderadas SHALL referirse al universo del periodo del
+entorno operativo del propio equipo e informarse con un IC bootstrap estratificado sobre el universo
+completo, sin excluir casos (los `sin_mayoria` entran con su tratamiento declarado). La lectura sin ponderar SHALL
 informarse junto a la ponderada, rotulada, y MUST NOT presentarse como estimacion poblacional. La
 ponderacion SHALL declarar la procedencia de sus pesos.
 

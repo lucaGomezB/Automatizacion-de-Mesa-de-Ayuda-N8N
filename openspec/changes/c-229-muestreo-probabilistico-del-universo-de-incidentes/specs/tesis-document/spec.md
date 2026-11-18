@@ -3,28 +3,30 @@
 ### Requirement: Muestra probabilistica del universo incorporada solo en una version posterior a la defensa
 
 Este requisito SHALL aplicarse solo en una version de la tesis posterior a la defensa y solo si se
-cumplen las tres condiciones: la campana probabilistica se ejecuto, el acta de la compuerta de
-procedencia (PS-003) y la documentacion de la compuerta etica y legal (PS-004) de
-`evaluation-probabilistic-sampling` estan cerradas, y existe la estimacion de PS-006. Si alguna falta,
-la tesis MUST NOT mencionar el diseno mas alla de lo que ya fijan los requisitos de trabajo futuro y de
-remedio empirico condicional. Cumplidas las condiciones: `subsec:poblacion-muestra-corpus` SHALL
+cumplen cuatro condiciones: existe un marco completo verificado (PS-001), la campana probabilistica se
+ejecuto, el acta de la compuerta de procedencia (PS-003) y la documentacion de la compuerta etica y
+legal (PS-004) de `evaluation-probabilistic-sampling` estan cerradas, y existe la estimacion de PS-006.
+Si alguna falta, la tesis MUST NOT mencionar el diseno mas alla de lo que ya fijan los requisitos de
+trabajo futuro y de remedio empirico condicional. Cumplidas las condiciones: `subsec:poblacion-muestra-corpus` SHALL
 describir la muestra probabilistica como distinta del corpus de 200 casos, que SHALL seguir descrito
 como muestra por conveniencia; una subseccion nueva de `07-resultados.tex` (etiqueta propuesta
 `subsec:muestra-probabilistica`) SHALL informar la exactitud ponderada y la cruda rotuladas, el DEFF,
 el IC con su metodo, las cuotas alcanzadas y las clases declaradas no estimables; la quinta amenaza de
-`subsec:amenazas-validez` SHALL precisar que la estimacion se refiere al universo del periodo de esa
-organizacion y no a otras; `subsec:corpus-independiente` SHALL conservar los elementos que exige su
-requisito vigente y agregar una remision a la subseccion de resultados nueva; `11-aspectos-legales.tex`
-SHALL declarar la autorizacion institucional, la base de licitud, el consentimiento de los
-etiquetadores y, en `subsec:transferencia-internacional`, los textos de la muestra enviados a
-proveedores con su cantidad, o que no se enviaron. La tesis SHALL declarar que el diseno no eleva la
-exactitud del clasificador sino que hace valida la estimacion. El texto MUST NOT reintroducir cifras,
-alias de etiquetadores ni descripciones del corpus retirado del ejemplar, MUST NOT cambiar el valor
-de ninguna cifra canonica del corpus de 200 y MUST NOT introducir identificadores `c-NNN` en el cuerpo.
+`subsec:amenazas-validez` SHALL precisar que la estimacion se refiere al universo del periodo del
+entorno operativo del propio equipo y no a otras organizaciones; `subsec:corpus-independiente` SHALL
+conservar los elementos que exige su requisito vigente y agregar una remision a la subseccion de
+resultados nueva; `11-aspectos-legales.tex` SHALL declarar la base de licitud por regimen
+(consentimiento informado del grupo para el regimen (a); sin datos personales para el regimen (b)), el
+consentimiento de los etiquetadores y, en `subsec:transferencia-internacional`, los textos de la
+muestra enviados a proveedores con su cantidad, o que no se enviaron. La tesis SHALL declarar que el
+diseno no eleva la exactitud del clasificador sino que hace valida la estimacion. El texto MUST NOT
+reintroducir cifras, alias de etiquetadores ni descripciones del corpus retirado del ejemplar, MUST NOT
+cambiar el valor de ninguna cifra canonica del corpus de 200 y MUST NOT introducir identificadores
+`c-NNN` en el cuerpo.
 
-#### Scenario: Sin campana o sin compuertas, la tesis no cambia
+#### Scenario: Sin marco, campana o compuertas, la tesis no cambia
 
-- **WHEN** falta la campana, el acta de procedencia o la documentacion etica y legal
+- **WHEN** falta el marco completo, la campana, el acta de procedencia o la documentacion etica y legal
 - **THEN** ninguna seccion de la tesis describe la muestra probabilistica como realizada
 - **AND** solo figuran las menciones de trabajo futuro y remedio condicional vigentes
 
@@ -34,10 +36,10 @@ de ninguna cifra canonica del corpus de 200 y MUST NOT introducir identificadore
 - **THEN** `subsec:muestra-probabilistica` informa exactitud ponderada y cruda rotuladas, DEFF, IC, cuotas alcanzadas y clases no estimables
 - **AND** el corpus de 200 sigue descrito como muestra por conveniencia con sus cifras canonicas intactas
 
-#### Scenario: Transferencias y autorizacion declaradas
+#### Scenario: Transferencias y consentimiento declarados
 
 - **WHEN** se lee el capitulo 7 de esa version
-- **THEN** figuran la autorizacion institucional, la base de licitud, el consentimiento de los etiquetadores y los textos enviados a proveedores con su cantidad, o la declaracion de que no se enviaron
+- **THEN** figuran la base de licitud por regimen, el consentimiento del grupo y de los etiquetadores, y los textos enviados a proveedores con su cantidad, o la declaracion de que no se enviaron
 
 #### Scenario: Sin evidencia retirada
 
@@ -48,12 +50,12 @@ de ninguna cifra canonica del corpus de 200 y MUST NOT introducir identificadore
 
 ### Requirement: Validez externa declarada en las conclusiones con su remedio empirico
 
-Las conclusiones SHALL declarar la amenaza a la validez externa con la fuerza que el diseno permite: la muestra es **no probabilistica por conveniencia** (los 200 casos son los incidentes cronometrados), proviene de **una sola organizacion** (servicios, provincia de Mendoza) y el universo es **proyectado, no medido** (`2.646 = 42 x 63`), de modo que las cifras valen para este corpus y no se extrapolan al universo de incidentes. La declaracion SHALL senalar que el remedio empirico es el **diseno de muestreo probabilistico del universo** (change `c-229`). Mientras ese diseno no se haya ejecutado con sus compuertas de procedencia y etica/legal cerradas, SHALL presentarlo como **condicional y no ejecutado** y MUST NOT afirmar que la validez externa ya fue establecida. En una version posterior a la defensa con la campana ejecutada y las compuertas cerradas, SHALL presentarlo como ejecutado, con remision a sus resultados, y SHALL acotar su alcance al universo del periodo de esa organizacion: MUST NOT afirmar validez externa respecto de otras organizaciones, sectores o regiones. La correccion MUST NOT cambiar el valor de ningun numero canonico.
+Las conclusiones SHALL declarar la amenaza a la validez externa con la fuerza que el diseno permite: la muestra es **no probabilistica por conveniencia** (los 200 casos son los incidentes cronometrados), proviene de **un unico entorno operativo** (sector servicios, provincia de Mendoza; presentado como escenario de referencia narrativo, NO como una organizacion real) y el universo es **proyectado, no medido** (`2.646 = 42 x 63`), de modo que las cifras valen para este corpus y no se extrapolan al universo de incidentes. La declaracion SHALL senalar que el remedio empirico es el **diseno de muestreo probabilistico del universo** (change `c-229`), SHALL presentarlo como **condicional y no ejecutado** y MUST NOT afirmar que la validez externa ya fue establecida. En una version posterior a la defensa con el marco completo verificado y la campana ejecutada con sus compuertas de procedencia y etica/legal cerradas, SHALL presentarlo como ejecutado, con remision a sus resultados, y SHALL acotar su alcance al universo del periodo del entorno operativo del propio equipo: MUST NOT afirmar validez externa respecto de otras organizaciones, sectores o regiones. La correccion MUST NOT cambiar el valor de ningun numero canonico, salvo lo que los autores ratifiquen sobre la proyeccion del universo.
 
 #### Scenario: Fuerza correcta en la conclusion
 
 - **WHEN** se leen las conclusiones (`09-conclusiones.tex`)
-- **THEN** el texto declara la muestra no probabilistica por conveniencia, la organizacion unica y el universo proyectado (`2.646 = 42 x 63`)
+- **THEN** el texto declara la muestra no probabilistica por conveniencia, el unico entorno operativo (escenario de referencia narrativo) y el universo proyectado (`2.646 = 42 x 63`)
 - **AND** las cifras se declaran validas para este corpus y no extrapolables al universo
 
 #### Scenario: Remedio empirico declarado como condicional
@@ -64,8 +66,8 @@ Las conclusiones SHALL declarar la amenaza a la validez externa con la fuerza qu
 
 #### Scenario: Remedio ejecutado con alcance acotado
 
-- **WHEN** se lee una version posterior a la defensa con la campana ejecutada y las compuertas cerradas
-- **THEN** la declaracion remite a los resultados de la muestra probabilistica y acota su alcance al universo del periodo de esa organizacion
+- **WHEN** se lee una version posterior a la defensa con el marco completo verificado y la campana ejecutada con las compuertas cerradas
+- **THEN** la declaracion remite a los resultados de la muestra probabilistica y acota su alcance al universo del periodo del entorno operativo del propio equipo
 - **AND** no afirma validez externa respecto de otras organizaciones, sectores o regiones
 
 #### Scenario: Valores canonicos intactos
@@ -73,6 +75,12 @@ Las conclusiones SHALL declarar la amenaza a la validez externa con la fuerza qu
 - **WHEN** se compara el `.tex` antes y despues del change
 - **THEN** ningun valor canonico cambia de valor
 - **AND** las unicas diferencias son palabras y remisiones de procedencia
+
+#### Scenario: Sin organizacion real en la conclusion
+
+- **WHEN** se lee la declaracion de validez externa de las conclusiones
+- **THEN** no se presenta el entorno como una organizacion real ni como una organizacion adoptante
+- **AND** la limitacion se declara sobre el escenario de referencia narrativo
 
 ### Requirement: Seleccion de los casos por conveniencia declarada
 

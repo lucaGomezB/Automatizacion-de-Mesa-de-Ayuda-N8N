@@ -9,16 +9,35 @@ Este change se propuso el 15/11/2026, un dia antes de la devolucion de tercera i
 - **Que cambia.** (1) La verificacion de la herramienta ya no depende de datos retirados: oraculo sintetico rotulado como tal y control de sanidad sobre el corpus de 200 (post-estratificar con su propia composicion reproduce la exactitud cruda `147/200` y da DEFF = 1). (2) La campana nueva queda sujeta a dos compuertas previas a cualquier computo: **procedencia** (K-01) y **etica y legal** (K-02), incluida la brecha que la version original no cubria: clasificar los casos nuevos con el hibrido envia su texto a la Gemini API. (3) El etiquetado sigue el protocolo de referencia por mayoria de `c-230`, sin arbitro unico. (4) La composicion por sector del corpus de 200, verificada (`85 / 67 / 31 / 16 / 1`), se usa solo como senal de planificacion para fijar cuotas minimas y declarar de antemano que clases no son estimables. (5) Se registra el trabajo con asistentes de IA en el inventario de `c-237` (A-03).
 - **Alcance respecto de la entrega.** Este change **no modifica el ejemplar que se defiende**. Se ejecuta despues del cierre de la entrega (`c-235` → `c-236` → `c-237` → `c-238` → `c-239`), primero del grupo `c-229` → `c-230` → `c-228` → `c-232`. Hasta entonces la tesis solo lo menciona como trabajo futuro, en los terminos que ya fijan `c-235` (requisito de trabajo futuro con procedencia acreditable en `subsec:corpus-independiente`) y `c-234` (remedio empirico condicional en `subsec:aportes-generalizacion` y `subsec:estudios-replicacion`). Toda prosa de este change se condiciona a una version posterior a la defensa, con la campana ejecutada y las compuertas cerradas. Si los autores quieren hacer algo antes de la defensa, es una Open Question (`design.md`, OQ5), no el plan por defecto.
 
+## Adaptacion al reencuadre del origen y la licitud del corpus (18/11/2026)
+
+El reencuadre de `c-242-reencuadrar-el-origen-y-la-licitud-del-corpus` establecio que la "organizacion" del estudio es un **dispositivo narrativo**, no un adoptante real: no existe organizacion adoptante ni carta de autorizacion, y el corpus es una mezcla de dos regimenes. Este change se re-scopea en consecuencia, sin haberse aplicado (0 tareas):
+
+- **Premisa que cae.** El estudio de muestreo corre sobre el **entorno operativo del propio equipo**, no sobre una organizacion adoptante. Se elimina toda dependencia de una organizacion real y de su autorizacion escrita. La poblacion y el marco son el universo real de incidentes del entorno del equipo; `N = 2.646 = 42 x 63` es una **proyeccion**, no un marco medido.
+- **Marco, nuevo primer paso sustantivo.** Antes de cualquier seleccion, el change SHALL verificar o construir un marco poblacional real a partir de los registros de incidentes del equipo (sistema de tickets / base de datos) del periodo, y documentar su completitud, campos y exclusiones. Si no existe un marco completo, la campana **SE DETIENE**: el change declara que el muestreo probabilistico no es posible; no se sustituye por una muestra por conveniencia ni se inventa un universo.
+- **Compuertas.** K-01 (procedencia: exportacion cruda, SHA-256 y verificacion del director) se mantiene. K-02 (etica y legal) se adapta: el consentimiento informado del grupo (acta T2, Ley 25.326 articulo 5 inciso 1) cubre el regimen (a); el regimen (b) no contiene datos personales; la decision explicita sobre la Gemini API y la pseudonimizacion se mantienen. Se retira la "autorizacion de la organizacion" de la compuerta.
+- **Estimador.** Sin cambios: Horvitz-Thompson, post-estratificacion, DEFF de Kish, bootstrap y control de sanidad con oraculo sintetico.
+- **Dependencias.** Despues de `c-242` y despues del cierre de la entrega (`c-239`, v1.6.0). El orden `c-229` -> `c-230` -> `c-228` -> `c-232` se mantiene; la referencia por mayoria de `c-230` sigue siendo la referencia de etiquetado.
+
+## Estado: DETENIDO (18/11/2026)
+
+El change queda **detenido** y se conserva como trabajo futuro: el protocolo, las compuertas (K-01/K-02) y el estimador (Horvitz-Thompson, post-estratificacion, DEFF de Kish, bootstrap y control de sanidad con oraculo sintetico) quedan documentados, sin campana ni medicion. Las tareas quedan sin marcar.
+
+**Motivo.** No existe hoy un marco poblacional completo. Los activos versionados son subconjuntos de la misma muestra por conveniencia de 200 casos: el corpus congelado (`R001`-`R200`, sin fechas), sus sidecars de corrida (200 / 118 / 81, con fechas de octubre), y los dumps de la base del prototipo (alrededor de 150 filas en 18 dias, filas de prototipo/campana, no intake de una mesa de ayuda real). La tesis ya declara que no se dispone de un marco poblacional y que `N = 2.646` es una proyeccion, no un universo medido. Sin marco completo, el muestreo probabilistico no es posible y no se sustituye por conveniencia ni se inventa un universo.
+
+**Reapertura.** Solo si el equipo opera el prototipo como su propia mesa de ayuda durante un periodo declarado y exporta la tabla `incidente` completa (`id`, `created_at`, `ingresado_en`, `persistido_en`, `sector_id`, `canal_origen_id`, `descripcion_pseudonimizada`), con control de completitud, SHA-256, acta K-01 y consentimiento K-02 (acta T2). Hasta entonces, el change no se aplica.
+
 ## Why
 
-La amenaza de sesgo de seleccion (quinta amenaza de `subsec:amenazas-validez`, `04-marco-metodologico.tex`) declara que los 200 casos **no son una muestra probabilistica**: son los incidentes cronometrados en la campana manual, una muestra por conveniencia de una sola organizacion. La distribucion del universo por sector **no esta disponible** (memo, linea 376) y el margen de error del `6,66 %` presupone un muestreo aleatorio que no se realizo (`subsec:poblacion-muestra-corpus`). Las conclusiones (`subsec:aportes-generalizacion`, agregado por `c-234`) declaran que el remedio empirico es un diseno de muestreo probabilistico del universo, **condicional y no ejecutado**.
+La amenaza de sesgo de seleccion (quinta amenaza de `subsec:amenazas-validez`, `04-marco-metodologico.tex`) declara que los 200 casos **no son una muestra probabilistica**: son los incidentes cronometrados en la campana manual, una muestra por conveniencia. La distribucion del universo por sector **no esta disponible** (memo, linea 376) y el margen de error del `6,66 %` presupone un muestreo aleatorio que no se realizo (`subsec:poblacion-muestra-corpus`). Las conclusiones (`subsec:aportes-generalizacion`, agregado por `c-234`) declaran que el remedio empirico es un diseno de muestreo probabilistico del universo, **condicional y no ejecutado**.
 
-Este change convierte esa remision en un diseno reproducible y, si la organizacion coopera, en una medicion: define el universo y su marco, fija un muestreo estratificado con cuotas prefijadas por canal y por sector, y entrega la maquinaria de estimacion ponderada con su efecto de diseno. La devolucion de tercera instancia no lo exige; el criterio del tribunal es que la evidencia nueva solo vale si su procedencia puede acreditarse. Por eso las dos compuertas son condicion de todo computo sobre datos nuevos. El diseno **no eleva la exactitud del clasificador**: hace valida la estimacion.
+Este change convierte esa remision en un diseno reproducible y, si el entorno operativo del equipo aporta un marco completo, en una medicion: verifica o construye el marco, define el universo, fija un muestreo estratificado con cuotas prefijadas por canal y por sector, y entrega la maquinaria de estimacion ponderada con su efecto de diseno. La devolucion de tercera instancia no lo exige; el criterio del tribunal es que la evidencia nueva solo vale si su procedencia puede acreditarse. Por eso las dos compuertas son condicion de todo computo sobre datos nuevos, y sin un marco completo no hay muestreo probabilistico. El diseno **no eleva la exactitud del clasificador**: hace valida la estimacion.
 
 ## What Changes
 
 | Bloque | Que cambia | Gobernanza |
 |---|---|---|
+| **A0. Marco poblacional** | Verificar o construir un marco real a partir de los registros de incidentes del entorno operativo del propio equipo (sistema de tickets / base de datos) del periodo: completitud, campos y exclusiones. Sin marco completo, la campana se detiene y se declara que el muestreo probabilistico no es posible. | **ALTA** |
 | **A. Compuertas** | Compuerta de procedencia (K-01) y compuerta etica y legal (K-02), cerradas por el director (o un tercero) contra la evidencia primaria antes de extraer, enviar a terceros o computar. Incluye la decision explicita sobre el envio de los textos a la Gemini API. | **ALTA** |
 | **B. Diseno muestral** | Protocolo nuevo `docs/campana-medicion/protocolo-muestreo-probabilistico.md`: universo, marco, estratos (sector, canal, complejidad), cuotas prefijadas con minimos por sector, clases no estimables declaradas de antemano, denominadores y reglas de decision, y remision al protocolo de referencia de `c-230`. | **ALTA** |
 | **C. Herramienta de estimacion** | Script offline `evaluation/data/campana/analisis/estimador_muestreo_probabilistico_c229.py` (TDD estricto): pesos de Horvitz-Thompson y post-estratificacion, exactitud ponderada, DEFF de Kish, IC bootstrap sobre el universo completo. Verificacion con oraculo sintetico rotulado y control de sanidad sobre el corpus de 200. | MEDIA |
@@ -33,6 +52,7 @@ Este change convierte esa remision en un diseno reproducible y, si la organizaci
 - No afirma que el diseno suba la exactitud del clasificador.
 - No toca `App/`, `n8n/`, el clasificador, el corpus de 200 ni sus predicciones.
 - No ejecuta llamadas a Gemini ni trabajo de campo mientras alguna compuerta este abierta.
+- No sustituye un muestreo probabilistico por una muestra por conveniencia ni inventa un universo si falta un marco completo.
 
 ## Capabilities
 
@@ -52,7 +72,7 @@ Este change convierte esa remision en un diseno reproducible y, si la organizaci
 | `docs/campana-medicion/protocolo-muestreo-probabilistico.md` | Nuevo | Diseno, cuotas, compuertas y remision al protocolo de `c-230` |
 | `docs/campana-medicion/compuertas-c229.md` (nombre a confirmar) | Nuevo | Lista de verificacion de las compuertas y acta del director, sin datos personales |
 | `evaluation/data/campana/analisis/` | Nuevo | Script TDD, prueba, fixture sintetico, salidas y manifiesto SHA-256 |
-| `evaluation/data/campana/probabilistica/` (nombre a confirmar) | Nuevo, condicionado | Muestra pseudonimizada autorizada, hashes de planillas crudas, predicciones |
+| `evaluation/data/campana/probabilistica/` (nombre a confirmar) | Nuevo, condicionado | Muestra pseudonimizada consentida, hashes de planillas crudas, predicciones |
 | `docs/Tesis/Correcciones/numeros-canonicos.md` | Aditivo | Seccion reservada `3.40` |
 | `docs/Tesis/Correcciones/dictamen-correcciones.md` | Aditivo | Entrada de trazabilidad |
 | `docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md` (de `c-237`) | Aditivo | Registro del trabajo con asistentes de IA (A-03) |
@@ -63,26 +83,27 @@ Este change convierte esa remision en un diseno reproducible y, si la organizaci
 | Riesgo | Prob. | Mitigacion |
 |---|---|---|
 | Repetir el problema de K-01 (evidencia no acreditable) | Media | Compuerta de procedencia previa a todo computo, verificada por el director contra la evidencia primaria; ninguna prueba estadistica de forma la sustituye |
-| Usar datos de la organizacion o enviarlos a un tercero sin base legal (K-02) | Media | Compuerta etica y legal: autorizacion escrita antes de extraer; decision explicita sobre la Gemini API antes de clasificar; solo material autorizado y pseudonimizado en el repo publico |
+| Usar datos personales del regimen (a) o enviarlos a un tercero sin base legal (K-02) | Media | Compuerta etica y legal: consentimiento informado del grupo (Ley 25.326 articulo 5 inciso 1) para el regimen (a); decision explicita sobre la Gemini API antes de clasificar; solo material pseudonimizado en el repositorio publico |
 | Que el diseno se lea como medicion realizada | Alta | Rotulo `condicional` hasta que exista la muestra; prosa solo en version posterior a la defensa |
 | Clases raras no estimables (`Bases de Datos`) | Alta | Cuotas minimas y clases no estimables declaradas antes de reunir la muestra |
-| La organizacion no coopera | Media | El change queda en diseno y herramienta; la campana no se ejecuta y no se sustituye por muestreo de conveniencia |
+| El marco del entorno operativo del equipo es incompleto | Alta | El change detiene la campana y declara que el muestreo probabilistico no es posible; no se sustituye por muestreo de conveniencia ni se inventa el universo |
 | Desfase de anclas `archivo:linea` por `c-235` | Alta | Se citan etiquetas LaTeX; las lineas se repuntan por contenido al aplicar |
 
 ## Rollback Plan
 
-`git revert` del commit del change: protocolo, script y salidas son aditivos; la seccion `3.40` se retira sin tocar las demas; la prosa (si se llego a escribir en una version posterior) se revierte por archivo. Si se versionaron datos de la muestra y la autorizacion se revoca, se retiran del arbol en un commit separado y se declara en el registro de correcciones.
+`git revert` del commit del change: protocolo, script y salidas son aditivos; la seccion `3.40` se retira sin tocar las demas; la prosa (si se llego a escribir en una version posterior) se revierte por archivo. Si se versionaron datos de la muestra y el consentimiento del grupo se revoca, se retiran del arbol en un commit separado y se declara en el registro de correcciones.
 
 ## Dependencies
 
-- Despues del cierre de la entrega (`c-239`). Primero del grupo `c-229` → `c-230` → `c-228` → `c-232`.
-- Bloqueada por datos externos: cooperacion y autorizacion escrita de la organizacion; constancia de extraccion.
+- Despues de `c-242` (reencuadre del origen y la licitud) y despues del cierre de la entrega (`c-239`, v1.6.0). Primero del grupo `c-229` → `c-230` → `c-228` → `c-232`.
+- Bloqueada por el entorno operativo del propio equipo: disponibilidad y completitud de los registros de incidentes del periodo (sistema de tickets / base de datos). Sin marco completo, la campana no se ejecuta.
 - **Dependencia cruzada con `c-230`:** el etiquetado y la referencia de la muestra los define y construye `c-230` (funciones puras y protocolo); la estimacion sobre datos reales de este change espera esa referencia (ver `design.md`, D8).
 - `c-237`: el inventario de uso de asistentes de IA debe existir para la tarea de A-03.
 - Consumidores aguas abajo: `c-228` y `c-232` (los adapta otro agente).
 
 ## Success Criteria
 
+- [ ] El marco poblacional se verifica o construye con su completitud, campos y exclusiones documentados; si no existe, el change declara que el muestreo probabilistico no es posible y no ejecuta la campana.
 - [ ] El protocolo define universo, marco, estratos, cuotas con minimos por sector, clases no estimables, denominadores, reglas de decision y la remision al protocolo de referencia de `c-230`; ningun valor se presenta como medido.
 - [ ] Las dos compuertas tienen acta del director (o tercero) con fecha, cerrada antes de extraer, enviar o computar; sin acta, la campana no se ejecuta.
 - [ ] El script es determinista, de solo lectura, sin red; reproduce el oraculo sintetico y el control de sanidad (`147/200`, `0,7350`, DEFF = 1) y no lee ningun artefacto retirado.
