@@ -3231,6 +3231,76 @@ aditiva y no incluye ninguna cifra de capacidad nueva.
 **Notas de remisión (aditivas).** La Sección `3.29` recibe una nota hacia esta sección, sin reescribir
 su texto. La subsección `subsec:latencia-con-inferencia` del cuerpo toma sus cifras de esta sección.
 
+### 3.48 Sensibilidad del balance al universo asumido: valores de referencia de `B_r` para `N` (c-244)
+
+Sección **aditiva**: no renumera ni modifica ninguna sección `3.1` a `3.47`. Registra, como valores
+**derivados** y en estado `condicional`, el balance neto trimestral `B_r` para tres universos de
+referencia (`N = 1.000`, `5.000` y `10.000` incidentes por trimestre) que la subsección
+`subsec:balance-neto` de `08-discusion.tex` cita en una sola oración. Cierra el follow-up OQ-05 de
+c-242 (la recta `B_r(N)`). Es aritmética derivada: no hay datos nuevos, ni remuestreo, ni llamadas
+pagas, y no cambia ninguna cifra canónica.
+
+**Linealidad e independencia de `N`.** El corchete `Δt − rho × r − (e_aut − e_man) × c` de la fórmula
+`B_r = (N/3.600) × [Δt − rho × r − (e_aut − e_man) × c]` es constante (`25,4688` s), de modo que
+`B_r(N) = (N/3.600) × 25,4688` es una recta por el origen: **`B_r` escala de forma lineal con `N`**.
+La exactitud mínima de equilibrio `a*_r = 43,1 %` y el costo de equilibrio `c* = 898,8` s **no
+dependen de `N`**, porque ninguna de sus fórmulas contiene `N`. `N` es una **premisa del escenario
+narrativo** (`42 × 63` incidentes por trimestre, Sección `3.46` (a)), **no un universo medido**: no
+proviene de un censo ni de una medición de demanda. Los tres valores de esta sección **no son
+canónicos** y no reemplazan la lectura central `B_r = +18,7` de la Sección `3.46`, que conserva su
+valor y su estado.
+
+*Numeración.* Al aplicar c-244 el memo terminaba en la Sección `3.47`; esta es la `3.48`, la primera
+libre (releída al aplicar, 2026-11-18).
+
+Fuente del corchete y de los insumos: `evaluation/data/campana/analisis/analisis_balance_neto_c236.json`
+(Sección `3.46`), generado por el script de solo lectura
+`evaluation/data/campana/analisis/analisis_balance_neto_c236.py`. Las tres filas se derivan del mismo
+corchete multiplicado por `N/3.600`; no hay insumo propio por fila. Comando de recálculo (desde la raíz
+del repositorio; solo lectura, sin red):
+
+```bash
+python3 - <<'PY'
+import json
+d = json.load(open("evaluation/data/campana/analisis/analisis_balance_neto_c236.json"))
+i = d["insumos"]
+corchete = i["delta_t_s"] - i["rho"] * i["r_s"] - (i["e_aut"] - i["e_man"]) * i["c_s"]
+print("corchete =", round(corchete, 4))
+for n in (1000, 5000, 10000):
+    print(n, round(n / 3600 * corchete, 4))
+PY
+```
+
+Salida esperada: `corchete = 25.4688`, `1000 7.0747`, `5000 35.3733`, `10000 70.7466`.
+
+**(a) Tres valores de referencia (`condicional`).** La tesis redondea a una decimal; la derivación
+conserva cuatro.
+
+| `N` (incidentes por trimestre) | `B_r` (h-persona por trimestre) | Derivación | Procedencia | Estado |
+|---|---|---|---|---|
+| `1.000` | `+7,1` | `(1.000/3.600) × 25,4688 = 7,0747` | corchete `25,4688` s; generador `analisis_balance_neto_c236.py` | `condicional` |
+| `5.000` | `+35,4` | `(5.000/3.600) × 25,4688 = 35,3733` | idem | `condicional` |
+| `10.000` | `+70,7` | `(10.000/3.600) × 25,4688 = 70,7466` | idem | `condicional` |
+
+**(b) Cantidades independientes de `N`.** `a*_r = 1 − e_man − (Δt − rho × r)/c = 43,1 %` y
+`c* = (Δt − rho × r)/(e_aut − e_man) = 898,8` s (Sección `3.46` (c) y (e)). Ninguna de las dos contiene
+`N`: cambiar el universo no altera la exactitud de equilibrio ni el costo de equilibrio, solo escala
+el balance.
+
+**(c) Límites y redondeo.** Los tres valores son producto de un corchete fijo por un `N` asumido, no
+estimaciones: no se informan intervalos ni se les atribuye variabilidad muestral. Heredan los
+supuestos de la lectura central (cota superior respecto del tramo de reanudación no medido, cota
+inferior del costo) y no se extrapolan a un universo distinto del que los origina. El `N = 2.646` del
+escenario narrativo y su `B_r = +18,7` siguen siendo la lectura central de la Sección `3.46`.
+
+**(d) Valores previos intactos.** Ningún valor ni estado de las secciones `3.1` a `3.47` cambia; el
+balance central `+18,7` conserva su valor y su estado (`vigente como cota superior`), y la cifra
+`+18,7` del cuerpo permanece idéntica.
+
+**Remisión al cuerpo.** La oración de sensibilidad de `subsec:balance-neto` (`08-discusion.tex`) cita
+los tres valores de esta sección y remite al anexo de números canónicos
+(`sec:anexo-numeros-canonicos`).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con

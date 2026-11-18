@@ -6797,3 +6797,19 @@ Se detiene `c-229-muestreo-probabilistico-del-universo-de-incidentes` (0/44) y s
 **Libro mayor de páginas y palabras.** Método declarado: `B` = `wc -w` crudo de los fuentes `01` a `11`; `C` = páginas del PDF. `B` (before, árbol de trabajo sobre c-242 sin c-243): 42.834 palabras; `B` (after, con c-243): 44.048 (+1.214; +2,8 %). `C` (before): 151 páginas; `C` (after): 155 (+4; +2,6 %). La variación se atribuye a la subsección nueva `subsec:latencia-con-inferencia` y a las correcciones de remisión: `07-resultados.tex` +1.029 palabras, `08-discusion.tex` +73, `04-marco-metodologico.tex` +79, `09-conclusiones.tex` +33. Compilación: XeLaTeX/latexmk, 155 páginas, 0 errores fatales, 0 referencias indefinidas, 0 citas indefinidas, 0 etiquetas duplicadas, 8 `Overfull \hbox` (máximo 6,9 pt), ninguno originado en `tab:carga-inferencia`.
 
 **Compuertas.** G1 (veredicto del backend como violación relativa, no saturación) resuelta; G2 (opción A) resuelta; G3 (`gemini-3.6-flash`; 274920 de entrada / 6648 de salida / 281568 totales; USD 0,23112; `gasto_origen = tokens_calculado`) resuelta; G4 (release `v1.6.1`) resuelta. Release pendiente de autorización expresa; sin commit, push ni tag en esta fase.
+
+## c-244: declarar la sensibilidad del balance al universo — APLICADO (2026-11-18)
+
+**Change.** `c-244-declarar-la-sensibilidad-del-balance-al-universo`.
+
+**Motivo.** Cierre del follow-up OQ-05 de `c-242` (opción B: la recta `B_r(N)`). El texto aplicado por `c-242` conserva `N = 2.646` como premisa/proyección del escenario narrativo, pero no declaraba cómo se mueve el balance al cambiar el universo. Una oración de sensibilidad lo explicita, sin tabla en el cuerpo y sin cambiar ninguna cifra canónica.
+
+**Archivos afectados.** `08-discusion.tex` (`subsec:balance-neto`, una oración nueva) y `docs/Tesis/Correcciones/numeros-canonicos.md` (sección aditiva `3.48`).
+
+**Oración insertada (L82, tras el párrafo que fija `N = 2.646` y antes de `\begin{table}`).** El balance `B_r` escala de forma lineal con `N`; a modo de referencia, con `N = 1.000`, `5.000` y `10.000` la cota superior condicional sería de `+7,1`, `+35,4` y `+70,7` horas-persona por trimestre; `a*_r` y `c*` no dependen de `N`; `N` permanece como premisa del escenario narrativo, no como universo medido. Una sola oración (58 palabras).
+
+**Memo `3.48`.** Primer número libre (al aplicar, `3.47` ya existía por c-243); aditiva, sin renumerar ni alterar `3.1`-`3.47`. Registra los tres valores con procedencia (corchete `25,4688` s; generador `evaluation/data/campana/analisis/analisis_balance_neto_c236.py`), comando de recálculo y estado `condicional`; declara la linealidad, la independencia de `a*_r` y `c*`, y `N` como premisa. No presenta los valores como canónicos.
+
+**Verificación.** ANTES/DESPUÉS por `rg`: la oración no existía y ahora figura en `08-discusion.tex:82`; la sección `3.48` no existía y ahora figura en `numeros-canonicos.md:3234`. Multiconjunto de cifras de `08-discusion.tex`: 6 tokens agregados, 0 eliminados; `+18,7` y todos los valores previos intactos. `pytest docs/Tesis/Correcciones "docs/Tesis/v10 (IA)"`: 488 passed. `verify_citations.py`: PASS. Recompilación en copia temporal: 155 páginas, 0 errores fatales, 0 referencias/citas indefinidas, 0 etiquetas duplicadas (la oración no cambia el recuento de páginas). `openspec validate --all --strict`: 92/0.
+
+**Alcance.** No modifica resultados, cifras canónicas, tablas, `App/`, `n8n/`, `evaluation/` ni `scripts/load_test/`. Release pendiente (tareas 4.3-4.5); sin commit, push ni tag en esta fase.
