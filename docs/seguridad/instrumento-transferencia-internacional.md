@@ -82,6 +82,14 @@ mecanismos).
 
 ## 6. Estado del instrumento
 
+- **T2 (corpus, régimen (a)).** El instrumento aplicado durante el estudio fue el
+  **consentimiento expreso de los titulares**, prestado el **2026-10-02** y documentado en
+  `acta-consentimiento-t2.md` (las transferencias de audio del 5 y 6 de octubre y las corridas pagas del 12 y 13 de noviembre son posteriores al consentimiento); **no se firmaron
+  cláusulas contractuales modelo**. La pseudonimización y la minimización **refuerzan** la
+  salvaguarda, pero **no sustituyen** el instrumento.
+- **T3 (adoptante futuro).** El instrumento de la organización adoptante es propio: debe
+  suscribirlo antes de transferir datos reales de sus usuarios; este documento documenta el
+  mecanismo y **no lo sustituye**.
 - Este documento **documenta el mecanismo**; **no** afirma que el instrumento este suscrito,
   vigente ni en vigor.
 - **La suscripcion** (consentimiento expreso o clausulas modelo) es una **accion

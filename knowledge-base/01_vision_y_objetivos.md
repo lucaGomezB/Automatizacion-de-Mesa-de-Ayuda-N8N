@@ -4,7 +4,7 @@
 
 Automatizar el registro inicial de incidentes de una mesa de ayuda empresarial mediana, integrando orquestación de flujos (N8N), procesamiento de lenguaje natural (FastAPI + Gemini 3.6 Flash) y persistencia relacional (PostgreSQL), de modo que cada incidente reportado por correo, formulario web o llamada telefónica sea clasificado y registrado automáticamente con supervisión humana en los casos que el sistema deriva a revisión (confianza de Gemini inferior a 0,70, etapa fallback o reportante no identificado).
 
-Contexto: organización mediana del sector servicios (Mendoza, Argentina), ~120 usuarios internos, ~42 incidentes diarios, registro manual previo de 165,3 s promedio por incidente con ~15 % de derivación errónea. Trabajo Final de Carrera UTN-FRM (Gómez, Bustos, Sevilla, 2026), director Prof. Alberto Cortez.
+Contexto: el escenario de referencia narrativo se construye a partir del entorno operativo de los propios autores; se presenta como una organización mediana del sector servicios (Mendoza, Argentina) con ~120 usuarios internos y ~42 incidentes diarios asumidos como premisas del escenario, no como mediciones. El corpus de evaluación es una mezcla cualitativa de dos regímenes: (a) incidentes reales del entorno operativo del equipo, pseudonimizados, y (b) reconstrucciones de tipos de incidente reales sin datos de terceros. El registro manual previo fue de 165,3 s promedio por incidente con ~15 % de derivación errónea. Trabajo Final de Carrera UTN-FRM (Gómez, Bustos, Sevilla, 2026), director Prof. Alberto Cortez.
 
 ## Objetivos por actor
 

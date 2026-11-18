@@ -143,8 +143,8 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 |---|---|---|---|
 | Intervención humana: `9,5 %` (`19/200`; `181/200` sin intervención) | `07-resultados.tex:157-159`, `00-resumen.tex:13`, `08-discusion.tex:14`, `09-conclusiones.tex:16`, `10-recomendaciones.tex:24` | **retirado** | Valor heredado del corpus sintético descartado en C-27 (2026-09-11), sin re-medir (`knowledge-base/01_vision_y_objetivos.md:39,44`; `knowledge-base/README.md:32`); NO derivable del corpus real. La remisión apunta a la sección que declara la intervención como no medida (`:157-159`); el valor retirado ya no figura en el `.tex`. Ver Sección 7. |
 | Universo calendario: `3.700 = 42 × 88` | `04-marco-metodologico.tex:45`, `04-marco-metodologico.tex:51` | **retirado** | Criterio incoherente con la tasa diaria de origen semanal. |
-| Universo días hábiles: `≈ 2.646 = 42 × 63` | recálculo (`88 × 5/7 ≈ 62,86 ≈ 63` días hábiles) | vigente | Valor canónico propuesto (decisión D5). |
-| Margen de error (corrección por finitud): `6,66 %` | `04-marco-metodologico.tex:51`; recálculo con `n = n₀/[1+(n₀−1)/N]`, `n₀ = z²p(1−p)/e²`, `z = 1,96`, `p = 0,5`, `n = 200`, `N ≈ 2.646` | vigente | Upsert c-145 (2026-10-26). Con esos insumos la fórmula reproduce `n ≈ 200,2`. Ver Sección 7, punto 2. |
+| Universo días hábiles: `≈ 2.646 = 42 × 63` | recálculo (`88 × 5/7 ≈ 62,86 ≈ 63` días hábiles) | vigente | Valor canónico propuesto (decisión D5). Bajo c-242, `N = 2.646` es premisa/proyección del escenario narrativo (`42 × 63`), no universo medido; el valor canónico no cambia. |
+| Margen de error (corrección por finitud): `6,66 %` | `04-marco-metodologico.tex:51`; recálculo con `n = n₀/[1+(n₀−1)/N]`, `n₀ = z²p(1−p)/e²`, `z = 1,96`, `p = 0,5`, `n = 200`, `N ≈ 2.646` | vigente | Upsert c-145 (2026-10-26). Con esos insumos la fórmula reproduce `n ≈ 200,2`. Bajo c-242, `N = 2.646` (y por tanto el margen) es premisa/proyección del escenario narrativo, no universo medido; el valor canónico no cambia. Ver Sección 7, punto 2. |
 | Margen de error (calendario): `6,74 %` | `04-marco-metodologico.tex:51` (histórico; calibrado con `N = 3.700`) | **retirado** | Reemplazado por `6,66 %` con `N ≈ 2.646` (upsert c-145). Se conserva solo para trazabilidad; no citar como vigente. |
 | Proyección calendario: `45,0 h` | `08-discusion.tex:14`, `01-introduccion.tex:18` | **retirado** | `43,82 × 3.700 / 3.600 = 45,04 h`. |
 | Proyección días hábiles: `≈ 32,2 h` | recálculo | vigente | `43,82 × 2.646 / 3.600 = 32,21 h`. |
@@ -569,7 +569,7 @@ Cálculo de solo lectura, sin invocar al clasificador (cero llamadas a Gemini).
 
 | Insumo | Valor | Procedencia (archivo:línea) | Estado | Notas |
 |---|---|---|---|---|
-| Universo trimestral `N` | `≈ 2.646 = 42 × 63` | Sección 3.4; `04-marco-metodologico.tex:45,51` | vigente | Escala el balance, no su signo. |
+| Universo trimestral `N` | `≈ 2.646 = 42 × 63` | Sección 3.4; `04-marco-metodologico.tex:45,51` | vigente | Escala el balance, no su signo. Bajo c-242, `N = 2.646` es premisa/proyección del escenario narrativo (`42 × 63`), no universo medido; `B_r` es lineal en `N`, y `a*_r` y `c*` no dependen de `N`; el valor canónico no cambia. |
 | Ahorro medio por incidente `Δt` | `43,82 s` | Sección 3.1; `report.md:199` | vigente | El `.tex` lo aproxima como `43,8 s`. |
 | Tasa de error estricta del clasificador `e_aut` | `0,265 = 53/200 = 1 − 0,7350` | `07-resultados.tex:74,128`; `report.md:20-21` | vigente (derivado) | El `26,5 %` no figura literalmente en el `.tex`. Es una cota **superior** de la tasa operativa de derivación errónea: el `53,5 %` de los casos (`107/200`, `07-resultados.tex:128`) admite más de un sector. |
 | Tasa de derivación errónea manual `e_man` | `≈ 15 %` | `01-introduccion.tex:18` | condicional | Estimación **preliminar** de una semana de operación, de la misma naturaleza que los `2 min 45 s` luego corregidos a `61,6 s`; nunca re-medida. La exactitud del brazo manual sobre el corpus NO se midió: el corpus no registra por caso la derivación del operador (`12-anexos.tex`, `sec:anexo-corpus`) y los operadores son los mismos analistas que fijaron la referencia (`04-marco-metodologico.tex:55,87`). |
@@ -3029,7 +3029,7 @@ publicó el tribunal).
 
 | Valor | Procedencia | Estado |
 |---|---|---|
-| `N = 2.646` incidentes por trimestre | memo 3.11 / `analisis_balance_neto_c222.json` (`insumos.n`) | vigente |
+| `N = 2.646` incidentes por trimestre | memo 3.11 / `analisis_balance_neto_c222.json` (`insumos.n`) | vigente (premisa/proyección del escenario narrativo, `42 × 63`, no universo medido; c-242: `B_r` es lineal en `N` y `a*_r` y `c*` no dependen de `N`; el valor no cambia) |
 | `Δt = 43,82 s` (constante; su incertidumbre no entra en el IC) | idem (`insumos.delta_t_s`); memo 3.1 y 3.4 | vigente |
 | `e_aut = 28/138 = 0,2029` (consenso `E1`/`E2`, por caso) | idem (`insumos.e_aut`); memo 3.21 (c) | vigente |
 | `e_man = 26/151 = 0,1722` (consenso `E1`/`E2`, por derivación) | idem (`insumos.e_man`) | vigente |

@@ -49,6 +49,14 @@ Se informa a las partes:
   oposición.
 - **No se usan datos ficticios**: el piloto opera con datos reales del equipo.
 
+El corpus de investigación (T2) que resulta del piloto es una **mezcla de dos regímenes**:
+el **régimen (a)**, incidentes reales del entorno operativo del propio equipo,
+pseudonimizados, cuya base de licitud es el consentimiento informado del grupo (Ley 25.326,
+art. 5, inc. 1) y la pseudonimización; y el **régimen (b)**, reconstrucciones de tipos de
+incidente reales, sin datos de terceros, que no contienen datos personales y no requieren
+base de licitud. No se usa una base de empleador para el corpus: no existe una relación de
+empleo.
+
 ## 4. Manifestación
 
 Las partes manifiestan haber leído y comprendido la información precedente y **prestan su
