@@ -333,13 +333,50 @@ Backend & 20 & 594,8 & 1215,8 & 1293,8 & 24,21 & 0 \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Nota:} latencia medida por el cliente (envío a respuesta) sobre 120 solicitudes por nivel; la capa «Backend» es el alta autenticada de un incidente y la capa «\emph{Webhook} de N8N» es la entrada del canal web. Una sola máquina, entorno desechable y camino determinístico sin inferencia paga. Fuente: \texttt{evaluation/evidence/load\_test\_multicanal\_2026-11-13.json}.}
+{\footnotesize\textit{Nota:} latencia medida por el cliente (envío a respuesta) sobre 120 solicitudes por nivel; la capa «Backend» es el alta autenticada de un incidente y la capa «\emph{Webhook} de N8N» es la entrada del canal web. Una sola máquina, entorno desechable y camino determinístico de costo cero, sin inferencia paga; mide capacidad. Fuente: \texttt{evaluation/evidence/load\_test\_multicanal\_2026-11-13.json}.}
 \end{table}
 
 En la capa del backend la regla de decisión se cumple en los cuatro niveles. El p95 máximo es 1215,8~ms, muy por debajo del techo de 5000~ms, y el throughput sube de 20,79 a un máximo de 26,84 solicitudes por segundo con 10 concurrentes y baja a 24,21 con 20: una caída del 9,8~\%, dentro de la tolerancia del 10~\% por un margen estrecho. El control secundario (cociente de p95 de 19,5, frente a la cota de 20) también se cumple con poca holgura.
 
 La capa del \emph{webhook} de N8N no cumple la regla. Con 20 solicitudes concurrentes el p95 es 6788,4~ms, 1,36 veces el techo, mientras que con 1, 5 y 10 queda por debajo (338,4, 1804,2 y 3526,5~ms). Su throughput se estabiliza en torno a 3,8 solicitudes por segundo desde 5 concurrentes (3,75, 3,82 y 3,78) y la latencia crece con la concurrencia sin que el throughput aumente, que es el patrón de una cola frente a un recurso saturado; el control secundario tampoco se cumple (cociente de 20,06 frente a la cota de 20). No se diagnosticó el origen de la saturación. La latencia de extremo a extremo que registra el servidor para los incidentes creados por esta vía acompaña a la del cliente (mediana de 246,0~ms con 1 solicitud concurrente y de 4118,0~ms con 20); en el alta directa al backend el cliente no sella el instante de ingreso, por lo que solo se informa la latencia del cliente. El veredicto global es «no sostenida», por la violación del techo de latencia en la capa de orquestación con 20 concurrentes. Ninguna solicitud falló: el límite observado es de latencia y no de disponibilidad.
 
-Estas cifras valen para una sola máquina, un perfil desechable, una instancia de N8N con la configuración del \emph{stack} y el camino determinístico, sin inferencia paga; la latencia con inferencia no se midió. La copia del flujo que se activó en el N8N desechable conserva el camino del canal web pero omite los nodos que exigen credenciales externas (disparadores de correo y telefonía y envíos de correo), por lo que el tiempo de esos envíos no está incluido. Los niveles de 1 a 20 concurrentes se fijaron a priori como niveles de carga y no estiman la demanda real de una mesa de ayuda, que no se midió. Los canales de correo y telefonía quedaron fuera de la inyección concurrente, y el resultado no se extrapola a producción ni a otro hardware. La complejidad operativa percibida no se midió.
+Estas cifras valen para una sola máquina, un perfil desechable, una instancia de N8N con la configuración del \emph{stack} y el camino determinístico de costo cero. Estas cifras miden capacidad y no incluyen la inferencia paga; la latencia con inferencia incluida se informa, como sonda ancilar de dos corridas combinadas, en la \autoref{subsec:latencia-con-inferencia}. La copia del flujo que se activó en el N8N desechable conserva el camino del canal web pero omite los nodos que exigen credenciales externas (disparadores de correo y telefonía y envíos de correo), por lo que el tiempo de esos envíos no está incluido. Los niveles de 1 a 20 concurrentes se fijaron a priori como niveles de carga y no estiman la demanda real de una mesa de ayuda, que no se midió. Los canales de correo y telefonía quedaron fuera de la inyección concurrente, y el resultado no se extrapola a producción ni a otro hardware. La complejidad operativa percibida no se midió.
+
+\subsection{Latencia del tramo compartido con inferencia incluida}\label{subsec:latencia-con-inferencia}
+
+Para acotar cuánto agrega la inferencia real a la latencia del tramo compartido se ejecutó una sonda pagada sobre las mismas dos capas de la \autoref{subsec:carga-concurrente}: el alta autenticada del backend y el \emph{webhook} de N8N. La sonda es \emph{ancilar}: no mide capacidad y no reemplaza el contraste determinístico de costo cero de la \autoref{tab:carga-multicanal}, que sigue siendo la evidencia primaria de capacidad. Combina dos corridas complementarias de distinta potencia. Los niveles de 1 y 5 solicitudes concurrentes provienen de una corrida ampliada (60 solicitudes por nivel, 3 repeticiones, 90 solicitudes escaladas por nivel y capa); los niveles de 10 y 20, de la corrida original (20 solicitudes por nivel, 1 repetición, 10 escaladas por nivel y capa). En ambos casos la mezcla esperada es del 50~\% (la mitad de las solicitudes pasa por el modelo), se conservan los cuatro niveles de concurrencia y las dos capas, y cada fila de la \autoref{tab:carga-inferencia} rotula su corrida de origen y su tamaño muestral. La sonda conserva la regla de decisión de tres vías y agrega una condición de degradación por inferencia: el cociente entre el p95 del subconjunto escalado y el p95 del subconjunto determinístico del mismo nivel no debe superar $T = 4$.
+
+\begin{table}[htbp]
+\centering
+\caption{Latencia del tramo compartido con inferencia incluida por nivel de concurrencia y por capa}
+\label{tab:carga-inferencia}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llccccccccc@{}}
+\toprule
+\textbf{Capa} & \textbf{Corrida/n} & \textbf{Conc.} & \textbf{p50} & \textbf{p95} & \textbf{p99} & \textbf{Sol./s} & \textbf{Error} & \textbf{Esc.} & \textbf{\(r\)} & \textbf{Veredicto} \\
+\midrule
+Backend & ampl. 90 & 1 & 1007,6 & 2089,3 & 2330,6 & 0,93 & 0,0000 & 90/180 & 5,05 & no cumple (inferencia) \\
+Backend & ampl. 90 & 5 & 1221,9 & 2708,4 & 3968,1 & 3,50 & 0,0000 & 90/180 & 3,74 & cumple \\
+Backend & orig. 10 & 10 & 1182,9 & 2759,6 & 2763,9 & 6,03 & 0,0000 & 10/20 & 3,55 & cumple \\
+Backend & orig. 10 & 20 & 2185,3 & 3424,2 & 3445,8 & 5,76 & 0,0000 & 10/20 & 1,93 & cumple \\
+\midrule
+N8N & ampl. 90 & 1 & 1757,9 & 2919,8 & 5033,4 & 0,56 & 0,0000 & 90/180 & 2,35 & cumple \\
+N8N & ampl. 90 & 5 & 4307,7 & 7545,7 & 8684,4 & 1,07 & 0,0000 & 90/180 & 1,70 & no cumple (techo) \\
+N8N & orig. 10 & 10 & 4519,8 & 8352,7 & 8596,7 & 1,83 & 0,0000 & 10/20 & 1,58 & no cumple (techo) \\
+N8N & orig. 10 & 20 & 8378,2 & 10183,6 & 10197,6 & 1,96 & 0,0000 & 10/20 & 1,22 & no cumple (techo) \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Nota:} latencia medida por el cliente (envío a respuesta) en milisegundos y throughput en solicitudes por segundo. Dos corridas complementarias: los niveles 1 y 5 provienen de la corrida ampliada (60 solicitudes por nivel, 3 repeticiones) y los niveles 10 y 20 de la corrida original (20 solicitudes por nivel, 1 repetición); «Corrida/n» rotula, por fila, la corrida de origen (\emph{ampl.} u \emph{orig.}) y el número de solicitudes escaladas por subconjunto y capa. \(r\) es el cociente entre el p95 del subconjunto escalado y el p95 del subconjunto determinístico del mismo nivel. El «veredicto del nivel» es una derivación editorial del criterio por capa (el reporte solo emite el veredicto por capa con su lista de violaciones). Una sola máquina, entorno desechable. Fuente: \texttt{evaluation/evidence/load\_test\_inferencia\_ampliada\_2026-11-18.json} y \texttt{evaluation/evidence/load\_test\_inferencia\_2026-11-17.json}.}
+\end{table}
+
+En la capa del backend la sonda arroja «no sostenida»: el techo absoluto de 5000~ms se cumple en los cuatro niveles (p95 máximo de 3424,2~ms), la tasa de error es cero y el throughput no decrece más del 10~\%, pero la condición de degradación por inferencia se viola en el nivel de 1 solicitud concurrente (el p95 del subconjunto escalado es 5,05 veces el del subconjunto determinístico, frente a $T = 4$); el nivel de 5 concurrentes pasa a cumplirla (3,74). La violación es relativa y no absoluta: no indica saturación del backend, sino que la inferencia domina la latencia cuando la cola todavía no domina a ambos subconjuntos.
+
+En la capa del \emph{webhook} de N8N la sonda también arroja «no sostenida», por una condición distinta: el techo absoluto de p95 se viola con 5, 10 y 20 concurrentes (7545,7; 8352,7 y 10183,6~ms), mientras que el cociente de degradación por inferencia se mantiene dentro de $T = 4$ en los cuatro niveles (2,35; 1,70; 1,58 y 1,22), la tasa de error es cero y el throughput no decrece. El veredicto global de la sonda es «no sostenida», el de la peor capa.
+
+El cociente no es monótono con la concurrencia y se lee con cautela: en el nivel de 20 concurrentes el subconjunto determinístico del backend también está dominado por la cola (su p95 determinístico es de 1782,9~ms), por lo que el cociente de 1,93 subestima la contribución de la inferencia. El cociente es interpretable como comparación pareada en niveles bajos y no como contribución marginal a alta concurrencia.
+
+Esta sonda tiene siete límites. Primero, son dos corridas complementarias y no una serie: los niveles 1 y 5 provienen de la corrida ampliada y los 10 y 20 de la original. Segundo, el tamaño muestral escalado por subconjunto difiere por fila: 90 solicitudes en los niveles 1 y 5 (60 por nivel, 3 repeticiones) y 10 en los niveles 10 y 20 (20 por nivel, 1 repetición). Tercero, se midió en una sola máquina. Cuarto, en un entorno desechable. Quinto, el gasto solo consta en la corrida ampliada y su procedencia es un cálculo a partir de tokens con el precio declarado de la tesis, no facturación del proveedor. Sexto, es posible una deriva de proveedor y de versión del modelo entre las corridas, la defensa y el estado actual. Séptimo, su potencia no es comparable con la corrida canónica de capacidad (120 solicitudes por nivel, 3 repeticiones). La sonda no se extrapola a producción ni a otro hardware y no se presenta como resultado de capacidad.
 
 \newpage

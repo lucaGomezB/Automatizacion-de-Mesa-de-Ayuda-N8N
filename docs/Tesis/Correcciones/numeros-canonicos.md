@@ -2056,6 +2056,11 @@ de convergencia del backend. No es un contraste total (la complejidad percibida 
 validación en producción. Ningún objetivo específico cambia de estado por este change. La prosa está en
 las secciones 1, 4, 7, 8 y 9 de la tesis.
 
+**Nota de remisión (aditiva, c-243).** La **sonda acotada de latencia con inferencia incluida** se
+registra en la Sección `3.47`; es evidencia **ancilar** de dos corridas combinadas, con veredicto
+`no sostenida` por condiciones distintas a las de esta sección, y **no modifica** el veredicto de
+capacidad de la `3.29` ni sus cifras ni su estado.
+
 ### 3.30 Sesgo del vocabulario ajustado con el corpus y fragilidad de la referencia (c-219)
 
 > **RETIRADO (c-235).** Todos los valores de esta sección pasan a estado `retirado` por el retiro de la validación fuera de muestra, sin cambiar su cifra ni borrarse (remisión: Sección 3.45).
@@ -3106,6 +3111,125 @@ reescribir su texto.
 sus cifras de esta sección; el umbral del `85 %` se declara criterio a priori en la introducción
 (observación M-01), con las lecturas posteriores rotuladas en la discusión.
 
+
+### 3.47 Sonda acotada de latencia con inferencia incluida (c-243)
+
+Sección **aditiva**: no renumera ni modifica ninguna sección `3.1` a `3.46`. Registra la **sonda
+acotada** de latencia del tramo compartido con **inferencia real incluida** (Gemini pagado), una
+medición **ancilar** que NO es cifra canónica de capacidad y NO reemplaza ni modifica la Sección
+`3.29` (lectura canónica de capacidad, camino determinístico de costo cero). **Todos los valores de
+esta sección quedan en estado `condicional`**: dependen de la instantánea del proveedor y del modelo,
+de una sola máquina y de dos corridas de potencia distinta. La prosa está en la subsección
+`subsec:latencia-con-inferencia` de `07-resultados.tex`. El veredicto global de la sonda es **no
+sostenida** (el de la peor capa) y **no modifica** el veredicto de capacidad de la Sección `3.29`.
+
+*Numeración.* Al aplicar c-243 el memo terminaba en la Sección `3.46`; esta es la `3.47`, la primera
+libre (releída al aplicar, 2026-11-18). No se reutilizan los huecos `3.39` a `3.42`.
+
+Fuentes únicas (dos corridas complementarias; decisión editorial «opción A» de los autores):
+`evaluation/evidence/load_test_inferencia_ampliada_2026-11-18.json` (niveles 1 y 5) y
+`evaluation/evidence/load_test_inferencia_2026-11-17.json` (niveles 10 y 20), producidas por
+`scripts/load_test/load_test_inference.py`. La tabla `tab:carga-inferencia` del cuerpo se coteja cifra
+por cifra contra los dos JSON con el test de solo lectura `cotejar_carga_inferencia.py`
+(`test_cotejar_carga_inferencia.py`). Comando de la corrida paga acotada (NO se reejecuta aquí):
+
+```bash
+python3 scripts/load_test/load_test_inference.py --confirm-paid --tope-usd 1.25
+```
+
+**(a) Metadatos de las dos corridas** (`commit`, `fecha_utc`, `corrida_id`, `n8n_version`, `perfil`,
+`fixture_sha256`).
+
+| Corrida | `commit` | `fecha_utc` | `corrida_id` | N8N | `perfil` | `fixture_sha256` | Estado |
+|---|---|---|---|---|---|---|---|
+| ampliada (`load_test_inferencia_ampliada_2026-11-18.json`) | `d0592d3` | `2026-11-18T20:04:46Z` | `6ad5e32d` | `2.11.2` | `corpus` con override pago acotado | `88cab8788273ed9df21dad03b1a653c855e31c2fd3294ee94869098f1935e163` | `condicional` |
+| original (`load_test_inferencia_2026-11-17.json`) | `bbc5865` | `2026-11-17T22:51:41Z` | `6d1917ed` | `2.11.2` | `corpus` con override pago acotado | `88cab8788273ed9df21dad03b1a653c855e31c2fd3294ee94869098f1935e163` | `condicional` |
+
+**(b) Constantes prerregistradas de cada corrida** (`constantes` y `prerregistro`).
+
+| Constante | Corrida ampliada | Corrida original | Estado |
+|---|---|---|---|
+| `niveles` | `1, 5` | `1, 5, 10, 20` | `condicional` |
+| `solicitudes_por_nivel` | `60` | `20` | `condicional` |
+| `repeticiones` | `3` | `1` | `condicional` |
+| `tope_presupuesto_usd` | `1,25` (`prerregistro`) | `1,00` (`constantes`) | `condicional` |
+| `techo_p95_ms` | `5000` | `5000` | `condicional` |
+| `tolerancia_throughput` | `0,10` | `0,10` | `condicional` |
+| `tasa_error_max` | `0` | `0` | `condicional` |
+| `tolerancia_inferencia` (T) | `4` | `4` | `condicional` |
+| `mezcla_escalada_esperada` | `0,5` | `0,5` | `condicional` |
+
+Nota de procedencia: en la corrida ampliada el tope efectivo de la corrida paga figura en
+`prerregistro.tope_presupuesto_usd = 1,25` (y en la vista `.md`); el campo `constantes.tope_presupuesto_usd`
+conserva el valor por defecto `1,00`. El valor vigente de la corrida es `1,25`.
+
+**(c) Ocho filas por capa y nivel** (`capas.<capa>.niveles[i]`). Procedencia común de cada fila:
+`…json` (`p50_ms`, `p95_ms`, `p99_ms`, `media_ms`, `throughput_rps`, `tasa_error`, `etapas.escalados`,
+`etapas.total`, `etapas.fraccion_escalada`, `inferencia.escalado.p95_ms`, `inferencia.deterministico.p95_ms`,
+`inferencia.razon_p95`). El cociente `r` es `p95(escalado)/p95(determinístico)` recalculado; el redondeo
+es a una decimal para latencias, dos para throughput y cociente y cuatro para la tasa de error. Los
+niveles `1` y `5` provienen de la corrida ampliada (`n = 90` escalados por subconjunto) y los niveles
+`10` y `20` de la corrida original (`n = 10`). Todas las filas: `condicional`.
+
+| Capa | Corrida/n | Conc. | p50 | p95 | p99 | Media | sol./s | Error | Escalados | Fracción | p95 esc. | p95 det. | r | Estado |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Backend | ampl. 90 | 1 | `1007,6` | `2089,3` | `2330,6` | `1075,5` | `0,93` | `0` | `90/180` | `0,5` | `2177,2` | `431,0` | `5,05` | `condicional` |
+| Backend | ampl. 90 | 5 | `1221,9` | `2708,4` | `3968,1` | `1344,5` | `3,50` | `0` | `90/180` | `0,5` | `3092,1` | `827,8` | `3,74` | `condicional` |
+| Backend | orig. 10 | 10 | `1182,9` | `2759,6` | `2763,9` | `1302,9` | `6,03` | `0` | `10/20` | `0,5` | `2762,5` | `779,0` | `3,55` | `condicional` |
+| Backend | orig. 10 | 20 | `2185,3` | `3424,2` | `3445,8` | `2038,6` | `5,76` | `0` | `10/20` | `0,5` | `3438,4` | `1782,9` | `1,93` | `condicional` |
+| N8N | ampl. 90 | 1 | `1757,9` | `2919,8` | `5033,4` | `1777,7` | `0,56` | `0` | `90/180` | `0,5` | `3390,0` | `1445,2` | `2,35` | `condicional` |
+| N8N | ampl. 90 | 5 | `4307,7` | `7545,7` | `8684,4` | `4521,8` | `1,07` | `0` | `90/180` | `0,5` | `8531,9` | `5024,7` | `1,70` | `condicional` |
+| N8N | orig. 10 | 10 | `4519,8` | `8352,7` | `8596,7` | `4643,6` | `1,83` | `0` | `10/20` | `0,5` | `8513,2` | `5376,9` | `1,58` | `condicional` |
+| N8N | orig. 10 | 20 | `8378,2` | `10183,6` | `10197,6` | `8413,1` | `1,96` | `0` | `10/20` | `0,5` | `10192,8` | `8382,9` | `1,22` | `condicional` |
+
+El «veredicto del nivel» que informa la tabla del cuerpo es una **derivación editorial** del criterio
+por capa (el JSON solo emite el veredicto por capa con su lista de violaciones
+`capas.<capa>.criterio.violaciones`): `cumple` salvo violación de techo de p95, de la tolerancia de
+throughput, de la tasa de error o de la tolerancia de inferencia. Resultado por nivel: Backend nivel 1
+`no cumple (inferencia)`; Backend 5, 10 y 20 `cumple`; N8N 1 `cumple`; N8N 5, 10 y 20 `no cumple (techo)`.
+
+**(d) Tres veredictos con su condición** (`capas.<capa>.criterio`, `veredicto`).
+
+| Ámbito | Veredicto | Condición violada | Estado |
+|---|---|---|---|
+| Backend | `no sostenida` | degradación por inferencia **solo en el nivel 1** (`r = 5,05` frente a `T = 4`); el nivel 5 cumple (`r = 3,74`, contra `5,0` en la corrida original). Techo absoluto de p95 (máximo `3424,2` ms), tolerancia de throughput y tasa de error `0` cumplidos en los cuatro niveles. **No es saturación.** | `condicional` |
+| N8N (\emph{webhook}) | `no sostenida` | techo absoluto de p95 en los niveles 5 (`7545,7` ms, ampliada), 10 (`8352,7` ms) y 20 (`10183,6` ms); el nivel 1 cumple (`2919,8` ms). Cociente de inferencia dentro de `T = 4` (2,35; 1,70; 1,58; 1,22), tasa de error `0` y throughput no decreciente. | `condicional` |
+| Global | `no sostenida` | el de la peor capa. | `condicional` |
+
+Cautela del cociente: no es monótono con la concurrencia. En el nivel 20 el subconjunto determinístico
+también está dominado por la cola (p95 determinístico del backend `1782,9` ms), por lo que el cociente
+`1,93` **subestima** la contribución de la inferencia; se interpreta como comparación pareada en niveles
+bajos, no como contribución marginal a alta concurrencia.
+
+**(e) Declaraciones de alcance.** (i) Los valores de esta sección **no son cifras canónicas de
+capacidad**. (ii) **No reemplazan ni modifican la Sección `3.29`**, que sigue siendo la lectura canónica
+de capacidad. (iii) Los niveles `1` y `5` provienen de la corrida ampliada (`n = 90` escalados por
+subconjunto, `3` repeticiones) y los niveles `10` y `20` de la corrida original (`n = 10`, `1`
+repetición). (iv) El gasto **solo consta en la corrida ampliada** y su procedencia es `tokens_calculado`
+(calculado desde tokens con el precio declarado de la tesis), **no** facturación del proveedor; la
+corrida original **no** lo estima. (v) La sonda es ancilar y **no** se extrapola a producción.
+
+**(f) Siete límites declarados.** (1) Sonda de **dos corridas complementarias**, no una serie (niveles
+1 y 5 de la ampliada; 10 y 20 de la original). (2) `n` escalado por subconjunto distinto por fila:
+`90` en los niveles 1 y 5 (`60` solicitudes por nivel, `3` repeticiones) y `10` en los niveles 10 y 20
+(`20` solicitudes por nivel, `1` repetición). (3) Una sola máquina. (4) Entorno desechable (perfil
+`corpus`). (5) El gasto solo consta en la corrida ampliada, con procedencia `tokens_calculado`. (6)
+Deriva posible de proveedor y de versión del modelo entre las corridas, la defensa y el estado actual.
+(7) Potencia **no comparable** con la corrida canónica de capacidad (`tab:carga-multicanal`, `120`
+solicitudes por nivel, `3` repeticiones) y **no extrapolable** a producción.
+
+**(g) Modelo, tokens y costo (corrida ampliada; G3).** `inferencia.model_version = gemini-3.6-flash`;
+`inferencia.tokens_entrada = 274920`, `inferencia.tokens_salida = 6648`, `inferencia.tokens_total =
+281568` (`tokens_origen = api`); `inferencia.costo_usd = 0,23112` con el precio declarado de la tesis
+(escenario `introductorio`) y `inferencia.gasto_origen = tokens_calculado` (no es facturación del
+proveedor). La corrida original no registra uso de tokens ni costo. Estado: `condicional`.
+
+**Valores previos intactos.** Ningún valor ni estado de las secciones `3.1` a `3.46` cambia. La Sección
+`3.29` conserva su cifra y su estado (solo recibe una nota de remisión, aditiva). Esta sección es
+aditiva y no incluye ninguna cifra de capacidad nueva.
+
+**Notas de remisión (aditivas).** La Sección `3.29` recibe una nota hacia esta sección, sin reescribir
+su texto. La subsección `subsec:latencia-con-inferencia` del cuerpo toma sus cifras de esta sección.
 
 ## 4. Contingencia del gate de intervención humana
 
