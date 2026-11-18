@@ -6619,35 +6619,57 @@ La sección de tiempos conserva la cifra primaria (71,2~\% y su intervalo) y rem
 
 ### c-242: reencuadrar el origen y la licitud del corpus (compuertas de autores y director)
 
-Propuesto el 2026-11-17 (absorbe y supersede a `c-241`). **Sin `.tex` escrito**: el apply queda bloqueado por las compuertas de autores (OQ-01 a OQ-05) y el visto bueno del director (D6 del design).
+Propuesto el 2026-11-17 (absorbe y supersede a `c-241-precisar-la-base-de-licitud-en-la-seccion-7-5`, retirado por el orquestador). Las decisiones de los autores quedaron ratificadas el 2026-11-17 (registro de sesion; no hay documento firmado aparte). El visto bueno del director sigue **PENDIENTE**: la prosa resultante es **PROVISIONAL** hasta su aprobacion.
 
 #### Compuertas de autores (ratificadas el 2026-11-17)
 
-| Compuerta | Pregunta | Respuesta ratificada | Fecha | Responsable |
+| Compuerta | Pregunta | Decision (ratificada el 2026-11-17) | Fecha | Responsable |
 |---|---|---|---|---|
-| OQ-01 | Reencuadre del origen: no hay organizacion real; el corpus es mezcla de los regimenes (a) y (b) | Ratificado | 2026-11-17 | Autores |
-| OQ-02 | Base de licitud por regimen y redaccion de §7.2/§7.5 | Regimen (a): consentimiento informado del grupo (art. 5, inc. 1) + pseudonimizacion; regimen (b): sin datos personales, sin base | 2026-11-17 | Autores |
-| OQ-03 | Transferencia del art. 12 sin instrumento suscrito | Opciones (ii)+(iii): base = consentimiento del titular (art. 12) + minimizacion/pseudonimizacion como refuerzo; extender el acta T2 al consentimiento expreso de transferencia | 2026-11-17 | Autores |
-| OQ-04 | Validez externa / escenario representativo | Opcion (4) combinada: §1.1/§4.1/§8.1 escenario de referencia; §1.8/§8.2/§9.1 sin marco poblacional | 2026-11-17 | Autores |
-| OQ-05 | Cifras del escenario (42/dia, universo 2.646, ~120 usuarios) | C ahora (balance condicional a N asumido); B (recta B_r(N)) como follow-up | 2026-11-17 | Autores |
+| OQ-01 | Reencuadre del origen: no hay organizacion real; el corpus es mezcla de los regimenes (a) y (b) | **Ratificada el 2026-11-17**: escenario de referencia narrativo; el corpus mezcla el regimen (a) (incidentes reales del entorno operativo del equipo, pseudonimizados) y el (b) (reconstrucciones de tipos de incidente reales, sin datos de terceros); la mezcla se declara de forma cualitativa, sin proporcion numerica (D5) | 2026-11-17 | Autores |
+| OQ-02 | Base de licitud por regimen y redaccion de §7.2/§7.5 | **Ratificada el 2026-11-17**: regimen (a): consentimiento informado del grupo (art. 5, inc. 1) + pseudonimizacion; regimen (b): sin datos personales, sin base. Se RETIRA la base de empleador (art. 5, inc. 2, ap. d) de §7.2 | 2026-11-17 | Autores |
+| OQ-03 | Transferencia del art. 12 sin instrumento suscrito | **Ratificada el 2026-11-17**: opciones (ii)+(iii), consentimiento del titular (art. 12) documentado en el acta T2, que se extiende de forma expresa a la transferencia, con la minimizacion y la pseudonimizacion como refuerzo; no se suscribieron clausulas contractuales modelo; el audio que cruzo la frontera fue la voz del propio autor, no la de un tercero | 2026-11-17 | Autores |
+| OQ-04 | Validez externa / escenario representativo | **Ratificada el 2026-11-17**: opcion (iv) combinada; §1.1/§4.1/§8.1 presentan el escenario de referencia del entorno operativo de los autores; §1.8/§8.2/§9.1 declaran que no hay marco poblacional ni generalizacion estadistica sobre un unico entorno | 2026-11-17 | Autores |
+| OQ-05 | Cifras del escenario (42/dia, universo 2.646, ~120 usuarios) | **Ratificada el 2026-11-17**: se conserva la opcion C; el balance neto queda condicional a N asumido y la linea B (`B_r(N)`) queda como seguimiento. Se conservan N = 2.646 y ~120 usuarios SOLO como premisa/proyeccion del escenario narrativo, nunca como hechos medidos; "42 incidentes diarios" se rotula como supuesto/proyeccion; NO se recalcula el balance neto ni ninguna cifra canonica | 2026-11-17 | Autores |
 
-#### Compuerta del director
+> **Alcance de lo PROVISIONAL.** Las decisiones OQ-01 a OQ-05 quedaron ratificadas por los autores el 2026-11-17 (registro de sesion; no hay documento firmado aparte). El acta T2 registra el consentimiento prestado el 2026-10-02 y su confirmacion escrita queda pendiente de firma en custodia del director. La compuerta del director sigue **PENDIENTE** y la prosa de `S/` y de `D/` derivada de estas decisiones es **PROVISIONAL** hasta su aprobacion. No se consigna firma.
+
+#### Compuerta del director (PENDIENTE)
 
 | Compuerta | Pregunta | Respuesta | Fecha | Responsable |
 |---|---|---|---|---|
-| Director | Visto bueno al reencuadre (el change altera lo que la tesis afirma sobre la procedencia de sus datos) | **PENDIENTE** (consulta enviada 2026-11-17 por WhatsApp) | - | Director |
+| Director | Visto bueno al reencuadre (el change altera lo que la tesis afirma sobre la procedencia de sus datos) | **PENDIENTE** (consulta enviada 2026-11-17 por WhatsApp; sin respuesta a la fecha) | - | Director |
+
+> **La tarea 2.6 queda SIN MARCAR.** Sin el visto bueno del director, la prosa escrita en este change se considera **PROVISIONAL** y no debe publicarse como version definitiva.
 
 #### Composicion del corpus
 
-La mezcla de los regimenes (a) y (b) se da en **ambos canales**: los 119 textos (66 correo + 53 formulario) y los 81 telefonos. La proporcion no esta codificada en el corpus, por lo que se declara de forma cualitativa (D5 del design).
+La mezcla de los regimenes (a) y (b) se da en **ambos canales**: los 119 textos (66 correo + 53 formulario) y los 81 telefonos. La procedencia real vs reconstruccion no esta codificada en el corpus, por lo que la mezcla se declara de forma cualitativa (D5 del design), sin proporcion numerica.
 
 #### Acta de consentimiento T2
 
-`docs/seguridad/acta-consentimiento-t2.md` (revisada el 2026-11-17; pendiente de firma). Documenta el consentimiento del grupo para el corpus (regimen a) y su transferencia (art. 12), con el original firmado en custodia del director.
+`docs/seguridad/acta-consentimiento-t2.md` (revisada el 2026-11-17; pendiente de firma). Documenta el consentimiento del grupo para el corpus (regimen a) y su extension expresa a la transferencia (art. 12). **Alineacion:** §7.3 se alineo con el acta T2 (opcion (a)); la confirmacion escrita del acta queda pendiente de firma en custodia del director.
+
+#### Verificaciones ANTES/DESPUES (equivalente de Strict TDD para prosa)
+
+Patron: cada tarea de edicion corrio una verificacion ANTES (linea base; muestra la afirmacion incorrecta) y DESPUES (estado deseado). Las busquedas se ejecutaron sobre `S/` = `docs/Tesis/v10 (IA)/paper/sections/` y `D/` = `docs/seguridad/`. Nota: los patrones sin tildes de `tasks.md` no coinciden con el texto acentuado; por eso se informan tambien las variantes tolerantes (`organizaci.n`).
+
+| Tarea | Comando | ANTES | DESPUES |
+|---|---|---|---|
+| 3.1 | `rg -n "organizacion mediana\|120 usuarios" S/01-introduccion.tex` | 2 coincidencias (L16, L72) que presentaban la organizacion como real y los 120 usuarios como plantilla medida | 2 coincidencias (L16, L72), ahora rotuladas: "escenario de referencia narrativo", "se asume de aproximadamente 120 usuarios", "no corresponde a una organizacion real"; 42/dia rotulado como premisa/proyeccion (L18) |
+| 3.3 | `rg -n "una unica organizacion\|segunda organizacion" S/01-introduccion.tex` (variante: `una .nica organizaci.n`) | "una única organización mediana ... de aproximadamente 120 usuarios" (L72) y "una única organización de la provincia de Mendoza" (L76) | 0 coincidencias de afirmacion de organizacion real; la unica aparicion de "organizacion real" es una negacion ("no proviene de una organizacion real ni de una segunda organizacion") |
+| 3.4 | `rg -n "organizacion analizada" S/04-marco-metodologico.tex` (variante: `organizaci.n analizada`) | "reportados a la mesa de ayuda de la organización analizada" (L46) | 0 coincidencias; la poblacion se declara del "entorno operativo del propio equipo ... escenario de referencia narrativo" |
+| 3.5 | `rg -n "una sola organizacion" S/08-discusion.tex S/09-conclusiones.tex` (variante: `una sola organizaci.n`) | "de una sola organización" (08 L22) y "de una sola organización, del sector servicios de la provincia de Mendoza" (09 L51) | 0 coincidencias de organizacion real; "un único entorno operativo ... escenario de referencia narrativo" y "No se dispone de un marco poblacional" |
+| 4.1 | `rg -n "empleadora\|inciso~?2, apartado~?d" S/11-aspectos-legales.tex` | "la organización es la empleadora y trata datos de sus propios empleados" + "artículo 5, inciso 2, apartado d)" como base vigente (L16) | 0 coincidencias; §7.2 declara la licitud por regimen (a: consentimiento + art. 5 inc. 1 + pseudonimizacion; b: sin base) |
+| 4.2 | `rg -n "120 empleados\|carta de autorizaci" S/11-aspectos-legales.tex` | "los 120 empleados de la organización fueron notificados..." + "una carta de autorización emitida por la organización adoptante" (L40) | 0 coincidencias; §7.5 declara el consentimiento del grupo (regimen a) y niega una organizacion real o una autorizacion institucional |
+| 4.3 | `rg -n "con el consentimiento informado" S/11-aspectos-legales.tex` (licitud colapsada) | "se funda en el artículo 5 ... con el consentimiento informado descrito en esta subsección" (colapsaba ambos regimenes) | §7.5 declara la base por regimen y no colapsa |
+| 6.2 | `rg -ni "organizacion real\|organizacion adoptante real\|carta de autorizaci\|120 empleados" S/ D/` | 1 coincidencia: `11-aspectos-legales.tex:40` | 0 coincidencias (las unicas apariciones de "organizacion real" en `S/` son negaciones: 01 L16/L72, 04 L46, 11 L40) |
+| 6.3 | `rg -n "empleadora\|relacion contractual, cientifica o profesional\|inciso~?2, apartado~?d" S/11-aspectos-legales.tex` | 1 coincidencia (L16) | 0 coincidencias |
+| 6.4 | `rg -ni "fuera de muestra\|corpus independiente" S/01-introduccion.tex` | 2 coincidencias (L38, L66), ambas declarando el retiro | 2 coincidencias (L38, L66), sin cambios; no se reintroduce como evidencia vigente |
+| 4.4 (correccion) | `rg -n "no se recab[oó] el consentimiento de los titulares para la transferencia\|brecha se declara" S/11-aspectos-legales.tex` | 1 linea (la version previa encuadraba la transferencia sin consentimiento de los titulares) | 0 coincidencias; `rg -n "acta-consentimiento-t2" S/11-aspectos-legales.tex D/registro-actividades-tratamiento.md D/registro-requisitos-legales.md` devuelve las tres referencias |
 
 #### Nota
 
-`c-242` supersede a `c-241-precisar-la-base-de-licitud-en-la-seccion-7-5` (retirado por el orquestador). No se escribe prosa hasta el visto bueno del director.
+`c-242` supersede a `c-241-precisar-la-base-de-licitud-en-la-seccion-7-5` (retirado por el orquestador).
 
 #### Por que se presento asi (contexto del reencuadre)
 
