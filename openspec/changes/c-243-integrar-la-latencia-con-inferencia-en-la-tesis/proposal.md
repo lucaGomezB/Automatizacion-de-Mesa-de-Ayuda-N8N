@@ -44,7 +44,7 @@ Ninguna.
 | `dictamen-correcciones.md` | Aditivo | Entrada de trazabilidad |
 | `00-portada.tex`, `12-anexos.tex`, `Bibliography_base.bib` | Modificado | Solo en la release: version y hash |
 
-Sin cambios en `App/`, `n8n/`, `evaluation/`, `data/`, `scripts/load_test/` (el arnes y la guarda de costo cero no se tocan) ni en la spec `multichannel-load-contrast`.
+La **enmienda 8** (seccion 8 de `tasks.md`) amplia el Impact: agrega `App/Backend/app/classifiers/{gemini_classifier.py,provider.py}` y `App/Backend/tests/classifiers/` (instrumentacion aditiva `usage_metadata`), `scripts/load_test/` (arnes y prerregistros de la sonda ampliada) y `evaluation/evidence/load_test_inferencia*`. Sin cambios en `n8n/` (el flujo no se toca) ni en la spec `multichannel-load-contrast`; el camino de costo cero del arnes permanece intacto.
 
 ## Governance and Approval
 

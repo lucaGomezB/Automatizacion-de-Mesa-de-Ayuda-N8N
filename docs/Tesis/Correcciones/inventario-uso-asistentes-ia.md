@@ -11,7 +11,8 @@ correos de personas: los autores figuran solo como T1, T2 y T3.
   entrega (commit `3f03597`, previo al commit de contenido de la version `v1.6.0`) el historial
   da **162 de 1199** commits con marca de asistente y el rango `v1.2.18..3f03597` da **49 de 282**
   (unico modelo: Claude Fable 5.2). Es el conteo que el Anexo I.3 declara para la entrega
-  `v1.6.0`; la serie de `v1.5.2` de mas abajo se conserva como historia.
+  `v1.6.0`.
+- **Re-ejecucion de la release v1.6.1 (2026-11-19):** sobre la ref de la entrega (commit `e2e5504`, previo al commit de contenido de la version `v1.6.1`) el historial da **162 de 1221** commits con marca de asistente y el rango `v1.2.18..e2e5504` da **49 de 304** (unico modelo: Claude Fable 5.2). Es el conteo que el Anexo I.3 declara para la entrega `v1.6.1`; la serie de `v1.5.2` de mas abajo se conserva como historia.
 - **Ref del arbol de trabajo al levantar este inventario:** `e52276e` (`v1.5.2-15`), con el
   arbol limpio.
 - **Herramienta:** `docs/Tesis/Correcciones/contar_uso_asistentes.py`, con su prueba
@@ -192,9 +193,9 @@ realizaron con asistencia sistematica de agentes de codigo basados en modelos de
 trabajo se organizo en changes con especificacion previa (propuesta, diseno y tareas) que los
 autores definian y revisaban; el agente implementaba las tareas y los autores aceptaban o
 rechazaban el resultado. El inventario versionado
-`docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md` reproduce los conteos: en la version
-`v1.5.2`, 154 de 1170 commits llevan la marca de co-autoria de un asistente, cifra que es una
-cota inferior porque la marca solo se registra con una de las herramientas en uso.
+`docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md` reproduce los conteos: en la ref de la entrega (el commit previo al commit de contenido de
+la version `v1.6.1`), 162 de 1221 commits llevan la marca de co-autoria de un asistente, cifra
+que es una cota inferior porque la marca solo se registra con una de las herramientas en uso.
 
 ### 6.2 Ambitos
 

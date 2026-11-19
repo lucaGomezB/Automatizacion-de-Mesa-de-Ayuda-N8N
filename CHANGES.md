@@ -2905,7 +2905,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
-## Cambios propuestos — mejoras estructurales (c-227 a c-234, sin aplicar)
+## Cambios estructurales (c-227 a c-234) — aplicados/archivados o detenidos
 
 > Cinco changes para atacar las limitaciones estructurales que pesan sobre el criterio 4 (metodologia) y el criterio 8 (redaccion) del ultimo dictamen. **c-231 y c-227 quedaron aplicados (2026-11-15); c-228, c-229, c-230 y c-232 quedan DETENIDOS (2026-11-18)**, por falta de un marco poblacional completo y de un `clasificacion_log` real acumulado, mas el consentimiento de etiquetadores independientes y la decision K-02. Los numeros de seccion del memo son los esperados (c-231 tomo la `3.38`; c-230/c-229/c-228 esperan `3.39`/`3.40`/`3.41`). **Actualizacion 2026-11-16**: c-228, c-229, c-230 y c-232 se adaptaron a la devolucion de tercera instancia (ver cada entrada); conservan las secciones reservadas `3.39` a `3.42` del memo.
 
@@ -2941,9 +2941,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Memo**: seccion aditiva esperada `3.39`.
 - **Governance**: HIGH (sujetos humanos + consentimiento).
 
-### [C-231] `cerrar-version-referencias-internas-y-matriz` — APLICADO (2026-11-15, HIGH para el tag)
+### [C-231] `cerrar-version-referencias-internas-y-matriz` — APLICADO/ARCHIVADO (2026-11-15, HIGH para el tag)
 
-- **Estado**: aplicado (todos los grupos). Compilación de cierre de **159 páginas** limpia (0 referencias/citas indefinidas, 0 etiquetas duplicadas; `Anexos` en p. 141); cadenas de versión `v1.5.0` repuntadas en la portada (`00-portada.tex:31`), el Anexo B (`12-anexos.tex:58`) y la entrada bibliográfica (`.bib`); anexo nuevo de números canónicos citados (`sec:anexo-numeros-canonicos`) y las 12 refs del cuerpo repuntadas a él; memo sección aditiva `3.38`. El tag anotado `v1.5.0` se está cortando (autorización expresa OQ3). Archivado: no.
+- **Estado**: aplicado (todos los grupos). Compilación de cierre de **159 páginas** limpia (0 referencias/citas indefinidas, 0 etiquetas duplicadas; `Anexos` en p. 141); cadenas de versión `v1.5.0` repuntadas en la portada (`00-portada.tex:31`), el Anexo B (`12-anexos.tex:58`) y la entrada bibliográfica (`.bib`); anexo nuevo de números canónicos citados (`sec:anexo-numeros-canonicos`) y las 12 refs del cuerpo repuntadas a él; memo sección aditiva `3.38`. El tag anotado `v1.5.0` se cortó (autorización expresa OQ3). **Archivado** el 2026-11-15 (`openspec/changes/archive/2026-11-15-c-231-cerrar-version-referencias-internas-y-matriz/`, commit `66fff60`).
 - **Objetivo**: (1) corregir la matriz **stale** de c-196 (segunda instancia: `N-02`/`N-04`/`N-05`/`P16` marcados `PENDIENTE` contra el texto actual y el commit `c5b2fb9`); (2) cortar un tag **`v1.5.0`** que incluya c-223 a c-226 y repuntar portada (`00-portada.tex:31`) y Anexo B (`12-anexos.tex:58`), desambiguando `version entregada` (tesis) vs `configuracion entregada` (software `v1.3.0`); (3) agregar un **anexo de numeros canonicos** y repuntar las **12** refs `Seccion[~ ]3.xx`.
 - **Specs**: `tesis-document`, `tesis-numeros-canonicos`.
 - **Memo**: seccion aditiva esperada `3.38`.
@@ -3011,26 +3011,77 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
-### [C-238] `mejorar-la-legibilidad-de-resultados-y-anexos` — APLICADO (2026-11-17, MEDIUM)
+### [C-238] `mejorar-la-legibilidad-de-resultados-y-anexos` — APLICADO/ARCHIVADO (2026-11-17, MEDIUM)
 
-- **Estado**: aplicado (42/42 tareas), pendiente de verificar y archivar; **sin commitear** (a pedido). Prosa y tipografía; sin datos nuevos, sin código de aplicación, sin llamadas a Gemini. Se aplica sobre `c-235`, `c-236`, `c-237` y `c-240` ya presentes en `main`. Recompilación de verificación en directorio temporal (149 pp, 126 pp de cuerpo, anexos desde la p. 127); el PDF versionado y `compilacion.md` los regenera `c-239`.
+- **Estado**: aplicado (42/42 tareas), verificado y **archivado** el 2026-11-17 (`openspec/changes/archive/2026-11-17-c-238-mejorar-la-legibilidad-de-resultados-y-anexos/`). Prosa y tipografía; sin datos nuevos, sin código de aplicación, sin llamadas a Gemini. Se aplicó sobre `c-235`, `c-236`, `c-237` y `c-240` ya presentes. Recompilación de verificación en directorio temporal (149 pp, 126 pp de cuerpo, anexos desde la p. 127); el PDF versionado y `compilacion.md` los regeneró `c-239`.
 - **Objetivo**: atender **M-03** (tabla de síntesis de cifras primarias al abrir el capítulo de resultados; anexo de lecturas de sensibilidad y robustez; Anexo J depurado; oraciones acotadas a 60 palabras), **B-01** (nombres de sector con las macros `\sectorcad` y `\sectorprosa`) y **B-03** (formato del Anexo J sin desbordes).
 - **Scope**: `docs/Tesis/v10 (IA)/paper/sections/{01-introduccion,04-marco-metodologico,05-arquitectura,07-resultados,08-discusion,09-conclusiones,10-recomendaciones,11-aspectos-legales,12-anexos}.tex` y `preambles/preamble.tex`; `docs/Tesis/Correcciones/{dictamen-correcciones.md,foto-cifras-c238-antes.txt,foto-cifras-c238-despues.txt}`; `docs/Tesis/v10 (IA)/tesis_para_agente.md`.
 - **Specs**: `tesis-document` (AGREGA tabla de síntesis, anexo K con vocabulario mínimo de rótulos y reducción medible de la extensión; MODIFICA nomenclatura de sectores, Anexo J y oraciones acotadas; RETIRA la nomenclatura sin tilde).
 - **Dependencias**: `c-235`, `c-236` y `c-237` **antes**; `c-239` **después** (respuestas al tribunal, bump de versión, recompilación versionada y tag).
 - **Governance**: MEDIUM (prosa y documentación). No cambia cifras, intervalos, veredictos, citas ni conclusiones; no renombra etiquetas; no toca 4.5, 4.8 ni 9.1 (N-06).
-- **Leer antes**: `openspec/changes/c-238-mejorar-la-legibilidad-de-resultados-y-anexos/{proposal,design,tasks}.md` y `auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md` (sección 5, M-03, B-01, B-03).
+- **Leer antes**: `openspec/changes/archive/2026-11-17-c-238-mejorar-la-legibilidad-de-resultados-y-anexos/{proposal,design,tasks}.md` y `auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md` (sección 5, M-03, B-01, B-03).
 
 ---
 
-### [C-239] `actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega` — APLICADO (2026-11-17, MEDIUM + ALTA por el tag)
+### [C-239] `actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega` — APLICADO/ARCHIVADO; entrega `v1.6.0` (2026-11-18, MEDIUM + ALTA por el tag)
 
-- **Estado**: aplicado (grupos 0 a 5; el tag anotado y el commit del hash quedan para la autorización expresa de los autores), **sin commitear, sin tag y sin push**. Documentación y prosa, más el script de cotejo (Strict TDD) y la recompilación; cero llamadas a Gemini. Se aplica **al final**, sobre `c-235`, `c-236`, `c-237`, `c-238` y `c-240` ya presentes. Recompilación de entrega: 149 páginas (126 de cuerpo), 0 errores, 0 referencias o citas indefinidas.
+- **Estado**: aplicado (grupos 0 a 5), commiteado (contenido `bbc5865`, hash consignado en el Anexo B por `f16a8fd`), tag anotado `v1.6.0` (objeto `430a5c357118fa488a54bbfe940f0fd38d9911a2` → commit `bbc5865`) publicado en `origin` y **archivado** el 2026-11-18 (`openspec/changes/archive/2026-11-18-c-239-actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega/`; archivo `a8d1474`). Documentación y prosa, más el script de cotejo (Strict TDD) y la recompilación; cero llamadas a Gemini. Se aplicó **al final**, sobre `c-235`, `c-236`, `c-237`, `c-238` y `c-240` ya presentes. Recompilación de entrega: 149 páginas (126 de cuerpo), 0 errores, 0 referencias o citas indefinidas.
 - **Objetivo**: atender **M-04** (el documento de respuestas al tribunal contradecía el ejemplar corregido) y cerrar la entrega posterior a la tercera instancia: reescribir `docs/defensa/respuestas-tribunal.md` (Q1 a Q16 actualizadas y P1 a P12 nuevas), cotejar mecánicamente cada cifra con el ejemplar corregido (`cotejar_cifras_respuestas.py`), asentar la trazabilidad de la devolución de tercera instancia y cerrar versión, compilación, derivados y registro.
 - **Scope**: `docs/defensa/{respuestas-tribunal.md,cotejo-lista-blanca.tsv}`; `docs/Tesis/Correcciones/{cotejar_cifras_respuestas.py,test_cotejar_cifras_respuestas.py,dictamen-correcciones.md,inventario-uso-asistentes-ia.md}`; `docs/Tesis/v10 (IA)/paper/sections/{00-portada,12-anexos}.tex` y `Bibliography_base.bib`; `paper/compilacion.md` y extractos; `README.md`; `knowledge-base/`; `CHANGES.md`.
 - **Specs**: `tesis-defensa` (documento de respuestas y cotejo automatizado) y `tesis-document` (trazabilidad T3, cierre de versión y compilación, condiciones del tribunal).
 - **Dependencias**: **después** de `c-235`, `c-236`, `c-237` y `c-238`. Destino de `c-228`, `c-229`, `c-230` y `c-232`: confirmados como **adaptados y posteriores a la entrega** (OQ2 = A; orden `c-229` -> `c-230` -> `c-228` -> `c-232`), sin tareas aplicadas ni cambios en el ejemplar.
-- **Governance**: MEDIUM (documentación y prosa) + ALTA (tag anotado, push y publicación, con OK expreso de los autores y tras el checklist de K-01/K-02). **Leer antes**: `openspec/changes/c-239-actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega/{proposal,design,tasks}.md` y `auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md` (secciones 5, 7 y 8).
+- **Governance**: MEDIUM (documentación y prosa) + ALTA (tag anotado, push y publicación, con OK expreso de los autores y tras el checklist de K-01/K-02). **Leer antes**: `openspec/changes/archive/2026-11-18-c-239-actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega/{proposal,design,tasks}.md` y `auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md` (secciones 5, 7 y 8).
+
+---
+
+### [C-240] `cerrar-el-residual-de-k-02` — APLICADO/ARCHIVADO (2026-11-17, ALTA + MEDIA)
+
+- **Estado**: aplicado y **archivado** el 2026-11-17 (`openspec/changes/archive/2026-11-17-c-240-cerrar-el-residual-de-k-02/`); commits `d7fd6ec` (licitud en §7.5 y frase veraz en §1.8), `9e641ee` (retiro del corpus independiente del repositorio, OOS-027) y `f678712` (archivado). Cierra los tres residuales que dejó `c-235`: el párrafo de licitud y alcance en §7.5, la frase veraz de §1.8 (una sola organización, dentro de la muestra) y el retiro de los textos del corpus independiente del repositorio público (bytes conservados fuera con sus SHA-256). Sin llamadas a Gemini.
+- **Objetivo**: cerrar el residual de **K-02** (base de licitud en §7.5 y precisión de §1.8) y la omisión de **A-02** (la organización única).
+- **Specs**: `tesis-document` y `evaluation-out-of-sample-validation` (OOS-027).
+- **Dependencias**: **después** de `c-235`; **antes** del tag de `c-239`. **Governance**: ALTA (retiro en el repositorio público) + MEDIA (prosa).
+- **Leer antes**: `openspec/changes/archive/2026-11-17-c-240-cerrar-el-residual-de-k-02/{proposal,design,tasks}.md` y `auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md` (secciones 5 y 7).
+
+---
+
+### [C-242] `reencuadrar-el-origen-y-la-licitud-del-corpus` — ACTIVO (2026-11-17; 30/31, ALTA)
+
+- **Estado**: activo (30/31). Reencuadra el origen y la licitud del corpus: el estudio empírico deja de presentarse como realizado en una organización adoptante real; declara la base de licitud por régimen (consentimiento del grupo + pseudonimización; sin datos personales), encuadra la transferencia del art. 12 y reconcilia §1.1/§1.2/§1.8/§4.1/§8.2/§9.1 y `docs/seguridad/`. **Supersede a `c-241`** (propuesto y retirado; nunca llegó a crear directorio de change). La tarea 2.6 ([COMPUERTA DIRECTOR]) sigue pendiente: sin el visto bueno del director, la prosa es PROVISIONAL.
+- **Objetivo**: reencuadrar el origen y la licitud del corpus (follow-up de K-02/A-02 tras `c-240`).
+- **Specs**: `tesis-document` y `security-governance-docs`.
+- **Dependencias**: **después** de `c-238`; coordina con `c-239` sobre los mismos archivos. **Governance**: ALTA (afirmaciones publicadas; compuertas de autores y visto bueno del director).
+- **Leer antes**: `openspec/changes/c-242-reencuadrar-el-origen-y-la-licitud-del-corpus/{proposal,design,tasks}.md`.
+
+---
+
+### [C-243] `integrar-la-latencia-con-inferencia-en-la-tesis` — ACTIVO (2026-11-18; 49/56, ALTA)
+
+- **Estado**: activo (49/56; grupos 0 a 6 aplicados; pendientes las tareas 7.2 a 7.7 de release). Agrega `subsec:latencia-con-inferencia` en `07-resultados.tex` y la tabla `tab:carga-inferencia` (8 filas = 2 capas x 4 niveles), los veredictos con su condición, los límites declarados y el registro aditivo en `numeros-canonicos.md`; separa el camino determinístico del camino con inferencia incluida. La tarea 7.1 ([COMPUERTA G3/G4]) y el corte de la release `v1.6.1` (7.2 a 7.7) siguen pendientes de la autorización literal para commitear y taguear.
+- **Objetivo**: integrar la sonda de latencia con inferencia (resultado ancilar) en la tesis.
+- **Specs**: `tesis-document` y `tesis-numeros-canonicos`.
+- **Dependencias**: **después** de `c-242`. **Governance**: ALTA (cambia un veredicto publicado; compuertas G1 a G4).
+- **Leer antes**: `openspec/changes/c-243-integrar-la-latencia-con-inferencia-en-la-tesis/{proposal,design,tasks}.md`.
+
+---
+
+### [C-244] `declarar-la-sensibilidad-del-balance-al-universo` — ACTIVO (2026-11-18; 14/17, MEDIUM)
+
+- **Estado**: activo (14/17; grupos 0 a 3 aplicados; pendientes las tareas 4.3 a 4.5 de release). Agrega una oración en `08-discusion.tex` (`subsec:balance-neto`) que declara que `B_r` escala linealmente con `N`, que `a*_r` y `c*` no dependen de `N`, y cita los tres valores de referencia (`+7,1`, `+35,4` y `+70,7` h-persona por trimestre para `N = 1.000`, `5.000` y `10.000`), rotulando `N` como premisa del escenario narrativo. Ningún número canónico cambia (`+18,7` se conserva). Cierra el follow-up OQ-05 de `c-242`.
+- **Objetivo**: declarar la sensibilidad del balance neto al tamaño del universo.
+- **Specs**: `tesis-document` y `tesis-numeros-canonicos`.
+- **Dependencias**: **después** de `c-242`; puede compartir la release `v1.6.1` con `c-243` (OQ-01). **Governance**: MEDIUM (aritmética derivada; sin datos nuevos ni llamadas pagas).
+- **Leer antes**: `openspec/changes/c-244-declarar-la-sensibilidad-del-balance-al-universo/{proposal,design,tasks}.md`.
+
+---
+
+### [C-245] `incorporar-la-facturacion-del-proveedor-y-otras-correcciones-de-prosa` — APLICADO (2026-11-19; MEDIUM, HIGH si viaja en la release)
+
+- **Estado**: aplicado (2026-11-19; grupos 0 a 3 y 5; pendientes las tareas operativas 4.1/4.2). Refleja en la prosa la **facturación del proveedor** (Cloud Billing) del período: distingue el **costo por corrida** (`tokens_calculado`) de la **facturación del período** (evidencia versionada aditiva), declara el total del período (`366.909` tokens / USD `0,300897`, cota inferior), el contraste con `usage_metadata` (≈`+30 %`, misma proporción, llamadas no contadas) y que el precio queda confirmado (0,75 / 3,75 USD por millón; no es diferencia de precio). Ajusta `07-resultados.tex` (límite «Quinto» y nota de `tab:carga-inferencia`), el memo `3.47` (los ítems `(e)(iv)` y `(f)(5)` remiten a `(h)`) y `dictamen-correcciones.md`. Evidencia: `evaluation/evidence/billing-gemini-2026-11-17-18-{oficial,resumen}.csv`.
+- **Objetivo**: incorporar la evidencia de facturación del proveedor en la prosa y agrupar correcciones de prosa por evidencia nueva.
+- **Specs**: `tesis-document` y `tesis-numeros-canonicos`.
+- **Dependencias**: **después** de `c-242`, `c-243` y `c-244` (mismos archivos de resultados/discusión). **Governance**: MEDIUM (prosa) + ALTA (release `v1.6.1`, toca el ejemplar).
+- **Pendiente operativo**: tarea 4.1 (reexportación del CSV de Cloud Billing el 2026-11-20) y 4.2 (reemplazar el CSV, recomputar SHA-256 y actualizar `README.md` y el memo al recibirlo).
+- **Leer antes**: `openspec/changes/c-245-incorporar-la-facturacion-del-proveedor-y-otras-correcciones-de-prosa/{proposal,design,tasks}.md`.
 
 ---
 
@@ -3114,6 +3165,8 @@ Actualizacion 2026-11-15 (c-224, arbitraje por mayoria): C-224 `acotar-el-arbitr
 Actualizacion 2026-11-16 (devolucion de tercera instancia sobre la `v1.5.2`): el tribunal dictamino «apta para defensa, condicionada a K-01 y K-02» (`auditorias/Devolucion_Tercera_Instancia_TFI_v1.5.2_2026-11-16.md`; 6,7/10, proyeccion 7,4 con las correcciones). Se propusieron cinco changes para las doce observaciones, que se aplican en este orden: C-235 `retirar-la-validacion-fuera-de-muestra-y-declarar-su-procedencia` (0/57; K-01, K-02, M-02), C-236 `acotar-el-balance-neto-y-declarar-el-umbral-a-priori` (0/34; A-01, M-01), C-237 `declarar-de-forma-completa-el-uso-de-asistentes-de-ia` (0/29; A-03), C-238 `mejorar-la-legibilidad-de-resultados-y-anexos` (0/42; M-03, B-01, B-03) y C-239 `actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega` (0/53; M-04 y cierre de version); cada uno agrega su entrada a este indice al aplicarse. El mismo dia se adaptaron los cuatro changes propuestos el 2026-11-15, cuyas premisas anclaban en la validacion fuera de muestra que se retira: C-229 (0/44), C-230 (0/38, reformulado), C-228 (0/46) y C-232 (0/48). Ninguno usa ya cifras ni artefactos retirados, todo dato nuevo queda sujeto a una compuerta de procedencia y a una compuerta etica y legal, y ninguno modifica el ejemplar que se defiende: se ejecutan despues de C-239, en el orden C-229 -> C-230 -> C-228 -> C-232, porque la devolucion no exige esa evidencia y atribuye la baja de la nota a evidencia nueva que no pudo acreditar. Queda pendiente la confirmacion de los tres autores (C-239 OQ2). Estado: 9 changes ACTIVOS (C-228, C-229, C-230, C-232 y C-235 a C-239), todos validos con `openspec validate --strict` y con 0 tareas aplicadas; release vigente `v1.5.2`.
 
 Actualizacion 2026-11-17 (entrega `v1.6.0`, tercera instancia): C-239 `actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega` quedo APLICADO (grupos 0 a 5; sin commit, tag ni push, a la espera de la autorizacion expresa de los autores) y se aplicaron y archivaron C-235, C-236, C-237 y C-238 (mas C-240, que cerro el residual de K-02 y la omision de A-02 en §1.8),sincronizando la `tesis-defensa` y la `tesis-document`. La entrega `v1.6.0` retira la validacion fuera de muestra, acota el balance neto como cota superior condicional, declara de forma completa el uso de asistentes de IA y mejora la legibilidad; el ejemplar recompila en 149 paginas (126 de cuerpo), con 0 errores, 0 referencias o citas indefinidas; `docs/defensa/respuestas-tribunal.md` queda coherente con el ejemplar (Q1 a Q16 actualizadas y P1 a P12 nuevas; cotejo de cifras con 0 fallas). Destino de C-228, C-229, C-230 y C-232: confirmados por los autores como **adaptados y posteriores a la entrega** (OQ2 = A), con 0 tareas aplicadas, en el orden C-229 -> C-230 -> C-228 -> C-232; no se archivan. Pendiente de la autorizacion de los autores: el tag anotado `v1.6.0` (gobernanza ALTA), el commit de contenido, el commit del hash en el Anexo B y la publicacion; la copia de entrega `docs/Tesis/tesis_ultima_version.pdf` se regenera en ese tramo. Release vigente de la tesis: `v1.5.2` hasta el tag de `v1.6.0`.
+
+Actualizacion 2026-11-19 (publicacion de `v1.6.0`, cierre de la familia K y preparacion de `v1.6.1`): la entrega `v1.6.0` quedo cerrada: commit de contenido `bbc5865`, hash consignado en el Anexo B por `f16a8fd`, tag anotado `v1.6.0` (objeto `430a5c357118fa488a54bbfe940f0fd38d9911a2`) publicado en `origin` y `c-239` archivado (`a8d1474`). Quedan **archivados** `c-234` (entrega `v1.5.2`), `c-235`, `c-236`, `c-237`, `c-238`, `c-240` y `c-239`. Estan **ACTIVOS** `c-242` (30/31; compuerta del director 2.6 pendiente, prosa PROVISIONAL), `c-243` (49/56; release pendiente), `c-244` (16/17; release pendiente) y `c-245` (aplicado; tareas operativas 4.1/4.2 y release pendientes). Quedan **DETENIDOS** `c-228` (0/46), `c-229` (0/44), `c-230` (0/38) y `c-232` (0/48) desde el 2026-11-18, por falta de un marco poblacional completo y de un `clasificacion_log` real acumulado. La release vigente de la tesis es `v1.6.0`; la proxima release prevista es `v1.6.1`, que consolida `c-242` + `c-243` + `c-244` + `c-245` sobre la rama `c-244-sensibilidad-del-balance`. Su preparacion (bump de version en la portada, el `.bib` y el Anexo B; recompilacion; regeneracion de derivados; hash del Anexo B) esta BLOQUEADA por la compuerta del director (`c-242` tarea 2.6) y por la compuerta G3/G4 (`c-243` tarea 7.1: autorizacion literal para commitear y taguear). Nota de estado de los derivados: `paper/compilacion.md`, `paper/main.pdf`, `docs/Tesis/tesis_ultima_version.pdf` y los extractos `tesis_*` fueron regenerados el 2026-11-19 en el tramo no destructivo de `v1.6.1` (incluye `c-242`, `c-243`, `c-244` y `c-245`); el hash del Anexo B y el tag siguen pendientes de las compuertas. Quedan superadas las lineas de estado de las actualizaciones anteriores, incluida la de "Primer change recomendado" (que declaraba 0 changes activos).
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)

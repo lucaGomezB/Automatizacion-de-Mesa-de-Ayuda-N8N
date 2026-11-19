@@ -3205,15 +3205,16 @@ bajos, no como contribución marginal a alta concurrencia.
 capacidad**. (ii) **No reemplazan ni modifican la Sección `3.29`**, que sigue siendo la lectura canónica
 de capacidad. (iii) Los niveles `1` y `5` provienen de la corrida ampliada (`n = 90` escalados por
 subconjunto, `3` repeticiones) y los niveles `10` y `20` de la corrida original (`n = 10`, `1`
-repetición). (iv) El gasto **solo consta en la corrida ampliada** y su procedencia es `tokens_calculado`
-(calculado desde tokens con el precio declarado de la tesis), **no** facturación del proveedor; la
-corrida original **no** lo estima. (v) La sonda es ancilar y **no** se extrapola a producción.
+repetición). (iv) El gasto **por corrida** solo consta en la corrida ampliada y su procedencia es `tokens_calculado`
+(calculado desde tokens con el precio declarado de la tesis); la **facturación del período** del proveedor
+se registra en la subsección `(h) Billing del proveedor (Cloud Billing)`. La corrida original **no** lo estima. (v) La sonda es ancilar y **no** se extrapola a producción.
 
 **(f) Siete límites declarados.** (1) Sonda de **dos corridas complementarias**, no una serie (niveles
 1 y 5 de la ampliada; 10 y 20 de la original). (2) `n` escalado por subconjunto distinto por fila:
 `90` en los niveles 1 y 5 (`60` solicitudes por nivel, `3` repeticiones) y `10` en los niveles 10 y 20
 (`20` solicitudes por nivel, `1` repetición). (3) Una sola máquina. (4) Entorno desechable (perfil
-`corpus`). (5) El gasto solo consta en la corrida ampliada, con procedencia `tokens_calculado`. (6)
+`corpus`). (5) El gasto **por corrida** solo consta en la corrida ampliada, con procedencia `tokens_calculado`;
+el período se registra en la subsección `(h) Billing del proveedor (Cloud Billing)`. (6)
 Deriva posible de proveedor y de versión del modelo entre las corridas, la defensa y el estado actual.
 (7) Potencia **no comparable** con la corrida canónica de capacidad (`tab:carga-multicanal`, `120`
 solicitudes por nivel, `3` repeticiones) y **no extrapolable** a producción.
@@ -3223,6 +3224,23 @@ solicitudes por nivel, `3` repeticiones) y **no extrapolable** a producción.
 281568` (`tokens_origen = api`); `inferencia.costo_usd = 0,23112` con el precio declarado de la tesis
 (escenario `introductorio`) y `inferencia.gasto_origen = tokens_calculado` (no es facturación del
 proveedor). La corrida original no registra uso de tokens ni costo. Estado: `condicional`.
+
+**(h) Billing del proveedor (Cloud Billing).** La evidencia de facturación del período está versionada
+en `evaluation/evidence/`: el **export oficial** `billing-gemini-2026-11-17-18-oficial.csv`
+(`sha256 7c75fc0128101f93c567060825d56c20f86f3fdc28aad5a1c183649f0d3324a4`) y su **resumen**
+`billing-gemini-2026-11-17-18-resumen.csv`
+(`sha256 5ffaf26b5c63d93e439488242397a3ee90cfc55ffd74d923047ad1151c4bf1cd`), registrados en
+`evaluation/evidence/README.md`. En hora del Pacífico (UTC-8), el período 2026-11-17/18 da `366909`
+tokens (`358336` de entrada + `8573` de salida) y **USD `0,300897`** sin impuesto. El precio implícito
+cierra exacto en el precio declarado de la tesis (`0,75` USD por millón de entrada y `3,75` de salida;
+escenario `introductorio`): **no es una diferencia de precio**. El total del billing excede en ≈30 % al
+de la corrida ampliada de (g) (`281568` tokens; USD `0,23112`; `+83416` de entrada y `+1925` de salida)
+con la **misma proporción** en ambos tipos de token, lo que se atribuye a llamadas que `usage_metadata`
+no contó (reintentos técnicos, pruebas previas o llamadas fuera de las dos corridas). El billing se
+registra como **total del período** con esa explicación; el costo por corrida, desde los tokens. El
+total se declara como **cota inferior** (la exportación del 18/11 no estaba cerrada; el proveedor
+preveía ≈USD `0,04` más). `gasto_origen = Cloud Billing`, complementario del `tokens_calculado` de (g).
+Estado: `condicional`.
 
 **Valores previos intactos.** Ningún valor ni estado de las secciones `3.1` a `3.46` cambia. La Sección
 `3.29` conserva su cifra y su estado (solo recibe una nota de remisión, aditiva). Esta sección es

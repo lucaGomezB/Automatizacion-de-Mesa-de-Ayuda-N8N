@@ -1,0 +1,8 @@
+fecha_cargo,zona_horaria_del_dia,servicio,sku,id_sku,modelo,cantidad_tokens,costo_usd_sin_redondear,costo_usd_redondeado,precio_implicito_usd_por_millon,nivel,fuente,fecha_consulta
+2026-11-17,America/Los_Angeles (UTC-8),Gemini API,Generate content input token count gemini 3.6 flash text,2F9F-F0E4-699C,gemini-3.6-flash,165122,0.123840,0.12,0.75,pago (Nivel 1),Cloud Billing > Informes > Descargar CSV (Fecha > SKU),2026-11-18
+2026-11-17,America/Los_Angeles (UTC-8),Gemini API,Generate content output token count gemini 3.6 flash text,90DC-1471-C3D3,gemini-3.6-flash,3928,0.014729,0.01,3.75,pago (Nivel 1),Cloud Billing > Informes > Descargar CSV (Fecha > SKU),2026-11-18
+2026-11-18,America/Los_Angeles (UTC-8),Gemini API,Generate content input token count gemini 3.6 flash text,2F9F-F0E4-699C,gemini-3.6-flash,193214,0.144910,0.14,0.75,pago (Nivel 1),Cloud Billing > Informes > Descargar CSV (Fecha > SKU),2026-11-18
+2026-11-18,America/Los_Angeles (UTC-8),Gemini API,Generate content output token count gemini 3.6 flash text,90DC-1471-C3D3,gemini-3.6-flash,4645,0.017418,0.02,3.75,pago (Nivel 1),Cloud Billing > Informes > Descargar CSV (Fecha > SKU),2026-11-18
+2026-11-17/18,America/Los_Angeles (UTC-8),Gemini API,TOTAL entrada,,gemini-3.6-flash,358336,0.268750,0.26,0.75,pago (Nivel 1),suma de las filas,2026-11-18
+2026-11-17/18,America/Los_Angeles (UTC-8),Gemini API,TOTAL salida,,gemini-3.6-flash,8573,0.032147,0.03,3.75,pago (Nivel 1),suma de las filas,2026-11-18
+2026-11-17/18,America/Los_Angeles (UTC-8),Gemini API,TOTAL periodo (impuesto 0.00),,gemini-3.6-flash,366909,0.300897,0.30,,pago (Nivel 1),Cloud Billing > Informes > Descargar CSV,2026-11-18
