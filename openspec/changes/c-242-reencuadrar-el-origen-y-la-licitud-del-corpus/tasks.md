@@ -40,9 +40,10 @@ nunca nombres reales ni la correspondencia alias-identidad; no tocar `App/`, `n8
 - [x] 2.5 **[COMPUERTA OQ-05]** Decidir que hacer con la proyeccion "42 incidentes diarios /
   universo 2.646" y con los "120 usuarios". Verificacion: la decision figura en la tabla;
   condiciona las tareas 3.1 y 3.2.
-- [ ] 2.6 **[COMPUERTA DIRECTOR]** Registrar el visto bueno del director (el change altera lo
+- [x] 2.6 **[COMPUERTA DIRECTOR]** Registrar el visto bueno del director (el change altera lo
   que la tesis afirma sobre la procedencia de sus datos). Verificacion: la firma/visto bueno
-  con fecha figuran en la tabla; sin el, no se escribe prosa.
+  con fecha figuran en la tabla; sin el, no se escribe prosa. **OTORGADO el 2026-11-20** (junto
+  con c-246); la prosa deja de ser provisional.
 
 ## 3. tesis-document — Reencuadre del origen (§1.1, §1.2, §1.8, §4.1, §8.2, §9.1)
 

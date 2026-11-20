@@ -6619,7 +6619,7 @@ La sección de tiempos conserva la cifra primaria (71,2~\% y su intervalo) y rem
 
 ### c-242: reencuadrar el origen y la licitud del corpus (compuertas de autores y director)
 
-Propuesto el 2026-11-17 (absorbe y supersede a `c-241-precisar-la-base-de-licitud-en-la-seccion-7-5`, retirado por el orquestador). Las decisiones de los autores quedaron ratificadas el 2026-11-17 (registro de sesion; no hay documento firmado aparte). El visto bueno del director sigue **PENDIENTE**: la prosa resultante es **PROVISIONAL** hasta su aprobacion.
+Propuesto el 2026-11-17 (absorbe y supersede a `c-241-precisar-la-base-de-licitud-en-la-seccion-7-5`, retirado por el orquestador). Las decisiones de los autores quedaron ratificadas el 2026-11-17 (registro de sesion; no hay documento firmado aparte). El visto bueno del director fue **OTORGADO el 2026-11-20**: la prosa resultante deja de ser **PROVISIONAL** y queda como definitiva.
 
 #### Compuertas de autores (ratificadas el 2026-11-17)
 
@@ -6631,15 +6631,15 @@ Propuesto el 2026-11-17 (absorbe y supersede a `c-241-precisar-la-base-de-licitu
 | OQ-04 | Validez externa / escenario representativo | **Ratificada el 2026-11-17**: opcion (iv) combinada; §1.1/§4.1/§8.1 presentan el escenario de referencia del entorno operativo de los autores; §1.8/§8.2/§9.1 declaran que no hay marco poblacional ni generalizacion estadistica sobre un unico entorno | 2026-11-17 | Autores |
 | OQ-05 | Cifras del escenario (42/dia, universo 2.646, ~120 usuarios) | **Ratificada el 2026-11-17**: se conserva la opcion C; el balance neto queda condicional a N asumido y la linea B (`B_r(N)`) queda como seguimiento. Se conservan N = 2.646 y ~120 usuarios SOLO como premisa/proyeccion del escenario narrativo, nunca como hechos medidos; "42 incidentes diarios" se rotula como supuesto/proyeccion; NO se recalcula el balance neto ni ninguna cifra canonica | 2026-11-17 | Autores |
 
-> **Alcance de lo PROVISIONAL.** Las decisiones OQ-01 a OQ-05 quedaron ratificadas por los autores el 2026-11-17 (registro de sesion; no hay documento firmado aparte). El acta T2 registra el consentimiento prestado el 2026-10-02 y su confirmacion escrita queda pendiente de firma en custodia del director. La compuerta del director sigue **PENDIENTE** y la prosa de `S/` y de `D/` derivada de estas decisiones es **PROVISIONAL** hasta su aprobacion. No se consigna firma.
+> **Alcance de lo PROVISIONAL (resuelto el 2026-11-20).** Las decisiones OQ-01 a OQ-05 quedaron ratificadas por los autores el 2026-11-17 (registro de sesion; no hay documento firmado aparte). El acta T2 registra el consentimiento prestado el 2026-10-02 y su confirmacion escrita queda pendiente de firma en custodia del director; su firma real es 2026-11-20 (ver c-246). La compuerta del director fue **OTORGADA el 2026-11-20** y la prosa de `S/` y de `D/` derivada de estas decisiones deja de ser **PROVISIONAL**.
 
-#### Compuerta del director (PENDIENTE)
+#### Compuerta del director (OTORGADA el 2026-11-20)
 
 | Compuerta | Pregunta | Respuesta | Fecha | Responsable |
 |---|---|---|---|---|
-| Director | Visto bueno al reencuadre (el change altera lo que la tesis afirma sobre la procedencia de sus datos) | **PENDIENTE** (consulta enviada 2026-11-17 por WhatsApp; sin respuesta a la fecha) | - | Director |
+| Director | Visto bueno al reencuadre (el change altera lo que la tesis afirma sobre la procedencia de sus datos) | **OTORGADO el 2026-11-20** | 2026-11-20 | Director |
 
-> **La tarea 2.6 queda SIN MARCAR.** Sin el visto bueno del director, la prosa escrita en este change se considera **PROVISIONAL** y no debe publicarse como version definitiva.
+> **La tarea 2.6 queda MARCADA (2026-11-20).** El visto bueno del director fue otorgado; la prosa de este change deja de ser **PROVISIONAL** y se publica como version definitiva.
 
 #### Composicion del corpus
 
