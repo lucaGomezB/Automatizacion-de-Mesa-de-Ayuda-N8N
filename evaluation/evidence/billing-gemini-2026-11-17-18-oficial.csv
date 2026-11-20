@@ -1,8 +1,8 @@
 Fecha,Descripción del servicio,ID de servicio,Descripción del SKU,ID de SKU,Cantidad de uso,Unidad de uso,Costo de uso ($),Ahorros negociados ($),Programas de ahorros ($),Otros ahorros ($),Subtotal sin redondear ($),Subtotal ($)
-2026-11-18,Gemini API,AEFD-7695-64FA,Generate content input token count gemini 3.6 flash text,2F9F-F0E4-699C,"193,214",count,0.14,0.00,0.00,0.00,0.144910,0.14
-2026-11-18,Gemini API,AEFD-7695-64FA,Generate content output token count gemini 3.6 flash text,90DC-1471-C3D3,"4,645",count,0.02,0.00,0.00,0.00,0.017418,0.02
+2026-11-18,Gemini API,AEFD-7695-64FA,Generate content input token count gemini 3.6 flash text,2F9F-F0E4-699C,"279,512",count,0.21,0.00,0.00,0.00,0.209632,0.21
+2026-11-18,Gemini API,AEFD-7695-64FA,Generate content output token count gemini 3.6 flash text,90DC-1471-C3D3,"6,747",count,0.03,0.00,0.00,0.00,0.025300,0.03
 2026-11-17,Gemini API,AEFD-7695-64FA,Generate content input token count gemini 3.6 flash text,2F9F-F0E4-699C,"165,122",count,0.12,0.00,0.00,0.00,0.123840,0.12
 2026-11-17,Gemini API,AEFD-7695-64FA,Generate content output token count gemini 3.6 flash text,90DC-1471-C3D3,"3,928",count,0.01,0.00,0.00,0.00,0.014729,0.01
-,,,,,,,,,Subtotal,0.300897,0.30
+,,,,,,,,,Subtotal,0.373501,0.37
 ,,,,,,,,,Impuesto,0.000000,0.00
-,,,,,,,,,Total,0.300897,0.30
+,,,,,,,,,Total,0.373501,0.37

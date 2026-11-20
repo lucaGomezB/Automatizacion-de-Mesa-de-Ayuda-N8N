@@ -17,7 +17,7 @@
 
 ### Requirement: Distincion entre el costo por corrida y la facturacion del proveedor del periodo
 
-El documento SHALL distinguir, en la prosa de la sonda de latencia con inferencia incluida, el costo **por corrida** del total facturado por el proveedor en el **periodo**. En el limite «Quinto» de `07-resultados.tex` y en la nota de `tab:carga-inferencia`, el texto SHALL declarar que el costo por corrida se calcula a partir de tokens con el precio declarado de la tesis (`gasto_origen = tokens_calculado`) y que la facturacion del periodo proviene del proveedor (Google Cloud Billing), como evidencia versionada distinta. La nota de `tab:carga-inferencia` SHALL citar, junto a los dos JSON de las corridas, las dos evidencias de facturacion (`evaluation/evidence/billing-gemini-2026-11-17-18-oficial.csv` y `billing-gemini-2026-11-17-18-resumen.csv`) con sus prefijos de SHA-256 (`7c75fc01\ldots` y `5ffaf26b\ldots`). El texto SHALL declarar el total del periodo (`366.909` tokens y USD `0,300897`) como **cota inferior**, porque la exportacion del 18/11 no estaba cerrada. El texto SHALL declarar el contraste con `usage_metadata` de la corrida ampliada (`281.568` tokens y USD `0,23112`: aproximadamente `+30\,\%` en ambos tipos de token, misma proporcion, atribuible a llamadas que `usage_metadata` no conto) y que el **precio queda confirmado** por coincidir el precio implicito con el escenario de la tesis (`0,75` USD por millon de entrada y `3,75` por millon de salida), de modo que NO es una diferencia de precio. El documento MUST NOT conservar ninguna afirmacion que presente el gasto como «no facturacion del proveedor» sin la distincion por corrida y por periodo. La incorporacion MUST NOT cambiar ninguna cifra canonica ni el contenido sustantivo, y MUST NOT introducir oraciones de mas de 60 palabras.
+El documento SHALL distinguir, en la prosa de la sonda de latencia con inferencia incluida, el costo **por corrida** del total facturado por el proveedor en el **periodo**. En el limite «Quinto» de `07-resultados.tex` y en la nota de `tab:carga-inferencia`, el texto SHALL declarar que el costo por corrida se calcula a partir de tokens con el precio declarado de la tesis (`gasto_origen = tokens_calculado`) y que la facturacion del periodo proviene del proveedor (Google Cloud Billing), como evidencia versionada distinta. La nota de `tab:carga-inferencia` SHALL citar, junto a los dos JSON de las corridas, las dos evidencias de facturacion (`evaluation/evidence/billing-gemini-2026-11-17-18-oficial.csv` y `billing-gemini-2026-11-17-18-resumen.csv`) con sus prefijos de SHA-256 (`f860b5cd\ldots` y `636fdd70\ldots`). El texto SHALL declarar el total del periodo **cerrado** (`455.309` tokens —`444.634` de entrada y `10.675` de salida— y USD `0,373501`), de la re-exportacion del `2026-11-20` con la ventana cerrada (la del 18/11 estaba abierta y subestimaba el 18/11). El texto SHALL declarar el contraste con `usage_metadata` de la corrida ampliada (la facturacion del `2026-11-18` —`286.259` tokens— coincide con los `281.568` tokens de su `usage_metadata`; el resto del periodo —`169.050` tokens del `2026-11-17`— corresponde a la corrida original, sin `usage_metadata`) y que el **precio queda confirmado** por coincidir el precio implicito con el escenario de la tesis (`0,75` USD por millon de entrada y `3,75` por millon de salida), de modo que NO es una diferencia de precio. El documento MUST NOT conservar ninguna afirmacion que presente el gasto como «no facturacion del proveedor» sin la distincion por corrida y por periodo. La incorporacion MUST NOT cambiar ninguna cifra canonica ni el contenido sustantivo, y MUST NOT introducir oraciones de mas de 60 palabras.
 
 #### Scenario: Limite Quinto distingue por corrida y por periodo
 
@@ -30,18 +30,18 @@ El documento SHALL distinguir, en la prosa de la sonda de latencia con inferenci
 
 - **WHEN** se lee la nota de `tab:carga-inferencia`
 - **THEN** cita los dos JSON de las corridas
-- **AND** cita `billing-gemini-2026-11-17-18-oficial.csv` (`7c75fc01\ldots`) y `billing-gemini-2026-11-17-18-resumen.csv` (`5ffaf26b\ldots`)
+- **AND** cita `billing-gemini-2026-11-17-18-oficial.csv` (`f860b5cd\ldots`) y `billing-gemini-2026-11-17-18-resumen.csv` (`636fdd70\ldots`)
 
-#### Scenario: Total del periodo declarado como cota inferior
+#### Scenario: Total del periodo cerrado
 
 - **WHEN** se lee el total del periodo de la facturacion del proveedor
-- **THEN** figura `366.909` tokens y USD `0,300897` con la salvedad de cota inferior
-- **AND** se declara que la exportacion del 18/11 no estaba cerrada
+- **THEN** figura `455.309` tokens y USD `0,373501` como **total cerrado**
+- **AND** se declara que la exportacion del 18/11 estaba abierta y subestimaba el 18/11, y que el total proviene de la re-exportacion cerrada del `2026-11-20`
 
 #### Scenario: Precio confirmado y contraste con usage_metadata
 
 - **WHEN** se lee el contraste entre la facturacion del periodo y la evidencia de la corrida ampliada
-- **THEN** figura el `+30\,\%` en ambos tipos de token con la misma proporcion, atribuido a llamadas que `usage_metadata` no conto
+- **THEN** se declara que la facturacion del dia de la corrida ampliada (`2026-11-18`) coincide con su `usage_metadata` y que el resto del periodo (`2026-11-17`) corresponde a la corrida original, sin `usage_metadata`
 - **AND** se declara que el precio implicito coincide con el escenario declarado de la tesis y que NO es una diferencia de precio
 
 #### Scenario: Barrido de coherencia con la evidencia nueva

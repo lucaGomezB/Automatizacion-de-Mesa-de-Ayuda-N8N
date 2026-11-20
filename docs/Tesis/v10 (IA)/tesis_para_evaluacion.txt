@@ -4487,13 +4487,13 @@ con su lista de violaciones). Una sola máquina, entorno desechable. Fuente:
 evaluation/evidence/load_test_inferencia_ampliada_2026-11-18.json y
 evaluation/evidence/load_test_inferencia_2026-11-17.json; la facturación del período de las dos
 corridas proviene del proveedor (Cloud Billing) y consta en
-evaluation/evidence/billing-gemini-2026-11-17-18-oficial.csv (sha256 7c75fc01…) y
-evaluation/evidence/billing-gemini-2026-11-17-18-resumen.csv (sha256 5ffaf26b…). El total
-del período es de 366.909 tokens y USD 0,300897, una cota inferior porque la exportación del 18/11 no estaba
-cerrada y el proveedor preveía unos USD 0,04 más. La corrida ampliada registra en usage_metadata
-281.568 tokens y USD 0,23112, cerca de un 30 % más en ambos tipos de token y en la misma proporción,
-atribuible a llamadas que usage_metadata no contó. El precio implícito coincide con el escenario declarado de
-la tesis (0,75 USD por millón de entrada y 3,75 por millón de salida), de modo que la diferencia no es de precio.
+evaluation/evidence/billing-gemini-2026-11-17-18-oficial.csv (sha256 f860b5cd…) y
+evaluation/evidence/billing-gemini-2026-11-17-18-resumen.csv (sha256 636fdd70…). El total
+cerrado del período es de 455.309 tokens (444.634 de entrada y 10.675 de salida) y USD 0,373501. La
+facturación del día de la corrida ampliada (18/11: 286.259 tokens) coincide con los 281.568 tokens de su
+usage_metadata; el resto del período (169.050 tokens del 17/11) corresponde a la corrida original, que no
+registra usage_metadata. El precio implícito coincide con el escenario declarado de la tesis (0,75 USD por
+millón de entrada y 3,75 por millón de salida), de modo que la diferencia no es de precio.
 
 subconjunto determinístico, frente a T = 4); el nivel de 5 concurrentes pasa a cumplirla (3,74).
 La violación es relativa y no absoluta: no indica saturación del backend, sino que la inferencia

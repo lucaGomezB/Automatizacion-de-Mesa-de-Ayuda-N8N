@@ -3227,20 +3227,18 @@ proveedor). La corrida original no registra uso de tokens ni costo. Estado: `con
 
 **(h) Billing del proveedor (Cloud Billing).** La evidencia de facturación del período está versionada
 en `evaluation/evidence/`: el **export oficial** `billing-gemini-2026-11-17-18-oficial.csv`
-(`sha256 7c75fc0128101f93c567060825d56c20f86f3fdc28aad5a1c183649f0d3324a4`) y su **resumen**
+(`sha256 f860b5cde5baf3e6c7dd7d2a5f6cab74688b34c064415a71f8a1713ff90a15f4`) y su **resumen**
 `billing-gemini-2026-11-17-18-resumen.csv`
-(`sha256 5ffaf26b5c63d93e439488242397a3ee90cfc55ffd74d923047ad1151c4bf1cd`), registrados en
-`evaluation/evidence/README.md`. En hora del Pacífico (UTC-8), el período 2026-11-17/18 da `366909`
-tokens (`358336` de entrada + `8573` de salida) y **USD `0,300897`** sin impuesto. El precio implícito
-cierra exacto en el precio declarado de la tesis (`0,75` USD por millón de entrada y `3,75` de salida;
-escenario `introductorio`): **no es una diferencia de precio**. El total del billing excede en ≈30 % al
-de la corrida ampliada de (g) (`281568` tokens; USD `0,23112`; `+83416` de entrada y `+1925` de salida)
-con la **misma proporción** en ambos tipos de token, lo que se atribuye a llamadas que `usage_metadata`
-no contó (reintentos técnicos, pruebas previas o llamadas fuera de las dos corridas). El billing se
-registra como **total del período** con esa explicación; el costo por corrida, desde los tokens. El
-total se declara como **cota inferior** (la exportación del 18/11 no estaba cerrada; el proveedor
-preveía ≈USD `0,04` más). `gasto_origen = Cloud Billing`, complementario del `tokens_calculado` de (g).
-Estado: `condicional`.
+(`sha256 636fdd7029e9a20edb19af5a6ae019681f5fcc23d1976213f9e435f4b4133318`), registrados en
+`evaluation/evidence/README.md`. En hora del Pacífico (UTC-8), el período 2026-11-17/18 (exportación
+cerrada del `2026-11-20`) da `455309` tokens (`444634` de entrada + `10675` de salida) y **USD
+`0,373501`** sin impuesto. El precio implícito cierra exacto en el precio declarado de la tesis (`0,75`
+USD por millón de entrada y `3,75` de salida; escenario `introductorio`): **no es una diferencia de
+precio**. La facturación del día de la corrida ampliada (`2026-11-18`: `286259` tokens) coincide con los
+`281568` tokens que esa corrida registró en `usage_metadata` (diferencia ≈2 %); el resto del período
+(`169050` tokens del `2026-11-17`) corresponde a la corrida original, que no dispone de `usage_metadata`.
+El billing se registra como **total del período**; el costo por corrida, desde los tokens.
+`gasto_origen = Cloud Billing`, complementario del `tokens_calculado` de (g). Estado: `condicional`.
 
 **Valores previos intactos.** Ningún valor ni estado de las secciones `3.1` a `3.46` cambia. La Sección
 `3.29` conserva su cifra y su estado (solo recibe una nota de remisión, aditiva). Esta sección es
