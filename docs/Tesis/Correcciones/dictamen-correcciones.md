@@ -6675,6 +6675,69 @@ Patron: cada tarea de edicion corrio una verificacion ANTES (linea base; muestra
 
 Los autores declaran, para la pregunta del tribunal, que el escenario se presento como una organizacion real porque en su momento pensaron que los datos asi presentados tendrian mas valor y que la tesis pareceria mas seria; en retrospectiva, lo que de verdad importaba eran las descripciones de los incidentes. El reencuadre de c-242 declara ese hecho de forma transparente, sin sostener la organizacion real.
 
+### c-246: aplicar el reencuadre autorizado de cuarta instancia (compuertas de autores y director)
+
+La devolucion de cuarta instancia (19/11/2026) dicta **"APTA PARA DEFENSA", CONDICIONADA A QUE LA PROXIMA VERSION APLIQUE EL REENCUADRE AUTORIZADO (R-01 a R-07)** (calificacion provisional 7,2/10; proyectada 7,5/10 si R-03 se resuelve declarando el flujo manual como tarea de laboratorio). El tribunal fija fecha de defensa solo al recibir una version con R-01..R-07 aplicados **y el visto bueno escrito del director**. c-246 cierra los residuales concretos que c-242 dejo cualitativos o no alcanzo (R-02 composicion numerica, R-03, R-05, R-06, R-07, B-01). Es un cambio de PROSA unicamente: no toca arquitectura, codigo ni latencias.
+
+#### Compuertas de autores (confirmadas el 2026-11-20)
+
+| Compuerta | Pregunta | Decision (confirmada el 2026-11-20) | Fecha | Responsable |
+|---|---|---|---|---|
+| OQ-01 | Composicion numerica del corpus de 200 casos (R-02) | **Confirmada el 2026-11-20**: 119 reales (regimen (a)) = 66 correo electronico + 53 formulario web; 81 reconstrucciones (regimen (b)) = 81 telefonicos. Las reconstrucciones las escribio el autor que recolecto los incidentes, SIN asistente de IA, anotando una descripcion general, sin detalles explicitos y pseudonimizada, de cada llamada telefonica recibida en su trabajo | 2026-11-20 | Autores |
+| OQ-02 | Base de licitud del regimen (a) y fecha del acta (R-05) | **Confirmada el 2026-11-20**: la base del regimen (a) es el consentimiento informado del grupo (art. 5 inc. 1); los incidentes reales son del propio equipo, no terceros ajenos. La firma real del acta es **2026-11-20**; el "2026-10-02" hoy vigente corresponde a la **notificacion** (correcta como tal), no a la firma | 2026-11-20 | Autores |
+| OQ-03 | Flujo manual como tarea de laboratorio (R-03) | **Confirmada el 2026-11-20**: el flujo manual de la campana 2026-10 se declara **medicion controlada / tarea de laboratorio**; los "61,6 s" se leen como medicion de tarea controlada, no de operacion normal de la mesa | 2026-11-20 | Autores |
+
+#### Compuerta del director (gate duro del tribunal)
+
+| Compuerta | Pregunta | Respuesta | Fecha | Responsable |
+|---|---|---|---|---|
+| Director | Visto bueno escrito al reencuadre (condicion del tribunal para fijar fecha) | **OTORGADO el 2026-11-20** (visto bueno escrito) | 2026-11-20 | Director |
+
+#### Composicion del corpus (resuelta)
+
+El desglose numerico exigido por R-02 queda respaldado por la respuesta OQ-01: 119 reales (regimen (a)) = 66 correo + 53 formulario web, y 81 reconstrucciones (regimen (b)) = 81 telefonicos. Supera a c-242, que por falta de registro primario declaro la mezcla de forma cualitativa (sin desglose por canal).
+
+#### Acta de consentimiento T2 (fecha reconciliada)
+
+La fecha "2026-10-02" vigente corresponde a la **notificacion** a los integrantes del grupo (correcta como tal); la **firma real** del acta de consentimiento es **2026-11-20**. La tarea 5.3 consigna la firma el 2026-11-20 y reenmarca "2026-10-02" como fecha de notificacion.
+
+#### Colaborador A1 (hallazgo Q5 de la revision de respuestas al tribunal)
+
+Durante la revision de las preguntas probables (Seccion 6 de la devolucion, Q5 "quien es A1 y que informacion recibio") se detecto que el colaborador **A1** (operador externo del brazo manual y analista original del consenso de etiquetas) no figura en ninguno de los instrumentos de consentimiento: las actas T1/T2 cubren al grupo de autores, y la confirmacion posterior cubre a E1-E5, O1 y O2. **Decision de los autores (2026-11-20):** A1 fue **notificado de antemano** de su participacion como colaborador, y se procede como con los otros colaboradores: se solicita su firma lo antes posible para entregarla con el documento fisico de la tesis. **Accion pendiente:** consignar la firma de A1 en el registro de consentimiento posterior (a la par de E1-E5, O1, O2) antes de la defensa. Ademas se agrego una nota de pie en §4.2 que desambigua el codigo de sujeto `A1` de las cadenas de busqueda A1-A4 del estado del arte (colision de rotulo).
+
+#### Verificaciones ANTES/DESPUES (equivalente de Strict TDD para prosa)
+
+Patron: cada tarea de edicion corrio una verificacion ANTES (linea base; muestra la afirmacion incorrecta) y DESPUES (estado deseado). Las busquedas se ejecutaron sobre `S/` = `docs/Tesis/v10 (IA)/paper/sections/`.
+
+| Tarea | Comando | ANTES | DESPUES |
+|---|---|---|---|
+| 3.1 | `rg -n "semana completa de operaci" S/01-introduccion.tex` | 1 coincidencia (L18): "obtenida del promedio de una semana completa de operacion sin cronometraje" | 0 coincidencias; L18 la presenta como "un parametro del escenario de referencia fijado por los autores", sin semana de operacion real |
+| 3.2 | `rg -n "operaci.n normal de la mesa\|16 de junio al 10 de septiembre" S/04-marco-metodologico.tex` | 2 coincidencias (L46): "sobre la operacion normal de la mesa" y "del 16 de junio al 10 de septiembre de 2026" | 0 coincidencias como hecho; el flujo manual se declara "medicion controlada / tarea de laboratorio" y la ventana \(42 \times 63\) queda como "supuesto del escenario" que "no corresponde a un periodo de operacion relevado" |
+| 3.3 | `rg -n "antig[üu]edad en la mesa de ayuda" S/04-marco-metodologico.tex` | 1 coincidencia (L64): "con mas de tres anos de antiguedad en la mesa de ayuda" | 0 coincidencias; los operadores se describen como "los analistas originales que fijaron la referencia y estan familiarizados con el dominio" |
+| 3.4 | `rg -n "otorga a la organizaci.n control pleno" S/01-introduccion.tex` | 1 coincidencia (L64): "otorga a la organizacion control pleno sobre sus datos operativos" | la frase pasa a "otorga a una organizacion adoptante real control pleno" (rol generico futuro, no la organizacion del estudio) |
+| 3.5 | `rg -n "2\.646|2.646" S/08-discusion.tex S/12-anexos.tex` | menciones desnudas en 08 L14 ("volumen trimestral de 2.646") y L74 ("volumen de 2.646 incidentes trimestrales") | L14 y L74 rotuladas "volumen trimestral supuesto de 2.646 incidentes (proyeccion 42 x 63, un supuesto del escenario y no un volumen medido)" / "volumen trimestral supuesto de 2.646"; L80 y L109 (formulas) ya declaraban \(N\) como premisa del escenario narrativo |
+| 4.1 | `rg -n "corpus real pseudonimizado" S/12-anexos.tex` | 1 coincidencia (L235) | 0 coincidencias; L235 distingue "incidentes reales pseudonimizados del regimen (a)" de "reconstrucciones del regimen (b)" |
+| 4.2 | `rg -n "119 casos\|81 casos\|reconstrucciones" S/04-marco-metodologico.tex` | composicion por canal (81/66/53) sin desglose por regimen ni autor/metodo | L46 declara el desglose: 119 reales (regimen (a)) = 66 correo + 53 formulario; 81 reconstrucciones (regimen (b)) = 81 telefonicos, escritas por el autor que recolecto, sin asistente de IA |
+| 4.3 | `rg -n "autores escribieron\|fijaron su sector\|ajustaron el vocabulario" S/04-marco-metodologico.tex` | sin esa amenaza en §4.8 (solo "seis amenazas") | L129 agrega la septima amenaza; L115 declara "siete amenazas" |
+| 4.4 | `rg -n "1.6.0\|escenario ficticio\|autorizacion del tribunal" S/12-anexos.tex` | sin nota | L237b (nuevo parrafo) declara: hasta v1.6.0 se presento como organizacion real; desde la version siguiente se declara ficticio, con autorizacion del tribunal |
+| 5.1 | `rg -n "empleadora\|inciso~?2, apartado~?d" S/11-aspectos-legales.tex` | 0 coincidencias (ya retirada por c-242); §7.2 funda en consentimiento art. 5 inc. 1 | sin cambios; §7.2 sigue fundando el regimen (a) en consentimiento (art. 5 inc. 1) y el (b) sin base |
+| 5.2 | `rg -n "usuarios de la organizaci\|designado por la organizaci\|120 empleados\|carta de autorizaci" S/11-aspectos-legales.tex` | 1 coincidencia (L38): "Los usuarios de la organizacion son informados... responsable de proteccion de datos designado por la organizacion" | 0 coincidencias; L38 declara que no hay usuarios de una organizacion adoptante ni responsable designado por ella, y reenvia los derechos ARCO a la organizacion adoptante futura |
+| 5.3 | `rg -n "2026-10-02\|prestado el" S/11-aspectos-legales.tex` | "prestado el 2026-10-02" (L30) como fecha del consentimiento | L30: la notificacion fue el 2026-10-02 y la firma del acta es 2026-11-20 |
+| 5.4 | `rg -n "único contexto en que se evalu.*|un único entorno operativo del sector|una sola organizaci" S/09-conclusiones.tex S/08-discusion.tex` | 09 L49 ("el unico contexto en que se evaluo"); 08 L50 ("un unico entorno operativo del sector servicios") | ambas reformuladas como "un corpus curado por los autores sobre un escenario de referencia" |
+| 6.1 | `rg -n "\\sectorcad\{si\}" S/01-introduccion.tex` | 2 coincidencias en prosa (L48, L72) | 0 coincidencias; L48 y L72 usan `\sectorprosa{si}` junto al resto de los cinco sectores en prosa |
+
+#### Verificacion de coherencia (extracto)
+
+- **7.1** §7.2 (L16) y §7.5 (L40, L48) coinciden: regimen (a) consentimiento informado (art. 5 inc. 1) + pseudonimizacion; regimen (b) sin base. Sin contradiccion.
+- **7.2** sin residual de la devolucion: `rg -ni "organizacion real|carta de autorizaci|120 empleados|operacion normal de la mesa|16 de junio al 10 de septiembre|una sola organizacion|corpus real pseudonimizado" S/` = **0 coincidencias**.
+- **7.3** sin `\sectorcad{si}` en prosa en 01: **0 coincidencias**.
+- **7.4** cifras canonicas intactas: 61,6 s, 17,76 s, W = 363, 73,5 % sin cambios; `git diff` limitado a re-rotulado.
+- **7.5** compilacion de verificacion: **diferida (regla no-build)**, sin latexmk.
+
+#### Nota de dependencia
+
+c-246 es una capacidad ADDED independiente (`tesis-reencuadre-cuarta-instancia`); el orden de archivado recomendado es c-242 antes que c-246, para que el reencuadre de c-242 aterrice en `tesis-document` antes de reconciliar los residuales de c-246.
+
 ## Dictamen v10 / v1.5.2 (2026-11-16) - c-239 (devolucion de tercera instancia)
 
 - **Change**: `c-239-actualizar-las-respuestas-al-tribunal-y-cerrar-la-entrega` (arbol de trabajo; sin commit, tag ni push en este tramo).
