@@ -32,7 +32,7 @@
 \contentsline {subsection}{\numberline {4.1}Enfoque y tipo de investigación}{37}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Diseño experimental}{37}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Operacionalización de variables}{38}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Población, muestra y corpus}{38}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.4}Población, muestra y corpus}{40}{subsection.4.4}%
 \contentsline {paragraph}{Un único corpus congelado.}{40}{paragraph*.5}%
 \contentsline {subsection}{\numberline {4.5}Protocolo de pruebas}{42}{subsection.4.5}%
 \contentsline {paragraph}{Procedencia de los datos del brazo automatizado.}{43}{paragraph*.6}%
@@ -40,11 +40,11 @@
 \contentsline {paragraph}{Test de carga del tramo compartido.}{45}{paragraph*.9}%
 \contentsline {subsection}{\numberline {4.6}Métricas e instrumentos}{46}{subsection.4.6}%
 \contentsline {paragraph}{Costo de la derivación errónea \(c\).}{47}{paragraph*.10}%
-\contentsline {subsection}{\numberline {4.7}Análisis estadístico}{47}{subsection.4.7}%
-\contentsline {paragraph}{Análisis de la campaña complementaria de medición.}{48}{paragraph*.11}%
-\contentsline {paragraph}{Calibración y punto de operación del gate de confianza.}{49}{paragraph*.12}%
-\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{50}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)}{52}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.7}Análisis estadístico}{48}{subsection.4.7}%
+\contentsline {paragraph}{Análisis de la campaña complementaria de medición.}{49}{paragraph*.11}%
+\contentsline {paragraph}{Calibración y punto de operación del gate de confianza.}{50}{paragraph*.12}%
+\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{51}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)}{53}{subsection.4.9}%
 \contentsline {section}{\numberline {5}Arquitectura del sistema}{54}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Visión general}{54}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Capa de canales de entrada}{57}{subsection.5.2}%
@@ -71,9 +71,9 @@
 \contentsline {subsection}{\numberline {7.6}Cumplimiento normativo y alineación con estándares}{81}{subsection.7.6}%
 \contentsline {subsubsection}{\numberline {7.6.1}Marco de referencia adoptado}{81}{subsubsection.7.6.1}%
 \contentsline {subsubsection}{\numberline {7.6.2}Estado de alineación con ISO/IEC 27002:2022}{81}{subsubsection.7.6.2}%
-\contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{81}{subsubsection.7.6.3}%
+\contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{82}{subsubsection.7.6.3}%
 \contentsline {subsubsection}{\numberline {7.6.4}Brechas principales y hoja de ruta}{82}{subsubsection.7.6.4}%
-\contentsline {subsubsection}{\numberline {7.6.5}Alineación con el marco legal}{82}{subsubsection.7.6.5}%
+\contentsline {subsubsection}{\numberline {7.6.5}Alineación con el marco legal}{83}{subsubsection.7.6.5}%
 \contentsline {section}{\numberline {8}Resultados}{84}{section.8}%
 \contentsline {subsection}{\numberline {8.1}Comparación de tiempos de registro}{84}{subsection.8.1}%
 \contentsline {subsection}{\numberline {8.2}Matriz de confusión y métricas de clasificación}{88}{subsection.8.2}%

@@ -144,17 +144,17 @@ Diseño experimental . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 4.3
 Operacionalización de variables . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
 4.4
-Población, muestra y corpus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+Población, muestra y corpus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
 4.5
 Protocolo de pruebas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 42
 4.6
 Métricas e instrumentos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46
 4.7
-Análisis estadístico . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47
+Análisis estadístico . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48
 4.8
-Amenazas a la validez . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
+Amenazas a la validez . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 51
 4.9
-Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto) 52
+Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto) 53
 5 Arquitectura del sistema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 54
 5.1
 Visión general . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 54
@@ -209,9 +209,9 @@ Consentimiento, derechos del usuario y supervisión humana . . . . . . . . . . .
 Cumplimiento normativo y alineación con estándares . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 81
 7.6.1 Marco de referencia adoptado . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 81
 7.6.2 Estado de alineación con ISO/IEC 27002:2022 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 81
-7.6.3 Perfil de alineación con NIST CSF 2.0 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 81
+7.6.3 Perfil de alineación con NIST CSF 2.0 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82
 7.6.4 Brechas principales y hoja de ruta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82
-7.6.5 Alineación con el marco legal . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82
+7.6.5 Alineación con el marco legal . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 83
 8 Resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
 8.1
 Comparación de tiempos de registro . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
@@ -347,7 +347,7 @@ Relecturas de la campaña complementaria . . . . . . . . . . . . . . . . . . . .
 Trabajos académicos previos sobre clasificación de tickets . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 34
 Comparación de soluciones para gestión automatizada de mesa de ayuda . . . . . . . . . . . . . . . . 35
 Operacionalización de variables del estudio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
-Procedencia de las cifras por familia: corrida, configuración y artefacto de origen . . . . . . . . . 44
+Procedencia de las cifras por familia: corrida, configuración y artefacto de origen . . . . . . . . . 45
 Capas funcionales de la arquitectura del sistema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 55
 Entidades principales del modelo de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60
 Puntos de entrada principales de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
@@ -580,13 +580,17 @@ inconvenientes de software o solicitudes de asistencia técnica.
 El escenario de referencia se dimensiona con premisas y proyecciones, no con mediciones del entorno: se asume un volumen promedio de 42 incidentes diarios, un tiempo medio de
 registro manual de 2 minutos con 45 segundos por incidente y una tasa de derivación errónea
 inicial cercana al 15 %. Aquel valor de 2 minutos con 45 segundos constituyó una estimación
-a priori, obtenida del promedio de una semana completa de operación sin cronometraje individual por caso, y sirvió para dimensionar el problema. La tasa de derivación errónea del 15 %
-comparte esa naturaleza preliminar: es una estimación a priori que no se re-midió directamente. La campaña complementaria de medición, en cambio, midió la exactitud estricta del brazo
-manual, que resultó de 0,8278 (125 de 151), de la que se deriva una tasa de error manual de
-eman = 26/151 = 0,1722. El saldo neto se declara condicional al tramo de reanudación no medido (Subsección 9.5). La campaña experimental posterior midió el tiempo de registro incidente
-por incidente con cronometraje en vivo, consignado en la planilla descrita en la Subsección 4.2.
-Arrojó una media de 61,6 s sobre los 200 casos del corpus, sustancialmente inferior a la estimación preliminar. El tiempo que el personal podría redirigir a tareas de mayor valor agregado
-si la etapa de registro estuviera automatizada se cuantifica en la Subsección 9.1.
+a priori, un parámetro del escenario de referencia fijado por los autores para dimensionar el
+problema, sin cronometraje individual por caso ni relevamiento de una operación real. La tasa
+de derivación errónea del 15 % comparte esa naturaleza preliminar: es una estimación a priori
+que no se re-midió directamente. La campaña complementaria de medición, en cambio, midió
+la exactitud estricta del brazo manual, que resultó de 0,8278 (125 de 151), de la que se deriva
+una tasa de error manual de eman = 26/151 = 0,1722. El saldo neto se declara condicional al
+tramo de reanudación no medido (Subsección 9.5). La campaña experimental posterior midió
+el tiempo de registro incidente por incidente con cronometraje en vivo, consignado en la planilla descrita en la Subsección 4.2. Arrojó una media de 61,6 s sobre los 200 casos del corpus,
+sustancialmente inferior a la estimación preliminar. El tiempo que el personal podría redirigir
+a tareas de mayor valor agregado si la etapa de registro estuviera automatizada se cuantifica
+en la Subsección 9.1.
 El registro manual de incidentes implica además la lectura de correos electrónicos, la
 interpretación de descripciones textuales heterogéneas, la clasificación del problema según el
 área responsable y la carga manual de la información en un sistema de tickets. Este procedimiento requiere tiempo, interrumpe las tareas del personal técnico y puede generar errores
@@ -595,12 +599,12 @@ incorrecta. La dispersión de los canales de comunicación —correo, llamada te
 simultáneamente.
 Este escenario es coherente con la caracterización general de la gestión de servicios
 de TI (Galup et al., 2009) (véase Subsección 2.1). Que los procesos de soporte no automatizados tiendan a degradarse cuando crece el volumen de solicitudes, con mayor impacto en
-organizaciones medianas donde el personal combina múltiples roles, es una inferencia de los
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 13
 
+organizaciones medianas donde el personal combina múltiples roles, es una inferencia de los
 autores de esta tesis y no una afirmación de esa fuente. Estos indicadores justifican la búsqueda de una alternativa tecnológica que reduzca el costo operativo, mejore la calidad de la
 derivación temprana y disminuya la variabilidad asociada al criterio individual.
 1.3. Pregunta de investigación
@@ -628,12 +632,12 @@ La segunda postula que la proporción de casos del flujo automatizado que requie
 acción manual de un operador no supera 0,15. Esa cota es el complemento del umbral de
 exactitud fijado a priori en el segundo objetivo específico. Se contrasta con el intervalo de
 Wilson de la proporción mediante una regla de tres vías: el resultado es compatible si el límite
-superior del intervalo queda por debajo de 0,15, refutado si la estimación puntual alcanza
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 14
 
+superior del intervalo queda por debajo de 0,15, refutado si la estimación puntual alcanza
 o supera 0,15, y no concluyente si la estimación queda por debajo de 0,15 pero su límite
 superior no. La regla es asimétrica: la rama de refutación se decide con la estimación puntual
 y no con el intervalo, de modo que basta que aquella alcance la cota. El denominador de 147
@@ -662,12 +666,12 @@ este trabajo.
 1.5. Objetivo general
 Evaluar la viabilidad y el desempeño de la automatización del registro inicial de incidentes de una mesa de ayuda empresarial mediana mediante la orquestación de flujos con
 N8N y el procesamiento de lenguaje natural en Python. El desarrollo y la implementación del
-sistema constituyen el medio para esa evaluación. Esta abarca la recepción, el procesamiento,
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 15
 
+sistema constituyen el medio para esa evaluación. Esta abarca la recepción, el procesamiento,
 la clasificación y el registro automáticos de incidentes. Considera la reducción del tiempo de
 registro, la calidad de la clasificación y la proporción de intervención humana en la etapa inicial,
 y mantiene la supervisión técnica y la trazabilidad de las decisiones tomadas por el sistema.
@@ -676,39 +680,32 @@ El primer objetivo específico consiste en diseñar una arquitectura distribuida
 natural, un canal de telefonía con transcripción automática del habla y una base de datos relacional. Esa arquitectura debe garantizar comunicación sincrónica entre componentes mediante
 interfaces de programación de aplicaciones de tipo REST sobre HTTP cifrado.
 El segundo objetivo específico se orienta a implementar un clasificador automático que
-asigne cada incidente a uno de los cinco sectores canónicos —Seguridad Informatica,
-Soporte Tecnico Hardware,
-
-Soporte Tecnico Software,
-
-Bases de Datos
-
-o
-
-Sistemas— sobre un corpus controlado de 200 casos representativos del entorno operativo.
-El umbral de desempeño —exactitud global no inferior al 85 % y F1 macro no inferior a 0,85—
-constituye el criterio de éxito de este objetivo, fijado a priori por los autores y verificable contra
-la exactitud observada y su intervalo de confianza; su grado de cumplimiento se declara
-en la Subsección 10.1. Ese umbral no se toma de un piso numérico de la literatura —los
-trabajos relevados no permiten fijar uno común—, sino que se fundamenta en tres criterios
-convergentes, disponibles antes de cualquier medición. Primero, la literatura de clasificación
-de tickets toma como referencia a los clasificadores supervisados clásicos, entre los que SVM
-tuvo buen desempeño en todas las muestras de Paramesh y Shreedhara (2019) (Tabla 1).
-Segundo, la estimación propia de los autores, a partir de la operación habitual —del orden
-de 10 a 15 minutos por reasignación y una tasa de derivación errónea preliminar del 15 %,
-estimaciones sin registro cuantitativo—, situaba la paridad con el flujo manual en el 85 % de
-exactitud. Tercero, situar el umbral en el 85 % deja margen para que, si la exactitud verdadera
-del clasificador lo supera, el límite inferior de su intervalo de confianza pueda ubicarse por
-encima de la frontera de interés en lugar de quedar solapado con ella. Las mediciones de
-noviembre de 2026 sobre el costo de una derivación errónea, la paridad con la exactitud
-manual medida y el costo marginal por punto se presentan en la Subsección 9.5 rotuladas
-como lecturas posteriores, que no fundamentan el umbral.
-El tercer objetivo específico plantea integrar tres canales de entrada paralelos —correo
+asigne cada incidente a uno de los cinco sectores canónicos —Seguridad Informática, Soporte
+Técnico Hardware, Soporte Técnico Software, Bases de Datos o Sistemas— sobre un corpus
+controlado de 200 casos representativos del entorno operativo. El umbral de desempeño —
+exactitud global no inferior al 85 % y F1 macro no inferior a 0,85— constituye el criterio de
+éxito de este objetivo, fijado a priori por los autores y verificable contra la exactitud observada
+y su intervalo de confianza; su grado de cumplimiento se declara en la Subsección 10.1. Ese
+umbral no se toma de un piso numérico de la literatura —los trabajos relevados no permiten
+fijar uno común—, sino que se fundamenta en tres criterios convergentes, disponibles antes
+de cualquier medición. Primero, la literatura de clasificación de tickets toma como referencia
+a los clasificadores supervisados clásicos, entre los que SVM tuvo buen desempeño en todas
+las muestras de Paramesh y Shreedhara (2019) (Tabla 1). Segundo, la estimación propia de
+los autores, a partir de la operación habitual —del orden de 10 a 15 minutos por reasignación
+y una tasa de derivación errónea preliminar del 15 %, estimaciones sin registro cuantitativo—,
+situaba la paridad con el flujo manual en el 85 % de exactitud. Tercero, situar el umbral en
+el 85 % deja margen para que, si la exactitud verdadera del clasificador lo supera, el límite
+inferior de su intervalo de confianza pueda ubicarse por encima de la frontera de interés en
+lugar de quedar solapado con ella. Las mediciones de noviembre de 2026 sobre el costo de una
+derivación errónea, la paridad con la exactitud manual medida y el costo marginal por punto
+se presentan en la Subsección 9.5 rotuladas como lecturas posteriores, que no fundamentan
+el umbral.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 16
 
+El tercer objetivo específico plantea integrar tres canales de entrada paralelos —correo
 electrónico, formulario web y llamada telefónica con transcripción automática— dentro de un
 único flujo automatizado que normalice la entrada y centralice el procesamiento.
 El cuarto objetivo específico consiste en evaluar comparativamente el flujo manual y
@@ -734,17 +731,18 @@ pueden estimar, con sus propias tasas, el retorno de una inversión similar.
 Desde la dimensión tecnológica, la solución combina componentes de código abierto
 —Python, FastAPI y PostgreSQL— con N8N, una plataforma de orquestación de flujos cuyo
 código fuente se distribuye bajo licencia Sustainable Use (fair-code) y admite despliegue completamente autoalojado (n8n GmbH, 2024). Esto permite una implementación reproducible en
-organizaciones de tamaño mediano sin requerir grandes inversiones de capital ni dependencia exclusiva de proveedores comerciales. Esta propiedad es particularmente relevante en el
+organizaciones de tamaño mediano sin requerir grandes inversiones de capital ni dependen-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 17
 
+cia exclusiva de proveedores comerciales. Esta propiedad es particularmente relevante en el
 contexto argentino, donde las restricciones de acceso a divisas y los costos de suscripción en
 moneda extranjera constituyen barreras significativas para la adopción de soluciones comerciales internacionales. Además, el despliegue autoalojado de la totalidad de los componentes
-—con excepción del servicio de inferencia— otorga a la organización control pleno sobre sus
-datos operativos, en línea con el control sobre los datos personales y su tratamiento conforme
-a la normativa de protección de datos (Honorable Congreso de la Nación Argentina, 2000).
+—con excepción del servicio de inferencia— otorga a una organización adoptante real control
+pleno sobre sus datos operativos, en línea con el control sobre los datos personales y su tratamiento conforme a la normativa de protección de datos (Honorable Congreso de la Nación
+Argentina, 2000).
 Desde la dimensión académica, el trabajo aporta evidencia empírica sobre el desempeño de modelos de lenguaje grandes aplicados a la clasificación de tickets en español rioplatense, dominio escasamente documentado en la literatura comparativa disponible. En los
 trabajos de clasificación automática de tickets relevados (Tabla 1) el idioma del corpus no se
 informa en la mayoría de los casos; entre los que lo consignan, ninguno declara un corpus
@@ -762,20 +760,20 @@ cumplimiento de la normativa argentina de protección de datos personales.
 1.8. Alcance y delimitaciones
 El alcance del trabajo se circunscribe a la etapa de recepción, clasificación y registro
 inicial de incidentes, sin abarcar la resolución técnica de los mismos, la cual permanece bajo
-responsabilidad del personal humano. El sistema contempla tres canales de entrada (correo
-electrónico, formulario web y llamada telefónica con transcripción automática) y cinco sec-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 18
 
-tores de derivación (Seguridad Informatica, Soporte Tecnico Hardware, Soporte
-Tecnico Software, Bases de Datos y Sistemas). La validación experimental se realiza
-dentro de la muestra, sobre un corpus de 200 casos en idioma español rioplatense recolectado en un único entorno operativo, presentado como escenario de referencia narrativo (sector
-servicios, provincia de Mendoza), cuya plantilla se asume de aproximadamente 120 usuarios
-internos distribuidos en cinco áreas funcionales. No se dispone de un marco poblacional: el
-corpus no proviene de una organización real ni de una segunda organización, de modo que la
-validación no sostiene una generalización estadística.
+responsabilidad del personal humano. El sistema contempla tres canales de entrada (correo
+electrónico, formulario web y llamada telefónica con transcripción automática) y cinco sectores
+de derivación (Seguridad Informática, Soporte Técnico Hardware, Soporte Técnico Software,
+Bases de Datos y Sistemas). La validación experimental se realiza dentro de la muestra, sobre un corpus de 200 casos en idioma español rioplatense recolectado en un único entorno
+operativo, presentado como escenario de referencia narrativo (sector servicios, provincia de
+Mendoza), cuya plantilla se asume de aproximadamente 120 usuarios internos distribuidos en
+cinco áreas funcionales. No se dispone de un marco poblacional: el corpus no proviene de una
+organización real ni de una segunda organización, de modo que la validación no sostiene una
+generalización estadística.
 Quedan fuera del alcance los siguientes aspectos, los cuales se proponen como líneas
 de trabajo futuro en la Sección 11. Primero, la integración con sistemas externos de inventario
 de activos informáticos o con sistemas de gestión de configuración. Segundo, un modelo de
@@ -795,13 +793,13 @@ proveedor.
 El documento se organiza en once capítulos y un conjunto de anexos. El Sección 2 y el
 Sección 3 fijan el marco conceptual y el relevamiento de antecedentes. El Sección 4 describe el
 diseño cuasiexperimental, el corpus, los procedimientos de medición y los métodos de análisis.
-El Sección 5 y el Sección 6 presentan la arquitectura de cinco capas y su construcción. El
-Sección 7 reúne las consideraciones éticas y legales que condicionan la lectura de la evidencia.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 19
 
+El Sección 5 y el Sección 6 presentan la arquitectura de cinco capas y su construcción. El
+Sección 7 reúne las consideraciones éticas y legales que condicionan la lectura de la evidencia.
 El Sección 8 reporta las mediciones y el Sección 9 las interpreta, las contrasta con la literatura
 y declara sus limitaciones. El Sección 10 y el Sección 11 cierran con el balance de los objetivos
 alcanzados y las líneas de trabajo futuro. Los anexos reúnen el diagrama de arquitectura, el
@@ -1505,8 +1503,8 @@ brazo manual precedió al automatizado en los 200 casos (manual: 5 de noviembre,
 El contrabalanceo planificado no se ejecutó y el efecto de orden queda sin estimar (Subsección 4.8).
 La investigación se desenvolvió bajo un protocolo de medición en vivo. Los dos operadores del brazo manual de la campaña 2026-10 son los analistas originales que fijaron la
 referencia (Subsección 4.4); trabajaron en pares y se cronometraron mutuamente, por lo que
-sabían que la campaña registraba tiempos, aunque no se anunció el inicio de cada cronometraje. El propósito comparativo (el contraste con un flujo automatizado) se ocultó, a lo sumo,
-al operador externo (A1); el operador que es también autor del trabajo (T1) lo conocía por esa
+sabían que la campaña registraba tiempos, aunque no se anunció el inicio de cada cronometraje. El propósito comparativo (el contraste con un flujo automatizado) se ocultó, a lo sumo, al
+operador externo (A1)1 ; el operador que es también autor del trabajo (T1) lo conocía por esa
 condición, por lo que para él no hubo enmascaramiento. La sesión de esclarecimiento (debriefing) alcanzó solo a A1. Así se atenuó, sin eliminarlo, el efecto Hawthorne —la alteración del
 comportamiento de los sujetos cuando saben que están siendo observados— (McCambridge
 et al., 2014), que subsiste como amenaza residual (Sección 9). La atenuación es menor para
@@ -1522,8 +1520,9 @@ entre variables cuantitativas continuas, cuantitativas proporcionales y cualitat
 Cada variable se acompaña de su unidad de medida y de la definición operacional aplicada
 durante la captura, garantizando la trazabilidad entre la definición conceptual y el procedimiento
 de medición efectivo.
-4.4. Población, muestra y corpus
-La población de referencia está constituida por la totalidad de los incidentes informáticos del entorno operativo del propio equipo, presentado como escenario de referencia narrativo, y no por los de una organización real distinta. El universo aproximado es de 2.646
+1
+A1 y T1 son códigos de sujeto del registro de la campaña; no deben confundirse con las cadenas de búsqueda
+A1–A4 del estado del arte (Sección 3).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -1645,22 +1644,36 @@ Fuente: elaboración propia.
 
 40
 
-incidentes, proyectado como 42 incidentes diarios sobre los 63 días hábiles del período relevado, del 16 de junio al 10 de septiembre de 2026 (42 × 63 ≈ 2.646). De ese universo se
-tomó un corpus de 200 casos pseudonimizados mediante un muestreo no probabilístico por
-conveniencia (disponibilidad): los 200 casos son los incidentes cronometrados en la campaña
-manual. No hubo estratificación ni asignación proporcional. La composición por sector es la
-observada y no una asignación: Soporte Técnico Hardware 85, Soporte Técnico Software 67,
-Seguridad Informática 31, Sistemas 16 y Bases de Datos 1. La distribución del universo por
-sector no está disponible, por lo que no puede afirmarse que el corpus la reproduzca. Bases
-de Datos quedó con un único caso, no estimable por clase, y en replicaciones convendría sobremuestrear las clases minoritarias. Los casos provienen de tres canales de origen: llamada
-telefónica 81, correo electrónico 66 y formulario web 53. El flujo manual se cronometró entre
-junio y agosto de 2026, una sub-ventana del período relevado, sobre la operación normal de la
-mesa; sobre los mismos 200 casos, el flujo automatizado se ejecutó entre septiembre y octubre
-de 2026.
+4.4. Población, muestra y corpus
+La población de referencia está constituida por la totalidad de los incidentes informáticos del entorno operativo del propio equipo, presentado como escenario de referencia narrativo, y no por los de una organización real distinta. El universo proyectado es de 2.646 incidentes,
+un supuesto del escenario que fija 42 incidentes diarios sobre una ventana de 63 días hábiles
+(42 × 63 ≈ 2.646); esa ventana no corresponde a un período de operación relevado, sino al
+horizonte que dimensiona el supuesto. De ese universo se tomó un corpus de 200 casos pseudonimizados mediante un muestreo no probabilístico por conveniencia (disponibilidad): los 200
+casos son los incidentes cronometrados en la campaña manual. No hubo estratificación ni asignación proporcional. La composición por sector es la observada y no una asignación: Soporte
+Técnico Hardware 85, Soporte Técnico Software 67, Seguridad Informática 31, Sistemas 16
+y Bases de Datos 1. La distribución del universo por sector no está disponible, por lo que
+no puede afirmarse que el corpus la reproduzca. Bases de Datos quedó con un único caso,
+no estimable por clase, y en replicaciones convendría sobremuestrear las clases minoritarias.
+Los casos provienen de tres canales de origen: llamada telefónica 81, correo electrónico 66
+y formulario web 53. La composición del corpus por régimen es la siguiente: 119 casos son
+incidentes reales del entorno operativo del propio equipo (régimen (a); 66 de correo electrónico y 53 de formulario web), pseudonimizados, y 81 casos son reconstrucciones de tipos de
+incidente reales (régimen (b); los 81 telefónicos). Lo que se reconstruye es la descripción, no
+el incidente: el autor que recolectó los incidentes redactó, sin asistente de inteligencia artificial,
+una descripción general, sin detalles explícitos y pseudonimizada, de cada llamada telefónica real que recibió en su trabajo. El flujo manual se cronometró entre junio y agosto de 2026
+como una medición controlada, una tarea de laboratorio sobre los 200 casos del corpus (los
+analistas A1 y T1 cronometraron por pares la carga completa de cada incidente, descrita en
+la Subsección 4.2), y no como una medición de la operación normal de una mesa de ayuda;
+sobre los mismos 200 casos, el flujo automatizado se ejecutó entre septiembre y octubre de
+2026.
 
 Un único corpus congelado. La evidencia numérica de este trabajo se apoya en un solo
 corpus congelado, data/corpus_evaluacion_pseudonimizado.json, cuya huella SHA-256 es 1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d8
 84dac5cb. Los 200 casos, su composición por sector y por canal y sus etiquetas de referencia
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+41
+
 son los mismos en todas las lecturas del documento. Lo que varía entre apartados no es el
 corpus, sino la configuración del clasificador y la corrida con que se obtuvieron los distintos
 conjuntos de cifras: los tiempos, las métricas de clasificación y la campaña complementaria
@@ -1677,11 +1690,6 @@ N z 2 p (1 − p)
 e2 (N − 1) + z 2 p (1 − p)
 
 equivalente a n = n0 /[1 + (n0 − 1)/N ] con n0 = z 2 p (1 − p)/e2 . En ella, N ≈ 2.646 es el
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-41
-
 tamaño del universo trimestral, z = 1,96 corresponde a un nivel de confianza del 95 %, p = 0,5
 es la proporción esperada conservadora (la que maximiza la varianza p(1 − p) y, con ella,
 el tamaño requerido) y e es el margen de error absoluto. El tamaño del corpus se fijó por
@@ -1699,6 +1707,11 @@ esto es, los registros sin contenido textual clasificable o cuya extensión no p
 sector responsable. En cambio, los casos con pertenencia simultánea a más de un sector (multicategoría) y las descripciones muy breves pero clasificables se conservaron deliberadamente
 por ser representativos del entorno operativo real, con una etiqueta primaria como sector responsable. Esto es coherente con el análisis de errores de la Sección 8, donde las descripciones
 muy cortas y la mezcla de categorías figuran entre los patrones de error dominantes: excluirlos
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+42
+
 habría sesgado el corpus hacia casos artificialmente limpios y sobreestimado el desempeño
 del clasificador.
 Cada incidente del corpus fue revisado y etiquetado de forma independiente por dos
@@ -1711,13 +1724,7 @@ entre las limitaciones (Sección 9). Los dos analistas son, además, quienes ope
 manual de la campaña 2026-10 (Subsección 4.2): esta coincidencia no altera el cómputo del
 acuerdo inter-evaluador, pero implica que la etiqueta de referencia y el brazo de comparación
 comparten sujetos, lo que acota la independencia del ground truth respecto de los operadores
-cronometrados (Subsección 4.8). Las discrepancias entre analistas fueron resueltas por con-
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-42
-
-senso bajo la supervisión del director del trabajo. Las planillas de ese doble etiquetado original
+cronometrados (Subsección 4.8). Las discrepancias entre analistas fueron resueltas por consenso bajo la supervisión del director del trabajo. Las planillas de ese doble etiquetado original
 no se conservaron. El valor de 0,87 informado en versiones anteriores de esta tesis no puede
 respaldarse con registros y por eso no se presenta como evidencia de fiabilidad (véase Subsección I.1). La fiabilidad de la referencia se estima con el doble etiquetado independiente de
 la campaña complementaria, a cargo de E1 y E2, distintos entre sí, de los dos analistas originales, de los autores y de los operadores del brazo manual. Se hizo sobre una planilla única
@@ -1732,19 +1739,20 @@ El protocolo se ejecutó en dos fases. La primera validó funcionalmente el sist
 verificó la integración de los componentes mediante tres tipos de pruebas. Las primeras son
 pruebas unitarias del módulo Python, cuya cobertura se mide con pytest-cov sobre los paquetes de rutas, servicios y repositorios mediante el comando pytest-m"notintegratio
 n"--cov=app.routes--cov=app.services--cov=app.repositories--cov-rep
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+43
+
 ort=term-missing. Las segundas son pruebas de integración de la API y de la base de
 datos, junto con pruebas estructurales que validan el archivo n8n/workflow.json. Las terceras son pruebas de aceptación simuladas con incidentes sintéticos representativos de cada
 categoría.
 La segunda fase consistió en la validación experimental propiamente dicha, en la cual
 los 200 incidentes del corpus se procesaron bajo ambas condiciones operativas y se registraron las variables descritas en la Subsección 4.3. El procesamiento manual lo realizaron dos
-operadores experimentados, con más de tres años de antigüedad en la mesa de ayuda y capacitados en el sistema de tickets de referencia. El automatizado de la campaña 2026-10 se
-ejecutó sin intervención humana en la captura y con el gate de revisión aplicable, en la ventana
-de septiembre a octubre de 2026; la procedencia de cada conjunto de datos se declara al final
-de esta sección.
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-43
+operadores experimentados, los analistas originales que fijaron la referencia y están familiarizados con el dominio de la mesa de ayuda del escenario de referencia. El automatizado de la
+campaña 2026-10 se ejecutó sin intervención humana en la captura y con el gate de revisión
+aplicable, en la ventana de septiembre a octubre de 2026; la procedencia de cada conjunto de
+datos se declara al final de esta sección.
 
 Procedencia de los datos del brazo automatizado. Los datos del brazo automatizado provienen de tres corridas con configuraciones distintas del clasificador. Los tiempos de correo
 y formulario (119 casos) se midieron el 2-10-2026. El autor Luca Gomez ejecutó el arnés
@@ -1759,6 +1767,11 @@ Esos 119 valores constan en el corpus y su registro primario pseudonimizado se v
 data/corpus_resultados_web_correo.json, que reúne 118 de los 119 casos de correo
 y formulario del 2-10-2026 con las marcas de tiempo de la base (ingreso y persistencia); R001
 es el único caso sin registro. Ese registro respalda la existencia y la procedencia de los incidentes, no la medición de extremo a extremo: aporta las marcas de tiempo de la base y no el
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+44
+
 tiempo del corpus, que incluye el envío. El archivo data/corpus_resultados.json corresponde a otra corrida y no los respalda. Los 81 tiempos telefónicos, en cambio, coinciden con su
 registro, data/corpus_resultados_telefonia.json. Esos 81 tiempos se midieron en
 una corrida realizada el 5 y 6 de octubre de 2026 (25 casos el 5 y 56 el 6, con unas 2 y 3 horas
@@ -1768,11 +1781,6 @@ no se apoya en el sidecar para acreditarlas, porque este consolida una fila por 
 desplegada que procesó los 56 casos del 6 de octubre (imagen de backend-corpus y flujo
 importado en n8n-corpus) no consta. La corrida no tiene configuración única: los 25 casos del
 5 de octubre son anteriores a dos cambios del sistema, la ampliación del vocabulario y la clasificación unificada con la cascada del backend (Sección I), contemporáneos de las llamadas
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-44
-
 del 6. Todas las llamadas son anteriores al cortocircuito evaluado. Las métricas de clasificación
 provienen de una ejecución fuera de línea del framework sobre el corpus JSON, generada el
 7-10-2026 a las 22:22 UTC con hybrid-v3, que versiona el commit bf5e099 (Tabla 24; evidencia: evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json; hash
@@ -1781,6 +1789,23 @@ al recálculo). El 19-10-2026 los tiempos telefónicos se recalcularon sumando l
 la grabación a la latencia posterior al cuelgue, para igualar la base con el tiempo manual, que
 incluye escuchar la llamada. Como las corridas de tiempos invocaban al modelo más que la
 configuración evaluada, no favorecen al flujo automatizado frente a ella (inferencia, no medición).
+
+Protocolo de la campaña complementaria de medición.
+
+La campaña complementaria
+
+de medición se ejecutó con un plan explícito por caso (plan_campana.csv), que fija la
+posicion, la mitad y el brazo_primero planificado de cada incidente; en la ejecución el
+brazo manual precedió al automatizado en los 200 casos (Subsección 4.2). El brazo manual
+lo operaron dos operadores experimentados, O1 y O2, distintos de los etiquetadores, de los
+analistas originales y de los autores, que registraron el tiempo por incidente en la planilla única
+brazo_manual.csv. La tarea manual de esta campaña difiere de la de la campaña 2026-10:
+cada operador recibió una hoja con el identificador y la descripción de cada caso y registró
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+45
+
 Tabla 4. Procedencia de las cifras por familia: corrida, configuración y artefacto de origen
 Familia de cifras
 
@@ -1866,22 +1891,6 @@ Nota: todas las familias se calculan sobre el mismo corpus congelado (Subsecció
 configuración y la corrida. La configuración entregada es el tag v1.3.0 del software (Tabla 24). Fuente:
 elaboración propia.
 
-Protocolo de la campaña complementaria de medición.
-
-La campaña complementaria
-
-de medición se ejecutó con un plan explícito por caso (plan_campana.csv), que fija la
-posicion, la mitad y el brazo_primero planificado de cada incidente; en la ejecución el
-brazo manual precedió al automatizado en los 200 casos (Subsección 4.2). El brazo manual
-lo operaron dos operadores experimentados, O1 y O2, distintos de los etiquetadores, de los
-analistas originales y de los autores, que registraron el tiempo por incidente en la planilla única
-brazo_manual.csv. La tarea manual de esta campaña difiere de la de la campaña 2026-10:
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-45
-
-cada operador recibió una hoja con el identificador y la descripción de cada caso y registró
 el instante en que tomó el caso y el instante en que asignó el sector. El tiempo medido es,
 por lo tanto, el de la decisión de sector. En la campaña 2026-10, en cambio, el cronometraje
 incluyó la lectura, la comprensión, la búsqueda y la carga del ticket, y la escucha en telefonía.
@@ -1901,7 +1910,13 @@ Para contrastar la dimensión de capacidad de la hi-
 pótesis subsidiaria de integración multicanal se midió el tramo en que convergen los canales
 con un test de carga reproducible y de costo cero. Se cargaron dos capas por separado: el
 punto de convergencia del backend (alta autenticada de un incidente) y el webhook del canal
-web de N8N, que además ejercita la orquestación. Se aplicaron 1, 5, 10 y 20 solicitudes concurrentes, con 40 solicitudes por nivel y 3 repeticiones, y se registraron la latencia medida por
+web de N8N, que además ejercita la orquestación. Se aplicaron 1, 5, 10 y 20 solicitudes con-
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+46
+
+currentes, con 40 solicitudes por nivel y 3 repeticiones, y se registraron la latencia medida por
 el cliente (p50, p95 y p99), el throughput y la tasa de error, sin descartar solicitudes fallidas. La
 regla de decisión de tres vías se fijó antes de observar datos y no se reajustó. La capacidad
 es «sostenida» si en todos los niveles la tasa de error es cero, el p95 no supera 5000 ms y el
@@ -1914,11 +1929,6 @@ ficticia y un presupuesto de inferencia nulo, con descripciones que las reglas d
 resuelven sin invocar al modelo. Se verificó en el registro de clasificación de cada incidente
 creado que ninguno escaló, de modo que no se emitió ninguna llamada paga. Los canales
 de correo, cuyo sondeo periódico no admite inyección concurrente, y de telefonía, que es de
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-46
-
 pago, quedaron fuera de la inyección; medir en el punto donde los tres convergen es lo que
 justifica esa exclusión. La medición se hizo en una sola máquina. De forma complementaria y
 ancilar, una sonda acotada con inferencia real incluida midió el mismo tramo en dos corridas
@@ -1934,6 +1944,11 @@ del F1 de la precisión y la sensibilidad macro promediadas), que neutraliza el 
 de clases del corpus (Sokolova & Lapalme, 2009). La cuarta es la proporción de intervención
 humana, en dos dimensiones rotuladas: casos que requieren intervención y tiempo dedicado
 a tareas manuales. El denominador del tiempo es el tiempo de registro automatizado más la
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+47
+
 duración de la intervención, no el tiempo total de atención (Subsección 8.3). No se midió en la
 campaña 2026-10, por ausencia de registro primario. Se mide en la campaña complementaria
 con el export de intervenciones, que registra el origen de cada acción por caso. Sobre esa
@@ -1947,11 +1962,6 @@ automatizado. El segundo es una planilla de cronometraje observacional para el f
 completada en vivo por el compañero de par que no registraba el incidente, con el tiempo total
 por incidente en segundos y redondeo hacia arriba. El tercero son las matrices de confusión
 generadas mediante la biblioteca scikit-learn (Pedregosa et al., 2011). En el flujo automatizado,
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-47
-
 el tiempo de registro del canal telefónico comprende tanto la duración de la llamada grabada
 como la latencia de procesamiento posterior al cuelgue, mientras que los canales de correo
 electrónico y formulario web se miden como latencia de extremo a extremo de su procesamiento. Dado que la grabación telefónica está acotada a un máximo de 45 s (véase la Sección 6),
@@ -1969,6 +1979,11 @@ proxy del rediagnóstico. El tramo activo se estima con un intervalo bootstrap p
 con semilla fija; el tramo de reanudación tras la interrupción no se mide en este corpus y se
 declara sin cota disponible. El método, la descomposición por régimen, el intervalo compuesto
 y su comparación con la banda canónica constan en el anexo de números canónicos citados
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+48
+
 (Sección J), que transcribe los valores de la fuente de verdad numérica del proyecto; el umbral
 del 85 % no se modifica; el balance usa c como cota inferior del costo y descuenta el tiempo
 de revisión.
@@ -1980,11 +1995,6 @@ n = 200: tiempos manuales (W = 0,803, p = 3,71×10−15 ), tiempos automatizados
 p = 3,47 × 10−10 ) y diferencias pareadas (W = 0,822, p = 2,37 × 10−14 ). En los tres casos
 el valor p queda muy por debajo del nivel de significancia α = 0,05, lo que respalda el uso
 de una prueba no paramétrica. En lo que sigue se denotan T + y T − la suma de los rangos
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-48
-
 de las diferencias positivas y negativas, respectivamente. La implementación de referencia
 (scipy.stats.wilcoxon en su variante de dos colas) devuelve como estadístico de contraste el menor de ambos, es decir W = mín(T + , T − ); por lo tanto W = T − cuando el flujo
 automatizado resulta más rápido que el manual en la mayoría de los pares, que es el caso del
@@ -2000,6 +2010,11 @@ Para el análisis de la clasificación se construyó la matriz de confusión glo
 macro. La referencia de verdad es multietiqueta (107 de los 200 casos, 53,5 %) y el clasificador emite una etiqueta principal: las métricas primarias son monoetiqueta (exactitud estricta y
 macro-F1 de umbral) y las secundarias, multietiqueta (subset accuracy, Hamming loss y microF1) (Tsoumakas & Katakis, 2007). Estas se calculan sobre el conjunto predicho de cada caso
 (la etiqueta principal más los sectores adicionales que emite la etapa determinística, en 8 casos), y la Hamming loss se normaliza por la unión de las etiquetas verdaderas y predichas del
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+49
+
 caso (equivalente a 1− Jaccard), no por las cinco clases. Como métrica secundaria operativa
 se calculó además la exactitud laxa (sector predicho principal dentro del conjunto de verdad
 del caso), distinta de la estricta, que sigue siendo la primaria; ambas se desagregaron por etapa y por canal con intervalo de Wilson, y la confianza se analizó por etapa, porque cada una
@@ -2015,11 +2030,6 @@ Análisis de la campaña complementaria de medición.
 Sobre la campaña complementa-
 
 ria de medición se agregan los siguientes contrastes. El kappa del doble etiquetado nuevo se
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-49
-
 informa con intervalo de confianza, estimado por dos vías: la aproximación asintótica de Fleiss
 et al. (1969) y el bootstrap percentil a nivel de caso (2000 remuestreos, semilla fija). Las proporciones por operador se acotan con el método de Wilson, y la exactitud agregada del brazo
 manual, con el bootstrap percentil por caso. La exactitud del brazo manual se contrasta con
@@ -2035,6 +2045,11 @@ puntual y no con el intervalo, de modo que basta que aquella alcance o supere la
 refutado si la estimación puntual alcanza o supera 0,15, y no concluyente si la estimación queda por debajo de 0,15 pero su límite superior no. Aplicada a la proporción prefijada, sobre los
 200 casos (25/200 = 12,5 %; IC de Wilson [8,6 %, 17,8 %]), la regla da un resultado no concluyente. En la campaña complementaria, la revisión humana alcanzó 66 casos de correo, 81
 de telefonía y ninguno de los 53 del formulario web. Sobre los 147 revisados, 25 cambiaron
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+50
+
 la derivación (17,0 %; IC de Wilson [11,8 %, 23,9 %]). Sobre ese denominador la estimación
 puntual supera la cota y la regla, aplicada literalmente, daría refutada. Pero el denominador se
 adoptó después de conocer los datos, el intervalo contiene 0,15 y la prueba binomial unilateral
@@ -2046,11 +2061,6 @@ regla y como dato secundario.
 Calibración y punto de operación del gate de confianza. Para medir si la confianza declarada sirve como criterio de derivación a revisión se calcularon, por etapa, dentro de la muestra,
 tres cantidades sobre el acierto estricto de cada caso. El error de calibración esperado (ECE)
 agrupa los casos en 10 bandas de igual ancho de la confianza en [0 ; 1] y promedia, ponderada por el número de casos de cada banda, la distancia absoluta entre la confianza media
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-50
-
 y la exactitud de la banda (Guo et al., 2017); la sobreconfianza es la confianza media menos
 la exactitud. El puntaje de Brier (Brier, 1950) es el error cuadrático medio entre la confianza
 y el acierto (0 o 1). El AUROC de la confianza es la probabilidad de que un caso acertado
@@ -2069,22 +2079,22 @@ el sector que habrían propuesto las reglas y el de Gemini, y el puntaje de corr
 reglas. Una regresión isotónica ajustada en los 200 casos se aplicó solo para corregir el nivel
 (ECE y Brier). El análisis es posterior a la campaña y no es ciego: antes de fijar las reglas
 se había tabulado la distribución de las confianzas y los aciertos por nivel en el corpus, y las
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+51
+
 reglas se fijaron por principio, a partir de las recomendaciones de la Subsección 11.1, y no
 por lo que esa tabulación sugería. Es una amenaza a la validez del prerregistro, y se informan
 todos los resultados, favorables o no.
 4.8. Amenazas a la validez
-Se identificaron y trataron explícitamente seis amenazas a la validez del estudio.
+Se identificaron y trataron explícitamente siete amenazas a la validez del estudio.
 La primera, una amenaza a la validez interna por efecto de aprendizaje del operador
 humano sobre el corpus, se acotó parcialmente mediante la ejecución secuencial pareada
 descrita en la Subsección 4.2. Como se anticipó allí, la rotación de operadores entre las dos
 mitades no elimina la amenaza (el efecto de operador queda confundido con la mitad del corpus) y se declara como limitación no resuelta del diseño, no como una mitigación efectiva. En
 la campaña complementaria el efecto de orden tampoco se resolvió (el brazo manual precedió
 al automatizado en los 200 casos y el contraste entre grupos brazo_primero no lo estima);
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-51
-
 solo se estima el efecto de posición, significativo para uno de los dos operadores y acotado
 por su efecto mínimo detectable (Sección 8). El rango de robustez consolidado de los tiempos
 (Tabla 29) acota la magnitud de la reducción frente a las sensibilidades ya calculadas, pero no
@@ -2100,6 +2110,11 @@ es autor del trabajo el enmascaramiento del propósito comparativo no existió, 
 el sesgo de novedad u observación no se distribuye por igual entre los dos operadores. Su
 dirección no se declara, por falta de evidencia sobre cuál fue más rápido.
 La tercera, una amenaza a la validez externa derivada del idioma y del dominio organizacional, se reconoce como limitación explícita del estudio: los resultados no son extrapolables
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+52
+
 sin nuevas validaciones a corpus en otros idiomas, en otras organizaciones o en otros sectores
 de la economía.
 La cuarta, una amenaza a la validez de conclusión derivada del tamaño moderado de
@@ -2111,11 +2126,6 @@ Lehmann, 1956)). El dz observado, 1,00, lo supera más de cuatro veces; por can
 (telefonía), 0,73 (correo) y 1,61 (formulario web), frente a mínimos de 0,31, 0,34 y 0,38 (0,33,
 0,37 y 0,41 con el ajuste). Por lo tanto, el diseño posee potencia suficiente para el contraste de
 tiempos. El riesgo se concentra, en cambio, en la precisión de las estimaciones de clasificación
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-52
-
 (exactitud por clase, macro-F1), que se reportan con intervalos de confianza (Wilson para las
 proporciones, bootstrap percentil para F1). La amenaza se trata, además, con pruebas no paramétricas robustas frente a tamaños muestrales pequeños y a desviaciones de la normalidad
 (Hernández Sampieri & Mendoza Torres, 2018).
@@ -2132,6 +2142,19 @@ un usuario real, lo que favorece el tiempo medido. Pudo favorecer también la tr
 aunque el canal telefónico obtuvo la exactitud más baja (0,654). Hubo dos configuraciones del
 sistema (25 casos el 5 de octubre y 56 el 6) y la versión del día 6 no consta (Subsección 4.5).
 No se estimó la magnitud del sesgo, y las cifras telefónicas no se extrapolan a usuarios reales.
+La séptima, una amenaza a la validez de constructo y a la validez externa, deriva de
+la procedencia del propio corpus: los autores escribieron parte de los casos (las 81 recons-
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+53
+
+trucciones del régimen (b)), fijaron el sector de cada incidente y ajustaron el vocabulario de
+reglas y el prompt sobre ese mismo corpus. Esa coautoría sobre los datos y sobre el criterio
+de clasificación puede beneficiar el desempeño medido de una forma que no se reproduce con
+incidentes redactados por terceros, por lo que la exactitud del 73,5 % no puede atribuirse por
+entero al clasificador sin considerar cómo se redactaron los casos. La magnitud del sesgo no
+se estimó y se declara como limitación reconocida del diseño.
 4.9. Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)
 Este apartado describe el método de construcción del artefacto, no el de investigación.
 El diseño experimental, el muestreo, el corpus y el análisis estadístico se definieron en las Secciones 4.1 a 4.8, mientras que la gestión bajo Scrumban concierne solo a cómo se construyó
@@ -2143,11 +2166,6 @@ La distribución de roles asignó la coordinación general, la integración de c
 y la telefónica (Twilio) a Luca Gomez, y la implementación inicial del módulo Python, la base
 de datos, el frontend y el flujo N8N a Gonzalo Sevilla; Carla Bustos revisó la tesis y colaboró en
 los anexos y la corroboración de fuentes. La dirección académica correspondió a los directores
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-53
-
 de la portada, el Prof. Alberto Cortez y el Prof. Ariel Enferrel.
 El tablero Kanban se gestionó en Jira con seguimiento diario y planificación por iteración; la coordinación del grupo, en GitHub Projects. La definición de terminado (Definition of
 Done) exigió pruebas unitarias aprobadas, revisión por pares y documentación actualizada.
@@ -2927,23 +2945,24 @@ tanto no configuran por sí mismas una de las bases de transferencia que la ley 
 El instrumento de transferencia internacional está documentado en el repositorio (do
 cs/seguridad/instrumento-transferencia-internacional.md); no se suscribieron cláusulas contractuales modelo (Agencia de Acceso a la Información Pública, 2023;
 Dirección Nacional de Protección de Datos Personales, 2016). El instrumento aplicado fue el
-consentimiento expreso de los titulares —los integrantes del grupo, régimen (a)—, prestado
+consentimiento expreso de los titulares —los integrantes del grupo, régimen (a)—, documenta-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 78
 
-el 2026-10-02 y documentado en docs/seguridad/acta-consentimiento-t2.md; las
-transferencias de audio (5 y 6 de octubre) y las corridas pagas (12 y 13 de noviembre) son
-posteriores al consentimiento. La pseudonimización previa de los textos y la minimización (solo se transfieren las descripciones, sin identificadores directos) refuerzan la salvaguarda, pero
-no sustituyen el instrumento. A los proveedores llegaron descripciones pseudonimizadas de
-los incidentes, en forma de texto (119 casos) y de audio recitado por uno de los autores a partir
-de esas descripciones (81 casos; Subsección 4.5); el audio que cruza la frontera es la voz del
-propio autor, no la de un tercero. El régimen (b) del corpus no contiene datos de terceros. En
-las corridas pagas del 12 y el 13 de noviembre de 2026 se enviaron además los textos de la
-validación fuera de muestra retirada de la presente versión: descripciones de incidentes elaboradas por los autores, sin datos personales ni de terceros. El instrumento de transferencia
-queda como requisito previo para la organización adoptante, antes de operar con datos reales
-de sus usuarios.
+do en docs/seguridad/acta-consentimiento-t2.md; la notificación a los integrantes
+del grupo se realizó el 2026-10-02, mientras que la firma del acta de consentimiento tiene fecha 2026-11-20. Las transferencias de audio (5 y 6 de octubre) y las corridas pagas (12 y 13
+de noviembre) son posteriores a la notificación. La pseudonimización previa de los textos y
+la minimización (solo se transfieren las descripciones, sin identificadores directos) refuerzan
+la salvaguarda, pero no sustituyen el instrumento. A los proveedores llegaron descripciones
+pseudonimizadas de los incidentes, en forma de texto (119 casos) y de audio recitado por uno
+de los autores a partir de esas descripciones (81 casos; Subsección 4.5); el audio que cruza
+la frontera es la voz del propio autor, no la de un tercero. El régimen (b) del corpus no contiene
+datos de terceros. En las corridas pagas del 12 y el 13 de noviembre de 2026 se enviaron además los textos de la validación fuera de muestra retirada de la presente versión: descripciones
+de incidentes elaboradas por los autores, sin datos personales ni de terceros. El instrumento
+de transferencia queda como requisito previo para la organización adoptante, antes de operar
+con datos reales de sus usuarios.
 7.4. Seguridad técnica
 Las medidas de seguridad técnica del sistema se sustentan en la triada confidencialidad, integridad y disponibilidad (CIA) descrita por Stallings y Brown (2018), y su evidencia de
 control se sintetiza en la Tabla 8 (tema Tecnológico). El cifrado en reposo con Fernet (AES-128
@@ -2956,16 +2975,17 @@ entregada v1.3.0). La capacidad de TLS pertenece a la configuración entregada (
 y no a la evaluada (Anexo B, Tabla 24). Los dos despliegues de la campaña experimental y la
 irrelevancia de TLS para las mediciones se detallan en la Subsección 5.1.
 7.5. Consentimiento, derechos del usuario y supervisión humana
-Los usuarios de la organización son informados, mediante una política de privacidad
-accesible desde los canales de entrada, sobre las características del sistema, los datos que se
-recolectan, la transferencia internacional aplicable y los derechos que les asisten conforme a
+El escenario del estudio es narrativo y no corresponde a una organización real que
+haya adoptado el sistema; por lo tanto, no existen usuarios de una organización adoptante a
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 79
 
-la normativa vigente. Se garantiza el ejercicio de los derechos de acceso, rectificación, actualización y supresión (derechos ARCO) mediante un procedimiento documentado a cargo del
-responsable de protección de datos designado por la organización.
+quienes informar mediante una política de privacidad ni un responsable de protección de datos
+designado por ella. Los derechos de acceso, rectificación, actualización y supresión (derechos
+ARCO) se garantizan, en el alcance del repositorio, mediante el procedimiento documentado
+que se describe más adelante, y su operación con titulares reales corresponde a la organización adoptante en un despliegue futuro.
 En lo que respecta al consentimiento informado para los fines de investigación académica, los titulares de los datos del régimen (a) —los integrantes del propio grupo de desarrollo,
 cuyo entorno operativo originó los incidentes reales— prestaron su consentimiento informado,
 documentado en el acta que se conserva en el expediente del trabajo. El escenario del estudio es narrativo: no corresponde a una organización real que haya adoptado el sistema ni
@@ -2986,13 +3006,13 @@ primaria del doble etiquetado almacena solo el alias, el identificador de caso, 
 derivado con clave criptográfica (HMAC-SHA-256), sin nombre, correo, teléfono ni legajo. La
 correspondencia entre el alias y la identidad de cada sujeto se conserva fuera del repositorio, pseudonimizada; las tablas y salidas de la campaña se versionan ya en esa forma, en
 consonancia con la pseudonimización descrita para el corpus académico (Subsección 7.5).
-Los cuatro participantes fueron informados verbalmente, antes de realizar sus tareas,
-del propósito del estudio, del carácter pseudonimizado de los registros, de la voluntariedad
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 80
 
+Los cuatro participantes fueron informados verbalmente, antes de realizar sus tareas,
+del propósito del estudio, del carácter pseudonimizado de los registros, de la voluntariedad
 de la participación y de su derecho a retirarse sin consecuencias. Con posterioridad a su participación firmaron una confirmación escrita de esa información y de su consentimiento; los
 originales firmados se conservan en el expediente físico del trabajo, en poder del director del
 trabajo, y no se versionan en el repositorio por contener datos personales. El repositorio conserva la plantilla de la confirmación y el registro de que se recabó para los cuatro participantes.
@@ -3017,13 +3037,13 @@ materializa el principio de la persona en el bucle (human in the loop) como salv
 a errores potenciales del clasificador automático. Cabe precisar su alcance.
 El gate de revisión se evalúa solo sobre la salida de la etapa Gemini (Subsección 5.5),
 por lo que sobre el 65,5 % de los casos, resueltos por la etapa determinística, no existe derivación automática por caso basada en la clasificación. Desde el 13 de octubre de 2026, posterior
-a la campaña 2026-10, el backend deriva además a revisión el incidente cuyo reportante no
-se identifica en el directorio de empleados, condición independiente de la clasificación. Para
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 81
 
+a la campaña 2026-10, el backend deriva además a revisión el incidente cuyo reportante no
+se identifica en el directorio de empleados, condición independiente de la clasificación. Para
 esa fracción la salvaguarda se limita al criterio con que se fijó el punto de operación del filtro
 —precisión no inferior a la del modelo sobre el conjunto que resuelve, estimada sobre el corpus
 de validación— y a la reasignación trazable del incidente descrita. Está disponible en la interfaz
@@ -3083,14 +3103,13 @@ con KMS/PAM, logs centralizados y redundancia offsite
 
 Fuente: elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0.
 
-7.6.3. Perfil de alineación con NIST CSF 2.0
-La Tabla 9 cubre las seis funciones de NIST CSF 2.0 y su madurez en una escala propia
-del relevamiento, de 0 (inexistente) a 4 (optimizado).
-
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 82
 
+7.6.3. Perfil de alineación con NIST CSF 2.0
+La Tabla 9 cubre las seis funciones de NIST CSF 2.0 y su madurez en una escala propia
+del relevamiento, de 0 (inexistente) a 4 (optimizado).
 Tabla 9. Perfil de alineación con las funciones de NIST CSF 2.0
 Función
 
@@ -3173,14 +3192,14 @@ Su operación con KMS/PAM, la custodia de claves en producción, la centralizaci
 redundancia fuera del host y el SBOM quedan como acción de la organización adoptante; las
 brechas organizacionales —personas (6.x), físicas (7.x), revisión independiente (5.35), segregación de funciones (5.3) y trabajo remoto (6.7, 8.1)— son responsabilidad de la organización
 adoptante.
-7.6.5. Alineación con el marco legal
-El plano legal de la alineación se desarrolla en el Subsección 7.1 y en la Subsección 7.3,
-a los que este apartado remite sin reproducir su contenido. Los controles de privacidad mapeados (5.31, 5.34, 8.12, 8.15) se apoyan en la base de licitud del artículo 5 de la Ley 25.326, en
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 83
 
+7.6.5. Alineación con el marco legal
+El plano legal de la alineación se desarrolla en el Subsección 7.1 y en la Subsección 7.3,
+a los que este apartado remite sin reproducir su contenido. Los controles de privacidad mapeados (5.31, 5.34, 8.12, 8.15) se apoyan en la base de licitud del artículo 5 de la Ley 25.326, en
 el instrumento de transferencia internacional del artículo 12 y en los plazos de los artículos 14
 (acceso) y 16 (rectificación, actualización y supresión).
 
@@ -4558,16 +4577,16 @@ en esa dimensión.
 La dispersión de los tiempos automatizados muestra una compresión sustancial de la
 variabilidad. El desvío estándar pasa de 44,9 s en el manual a 13,52 s en el automatizado,
 cerca de la tercera parte, consecuencia de la automatización y no un objetivo del diseño.
-Si se proyecta el ahorro medio de tiempo por incidente (61,6 − 17,76 = 43,8 s) sobre
-el volumen trimestral de 2.646 incidentes, la automatización liberaría aproximadamente 32,2
-horas-persona brutas por trimestre —unas cuatro jornadas laborales de un operador—,1 tiempo que el personal podría redirigir a tareas de resolución técnica o a actividades de mejora
-continua. Ese ahorro es bruto: no descuenta el costo de las derivaciones erróneas que el clasificador agrega respecto del flujo manual, cuyo balance se analiza en la Subsección 9.5.
+Si se proyecta el ahorro medio de tiempo por incidente (61,6 − 17,76 = 43,8 s) sobre el
+volumen trimestral supuesto de 2.646 incidentes (proyección 42 × 63, un supuesto del escenario y no un volumen medido), la automatización liberaría aproximadamente 32,2 horas-persona
+brutas por trimestre —unas cuatro jornadas laborales de un operador—,2 tiempo que el personal podría redirigir a tareas de resolución técnica o a actividades de mejora continua. Ese
+ahorro es bruto: no descuenta el costo de las derivaciones erróneas que el clasificador agrega
+respecto del flujo manual, cuyo balance se analiza en la Subsección 9.5.
 Sin embargo, la lectura conjunta de la derivación por gate y del análisis de calibración
 (Sección 8.4) matiza ese resultado, que debe leerse por etapa. El gate del 70 % presupone que
 la confianza declarada discrimina los casos correctos de los incorrectos. Solo se evalúa sobre
 la salida de Gemini y, en el rango observado (0,85 a 1,00), esa confianza no los discrimina.
-La etapa determinística no emite una confianza utilizable para derivar. La supervisión humana
-1
+2
 
 Cálculo: 43,8 s/incidente × 2.646 incidentes/3.600 s/h ≈ 32,2 h-persona por trimestre.
 
@@ -4575,6 +4594,7 @@ Cálculo: 43,8 s/incidente × 2.646 incidentes/3.600 s/h ≈ 32,2 h-persona por 
 
 104
 
+La etapa determinística no emite una confianza utilizable para derivar. La supervisión humana
 efectiva no puede depender del umbral de confianza: debe complementarse con señales independientes del puntaje —la ambigüedad léxica entre las categorías candidatas o la revisión por
 muestreo de los casos de alta confianza—. El esquema human in the loop conserva su valor
 de diseño y, en el corpus, actuó por la regla del reportante no identificado: 147 intervenciones
@@ -4601,12 +4621,13 @@ muestra, probablemente optimistas; la Subsección K.2 acota la parte atribuible
 La reducción del tiempo de registro, aunque estadísticamente robusta, admite seis explicaciones rivales. Primero, la asimetría del instrumento: el flujo manual se cronometró en vivo
 e incluye lectura, comprensión, búsqueda y carga del ticket, mientras que el automatizado se
 midió con marcas de tiempo del sistema. Eso favorece al segundo. Lo debilita el análisis de
-sensibilidad, que mantiene la reducción por encima del 65 % aun descontando 10 s por caso. Se descartaría midiendo ambos flujos con el mismo instrumento. Segundo, la mezcla de
+sensibilidad, que mantiene la reducción por encima del 65 % aun descontando 10 s por ca-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 105
 
+so. Se descartaría midiendo ambos flujos con el mismo instrumento. Segundo, la mezcla de
 canales: parte de la diferencia podría reflejar la composición. Lo debilita el desagregado de
 la Tabla 12, con reducciones del 51,1 al 93,4 % y contraste intra-canal significativo, aunque
 la magnitud global depende de la composición. Tercero, la novedad o efecto Hawthorne y el
@@ -4636,12 +4657,12 @@ explicaciones rivales se descarta por completo con el diseño actual. El rango d
 consolidado de los tiempos (Tabla 29) reúne estas lecturas. Para el estimando primario, la
 reducción de la media va del 65,6 % al 71,2 %, y el escenario que la minimiza es el descuento
 de 10 s por caso. Las demás lecturas se informan rotuladas y no se comparan entre sí ni con
-ese mínimo, de modo que la lectura más adversa por operador (33,8 %) y la menor por canal
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 106
 
+ese mínimo, de modo que la lectura más adversa por operador (33,8 %) y la menor por canal
 (51,1 %, correo electrónico) acotan la magnitud de la diferencia, no su sentido.
 El patrón de error más informativo es la confusión sistemática de Sistemas: de los
 16 casos asignados, solo 7 se clasificaron correctamente y los errores se repartieron entre
@@ -4671,12 +4692,12 @@ validez que acotan estas conclusiones están enumeradas en la Subsección 4.8.
 9.2. Comparación con la literatura
 Los valores de exactitud y F1 macro obtenidos se contrastan a continuación con los
 reportados en la literatura comparable. Paramesh y Shreedhara (2019) comparan Naive Bayes multinomial, regresión logística, k vecinos más cercanos y SVM sobre tickets reales y
-reportan buen desempeño de SVM en todas las muestras, sin que el resumen consigne cifras
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 107
 
+reportan buen desempeño de SVM en todas las muestras, sin que el resumen consigne cifras
 comparables. Revina et al. (2020), en cambio, muestran que los clasificadores simples y explicables construidos con rasgos lingüísticos del dominio son competitivos frente a alternativas
 más complejas.
 Los resultados del presente trabajo —73,5 % de exactitud estricta y un F1 macro de
@@ -4702,12 +4723,13 @@ la sobreconfianza y la concentración en el extremo alto de la escala que Xiong 
 documentan para la confianza verbalizada. Para esos autores, predecir las fallas sigue siendo
 un desafío; Tian et al. (2023) muestran, sin embargo, que depende de la elicitación. En las
 cascadas la derivación exige una señal de fiabilidad correlacionada con el acierto y un umbral
-(Chen et al., 2024; Varshney & Baral, 2022). El cortocircuito de la etapa determinística la adopta con el puntaje de correctitud, que ordena la correctitud esperada sin ser una probabilidad
+(Chen et al., 2024; Varshney & Baral, 2022). El cortocircuito de la etapa determinística la adop-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 108
 
+ta con el puntaje de correctitud, que ordena la correctitud esperada sin ser una probabilidad
 calibrada. La revisión humana, en cambio, depende de la confianza verbalizada de Gemini,
 la señal que esa literatura describe como sobreconfiada. La hipótesis subsidiaria de eficiencia
 frente a un esquema solo de modelo queda sin contraste limpio (Subsección 9.1). La medición
@@ -4732,17 +4754,17 @@ que el conteo y su estado no se contradicen.
 Primero, el tamaño de la muestra (n = 200) basta para una validación piloto pero no
 para generalizaciones poblacionales sobre el universo de mesas de ayuda en organizaciones
 medianas. El intervalo de confianza al 95 % de la exactitud estricta, [67,0 %, 79,1 %], queda
-íntegramente por debajo del umbral del 85 %, por lo que el segundo objetivo específico no se
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 109
 
+íntegramente por debajo del umbral del 85 %, por lo que el segundo objetivo específico no se
 alcanza; muestras mayores, un corpus más equilibrado y una revisión del clasificador serían
 necesarios para cerrar la brecha.
-Segundo, la circunscripción del corpus a un único entorno operativo del sector servicios con sede en la provincia de Mendoza, presentado como escenario de referencia narrativo,
-restringe la validez externa de los hallazgos. La distribución de tipos de incidentes, el léxico
-organizacional y los patrones de redacción pueden variar significativamente entre organizaciones, sectores y regiones.
+Segundo, la circunscripción del estudio a un corpus curado por los autores sobre un escenario de referencia (sector servicios, provincia de Mendoza, presentado como escenario de
+referencia narrativo) restringe la validez externa de los hallazgos. La distribución de tipos de incidentes, el léxico organizacional y los patrones de redacción pueden variar significativamente
+entre organizaciones, sectores y regiones.
 Tercero, la dependencia operativa de un servicio externo de inferencia condiciona el
 rendimiento del sistema. Un eventual deterioro del servicio de Gemini 3.6 Flash, un cambio
 significativo en las condiciones comerciales del proveedor, o una modificación en el comportamiento del modelo debido a actualizaciones afectaría directamente la operación. Esta dependencia es intrínseca al enfoque basado en LLM externo y debe ser gestionada como un riesgo
@@ -4764,12 +4786,12 @@ Sexto, los analistas que etiquetaron la referencia de la campaña 2026-10 operar
 también el brazo manual y uno de ellos es autor del trabajo (Subsección 4.4). Eso acota la
 independencia del ground truth de esa campaña. Junto con la falta de registro por caso de la
 derivación manual, impidió medir sin sesgo la exactitud de ese brazo. La campaña complementaria resolvió esa coincidencia y midió la exactitud del brazo manual con etiquetadores y
-operadores independientes (Subsección 8.6, Subsección 9.5).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 110
 
+operadores independientes (Subsección 8.6, Subsección 9.5).
 Séptimo, el vocabulario del filtro determinístico y las reglas de frontera del prompt se
 ajustaron con errores observados en el mismo corpus de evaluación, por lo que las métricas
 de clasificación son estimaciones dentro de la muestra. Sin ese vocabulario, la exactitud de
@@ -4797,12 +4819,12 @@ queda superada.
 El clasificador de la configuración entregada (release v1.3.0) es el mismo hybrid-v3
 que el evaluado: entre bf5e099 y v1.3.0 el código de app/classifiers solo cambia en
 documentación e importación perezosa, y no cambian el vocabulario, el prompt ni los umbrales.
-Por eso la evaluación de clasificación se refiere también a la configuración entregada y no
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 111
 
+Por eso la evaluación de clasificación se refiere también a la configuración entregada y no
 requiere una corrida nueva; lo que la entregada agrega respecto de la evaluada —la regla
 del reportante, el cierre TLS y la política de reintentos— es andamiaje de operación que no
 interviene en la exactitud de clasificación. Sí difieren las versiones de las dependencias del
@@ -4823,29 +4845,27 @@ En el plano económico, el costo operativo del sistema se compone de dos rubros 
 de memoria se ofrece a 24 USD/mes. Ese rubro incluye 4.000 GiB de transferencia saliente
 y 80 GiB de disco SSD. Se le suman, si se contratan, el respaldo automático (entre el 20 %
 semanal y el 30 % diario del costo de la instancia) y otros servicios de almacenamiento y direccionamiento. El costo mensual se ubica así en el orden de 24 a 32 USD/mes (DigitalOcean,
-2026).2 El segundo rubro es el costo de inferencia del LLM. El precio introductorio vigente del
-modelo gemini-3.6-flash es de 0,75 USD por millón de tokens de entrada y 3,75 USD por
-millón de tokens de salida (Google, 2026c).3 Los supuestos explícitos son de aproximadamen2
+2026).3 El segundo rubro es el costo de inferencia del LLM. El precio introductorio vigente del
+modelo gemini-3.6-flash es de 0,75 USD por millón de tokens de entrada y 3,75 USD
+3
 Precio de lista consultado el 19 de octubre de 2026 en https://www.digitalocean.com/pricing/droplets: Droplet
 Basic de 2 vCPU y 4 GB, 24 USD/mes, con 4.000 GiB de transferencia y 80 GiB de SSD incluidos; el respaldo
 automático agrega entre el 20 % (semanal) y el 30 % (diario) del costo de la instancia. No se computan volúmenes
 adicionales, instantáneas ni direcciones IP reservadas.
-3
-Precios de lista consultados el 19 de octubre de 2026 en https://ai.google.dev/gemini-api/docs/pricing: Gemini
-3.6 Flash, precio introductorio de 0,75/3,75 USD por millón de tokens de entrada/salida vigente hasta el 31 de
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 112
 
-te 800 tokens de entrada (prompt con la descripción de las cinco categorías, un único ejemplo
-representativo por sector y el incidente) y 30 tokens de salida (JSON estricto con categoría
-y confianza). Con ellos, cada invocación cuesta del orden de 7 × 10−4 USD, entre 0,0006 y
-0,0009 USD según el tamaño del prompt.4 Para un volumen de 2.646 incidentes trimestrales,
-con un 34,5 % requiriendo inferencia externa, el costo trimestral de API se sitúa en el orden
-de 1 USD y en ningún caso por encima de 2 USD, un valor marginal frente a las 32,2 horaspersona brutas liberadas. El costo de la transcripción del canal telefónico queda excluido de
-este cálculo, porque el modelo (gemini-3.5-transcribe) se factura por audio procesado, magnitud que la campaña no registró por caso: el costo reportado corresponde solo a la
-clasificación.
+por millón de tokens de salida (Google, 2026c).4 Los supuestos explícitos son de aproximadamente 800 tokens de entrada (prompt con la descripción de las cinco categorías, un único
+ejemplo representativo por sector y el incidente) y 30 tokens de salida (JSON estricto con categoría y confianza). Con ellos, cada invocación cuesta del orden de 7 × 10−4 USD, entre 0,0006
+y 0,0009 USD según el tamaño del prompt.5 Para un volumen trimestral supuesto de 2.646
+incidentes, con un 34,5 % requiriendo inferencia externa, el costo trimestral de API se sitúa
+en el orden de 1 USD y en ningún caso por encima de 2 USD, un valor marginal frente a las
+32,2 horas-persona brutas liberadas. El costo de la transcripción del canal telefónico queda
+excluido de este cálculo, porque el modelo (gemini-3.5-transcribe) se factura por audio
+procesado, magnitud que la campaña no registró por caso: el costo reportado corresponde
+solo a la clasificación.
 Un aspecto que excede el alcance técnico pero condiciona la efectividad en operación
 real es la dimensión organizacional de la adopción. La experiencia de campo indica que los
 empleados con mayor antigüedad tienden a resistir los cambios de procedimiento, aun con
@@ -4859,11 +4879,13 @@ La proyección de 32,2 horas-persona por trimestre es un ahorro bruto: no descue
 las derivaciones erróneas que el clasificador agrega respecto del flujo manual ni el tiempo de
 revisión humana que el flujo automatizado sí agrega. Sean N = 2.646 incidentes por trimestre (Subsección 9.1), ∆t = 43,82 s el ahorro medio por incidente (Sección 8), ρ = 147/200 =
 0,735 la proporción de casos que reciben revisión humana (Subsección 8.3), r = 22,06 s el
-tiempo-persona medio por revisión (media de las 138 duraciones; Sección J). Las tasas de
-error estricta del clasificador y de derivación errónea manual son eaut = 28/138 = 0,2029 y
+4
+
+Precios de lista consultados el 19 de octubre de 2026 en https://ai.google.dev/gemini-api/docs/pricing: Gemini
+3.6 Flash, precio introductorio de 0,75/3,75 USD por millón de tokens de entrada/salida vigente hasta el 31 de
 diciembre de 2026; desde el 1 de enero de 2027 rige el precio estándar de 1,50/7,50 USD por millón de tokens,
 que duplica la cifra. Equivalen a 0,75 × 10−6 y 3,75 × 10−6 USD por token.
-4
+5
 Cálculo: 800 × 10−6 × 0,75 + 30 × 10−6 × 3,75 ≈ 7 × 10−4 USD por invocación; el límite de salida configurado
 es de 100 tokens y el JSON de respuesta ronda los 15–30 tokens. No se computan reintentos ni la transcripción
 de voz, que se factura por separado.
@@ -4872,6 +4894,8 @@ de voz, que se factura por separado.
 
 113
 
+tiempo-persona medio por revisión (media de las 138 duraciones; Sección J). Las tasas de
+error estricta del clasificador y de derivación errónea manual son eaut = 28/138 = 0,2029 y
 eman = 26/151 = 0,1722, ambas medidas contra la referencia común (Subsección 8.6); el costo medido de cada derivación errónea es c = 69,51 s, IC 95 % [33,42; 106,56] s (Sección J).
 El término de revisión (ρ r) solo resta del lado automatizado: el flujo manual no tiene una revisión equivalente posterior al registro. El costo c cubre solo el tramo activo (la corrección en la
 compuerta de revisión y la re-decisión de sector tomada como proxy del rediagnóstico): como
@@ -4945,13 +4969,13 @@ lectura central se transcribe con una decimal y la rejilla con dos, para disting
 93,0 %]).
 
 La rejilla histórica de la versión anterior (con eaut = 53/200, tasas manuales supuestas
-y sin término de revisión, con referencias mezcladas) informaba un balance de −18,5 a −43,9
-horas-persona con el 15 % preliminar y entre 10 y 15 minutos por reasignación; esa no es
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 114
 
+y sin término de revisión, con referencias mezcladas) informaba un balance de −18,5 a −43,9
+horas-persona con el 15 % preliminar y entre 10 y 15 minutos por reasignación; esa no es
 la lectura vigente y se conserva, como registro de la versión previa, en el memo canónico
 (Sección J). El umbral del 85 % es un criterio fijado a priori por los autores; la equivalencia con
 la paridad del 15 % preliminar era la estimación de esa misma naturaleza, no una medición.
@@ -4979,13 +5003,13 @@ La referencia común no iguala todas las diferencias. eaut se cuenta por caso y 
 por derivación, y 13 de los 138 casos tienen doble cobertura de los operadores. ∆t proviene
 de la campaña 2026-10, que cronometró la carga completa del ticket, mientras que el brazo
 manual de la campaña complementaria mide solo la decisión de sector; los intervalos lo tratan
-como constante. El consenso excluye los casos discordantes entre etiquetadores, que sesgan
-la referencia hacia los casos más fáciles, para ambas tasas. El 26,5 % sigue siendo una cota
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 115
 
+como constante. El consenso excluye los casos discordantes entre etiquetadores, que sesgan
+la referencia hacia los casos más fáciles, para ambas tasas. El 26,5 % sigue siendo una cota
 superior de la tasa operativa, porque el 53,5 % de los casos admite más de un sector.
 En síntesis, la viabilidad técnica queda sostenida (reducción del 71,2 % del tiempo de
 registro) y el costo monetario de la inferencia es marginal. La viabilidad operativa es condicional. El balance neto, con el término de revisión incluido y el costo medido como cota inferior,
@@ -5177,13 +5201,11 @@ sostiene aquí una superioridad general de los modelos de lenguaje (véase la Su
 120
 
 Esta combinación arquitectónica —orquestación visual, filtrado determinístico y LLM
-como árbitro semántico— constituye un patrón de diseño reproducible en el entorno operativo
-de referencia (un escenario narrativo de organización mediana argentina), el único contexto
-en que se evaluó. Su transferencia a otras organizaciones de la región, donde la restricción
-presupuestaria y la soberanía de datos también pueden ser determinantes, es una hipótesis por
-validar. La arquitectura propuesta no requiere GPU propia, pero depende de servicios externos
-(Gemini API y Twilio) y de N8N; su costo monetario, dominado por la infraestructura y no por
-la inferencia, se cuantifica en la Subsección 9.4.
+como árbitro semántico— constituye un patrón de diseño reproducible sobre un corpus curado por los autores sobre un escenario de referencia (un escenario narrativo de organización
+mediana argentina). Su transferencia a otras organizaciones de la región, donde la restricción
+presupuestaria y la soberanía de datos también pueden ser determinantes, es una hipótesis
+por validar. La arquitectura propuesta no requiere GPU propia, pero depende de servicios externos (Gemini API y Twilio) y de N8N; su costo monetario, dominado por la infraestructura y
+no por la inferencia, se cuantifica en la Subsección 9.4.
 La validez externa de estos resultados es acotada y se declara con la fuerza que el
 diseño permite. La muestra de 200 casos es no probabilística por conveniencia: son los incidentes cronometrados en la campaña manual, no una selección aleatoria del universo. No se
 dispone de un marco poblacional: los datos provienen de un único entorno operativo, del sector
@@ -5666,8 +5688,7 @@ documento (Gomez et al., 2026).
 
 B. Repositorio de código fuente
 El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL
-gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y
-los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto (Gomez et al., 2026), accesible en https://github.com/lucaGomezB/Automatizacion-d
+gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto (Gomez et al., 2026), accesible en https://github.com/lucaGomezB/Au
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -5717,10 +5738,9 @@ provienen de la respuesta de los autores del 2026-10-28, y la confirmación del 
 ventanas de las campañas. La campaña complementaria de medición corrió en noviembre de 2026;
 su plan pre-registrado se versionó el 2026-11-01 y sus tablas primarias y análisis, entre el 2026-11-04
 y el 2026-11-08.
-e-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el
-tag anotado v1.6.1, que fija el contenido de la versión entregada. Como un commit no puede contener
-su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior
-consigna en este anexo ese hash, que constituye la referencia verificable de la versión entregada.
+tomatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.6.1, que fija el contenido de la versión entregada. Como un
+commit no puede contener su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior consigna en este anexo ese hash. El hash del commit de referencia es
+00a9a5fb439bd99035518f25e401d56e486080b7, que constituye la referencia verificable de la versión entregada.
 La verificación de la compilación se conserva en paper/compilacion.md, que registra
 las páginas, los errores y el SHA-256 del PDF, y la de la matriz de trazabilidad de las correcciones,
 en docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py; ambos artefactos
@@ -5735,7 +5755,6 @@ llamada siguiente en el softphone y el aviso de voz. Las intervenciones se valid
 de intervención y la derivación por reportante activas (Subsección 8.6). La Tabla 24 consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o
 capacidades remiten a ella. La procedencia de cada familia de cifras (corrida, configuración y artefacto
 de origen) se resume en la Tabla 4 del marco metodológico.
-La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/, React
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -5890,6 +5909,7 @@ artefactos no permiten recuperar.
 
 140
 
+La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/, React
 con TypeScript), la definición del flujo de orquestación (n8n/workflow.json), los artefactos de evaluación (evaluation/), el corpus pseudonimizado (data/), los scripts auxiliares (scripts/) y la documentación (docs/). A esa organización se suman las especificaciones de los cambios (openspec/)
 y los archivos de orquestación local docker-compose.yml y Makefile. El archivo README.md describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15
 minutos; por eso constituye el punto de entrada al código fuente disponible en el repositorio público
@@ -5916,13 +5936,13 @@ solicitud y respuesta validados mediante Pydantic v2, los códigos de estado pos
 HTTP, y ejemplos representativos para cada caso de uso.
 La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta /docs durante la ejecución, y en
 formato estático como archivo openapi.json en el directorio docs/ del repositorio. La sincronización
-entre el código y la especificación estática se verifica automáticamente en el pipeline de integración
-continua.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 141
 
+entre el código y la especificación estática se verifica automáticamente en el pipeline de integración
+continua.
 La especificación OpenAPI vigente describe 33 puntos de entrada que exponen 41 métodos
 HTTP y 44 esquemas de datos, agrupados por recurso: autenticación, catálogos, clasificaciones, incidentes, directorio, estadísticas, telefonía, control de costo y salud.
 A título ilustrativo, los 44 esquemas de datos comprenden las estructuras de los catálogos, las
@@ -5951,7 +5971,6 @@ El corpus de 200 incidentes utilizado para la validación experimental reside en
 en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corpus_evalua
 cion_pseudonimizado.json. Cada caso incluye el identificador anónimo, la descripción cruda
 pseudonimizada, el canal de origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador
-y la confianza asociada no forman parte del corpus: se conservan en la copia versionada de la caché, evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json. Los tiempos
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -5975,6 +5994,7 @@ Parte B: etapas 4 a 6 (ruteo por canal de origen, revisión humana, respuesta y 
 
 Figura 14. Reconstrucción esquemática del flujo de orquestación N8N (continuación de la Figura 13).
 Parte C: etapa 7 (aviso posterior a la revisión).
+y la confianza asociada no forman parte del corpus: se conservan en la copia versionada de la caché, evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json. Los tiempos
 automatizados constan por caso en el corpus; sus registros primarios (base operativa del 2-10-2026
 con los incidentes ingresados, respaldo del 9-10-2026 de los 81 ingresos telefónicos y ejecuciones de
 N8N) no se conservan en el repositorio. Los 81 tiempos telefónicos coinciden con el archivo versionado
@@ -5985,13 +6005,14 @@ R001 es el único caso sin registro. Ese registro acredita la existencia y la pr
 no la medición de extremo a extremo, porque no incluye el envío; data/corpus_resultados.json
 corresponde a otra corrida y no los respalda (Subsección 4.5). Se incluyen además las planillas de
 cronometraje del flujo manual.
-Cada uno de los 200 casos del corpus se compone de siete campos. El primero es id (identificador anónimo, por ejemplo R001). El segundo es descripcion (el texto pseudonimizado que produce el módulo de pseudonimización del sistema; ese módulo reemplaza los identificadores personales directos —nombres propios, direcciones de correo electrónico, números telefónicos, hosts internos e identificadores corporativos— por etiquetas genéricas. En el corpus de este estudio los incidentes no incluían identificadores personales directos, por lo que las descripciones no contienen ninguna de esas etiquetas). Los demás son canal_origen (correo electrónico, formulario web o llamada
-telefónica), sector_asignado (sector principal de verdad, exactamente uno de los cinco sectores
+Cada uno de los 200 casos del corpus se compone de siete campos. El primero es id (identificador anónimo, por ejemplo R001). El segundo es descripcion (el texto pseudonimizado que produce el módulo de pseudonimización del sistema; ese módulo reemplaza los identificadores personales directos —nombres propios, direcciones de correo electrónico, números telefónicos, hosts internos e identificadores corporativos— por etiquetas genéricas. En el corpus de este estudio los incidentes no incluían identificadores personales directos, por lo que las descripciones no contienen ningu-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 145
 
+na de esas etiquetas). Los demás son canal_origen (correo electrónico, formulario web o llamada
+telefónica), sector_asignado (sector principal de verdad, exactamente uno de los cinco sectores
 canónicos), sectores_adicionales (sectores de verdad complementarios, sin repetir el asignado), tiempo_manual_s (tiempo de clasificación manual, en segundos) y tiempo_automatizado_s
 (tiempo del sistema automatizado, en segundos). El corpus completo reside en data/corpus_eval
 uacion_pseudonimizado.json y las predicciones del clasificador en evaluation/evidence/
@@ -6024,13 +6045,13 @@ H.1. Estructura y contenido del prompt
 El prompt sigue una estructura fija en español organizada en cinco componentes funcionales y
 un conjunto de reglas de desambiguación:
 1. Instrucción de rol: define que el modelo actúa como agente especializado en clasificación
-de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio
-y el dialecto del estudio.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 146
 
+de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio
+y el dialecto del estudio.
 2. Definición de categorías: presenta los cinco sectores canónicos con sus strings exactos
 (sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un único ejemplo
 representativo extraído del dominio real por clase (cinco en total).
@@ -6062,14 +6083,10 @@ El Listado 1 resume la rutina de validación.
 1
 2
 3
-4
-5
 
 def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 try:
 data = json.loads(response_text)
-except json.JSONDecodeError as e:
-return False, {"error": f"JSON invalido: {e}"}
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -6155,6 +6172,8 @@ Fuente: elaboración propia a partir de la documentación del SDK google-genai.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
+4
+5
 6
 7
 8
@@ -6168,6 +6187,8 @@ Fuente: elaboración propia a partir de la documentación del SDK google-genai.
 
 148
 
+except json.JSONDecodeError as e:
+return False, {"error": f"JSON invalido: {e}"}
 if "categoría" not in data:
 return False, {"error": "Falta campo 'categoría'"}
 if data["categoría"] not in SECTORES_CANONICOS:
@@ -6195,18 +6216,19 @@ Subsección 9.4, se recomienda migrar a un modelo ajustado específicamente al d
 
 I. Trazabilidad de las correcciones de los dictámenes
 I.1. Nota de versiones
-La versión del 3 de julio de 2026 informó una reducción del tiempo medio de registro de 165,3
-s a 18,2 s (89,0 %), una exactitud de 92 %, W = 0 y un kappa de 0,87. Los tiempos, la exactitud y el
-estadístico provenían de un corpus sintético de 200 casos generado durante el desarrollo, no de incidentes reales. Ese corpus se descartó y se eliminó del repositorio. La versión actual los reemplaza por
-los del corpus real pseudonimizado: tiempo medio de 61,6 s a 17,76 s (reducción de 71,2 %), exactitud
-de 73,5 % y W = 363. El kappa de 0,87 figuraba en aquella versión, pero sus planillas no se conservan.
-Por eso ya no se presenta como evidencia de fiabilidad (Subsección 4.4).
-Entre las versiones 1.3.0 y 1.5.2 se informó además una validación «fuera de muestra» sobre
+La versión del 3 de julio de 2026 informó una reducción del tiempo medio de registro de 165,3 s
+a 18,2 s (89,0 %), una exactitud de 92 %, W = 0 y un kappa de 0,87. Los tiempos, la exactitud y el estadístico provenían de un corpus sintético de 200 casos generado durante el desarrollo, no de incidentes
+reales. Ese corpus se descartó y se eliminó del repositorio. La versión actual los reemplaza por los del
+corpus de 200 casos descrito en la Subsección 4.4, que mezcla incidentes reales pseudonimizados
+del régimen (a) con reconstrucciones del régimen (b): tiempo medio de 61,6 s a 17,76 s (reducción de
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 149
 
+71,2 %), exactitud de 73,5 % y W = 363. El kappa de 0,87 figuraba en aquella versión, pero sus planillas
+no se conservan. Por eso ya no se presenta como evidencia de fiabilidad (Subsección 4.4).
+Entre las versiones 1.3.0 y 1.5.2 se informó además una validación «fuera de muestra» sobre
 150 textos presentados como incidentes de una compañía financiera del ámbito laboral de uno de los
 autores, más 56 casos de refuerzo, etiquetados por E3 y E4 y arbitrados por E5; su exactitud estricta
 cruda era 0,6893 (142/206). Esa evidencia se retira de la presente versión, junto con todo lo que dependía de ella (línea de base clásica, bloque primario del brazo de modelo solo, calibración y sensibilidad
@@ -6217,14 +6239,19 @@ investigación— y su presentación como registro de una compañía no era exac
 la ocurrencia de incidentes reales. No puede acreditarse cómo se generaron las marcas temporales ni
 las etiquetas de E3, E4 y E5. La validación sobre el corpus de 200 casos y la campaña complementaria
 (E1, E2, O1, O2) no se ven afectadas por este retiro.
+Hasta la versión 1.6.0 el escenario del estudio se presentó como una organización real; a pedido
+del grupo, el tribunal autorizó declararlo como un escenario de referencia ficticio construido por los
+autores. Desde la versión siguiente la tesis declara ficticio ese escenario y presenta las cifras que lo
+describen como parámetros o supuestos, y no como mediciones de una operación real. Este reencuadre
+sigue el mismo criterio que ya se aplicó al corpus sintético de julio y a la validación fuera de muestra
+retirada: se declara la procedencia de forma transparente, sin sostener una organización real.
 
 I.2. Revisiones que originaron las correcciones
 Las correcciones de la tesis responden a la auditoría integral del tribunal del 4 de agosto de
 2026, a una serie de autoevaluaciones internas frente a criterios de la CONEAU, a la devolución de
-segunda instancia del tribunal del 11 de noviembre de 2026 y a la devolución de tercera instancia
-del tribunal del 16 de noviembre de 2026. El detalle de cada observación, el cambio responsable y la
-sección donde se atendió se conserva como trazabilidad operativa del proyecto y no se reproduce en
-este anexo.
+segunda instancia del tribunal del 11 de noviembre de 2026, a la devolución de tercera instancia del
+tribunal del 16 de noviembre de 2026 y a la devolución de cuarta instancia del tribunal del 19 de noviembre de 2026. El detalle de cada observación, el cambio responsable y la sección donde se atendió
+se conserva como trazabilidad operativa del proyecto y no se reproduce en este anexo.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
