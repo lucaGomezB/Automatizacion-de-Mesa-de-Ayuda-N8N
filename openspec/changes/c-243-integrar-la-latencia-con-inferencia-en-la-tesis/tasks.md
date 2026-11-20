@@ -69,7 +69,7 @@ Se aplica **despues** de `c-242` y requiere sus compuertas de autores (G1 a G4, 
 
 ## 7. Release (solo con autorizacion expresa; no se ejecuta en la fase de propuesta)
 
-- [ ] 7.1 **[COMPUERTA G3/G4]** Presentar a los autores y al director: diff, compilacion, cotejo, conteos y decisiones G1 a G4. Registrar la autorizacion literal para commitear y taguear. Sin autorizacion, cerrar sin release. Verificacion: decision literal registrada; sin commit ni tag.
+- [x] 7.1 **[COMPUERTA G3/G4]** Presentar a los autores y al director: diff, compilacion, cotejo, conteos y decisiones G1 a G4. Registrar la autorizacion literal para commitear y taguear. Sin autorizacion, cerrar sin release. Verificacion: decision literal registrada; sin commit ni tag. **RESUELTA (2026-11-20):** autorizacion para commitear y taguear registrada (tag `v1.6.1` creado sobre `00a9a5f`); la compilacion de verificacion queda diferida (regla no-build), igual que c-246 7.5.
 - [ ] 7.2 Bump de version en `00-portada.tex:31`, `Bibliography_base.bib:919` y la mencion del Anexo B, segun la version autorizada (`v1.6.1`). Verificacion: `rg -n "1\\.6\\.0"` no queda en los loci de version; el valor nuevo figura en los tres.
 - [ ] 7.3 Recompilar y regenerar `paper/compilacion.md` con `docs/Tesis/Correcciones/resumir_registro_compilacion.py`; `verify_citations.py` en PASS. Verificacion: paginas y SHA-256 nuevos registrados; PASS.
 - [ ] 7.4 Regenerar `tesis_completa_extraida.txt`, `tesis_para_evaluacion.txt` y `tesis_para_agente.md`; copiar `main.pdf` a `docs/Tesis/tesis_ultima_version.pdf` y verificar SHA-256 iguales. Verificacion: los cuatro derivados regenerados; hashes del PDF iguales.
