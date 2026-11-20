@@ -1,6 +1,6 @@
-# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.6.1)
+# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.6.2)
 
-> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.6.1`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
+> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.6.2`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
 
 ---
 
@@ -34,7 +34,7 @@
 
  14 de noviembre de 2026
 
- Versión 1.6.1
+ Versión 1.6.2
 
 ## Resumen
 
@@ -1349,11 +1349,11 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md
 
 ## Repositorio de código fuente
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio`, accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N]. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.6.1`, que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior consigna en este anexo ese hash. El hash del commit de referencia es `00a9a5fb439bd99035518f25e401d56e486080b7`, que constituye la referencia verificable de la versión entregada.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio`, accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N]. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.6.2`, que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior consigna en este anexo ese hash. El hash del commit de referencia es `17aa6d21ef0304d34ef081977fe6b4aa3038bcdc`, que constituye la referencia verificable de la versión entregada.
 
 La verificación de la compilación se conserva en paper/compilacion.md`, que registra las páginas, los errores y el SHA-256 del PDF, y la de la matriz de trazabilidad de las correcciones, en docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py; ambos artefactos corresponden a este anexo de repositorio.
 
-La *versión entregada* designa el tag del manuscrito de tesis (`v1.6.1`), distinto de la *configuración entregada*, que designa el tag del software desplegado (`v1.3.0`). La versión entregada no es la que se evaluó. La *configuración evaluada* es la del commit `bf5e099` (7-10-2026), primera revisión que versiona la cascada `hybrid-v3`; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (§`subsec:protocolo-pruebas`). La *configuración entregada* es la del tag `v1.3.0`. La *configuración de la campaña complementaria* no es un único commit. El brazo automatizado de correo y formulario web corrió desde `cda7712` (5-11-2026), y el de telefonía desde el 6-11-2026, tras ajustar el bloqueo de la llamada siguiente en el softphone y el aviso de voz. Las intervenciones se validaron entre el 7 y el 8-11-2026 (ajustes de la interfaz y de la codificación del correo), todas con `hybrid-v3`, la instrumentación de intervención y la derivación por reportante activas (§`subsec:resultados-campana-medicion`). La §`tab:configuracion-evaluada-entregada` consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella. La procedencia de cada familia de cifras (corrida, configuración y artefacto de origen) se resume en la Tabla `tab:procedencia-numeros` del marco metodológico.
+La *versión entregada* designa el tag del manuscrito de tesis (`v1.6.2`), distinto de la *configuración entregada*, que designa el tag del software desplegado (`v1.3.0`). La versión entregada no es la que se evaluó. La *configuración evaluada* es la del commit `bf5e099` (7-10-2026), primera revisión que versiona la cascada `hybrid-v3`; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (§`subsec:protocolo-pruebas`). La *configuración entregada* es la del tag `v1.3.0`. La *configuración de la campaña complementaria* no es un único commit. El brazo automatizado de correo y formulario web corrió desde `cda7712` (5-11-2026), y el de telefonía desde el 6-11-2026, tras ajustar el bloqueo de la llamada siguiente en el softphone y el aviso de voz. Las intervenciones se validaron entre el 7 y el 8-11-2026 (ajustes de la interfaz y de la codificación del correo), todas con `hybrid-v3`, la instrumentación de intervención y la derivación por reportante activas (§`subsec:resultados-campana-medicion`). La §`tab:configuracion-evaluada-entregada` consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella. La procedencia de cada familia de cifras (corrida, configuración y artefacto de origen) se resume en la Tabla `tab:procedencia-numeros` del marco metodológico.
 
 **Tabla: Configuración evaluada, configuración entregada y configuración de la campaña complementaria**
 
@@ -1505,7 +1505,7 @@ Las correcciones de la tesis responden a la auditoría integral del tribunal del
 
 ### Declaración de uso de asistentes de inteligencia artificial
 
-El desarrollo del sistema, los scripts de análisis y evaluación y la redacción de esta tesis se realizaron con asistencia sistemática de agentes de código basados en modelos de lenguaje. El trabajo se organizó en changes con especificación previa (propuesta, diseño y tareas) que los autores definían y revisaban; el agente implementaba las tareas y los autores aceptaban o rechazaban el resultado. El inventario versionado docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md reproduce los conteos: en la ref de la entrega (el commit previo al commit de contenido de la versión `v1.6.1`), 162 de 1221 commits llevan la marca de coautoría de un asistente, cifra que es una cota inferior porque la marca solo se registra con una de las herramientas en uso.
+El desarrollo del sistema, los scripts de análisis y evaluación y la redacción de esta tesis se realizaron con asistencia sistemática de agentes de código basados en modelos de lenguaje. El trabajo se organizó en changes con especificación previa (propuesta, diseño y tareas) que los autores definían y revisaban; el agente implementaba las tareas y los autores aceptaban o rechazaban el resultado. El inventario versionado docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md reproduce los conteos: en la ref de la entrega (el commit previo al commit de contenido de la versión `v1.6.2`), 162 de 1234 commits llevan la marca de coautoría de un asistente, cifra que es una cota inferior porque la marca solo se registra con una de las herramientas en uso.
 
 **Tabla: Herramienta y modelo, producción y verificación por ámbito**
 

@@ -30,7 +30,7 @@ Prof. Alberto Cortez y Prof. Ariel Enferrel
 
 Mendoza, República Argentina
 14 de noviembre de 2026
-Versión 1.6.1
+Versión 1.6.2
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -5482,7 +5482,7 @@ precios)]. Recuperado el 19 de octubre de 2026, de https://www.freshworks.com/fr
 
 Galup, S. D., Dattero, R., Quan, J. J., & Conger, S. (2009). An overview of IT service management. Communications
 of the ACM, 52(5), 124–127. https://doi.org/10.1145/1506409.1506439
-Gomez, L., Bustos, C., & Sevilla, G. (2026). Automatización de mesa de ayuda N8N (Versión 1.6.1) [Software de
+Gomez, L., Bustos, C., & Sevilla, G. (2026). Automatización de mesa de ayuda N8N (Versión 1.6.2) [Software de
 computadora. GitHub]. Recuperado el 14 de noviembre de 2026, de https : / / github . com / lucaGomezB /
 Automatizacion-de-Mesa-de-Ayuda-N8N
 Google. (2026a). Audio understanding [Documentación de la Gemini API]. Recuperado el 9 de noviembre de 2026,
@@ -5738,14 +5738,14 @@ provienen de la respuesta de los autores del 2026-10-28, y la confirmación del 
 ventanas de las campañas. La campaña complementaria de medición corrió en noviembre de 2026;
 su plan pre-registrado se versionó el 2026-11-01 y sus tablas primarias y análisis, entre el 2026-11-04
 y el 2026-11-08.
-tomatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.6.1, que fija el contenido de la versión entregada. Como un
+tomatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.6.2, que fija el contenido de la versión entregada. Como un
 commit no puede contener su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior consigna en este anexo ese hash. El hash del commit de referencia es
-00a9a5fb439bd99035518f25e401d56e486080b7, que constituye la referencia verificable de la versión entregada.
+17aa6d21ef0304d34ef081977fe6b4aa3038bcdc, que constituye la referencia verificable de la versión entregada.
 La verificación de la compilación se conserva en paper/compilacion.md, que registra
 las páginas, los errores y el SHA-256 del PDF, y la de la matriz de trazabilidad de las correcciones,
 en docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py; ambos artefactos
 corresponden a este anexo de repositorio.
-La versión entregada designa el tag del manuscrito de tesis (v1.6.1), distinto de la configuración entregada, que designa el tag del software desplegado (v1.3.0). La versión entregada no es la
+La versión entregada designa el tag del manuscrito de tesis (v1.6.2), distinto de la configuración entregada, que designa el tag del software desplegado (v1.3.0). La versión entregada no es la
 que se evaluó. La configuración evaluada es la del commit bf5e099 (7-10-2026), primera revisión que
 versiona la cascada hybrid-v3; las corridas de tiempos usaron revisiones anteriores con las mismas
 dependencias (Subsección 4.5). La configuración entregada es la del tag v1.3.0. La configuración de
@@ -6264,7 +6264,7 @@ se organizó en changes con especificación previa (propuesta, diseño y tareas)
 y revisaban; el agente implementaba las tareas y los autores aceptaban o rechazaban el resultado.
 El inventario versionado docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md
 reproduce los conteos: en la ref de la entrega (el commit previo al commit de contenido de la versión
-v1.6.1), 162 de 1221 commits llevan la marca de coautoría de un asistente, cifra que es una cota
+v1.6.2), 162 de 1234 commits llevan la marca de coautoría de un asistente, cifra que es una cota
 inferior porque la marca solo se registra con una de las herramientas en uso.
 Tabla 26. Herramienta y modelo, producción y verificación por ámbito
 Ámbito
