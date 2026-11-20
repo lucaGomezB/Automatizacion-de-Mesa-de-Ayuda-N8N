@@ -3,8 +3,9 @@
 > **Nota c-235 (2026-11-16).** Las confirmaciones de consentimiento son reales y los formularios están firmados por los participantes (compuerta P8). Las filas de `E3`/`E4`/`E5` de la tabla de abajo corresponden a la validación fuera de muestra **retirada de la tesis** (c-235); se conservan como registro de la campaña y no constituyen evidencia de la tesis. Remisión: `docs/Tesis/Correcciones/numeros-canonicos.md`, Sección 3.45, y la nota de versiones de la tesis.
 
 Plantilla para los participantes de la campaña complementaria de medición (`E1`, `E2`,
-`O1` y `O2`), de la validación fuera de muestra de c-191 (`E3` y `E4`) y del
-arbitraje de los casos discordantes de c-206 (`E5`). Se usa cuando la
+`O1` y `O2`), de la validación fuera de muestra de c-191 (`E3` y `E4`), del
+arbitraje de los casos discordantes de c-206 (`E5`) y del analista original de la campaña
+2026-10 (`A1`). Se usa cuando la
 información y el consentimiento se dieron de forma **verbal** y
 no quedó un formulario firmado en el momento. Se firma con posterioridad y se conserva en
 **formato físico**, en poder del director del trabajo.
@@ -55,3 +56,4 @@ documento de campaña correspondiente.
 | E3 | etiquetador | 2026-11-12 | 2026-11-13 | director |
 | E4 | etiquetador | 2026-11-12 | 2026-11-13 | director |
 | E5 | arbitro | 2026-11-12 | 2026-11-13 | director |
+| A1 | analista original | de antemano (previo a su participacion) | 2026-11-20 | director |
