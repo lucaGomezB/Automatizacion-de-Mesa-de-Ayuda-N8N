@@ -6264,7 +6264,7 @@ se organizó en changes con especificación previa (propuesta, diseño y tareas)
 y revisaban; el agente implementaba las tareas y los autores aceptaban o rechazaban el resultado.
 El inventario versionado docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md
 reproduce los conteos: en la ref de la entrega (el commit previo al commit de contenido de la versión
-v1.6.2), 162 de 1234 commits llevan la marca de coautoría de un asistente, cifra que es una cota
+v1.6.2), 162 de 1235 commits llevan la marca de coautoría de un asistente, cifra que es una cota
 inferior porque la marca solo se registra con una de las herramientas en uso.
 Tabla 26. Herramienta y modelo, producción y verificación por ámbito
 Ámbito
