@@ -92,6 +92,7 @@ Ninguna.
 | `.../sections/01-introduccion.tex`, `02-marco-teorico.tex`, `03-estado-del-arte.tex` | Modificado | Entorno real vs escenario, hipotesis, umbral, TF-IDF, fichas |
 | `.../sections/04-marco-metodologico.tex` | Modificado | OQ-01, OQ-02, residuos de R-01, 0,864, oraciones largas |
 | `.../sections/06-implementacion.tex`, `07-resultados.tex` | Modificado | Recharts, facturacion, 61,6 s, sonda, fuentes |
+| `.../sections/05-arquitectura.tex` | Modificado | Lineas "Fuente" de `fig:despliegue` y `fig:er_modelo_datos` (tarea 6.6) |
 | `.../sections/08-discusion.tex`, `09-conclusiones.tex`, `10-recomendaciones.tex` | Modificado | Limitaciones, balance, aportes, §11.7 |
 | `.../sections/11-aspectos-legales.tex` | Modificado (HIGH, gated) | OQ-01 y OQ-03 |
 | `.../sections/12-anexos.tex`, `Bibliography_base.bib` | Modificado | Anexo F, Nota de versiones, Anexo J, bibliografia |
@@ -99,3 +100,4 @@ Ninguna.
 | `data/README.md` (y, solo si los autores lo eligen, el metadato del JSON) | Modificado (gated OQ-01) | Descripcion del corpus |
 | `docs/Tesis/Correcciones/respuestas-tribunal-cuarta-instancia.md`, `docs/defensa/respuestas-tribunal.md` | Modificado | Nueve respuestas y Q15 |
 | `docs/Tesis/Correcciones/dictamen-correcciones.md` | Aditivo | Seccion c-247: compuertas, ANTES/DESPUES, instruccion OQ-04 |
+| `.gitignore`, `docs/Tesis/fuentes/README.md` | Nuevo | Carpeta para PDFs de terceros (copyright), ignorada salvo el README (verificacion de la tarea 5.4) |
