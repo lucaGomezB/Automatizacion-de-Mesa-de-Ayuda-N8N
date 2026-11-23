@@ -3085,6 +3085,17 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+### [C-248] `publicar-la-release-y-la-nota-de-erratum-de-v1-6-2` — APLICADO/ARCHIVADO (2026-11-22; HIGH)
+
+- **Estado**: aplicado y archivado el 2026-11-22. Publico la release **v1.6.3** — tag anotado sobre el commit de contenido `a318e13187cc451b304737b06cefb88a309c39b9` (C3, cuyo PDF del Anexo B **no imprime hash**); el commit posterior `f8618bd` (C4) consigna el hash en el Anexo B y recompila; merge a `main` con merge commit `efc2593` — y registro la **nota de erratum de `v1.6.2`** (su PDF de tag imprime `17aa6d21`; el tag **no se movio**). Recompilado: **158 paginas**, 0 errores fatales, 0 refs/citas indefinidas, 0 etiquetas duplicadas. Version propagada a portada (fecha 2026-11-22), Anexo B, `Bibliography_base.bib` (`Gomez2026_repositorio`), `README.md` y `knowledge-base/`; Anexo I.3 con el conteo `165 de 1250`. Derivados y copia de entrega regenerados.
+- **Objetivo**: cerrar la cuarta condicion de release del dictamen sobre v1.6.2 (opcion A de OQ-04) y publicar v1.6.3.
+- **Specs**: `tesis-document` (nota de erratum de una release con PDF de tag de hash ajeno; verificacion de flotantes en la release).
+- **Dependencias**: **despues** de `c-247` (consolida su contenido). **Governance**: HIGH (toca el ejemplar defendido y publica un tag).
+- **Hallazgo**: el build destapo una regresion de `c-247` (`07-resultados.tex:93`, un `\path` dentro de un `\caption`, que impedia compilar); corregida en este change.
+- **Leer antes**: `openspec/changes/archive/2026-11-22-c-248-publicar-la-release-y-la-nota-de-erratum-de-v1-6-2/{proposal,design,tasks}.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
