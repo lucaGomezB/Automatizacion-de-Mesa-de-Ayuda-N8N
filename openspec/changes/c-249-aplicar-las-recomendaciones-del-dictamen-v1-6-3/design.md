@@ -162,14 +162,19 @@ sostenida" de la fila del OE3 y el tratamiento de "accesibilidad" y "dispersion"
 
 ### D8 - Regla de tags escrita antes de la proxima release
 
-Opciones de OQ-05 (autores y director): (A) inmutabilidad estricta: tag sobre C3, cuyo PDF no
-imprime hash; C4 consigna el hash; el tag no se mueve aunque su PDF no imprima hash; (B) tag
-creado una sola vez sobre C4, despues de consignar el hash de C3 y recompilar, y nunca movido: el
-PDF del tag imprime el hash de un commit identico salvo esa linea, y `12:60` lo dice; (C) un tag
-publicado puede moverse una sola vez, solo antes de difundir el ejemplar y con registro fechado
-(exige MODIFIED del requisito vigente, D1); (D) no versionar PDF en el arbol del tag. La opcion
-elegida se escribe en `tesis-document` (requisito ADDED de c-249) y se aplica a `v1.6.4`. En la
-misma compuerta: version `v1.6.4` y si la Nota de versiones (I.1) registra `v1.6.2`, `v1.6.3` y el
+Opciones de OQ-05 (autores y director). La regla vigente "Publicacion de una release de correccion
+sin mover tags publicados" (`tesis-document`) fija el tag anotado sobre el commit C3 (texto
+corregido y PDF recompilado) y el hash consignado en C4. De las cuatro opciones, A es exactamente
+esa regla y es la unica compatible; las otras tres la contradicen en el cuerpo del requisito y cada
+una exige un MODIFIED (D1): (A) inmutabilidad estricta: tag sobre C3, cuyo PDF no imprime hash; C4
+consigna el hash; el tag no se mueve aunque su PDF no imprima hash (compatible); (B) tag creado una
+sola vez sobre C4, despues de consignar el hash de C3 y recompilar, y nunca movido (el PDF del tag
+imprime el hash de un commit identico salvo esa linea, y `12:60` lo dice): incompatible, cambia el
+destino del tag de C3 a C4; (C) un tag publicado puede moverse una sola vez, solo antes de difundir
+el ejemplar y con registro fechado: incompatible, mueve un tag publicado; (D) no versionar PDF en el
+arbol del tag: incompatible, el requisito vigente exige el PDF recompilado en C3. La opcion elegida
+se escribe en `tesis-document` (requisito ADDED de c-249) y se aplica a `v1.6.4`. En la misma
+compuerta: version `v1.6.4` y si la Nota de versiones (I.1) registra `v1.6.2`, `v1.6.3` y el
 erratum (revierte OQ-3 de c-248, que lo habia dejado solo en el registro).
 
 ### D9 - Resumen y Abstract: reemplazar, no agregar
