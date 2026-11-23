@@ -100,3 +100,9 @@ evaluation/predicciones_sensibilidad_prompt_*.json
 *.fdb_latexmk
 *.synctex.gz
 *.run.xml
+
+# Fuentes de terceros (papers con copyright): se descargan solo para revision local y NUNCA
+# se versionan (el repositorio es publico). Se conserva el README que documenta la carpeta;
+# el resto del contenido queda ignorado. Ver docs/Tesis/fuentes/README.md.
+docs/Tesis/fuentes/*
+!docs/Tesis/fuentes/README.md

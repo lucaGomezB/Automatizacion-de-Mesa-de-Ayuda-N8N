@@ -4,10 +4,10 @@
 > y del instrumento de transferencia internacional (art. 12). Requisito SGD-012. No es uno de
 > los 11 documentos de gobernanza: es el acta que respalda el tratamiento **T2** (régimen a) y
 > su transferencia.
-> **Estado**: v1 — información entregada el 2026-10-01; consentimiento prestado el
-> 2026-10-02; la confirmación escrita se firma con posterioridad y queda en custodia del
-> director, sin fecha de firma consignada aquí, del mismo modo que la de los colaboradores
-> de la campaña (ver §5).
+> **Estado**: v1.1 — notificación a los integrantes del grupo el 2026-10-01; consentimiento
+> verbal prestado y documentado el 2026-10-02; acta redactada el 2026-11-17 y firmada el
+> 2026-11-20. La confirmación escrita queda en custodia del director, del mismo modo que la
+> de los colaboradores de la campaña (ver §5).
 > **Alcance**: consentimiento del propio grupo para el tratamiento T2 (corpus), régimen (a).
 > **Encuadre**: documento alineado con la Ley 25.326; no constituye certificación ni auditoría.
 
@@ -70,19 +70,20 @@ Se informa a las partes:
 
 ## 4. Manifestación
 
-Las partes manifiestan haber recibido la información precedente el **2026-10-01** y prestan su
-consentimiento libre, expreso e informado el **2026-10-02** para el tratamiento T2 (régimen a)
-y para la transferencia internacional descrita.
+Las partes manifiestan que la notificación de la información precedente se realizó el
+**2026-10-01** y que prestaron su consentimiento libre, expreso e informado el **2026-10-02**
+para el tratamiento T2 (régimen a) y para la transferencia internacional descrita. El acta se
+redactó el **2026-11-17** y las partes la firmaron el **2026-11-20**.
 
 ## 5. Registro
 
-| Integrante | Consentimiento | Fecha de información | Fecha de consentimiento |
+| Integrante | Consentimiento | Fecha de notificación | Fecha de consentimiento |
 |------------|----------------|----------------------|-------------------------|
 | Luca Gomez | Sí | 2026-10-01 | 2026-10-02 |
 | Carla Bustos | Sí | 2026-10-01 | 2026-10-02 |
 | Gonzalo Sevilla | Sí | 2026-10-01 | 2026-10-02 |
 
-La confirmación escrita se firma con posterioridad y queda en custodia del director del
+La confirmación escrita se firmó el 2026-11-20 y queda en custodia del director del
 trabajo, del mismo modo en que se documentó el consentimiento de los colaboradores de la
 campaña (`docs/campana-medicion/confirmacion-posterior-consentimiento.md`). Los originales
 firmados contienen datos personales y **no se versionan** en el repositorio.

@@ -4,6 +4,9 @@
 > requisito SGD-012. No es uno de los 11 documentos de gobernanza: es el **acta** que
 > respalda el tratamiento T1.
 > **Estado**: v1 — aprobada/firmada el 2026-10-01.
+> **Nota de revisión (2026-11-18)**: se agregó el párrafo de dos regímenes del §3 para alinear
+> el acta con el encuadre del corpus; el texto agregado fue revisado y aprobado por los autores
+> (commit b01da04d).
 > **Alcance**: consentimiento del propio grupo de desarrollo para el tratamiento T1.
 > **Encuadre**: documento **alineado con** la Ley 25.326; no constituye certificación ni
 > auditoría.

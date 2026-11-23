@@ -21,14 +21,14 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{secuencia_a}
-\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente (parte A)]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.3.0}). El disparador por reportante no identificado en el directorio es posterior a la campaña 2026-10 (13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}. Parte A: ingreso, alta y clasificación (mensajes 1 a 13), que continúa en la \autoref{fig:secuencia_b}.}
+\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente (parte A)]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.3.0}). El disparador por reportante no identificado en el directorio es posterior a la campaña 2026-10 (13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}. Parte A: ingreso, alta y clasificación (mensajes 1 a 13), que continúa en la \autoref{fig:secuencia_b}. Fuente: \texttt{docs/diagrams/secuencia.md}.}
 \label{fig:secuencia}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{secuencia_b}
-\caption[Diagrama de secuencia del flujo extremo a extremo (parte B)]{Diagrama de secuencia del flujo extremo a extremo de un incidente (continuación de la \autoref{fig:secuencia}). Parte B: persistencia del resultado, respuesta al canal y ciclo de revisión humana (mensajes 14 a 22).}
+\caption[Diagrama de secuencia del flujo extremo a extremo (parte B)]{Diagrama de secuencia del flujo extremo a extremo de un incidente (continuación de la \autoref{fig:secuencia}). Parte B: persistencia del resultado, respuesta al canal y ciclo de revisión humana (mensajes 14 a 22). Fuente: \texttt{docs/diagrams/secuencia.md}.}
 \label{fig:secuencia_b}
 \end{figure}
 
@@ -42,7 +42,7 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{componentes_b}
-\caption[Diagrama de componentes del módulo Python (parte B)]{Diagrama de componentes del módulo Python organizado en capas (continuación de la \autoref{fig:componentes}). Parte B: repositorios, modelos ORM, utilidades transversales y configuración.}
+\caption[Diagrama de componentes del módulo Python (parte B)]{Diagrama de componentes del módulo Python organizado en capas (continuación de la \autoref{fig:componentes}). Parte B: repositorios, modelos ORM, utilidades transversales y configuración. Fuente: \texttt{docs/diagrams/componentes.md}.}
 \label{fig:componentes_b}
 \end{figure}
 
@@ -53,13 +53,15 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 \label{fig:cronograma}
 \end{figure}
 
+\clearpage
+
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.6.2}, que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior consigna en este anexo ese hash. El hash del commit de referencia es \texttt{e7013127b565faa8f67a75284756cd4abe5c148f}, que constituye la referencia verificable de la versión entregada.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.6.3}, que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, el PDF compilado en el propio tag no lo imprime; un commit inmediatamente posterior consigna en este anexo ese hash. El hash del commit de referencia se consigna en el commit inmediatamente posterior a este y se registra en \path{paper/compilacion.md}, que lo reproduce junto con el SHA-256 del PDF; por eso este PDF no imprime el hash de la entrega ni el de ninguna release previa.
 
 La verificación de la compilación se conserva en \path{paper/compilacion.md}, que registra las páginas, los errores y el SHA-256 del PDF, y la de la matriz de trazabilidad de las correcciones, en \path{docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py}; ambos artefactos corresponden a este anexo de repositorio.
 
-La \emph{versión entregada} designa el tag del manuscrito de tesis (\texttt{v1.6.2}), distinto de la \emph{configuración entregada}, que designa el tag del software desplegado (\texttt{v1.3.0}). La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{bf5e099} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.3.0}. La \emph{configuración de la campaña complementaria} no es un único commit. El brazo automatizado de correo y formulario web corrió desde \texttt{cda7712} (5-11-2026), y el de telefonía desde el 6-11-2026, tras ajustar el bloqueo de la llamada siguiente en el softphone y el aviso de voz. Las intervenciones se validaron entre el 7 y el 8-11-2026 (ajustes de la interfaz y de la codificación del correo), todas con \texttt{hybrid-v3}, la instrumentación de intervención y la derivación por reportante activas (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella. La procedencia de cada familia de cifras (corrida, configuración y artefacto de origen) se resume en la Tabla~\ref{tab:procedencia-numeros} del marco metodológico.
+La \emph{versión entregada} designa el tag del manuscrito de tesis (\texttt{v1.6.3}), distinto de la \emph{configuración entregada}, que designa el tag del software desplegado (\texttt{v1.3.0}). La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{bf5e099} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.3.0}. La \emph{configuración de la campaña complementaria} no es un único commit. El brazo automatizado de correo y formulario web corrió desde \texttt{cda7712} (5-11-2026), y el de telefonía desde el 6-11-2026, tras ajustar el bloqueo de la llamada siguiente en el softphone y el aviso de voz. Las intervenciones se validaron entre el 7 y el 8-11-2026 (ajustes de la interfaz y de la codificación del correo), todas con \texttt{hybrid-v3}, la instrumentación de intervención y la derivación por reportante activas (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella. La procedencia de cada familia de cifras (corrida, configuración y artefacto de origen) se resume en la Tabla~\ref{tab:procedencia-numeros} del marco metodológico.
 
 \begin{table}[htbp]
 \footnotesize
@@ -122,29 +124,29 @@ Las Figuras~\ref{fig:anexo_flujo_n8n} a~\ref{fig:anexo_flujo_n8n_c} presentan un
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{flujo_n8n_a}
-\caption[Reconstrucción esquemática del flujo de orquestación N8N (parte A)]{Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la interfaz; los 29 nodos operativos se agrupan por etapa funcional. Parte A: etapas 1 a 3 (entrada, validación y envío al backend), que continúa en la \autoref{fig:anexo_flujo_n8n_b}. Los nodos punteados son referencias a las otras partes.}
+\caption[Reconstrucción esquemática del flujo de orquestación N8N (parte A)]{Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la interfaz; los 29 nodos operativos se agrupan por etapa funcional. Parte A: etapas 1 a 3 (entrada, validación y envío al backend), que continúa en la \autoref{fig:anexo_flujo_n8n_b}. Los nodos punteados son referencias a las otras partes. Fuente: \texttt{n8n/workflow.json}.}
 \label{fig:anexo_flujo_n8n}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{flujo_n8n_b}
-\caption[Reconstrucción esquemática del flujo de orquestación N8N (parte B)]{Reconstrucción esquemática del flujo de orquestación N8N (continuación de la \autoref{fig:anexo_flujo_n8n}). Parte B: etapas 4 a 6 (ruteo por canal de origen, revisión humana, respuesta y auditoría).}
+\caption[Reconstrucción esquemática del flujo de orquestación N8N (parte B)]{Reconstrucción esquemática del flujo de orquestación N8N (continuación de la \autoref{fig:anexo_flujo_n8n}). Parte B: etapas 4 a 6 (ruteo por canal de origen, revisión humana, respuesta y auditoría). Fuente: \texttt{n8n/workflow.json}.}
 \label{fig:anexo_flujo_n8n_b}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.55\textwidth]{flujo_n8n_c}
-\caption[Reconstrucción esquemática del flujo de orquestación N8N (parte C)]{Reconstrucción esquemática del flujo de orquestación N8N (continuación de la \autoref{fig:anexo_flujo_n8n_b}). Parte C: etapa 7 (aviso posterior a la revisión).}
+\caption[Reconstrucción esquemática del flujo de orquestación N8N (parte C)]{Reconstrucción esquemática del flujo de orquestación N8N (continuación de la \autoref{fig:anexo_flujo_n8n_b}). Parte C: etapa 7 (aviso posterior a la revisión). Fuente: \texttt{n8n/workflow.json}.}
 \label{fig:anexo_flujo_n8n_c}
 \end{figure}
 
 \section{Corpus de validación}\label{sec:anexo-corpus}
 
-El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta \path{data/corpus_evaluacion_pseudonimizado.json}. Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte del corpus: se conservan en la copia versionada de la caché, \path{evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json}. Los tiempos automatizados constan por caso en el corpus; sus registros primarios (base operativa del 2-10-2026 con los incidentes ingresados, respaldo del 9-10-2026 de los 81 ingresos telefónicos y ejecuciones de N8N) no se conservan en el repositorio. Los 81 tiempos telefónicos coinciden con el archivo versionado \path{data/corpus_resultados_telefonia.json}. Los 119 de correo y formulario web constan en el corpus y su registro primario pseudonimizado se versiona en \path{data/corpus_resultados_web_correo.json}, que reúne 118 de esos casos con las marcas de tiempo de la base (ingreso y persistencia); \texttt{R001} es el único caso sin registro. Ese registro acredita la existencia y la procedencia de los incidentes, no la medición de extremo a extremo, porque no incluye el envío; \path{data/corpus_resultados.json} corresponde a otra corrida y no los respalda (\autoref{subsec:protocolo-pruebas}). Se incluyen además las planillas de cronometraje del flujo manual.
+El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta \path{data/corpus_evaluacion_pseudonimizado.json}. La composición del corpus es de 119 incidentes reales pseudonimizados y 81 reconstrucciones de tipos de incidente redactadas por los autores; esa mezcla es una declaración de los autores, sin registro de procedencia por caso (\autoref{subsec:poblacion-muestra-corpus}). Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte del corpus: se conservan en la copia versionada de la caché, \path{evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json}. Los tiempos automatizados constan por caso en el corpus; sus registros primarios (base operativa del 2-10-2026 con los incidentes ingresados, respaldo del 9-10-2026 de los 81 ingresos telefónicos y ejecuciones de N8N) no se conservan en el repositorio. Los 81 tiempos telefónicos coinciden con el archivo versionado \path{data/corpus_resultados_telefonia.json}. Los 119 de correo y formulario web constan en el corpus y su registro primario pseudonimizado se versiona en \path{data/corpus_resultados_web_correo.json}, que reúne 118 de esos casos con las marcas de tiempo de la base (ingreso y persistencia); \texttt{R001} es el único caso sin registro. Ese registro acredita la existencia y la procedencia de los incidentes, no la medición de extremo a extremo, porque no incluye el envío; \path{data/corpus_resultados.json} corresponde a otra corrida y no los respalda (\autoref{subsec:protocolo-pruebas}).
 
-Cada uno de los 200 casos del corpus se compone de siete campos. El primero es \texttt{id} (identificador anónimo, por ejemplo \texttt{R001}). El segundo es \texttt{descripcion} (el texto pseudonimizado que produce el módulo de pseudonimización del sistema; ese módulo reemplaza los identificadores personales directos ---nombres propios, direcciones de correo electrónico, números telefónicos, hosts internos e identificadores corporativos--- por etiquetas genéricas. En el corpus de este estudio los incidentes no incluían identificadores personales directos, por lo que las descripciones no contienen ninguna de esas etiquetas). Los demás son \texttt{canal\_origen} (correo electrónico, formulario web o llamada telefónica), \texttt{sector\_asignado} (sector principal de verdad, exactamente uno de los cinco sectores canónicos), \texttt{sectores\_adicionales} (sectores de verdad complementarios, sin repetir el asignado), \texttt{tiempo\_manual\_s} (tiempo de clasificación manual, en segundos) y \texttt{tiempo\_automatizado\_s} (tiempo del sistema automatizado, en segundos). El corpus completo reside en \path{data/corpus_evaluacion_pseudonimizado.json} y las predicciones del clasificador en \path{evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json}.
+Cada uno de los 200 casos del corpus se compone de siete campos. El primero es \texttt{id} (identificador anónimo, por ejemplo \texttt{R001}). El segundo es \texttt{descripcion} (el texto pseudonimizado que produce el módulo de pseudonimización del sistema; ese módulo reemplaza los identificadores personales directos ---nombres propios, direcciones de correo electrónico, números telefónicos, hosts internos e identificadores corporativos--- por etiquetas genéricas. En el corpus de este estudio los incidentes no incluían identificadores personales directos, por lo que las descripciones no contienen ninguna de esas etiquetas). Los demás son \texttt{canal\_origen} (correo electrónico, formulario web o llamada telefónica), \texttt{sector\_asignado} (sector principal de verdad, exactamente uno de los cinco sectores canónicos), \texttt{sectores\_adicionales} (sectores de verdad complementarios, sin repetir el asignado), \texttt{tiempo\_manual\_s} (tiempo de la carga completa del ticket, en segundos) y \texttt{tiempo\_automatizado\_s} (tiempo del sistema automatizado, en segundos). El corpus completo reside en \path{data/corpus_evaluacion_pseudonimizado.json} y las predicciones del clasificador en \path{evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json}.
 
 Por razones de privacidad y en cumplimiento de la Ley~25.326 \parencite{Ley25326_2000}, el módulo de pseudonimización del sistema se aplica a cada incidente en producción antes de su clasificación y de su persistencia, y es la herramienta que produce el texto \texttt{descripcion} del corpus. En el corpus de este estudio no había identificadores personales directos, por lo que las descripciones publicadas no contienen etiquetas de pseudonimización.
 
@@ -232,11 +234,11 @@ Ante una degradación de las métricas por cambios en el modelo, se recomienda a
 
 \subsection{Nota de versiones}\label{subsec:nota-versiones}
 
-La versión del 3 de julio de 2026 informó una reducción del tiempo medio de registro de 165,3 s a 18,2 s (89,0~\%), una exactitud de 92~\%, \(W = 0\) y un kappa de 0,87. Los tiempos, la exactitud y el estadístico provenían de un corpus sintético de 200 casos generado durante el desarrollo, no de incidentes reales. Ese corpus se descartó y se eliminó del repositorio. La versión actual los reemplaza por los del corpus de 200 casos descrito en la \autoref{subsec:poblacion-muestra-corpus}, que mezcla incidentes reales pseudonimizados del régimen (a) con reconstrucciones del régimen (b): tiempo medio de 61,6 s a 17,76 s (reducción de 71,2~\%), exactitud de 73,5~\% y \(W = 363\). El kappa de 0,87 figuraba en aquella versión, pero sus planillas no se conservan. Por eso ya no se presenta como evidencia de fiabilidad (\autoref{subsec:poblacion-muestra-corpus}).
+La versión del 3 de julio de 2026 informó una reducción del tiempo medio de registro de 165,3 s a 18,2 s (89,0~\%), una exactitud de 92~\%, \(W = 0\) y un kappa de 0,87. Los tiempos, la exactitud y el estadístico provenían de un corpus sintético de 200 casos generado durante el desarrollo, no de incidentes reales. Ese corpus se descartó y se eliminó del repositorio. La versión actual los reemplaza por los del corpus de 200 casos descrito en la \autoref{subsec:poblacion-muestra-corpus}, que mezcla incidentes reales pseudonimizados del régimen (a) con reconstrucciones del régimen (b) redactadas por los autores; esa composición (119 incidentes reales y 81 reconstrucciones) es una declaración de los autores, sin registro de procedencia por caso. Los valores vigentes son: tiempo medio de 61,6 s a 17,76 s (reducción de 71,2~\%), exactitud de 73,5~\% y \(W = 363\). El kappa de 0,87 figuraba en aquella versión, pero sus planillas no se conservan. Por eso ya no se presenta como evidencia de fiabilidad (\autoref{subsec:poblacion-muestra-corpus}).
 
 Entre las versiones 1.3.0 y 1.5.2 se informó además una validación «fuera de muestra» sobre 150 textos presentados como incidentes de una compañía financiera del ámbito laboral de uno de los autores, más 56 casos de refuerzo, etiquetados por E3 y E4 y arbitrados por E5; su exactitud estricta cruda era 0,6893 (142/206). Esa evidencia se retira de la presente versión, junto con todo lo que dependía de ella (línea de base clásica, bloque primario del brazo de modelo solo, calibración y sensibilidad fuera de muestra, arbitraje por mayoría). Los textos no provenían de una compañía: eran descripciones de incidentes construidas por los autores ---escenarios base generados por un asistente de inteligencia artificial (Gemini 3.1), curados y adaptados a mano, y los 56 casos de refuerzo redactados a partir de investigación--- y su presentación como registro de una compañía no era exacta. Las fechas que figuraban (2 de noviembre de 2025 a 12 de febrero de 2026) eran parte de la construcción de los casos y no la ocurrencia de incidentes reales. No puede acreditarse cómo se generaron las marcas temporales ni las etiquetas de E3, E4 y E5. La validación sobre el corpus de 200 casos y la campaña complementaria (E1, E2, O1, O2) no se ven afectadas por este retiro.
 
-Hasta la versión 1.6.0 el escenario del estudio se presentó como una organización real; a pedido del grupo, el tribunal autorizó declararlo como un escenario de referencia ficticio construido por los autores. Desde la versión siguiente la tesis declara ficticio ese escenario y presenta las cifras que lo describen como parámetros o supuestos, y no como mediciones de una operación real. Este reencuadre sigue el mismo criterio que ya se aplicó al corpus sintético de julio y a la validación fuera de muestra retirada: se declara la procedencia de forma transparente, sin sostener una organización real.
+Hasta la versión 1.6.0 el escenario del estudio se presentó como una organización real; a pedido del grupo, el tribunal autorizó declararlo como un escenario de referencia ficticio construido por los autores. Desde la versión siguiente la tesis declara ficticio ese escenario y presenta las cifras que lo describen como parámetros o supuestos, y no como mediciones de una operación real. Este reencuadre sigue el mismo criterio que ya se aplicó al corpus sintético de julio y a la validación fuera de muestra retirada: se declara la procedencia de forma transparente, sin sostener una organización real. La composición 119/81 del corpus vigente es una declaración de los autores, sin registro de procedencia por caso, y no una medición de la operación de una organización real.
 
 \subsection{Revisiones que originaron las correcciones}
 
@@ -246,7 +248,7 @@ Las correcciones de la tesis responden a la auditoría integral del tribunal del
 
 \subsection{Declaración de uso de asistentes de inteligencia artificial}\label{subsec:declaracion-uso-ia}
 
-El desarrollo del sistema, los scripts de análisis y evaluación y la redacción de esta tesis se realizaron con asistencia sistemática de agentes de código basados en modelos de lenguaje. El trabajo se organizó en changes con especificación previa (propuesta, diseño y tareas) que los autores definían y revisaban; el agente implementaba las tareas y los autores aceptaban o rechazaban el resultado. El inventario versionado \path{docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md} reproduce los conteos: en la ref de la entrega (el commit previo al commit de contenido de la versión \texttt{v1.6.2}), 162 de 1235 commits llevan la marca de coautoría de un asistente, cifra que es una cota inferior porque la marca solo se registra con una de las herramientas en uso.
+El desarrollo del sistema, los scripts de análisis y evaluación y la redacción de esta tesis se realizaron con asistencia sistemática de agentes de código basados en modelos de lenguaje. El trabajo se organizó en changes con especificación previa (propuesta, diseño y tareas) que los autores definían y revisaban; el agente implementaba las tareas y los autores aceptaban o rechazaban el resultado. El inventario versionado \path{docs/Tesis/Correcciones/inventario-uso-asistentes-ia.md} reproduce los conteos: en la ref de la entrega (el commit previo al commit de contenido de la versión \texttt{v1.6.3}), 165 de 1250 commits llevan la marca de coautoría de un asistente, cifra que es una cota inferior porque la marca solo se registra con una de las herramientas en uso. La Tabla~\ref{tab:declaracion-uso-ia} desglosa, por ámbito, la herramienta y el modelo, lo producido por el asistente y la verificación de los autores.
 
 \begin{table}[htbp]
 \scriptsize
@@ -278,7 +280,7 @@ Este anexo reúne, condensados, los números canónicos que el cuerpo cita. Para
 
 \paragraph{Costo de la derivación errónea \(c\).}
 
-El costo medido se compone de la corrección en la compuerta de revisión y de la re-decisión de sector tomada como proxy del rediagnóstico; el tramo de reanudación tras la interrupción no se mide y queda sin cota disponible. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_costo_derivacion_c220.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py}.
+El costo medido se compone de la corrección en la compuerta de revisión y de la re-decisión de sector tomada como proxy del rediagnóstico; el tramo de reanudación tras la interrupción no se mide y queda sin cota disponible. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_costo_derivacion_c220.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py}. La Tabla~\ref{tab:anexo-nc-costo} reúne esos valores con la clave del artefacto que los contiene.
 
 \begin{table}[htbp]
 \centering
@@ -297,11 +299,13 @@ Paridad con la tasa manual medida: \(1 - e_{\mathrm{man}} = 0{,}8278\) (lectura 
 Costo marginal por punto de exactitud: \(0{,}51\)~h-persona por trimestre (lectura posterior) & \path{costo_marginal_por_punto_horas_trimestre} \\
 \bottomrule
 \end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} \path{evaluation/data/campana/analisis/analisis_costo_derivacion_c220.json}.\par}
 \end{table}
 
 \paragraph{Balance neto y umbral de equilibrio.}
 
-La lectura central usa el costo medido como cota inferior, el término de revisión y las tasas de error medidas contra la referencia común; el balance se presenta como cota superior respecto del tramo de reanudación no medido. La rejilla de 5, 10 y 15 minutos se conserva como sensibilidad al tramo no medido y no es la lectura central. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_balance_neto_c236.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_balance_neto_c236.py}.
+La lectura central usa el costo medido como cota inferior, el término de revisión y las tasas de error medidas contra la referencia común; el balance se presenta como cota superior respecto del tramo de reanudación no medido. La rejilla de 5, 10 y 15 minutos se conserva como sensibilidad al tramo no medido y no es la lectura central. La fuente única de las cifras es \path{evaluation/data/campana/analisis/analisis_balance_neto_c236.json}, que reproduce el comando \texttt{python3} \path{evaluation/data/campana/analisis/analisis_balance_neto_c236.py}. La Tabla~\ref{tab:anexo-nc-balance} reúne esos valores con la clave del artefacto que los contiene.
 
 \begin{table}[htbp]
 \centering
@@ -318,7 +322,7 @@ La lectura central usa el costo medido como cota inferior, el término de revisi
 \(r = 22{,}06\)~s (media de 138 duraciones) & \path{insumos.r_s} \\
 \(\rho = 147/200 = 0{,}735\) (proporción de casos revisados) & \path{insumos.rho} \\
 \(c = 69{,}51\)~s; IC 95~\% \([33{,}42; 106{,}56]\)~s (cota inferior del tramo activo) & \path{insumos.c_s}; \path{insumos.c_ic} \\
-\(N = 2.646\) incidentes por trimestre & \path{insumos.n} \\
+\(N = 2.646\) incidentes por trimestre (supuesto del escenario) & \path{insumos.n} \\
 \(\Delta t = 43{,}82\)~s & \path{insumos.delta_t_s} \\
 \(e_{\mathrm{aut}} = 28/138 = 0{,}2029\) & \path{insumos.e_aut} \\
 \(e_{\mathrm{man}} = 26/151 = 0{,}1722\) & \path{insumos.e_man} \\
@@ -328,7 +332,11 @@ Rejilla 5, 10 y 15 min (con revisión y referencia común): \(B_r = +13{,}52 / +
 Rejilla 5, 10 y 15 min: \(a^{*}_r = 73{,}58 / 78{,}18 / 79{,}71\)~\%; IC \([67{,}02; 79{,}89]\), \([71{,}82; 84{,}24]\), \([73{,}31; 85{,}83]\)~\% (sensibilidad) & \path{sensibilidad_al_tramo_no_medido} \\
 \bottomrule
 \end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} \path{evaluation/data/campana/analisis/analisis_balance_neto_c236.json}.\par}
 \end{table}
+
+\clearpage
 
 \section{Lecturas de sensibilidad y robustez}\label{sec:anexo-sensibilidad}
 

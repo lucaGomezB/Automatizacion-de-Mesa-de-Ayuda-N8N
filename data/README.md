@@ -14,6 +14,15 @@ El corpus de evaluación (200 casos), pseudonimizado por el módulo de C-03.
 > reconstrucciones de tipos de incidente reales sin datos de terceros. La procedencia no está
 > codificada por caso en el corpus.
 
+> **Descripción vigente del corpus (c-247, OQ-01).** La descripción vigente es la de este
+> archivo: 200 casos pseudonimizados, mezcla de incidentes reales reportados por los integrantes
+> del entorno operativo del propio equipo (régimen (a)) y reconstrucciones de descripciones de
+> incidentes reales que no contienen datos personales (régimen (b)). La composición 119/81 es
+> una declaración de los autores, sin registro de procedencia por caso. `tiempo_manual_s` mide
+> la carga completa del ticket. El metadato `descripcion` del JSON congelado conserva una cadena
+> histórica que lo describe como un corpus de casos reales con clasificación manual; esa cadena
+> es histórica y queda superada por esta descripción, y el SHA-256 del archivo no cambia.
+
 ### `Corpus Tesis - Hoja 1 (pseudonimizado).csv`
 
 Corpus de registro pseudonimizado (formato Hoja 1). **SI se versiona**.
@@ -77,7 +86,7 @@ y su andamiaje de generación fueron **eliminados permanentemente** en C-27.
 | `canal_origen` | string | Sí | Canal de entrada (correo, formulario, llamada) |
 | `sector_asignado` | string | Sí | Sector principal de verdad fundamental |
 | `sectores_adicionales` | array | Sí | Sectores adicionales de verdad (`[]` si no hay) |
-| `tiempo_manual_s` | number | Sí | Segundos del flujo manual |
+| `tiempo_manual_s` | number | Sí | Segundos de la carga completa del ticket en el flujo manual |
 | `tiempo_automatizado_s` | number | Sí | Segundos del flujo automatizado |
 
 Valores válidos para los sectores (exactos, sensibles a mayúsculas, **sin tildes**):

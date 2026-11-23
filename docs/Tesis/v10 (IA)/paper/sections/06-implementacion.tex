@@ -76,7 +76,7 @@ La construcción del sistema fue organizada bajo el esquema Scrumban descrito en
   \item La validación experimental y la documentación final ejecutaron el protocolo de pruebas descrito en la \autoref{sec:marco-metodologico}, recolectaron las mediciones del corpus completo y produjeron el análisis estadístico presentado en la \autoref{sec:resultados}.
 \end{enumerate}
 
-La campaña del flujo manual (junio a agosto de 2026) no es una etapa de construcción; la del flujo automatizado (septiembre a octubre de 2026) corresponde a la validación experimental, con \texttt{gemini-3.6-flash} integrado el 24 de septiembre de 2026.
+La campaña del flujo manual (junio a agosto de 2026) no es una etapa de construcción; la del flujo automatizado (octubre de 2026) corresponde a la validación experimental, con \texttt{gemini-3.6-flash} integrado el 24 de septiembre de 2026.
 
 La trazabilidad entre etapas y artefactos, mediada por el tablero Kanban en Jira, permitió identificar tempranamente los desvíos respecto del plan y redistribuir el esfuerzo ante imprevistos, y los límites de trabajo en curso evitaron la acumulación de tareas a medio terminar (\autoref{subsec:gestion-scrumban}).
 
@@ -94,12 +94,12 @@ La integración continua (CI) se ejecuta automáticamente en cada solicitud de i
 
 \subsection{Dashboard de analítica}\label{subsec:dashboard-analitica}
 
-El panel de administración incluye un dashboard de analítica desarrollado con la biblioteca ReCharts de React. Este módulo proporciona visualización agregada de los datos históricos de incidentes, permitiendo identificar tendencias temporales, patrones de fallas recurrentes y desequilibrios en la distribución de carga entre sectores. Esta capacidad de análisis retrospectivo transforma los datos operativos acumulados en inteligencia organizacional accionable. La Figura~\ref{fig:panel_admin} muestra el panel de administración sobre el que se integra esta capacidad analítica, con el listado de tickets, los filtros combinados y la pestaña de revisión humana, que lista los casos que el backend marcó con su indicador de revisión (\autoref{subsec:reduccion-intervencion}).
+El panel de administración incluye un dashboard de analítica desarrollado con la biblioteca Recharts de React. Este módulo proporciona visualización agregada de los datos históricos de incidentes, permitiendo identificar tendencias temporales, patrones de fallas recurrentes y desequilibrios en la distribución de carga entre sectores. Esta capacidad de análisis retrospectivo transforma los datos operativos acumulados en inteligencia organizacional accionable. La Figura~\ref{fig:panel_admin} muestra el panel de administración sobre el que se integra esta capacidad analítica, con el listado de tickets, los filtros combinados y la pestaña de revisión humana, que lista los casos que el backend marcó con su indicador de revisión (\autoref{subsec:reduccion-intervencion}).
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.70\textwidth]{panel_admin}
-\caption[Panel de administración del sistema]{Panel de administración del sistema: listado de tickets con filtros combinados y cola de revisión humana. Captura del 21-10-2026 de una instancia local de desarrollo con rótulo v1.0.0: los tickets visibles son del 2 y del 13-10-2026 y la cola (94 casos) refleja el indicador \texttt{requiere\_revision\_humana} registrado por el backend en esa base, no la regla de confianza evaluada fuera de línea (\autoref{subsec:reduccion-intervencion}).}
+\caption[Panel de administración del sistema]{Panel de administración del sistema: listado de tickets con filtros combinados y cola de revisión humana. Captura del 21-10-2026 de una instancia local de desarrollo con rótulo v1.0.0: los tickets visibles son del 2 y del 13-10-2026 y la cola (94 casos) refleja el indicador \texttt{requiere\_revision\_humana} registrado por el backend en esa base, no la regla de confianza evaluada fuera de línea (\autoref{subsec:reduccion-intervencion}). Fuente: captura propia del sistema (instancia local de desarrollo, 21-10-2026).}
 \label{fig:panel_admin}
 \end{figure}
 
@@ -108,7 +108,7 @@ El dashboard se organiza en tres visualizaciones principales. Un gráfico de ten
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.70\textwidth]{dashboard}
-\caption[Dashboard de analítica del panel de administración]{Dashboard de analítica del panel de administración: tendencia temporal de incidentes, distribución por sector y distribución por estado. Misma captura (21-10-2026, instancia local de desarrollo, rótulo v1.0.0), con 145 incidentes entre el 21-09 y el 21-10-2026 (el 2-10 concentra el pico); la tasa de revisión humana (64,8~\%, 94 de 145) es el indicador registrado por el backend en esa base y difiere de la evaluación fuera de línea (\autoref{subsec:reduccion-intervencion}).}
+\caption[Dashboard de analítica del panel de administración]{Dashboard de analítica del panel de administración: tendencia temporal de incidentes, distribución por sector y distribución por estado. Misma captura (21-10-2026, instancia local de desarrollo, rótulo v1.0.0), con 145 incidentes entre el 21-09 y el 21-10-2026 (el 2-10 concentra el pico); la tasa de revisión humana (64,8~\%, 94 de 145) es el indicador registrado por el backend en esa base y difiere de la evaluación fuera de línea (\autoref{subsec:reduccion-intervencion}). Fuente: captura propia del sistema (instancia local de desarrollo, 21-10-2026).}
 \label{fig:dashboard}
 \end{figure}
 
