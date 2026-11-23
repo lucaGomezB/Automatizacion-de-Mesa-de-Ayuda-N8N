@@ -3092,6 +3092,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Specs**: `tesis-document` (nota de erratum de una release con PDF de tag de hash ajeno; verificacion de flotantes en la release).
 - **Dependencias**: **despues** de `c-247` (consolida su contenido). **Governance**: HIGH (toca el ejemplar defendido y publica un tag).
 - **Hallazgo**: el build destapo una regresion de `c-247` (`07-resultados.tex:93`, un `\path` dentro de un `\caption`, que impedia compilar); corregida en este change.
+- **Tag**: anotado **`v1.6.3`** -> `f8618bd` (C4). Se creo sobre C3 y se **movio** a C4 por decision de los autores (MODIFIED de la regla "no mover tags publicados"), para que el PDF del tag imprima el hash `a318e13` del commit de contenido.
 - **Leer antes**: `openspec/changes/archive/2026-11-22-c-248-publicar-la-release-y-la-nota-de-erratum-de-v1-6-2/{proposal,design,tasks}.md`.
 
 ---

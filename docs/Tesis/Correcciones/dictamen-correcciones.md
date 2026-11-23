@@ -7090,3 +7090,5 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 
 **Gobernanza.** HIGH: toca el ejemplar defendido y publica un tag; ningun `.tex` ni tag sin OK expreso.
 
+**Movimiento del tag `v1.6.3` (decision de los autores, 2026-11-22).** El tag anotado `v1.6.3` se creo sobre el commit de contenido **C3** (`a318e13187cc451b304737b06cefb88a309c39b9`, cuyo PDF del Anexo B **no imprime hash**, al estilo del erratum de `v1.6.2`) y luego se **movio a C4** (`f8618bd`), cuyo PDF **si** imprime el hash `a318e13` del commit de referencia. El movimiento **MODIFICA de hecho** la regla vigente "no mover tags publicados": se registra como excepcion autorizada por los autores, para que el PDF de la version entregada (el del tag) imprima un hash real y no uno ajeno. `git rev-parse v1.6.3^{commit}` = `f8618bd`; el "commit de referencia" que el Anexo B consigna (`a318e13`) es el commit de contenido, no el del tag (un commit no puede imprimir su propio hash). `v1.6.2` (`e7013127`) no se movio.
+
