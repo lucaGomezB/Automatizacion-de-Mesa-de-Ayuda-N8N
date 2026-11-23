@@ -7078,3 +7078,15 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 - `docs/Tesis/fuentes/README.md` (nuevo): carpeta para PDFs de terceros (con copyright); el contenido queda ignorado. Introducida al verificar la tarea 5.4 contra el texto completo de Paramesh.
 - `docs/Tesis/v10 (IA)/paper/sections/05-arquitectura.tex` (modificado): lineas "Fuente" de `fig:despliegue` y `fig:er_modelo_datos` (tarea 6.6), omitido en la tabla de impacto del proposal.
 
+## c-248: publicar la release v1.6.3 y la nota de erratum de v1.6.2 - EN CURSO (2026-11-22)
+
+**Change.** `c-248-publicar-la-release-y-la-nota-de-erratum-de-v1-6-2`.
+
+**Motivo.** Cuarta condicion de release del dictamen sobre `v1.6.2` (el PDF del arbol del tag imprime `17aa6d21`) y la instruccion OQ-04 opcion (A) de c-247.
+
+**Nota de erratum de `v1.6.2`.** El PDF compilado en el arbol del tag `v1.6.2` imprime, en el Anexo B, el hash `17aa6d21` (del candidato previo) en lugar del hash del commit de contenido `e7013127`. El tag `v1.6.2` no se mueve ni se borra. La release `v1.6.3` compila (C3) un PDF cuyo Anexo B no imprime ningun hash (remite al tag y a `compilacion.md`) y el commit siguiente (C4) consigna el hash y recompila; `compilacion.md` nombra el commit compilado.
+
+**Version y fecha.** Portada a `v1.6.3` con fecha `2026-11-22`; version propagada a `README.md`, Anexo B (`12-anexos.tex`), `Bibliography_base.bib` (`Gomez2026_repositorio`), `knowledge-base/` e `inventario-uso-asistentes-ia.md` (conteo **165 de 1250** sobre el commit `87ce685`).
+
+**Gobernanza.** HIGH: toca el ejemplar defendido y publica un tag; ningun `.tex` ni tag sin OK expreso.
+

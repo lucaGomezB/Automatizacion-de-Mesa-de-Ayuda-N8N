@@ -926,7 +926,7 @@
       \field{labeltitlesource}{title}
       \field{day}{30}
       \field{month}{6}
-      \field{note}{Diario Oficial de la Unión Europea, L 168, 8 de julio de 2003}
+      \field{note}{Diario Oficial de la Unión Europea, L 168, 8 de julio de 2003. Revisión de vigencia: primera revisión del funcionamiento de las decisiones de adecuación adoptadas al amparo del artículo 25(6) de la Directiva 95/46/CE, Comisión Europea, 15 de enero de 2024 (\url{https://commission.europa.eu/document/f62d70a4-39e3-4372-9d49-e59dc0fda3df_en})}
       \field{title}{Decisión 2003/490/CE de la Comisión, de 30 de junio de 2003, con arreglo a la Directiva 95/46/CE, sobre la protección adecuada de los datos personales en Argentina}
       \field{urlday}{29}
       \field{urlmonth}{10}
@@ -1368,8 +1368,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.6.2)}
-      \field{urlday}{14}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.6.3)}
+      \field{urlday}{22}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
@@ -3484,7 +3484,7 @@
            givenun=0}}%
       }
       \list{publisher}{1}{%
-        {IOS Press}%
+        {SAGE Publications}%
       }
       \strng{namehash}{7268938061362c346fdd5d01b361d8c6}
       \strng{fullhash}{d9db77653593261d10daca4bb50fbf96}
@@ -6470,7 +6470,7 @@
       \field{labeltitlesource}{title}
       \field{day}{30}
       \field{month}{6}
-      \field{note}{Diario Oficial de la Unión Europea, L 168, 8 de julio de 2003}
+      \field{note}{Diario Oficial de la Unión Europea, L 168, 8 de julio de 2003. Revisión de vigencia: primera revisión del funcionamiento de las decisiones de adecuación adoptadas al amparo del artículo 25(6) de la Directiva 95/46/CE, Comisión Europea, 15 de enero de 2024 (\url{https://commission.europa.eu/document/f62d70a4-39e3-4372-9d49-e59dc0fda3df_en})}
       \field{title}{Decisión 2003/490/CE de la Comisión, de 30 de junio de 2003, con arreglo a la Directiva 95/46/CE, sobre la protección adecuada de los datos personales en Argentina}
       \field{urlday}{29}
       \field{urlmonth}{10}
@@ -6912,8 +6912,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.6.2)}
-      \field{urlday}{14}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.6.3)}
+      \field{urlday}{22}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
@@ -9028,7 +9028,7 @@
            givenun=0}}%
       }
       \list{publisher}{1}{%
-        {IOS Press}%
+        {SAGE Publications}%
       }
       \strng{namehash}{7268938061362c346fdd5d01b361d8c6}
       \strng{fullhash}{d9db77653593261d10daca4bb50fbf96}
