@@ -844,6 +844,13 @@ La tasa bruta `0,735` y su intervalo no cambian.
 
 **SUPERADA por c-196** (estado vigente: no concluyente, con estimación puntual por encima de la cota; Sección 3.17). Estado de c-190/c-195 de la segunda sub-hipótesis: **refutada sobre los 147 revisados** (`25/147 = 0,170`; Wilson `[0,118; 0,239]`; binomial `p = 0,28`; el intervalo no descarta una proporción inferior a la cota; la regla de tres vías es asimétrica); `25/200 = 0,125` queda como dato secundario. Las filas siguientes con "no concluyente" sobre 25/200 son notas históricas de c-187, **superadas por c-190**.
 
+**Precedencia vigente por c-249 (2026-11-24).** El veredicto de la segunda sub-hipótesis se
+decide con la regla y el denominador prefijados: `25/200 = 0,125`, IC Wilson `[0,086; 0,178]`
+-> *no concluyente*. El denominador de 147 casos revisados (`25/147 = 0,170`, IC `[0,118;
+0,239]`) y la prueba binomial (`p = 0,28`) se informan como datos post hoc y **no** como
+criterio de decisión. Esta precedencia reemplaza la lectura de c-196, que usaba el denominador
+de 147 como criterio; las cifras de ambos denominadores no cambian.
+
 | Valor | Procedencia | Estado |
 |---|---|---|
 | Proporción de intervenciones con cambio de derivación `25/200 = 0,125`, IC Wilson al 95 % `[0,086; 0,178]` (`[0,0861; 0,1780]` recomputado con `evaluation.metrics.intervalo_wilson`) | `evaluation/data/campana/intervenciones.csv` (`cambio_sector = true`) | vigente (nuevo) |

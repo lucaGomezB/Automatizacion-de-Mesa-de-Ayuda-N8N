@@ -41,15 +41,15 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   titulares = responsables; PII de los originales; texto de origen o reescritura; empleadores;
   formula de `01:72`; quien "recolecto" segun c-246 OQ-01). Verificacion: la fila existe; sin
   ella, 3.4 a 3.7 quedan bloqueadas.
-- [ ] 2.3 **[COMPUERTA OQ-03]** Presentar las cinco preguntas de OQ-03 (orden corrida/consentimiento
+- [x] 2.3 **[COMPUERTA OQ-03]** Presentar las cinco preguntas de OQ-03 (orden corrida/consentimiento
   del 2-10; corridas 21-09 a 1-10 y dashboard; constancia contemporanea; texto de la brecha del
   art. 5; vocabulario del acta T2 §2). Verificacion: la fila existe; sin ella, 3.8 a 3.10 quedan
   bloqueadas.
-- [ ] 2.4 **[COMPUERTA OQ-04]** Presentar las cinco preguntas de OQ-04 (sub-hipotesis 2 D7 a/b y
+- [x] 2.4 **[COMPUERTA OQ-04]** Presentar las cinco preguntas de OQ-04 (sub-hipotesis 2 D7 a/b y
   nombre de la variable; consenso de la sub-hipotesis 3; OE2; fila del OE3; `01:38`), con las
   cifras del recomputo de 4.3 a la vista. Verificacion: la fila existe; sin ella, 5.1 a 5.4 quedan
   bloqueadas.
-- [ ] 2.5 **[COMPUERTA OQ-05]** Presentar a autores y director la regla de tags D8 (A)-(D), la
+- [x] 2.5 **[COMPUERTA OQ-05]** Presentar a autores y director la regla de tags D8 (A)-(D), la
   version `v1.6.4`, la Nota de versiones con `v1.6.2`/`v1.6.3`/erratum y la cifra del inventario de
   IA. Verificacion: la fila existe con ambos responsables; sin ella, 7.1 y el grupo 10 quedan
   bloqueados.
@@ -142,23 +142,23 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 5. Veredictos e hipotesis (recomendacion 4 y 12 en lo que toca a objetivos; gated)
 
-- [ ] 5.1 **[GATED OQ-04]** Sub-hipotesis 2: `S/07-resultados.tex:184`, `S/09-conclusiones.tex:6`
+- [x] 5.1 **[GATED OQ-04]** Sub-hipotesis 2: `S/07-resultados.tex:184`, `S/09-conclusiones.tex:6`
   (y `S/07-resultados.tex:10` si repite el rotulo) segun D7 (a), o `S/01-introduccion.tex:34` y
   `S/04-marco-metodologico.tex:109` con la enmienda post hoc declarada segun D7 (b); un solo nombre
   de la variable ("requieren accion manual" frente a "cambiaron la derivacion"). Cifras desde
   `E/analisis_regimen_c249.json`. Verificacion ANTES: `rg -n "lectura literal de la regla|acci.n manual|cambiaron la derivaci.n" S/`;
   DESPUES: el criterio que decide coincide con el enunciado y la variable tiene un nombre.
-- [ ] 5.2 **[GATED OQ-04]** Sub-hipotesis 3 con consenso: `S/07-resultados.tex:153` y
+- [x] 5.2 **[GATED OQ-04]** Sub-hipotesis 3 con consenso: `S/07-resultados.tex:153` y
   `S/08-discusion.tex:62` ("se refuta igualmente; solo el limite superior del intervalo (0,856)
   supera el umbral"). Verificacion ANTES: `rg -n "ser.a no concluyente" S/07-resultados.tex S/08-discusion.tex`
   devuelve `:153`, `:62`; DESPUES: 0 coincidencias.
-- [ ] 5.3 **[GATED OQ-04]** Objetivos: OE2 (`S/01-introduccion.tex:48` y fila `S/09-conclusiones.tex:24`)
+- [x] 5.3 **[GATED OQ-04]** Objetivos: OE2 (`S/01-introduccion.tex:48` y fila `S/09-conclusiones.tex:24`)
   segun OQ-04 (3); fila OE3 (`S/09-conclusiones.tex:25`: "no sostenida", exclusion de correo y
   telefonia del test de carga, remision a `tab:tiempos-canal` en lugar de `tab:exactitud-etapa-canal`);
   fila OG (`:22`) con "cota superior" y "tarea de laboratorio". Verificacion ANTES:
   `rg -n "exactitud-etapa-canal" S/09-conclusiones.tex` devuelve `:25`; DESPUES: remision correcta y
   veredictos coincidentes con OQ-04.
-- [ ] 5.4 **[GATED OQ-04]** `S/01-introduccion.tex:38`: "La de eficiencia no se contrasta en este
+- [x] 5.4 **[GATED OQ-04]** `S/01-introduccion.tex:38`: "La de eficiencia no se contrasta en este
   trabajo; la de integracion, solo en su dimension de capacidad"; "accesibilidad" y "dispersion"
   operacionalizadas o retiradas; OG (`:42`) dice que se evalua un prototipo. Verificacion ANTES:
   `rg -n "se informa en el Cap|accesibilidad|dispersi.n" S/01-introduccion.tex`; DESPUES: sin promesa
