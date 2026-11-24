@@ -33,7 +33,7 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 2. Compuertas de autores y director
 
-- [ ] 2.1 **[COMPUERTA OQ-01]** Presentar a los autores las cuatro preguntas de OQ-01 de
+- [x] 2.1 **[COMPUERTA OQ-01]** Presentar a los autores las cuatro preguntas de OQ-01 de
   `design.md` (que quedo del cronometraje; busqueda y carga del ticket; origen de los 2 min 45 s;
   ventana junio-agosto) con las opciones D3 (a), (b), (c). Registrar respuesta literal, fecha y
   responsable. Verificacion: la fila existe; sin ella, 3.1 a 3.3 quedan bloqueadas.
@@ -59,18 +59,18 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 3. Bloque A - Veracidad y licitud (recomendaciones 1 a 3 y 7; gated)
 
-- [ ] 3.1 **[GATED OQ-01]** `S/04-marco-metodologico.tex:97`: reescribir el segundo instrumento
+- [x] 3.1 **[GATED OQ-01]** `S/04-marco-metodologico.tex:97`: reescribir el segundo instrumento
   segun D3 y OQ-01 (sin describir como existente una planilla inexistente; remitir a
   `tiempo_manual_s`). Verificacion ANTES: `rg -n "planilla de cronometraje observacional" S/04-marco-metodologico.tex`
   devuelve `:97`; DESPUES: 0 coincidencias en indicativo de existencia y el texto coincide con OQ-01.
-- [ ] 3.2 **[GATED OQ-01]** `S/04-marco-metodologico.tex:117` (primera amenaza) con la falta de
+- [x] 3.2 **[GATED OQ-01]** `S/04-marco-metodologico.tex:117` (primera amenaza) con la falta de
   registro primario; `:89` (que se busco y que campos se completaron) y nueva amenaza de constructo
   (tarea sobre planilla frente a extremo a extremo) en §4.8 (`:115-129`, ajustar el cardinal
   "siete amenazas" si cambia); `S/09-conclusiones.tex:27` (fila OE5) y `S/01-introduccion.tex:54`
   acotados. Verificacion ANTES: `rg -n "registro primario" S/04-marco-metodologico.tex` = 0 y
   `rg -n "siete amenazas" S/04-marco-metodologico.tex`; DESPUES: >= 1 en la primera amenaza, cardinal
   coherente, fila OE5 y `01:54` acotadas.
-- [ ] 3.3 **[GATED OQ-01]** `S/04-marco-metodologico.tex:46` (ventana "junio a agosto" como
+- [x] 3.3 **[GATED OQ-01]** `S/04-marco-metodologico.tex:46` (ventana "junio a agosto" como
   declaracion sin registro fechado) y `S/01-introduccion.tex:18` (origen de la premisa de 2 min
   45 s, si los autores lo confirman). Verificacion ANTES: `rg -n "recogidos entre junio y agosto" S/04-marco-metodologico.tex`
   devuelve `:46` sin calificacion; DESPUES: la ventana lleva la clausula declarativa y el origen de

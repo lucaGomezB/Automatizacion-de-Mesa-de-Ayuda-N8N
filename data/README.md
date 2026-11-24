@@ -18,8 +18,9 @@ El corpus de evaluación (200 casos), pseudonimizado por el módulo de C-03.
 > archivo: 200 casos pseudonimizados, mezcla de incidentes reales reportados por los integrantes
 > del entorno operativo del propio equipo (régimen (a)) y reconstrucciones de descripciones de
 > incidentes reales que no contienen datos personales (régimen (b)). La composición 119/81 es
-> una declaración de los autores, sin registro de procedencia por caso. `tiempo_manual_s` mide
-> la carga completa del ticket. El metadato `descripcion` del JSON congelado conserva una cadena
+> una declaración de los autores, sin registro de procedencia por caso. `tiempo_manual_s` combina
+> la lectura medida de la descripción con un tiempo de carga del ticket estimado (fijo, del orden de
+> 10 s), ya incluido en el valor consignado; no hubo búsqueda. El metadato `descripcion` del JSON congelado conserva una cadena
 > histórica que lo describe como un corpus de casos reales con clasificación manual; esa cadena
 > es histórica y queda superada por esta descripción, y el SHA-256 del archivo no cambia.
 
@@ -86,7 +87,7 @@ y su andamiaje de generación fueron **eliminados permanentemente** en C-27.
 | `canal_origen` | string | Sí | Canal de entrada (correo, formulario, llamada) |
 | `sector_asignado` | string | Sí | Sector principal de verdad fundamental |
 | `sectores_adicionales` | array | Sí | Sectores adicionales de verdad (`[]` si no hay) |
-| `tiempo_manual_s` | number | Sí | Segundos de la carga completa del ticket en el flujo manual |
+| `tiempo_manual_s` | number | Sí | Segundos del registro manual: lectura medida más tiempo de carga del ticket estimado |
 | `tiempo_automatizado_s` | number | Sí | Segundos del flujo automatizado |
 
 Valores válidos para los sectores (exactos, sensibles a mayúsculas, **sin tildes**):

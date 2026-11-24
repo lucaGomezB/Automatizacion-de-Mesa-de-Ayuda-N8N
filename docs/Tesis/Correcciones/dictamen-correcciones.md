@@ -7092,3 +7092,46 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 
 **Movimiento del tag `v1.6.3` (decision de los autores, 2026-11-22).** El tag anotado `v1.6.3` se creo sobre el commit de contenido **C3** (`a318e13187cc451b304737b06cefb88a309c39b9`, cuyo PDF del Anexo B **no imprime hash**, al estilo del erratum de `v1.6.2`) y luego se **movio a C4** (`f8618bd`), cuyo PDF **si** imprime el hash `a318e13` del commit de referencia. El movimiento **MODIFICA de hecho** la regla vigente "no mover tags publicados": se registra como excepcion autorizada por los autores, para que el PDF de la version entregada (el del tag) imprima un hash real y no uno ajeno. `git rev-parse v1.6.3^{commit}` = `f8618bd`; el "commit de referencia" que el Anexo B consigna (`a318e13`) es el commit de contenido, no el del tag (un commit no puede imprimir su propio hash). `v1.6.2` (`e7013127`) no se movio.
 
+## c-249: aplicar las recomendaciones del dictamen v1.6.3 - EN CURSO (2026-11-24)
+
+**Change.** `c-249-aplicar-las-recomendaciones-del-dictamen-v1-6-3`.
+
+**Motivo.** El dictamen CONEAU del 2026-11-23 sobre `v1.6.3` dictó aprobada con observaciones y señaló siete observaciones nuevas, dos de ellas de veracidad. Este registro se abre con el bloque A (recomendaciones 1 a 3 y 7), bloqueado por las compuertas OQ-01 a OQ-03. En esta ronda se registra OQ-01 y se aplican las tareas 3.1, 3.2 y 3.3.
+
+### Compuertas OQ-01 a OQ-06 (respuestas de autores y director)
+
+| OQ | Respuesta registrada | Fecha | Responsable |
+|---|---|---|---|
+| OQ-01 | Ver la respuesta literal de las cuatro preguntas, abajo. | 2026-11-24 | autores |
+| OQ-02 | Pendiente. | — | — |
+| OQ-03 | Pendiente. | — | — |
+| OQ-04 | Pendiente. | — | — |
+| OQ-05 | Pendiente (autores y director). | — | — |
+| OQ-06 | Pendiente. | — | — |
+
+**OQ-01 (respuesta literal, 2026-11-24, autores).**
+
+1. Del cronometraje de junio a agosto, el registro EXISTE: la hoja de campaña `data/Corpus Tesis - Hoja 1` —que ERA la planilla— se versiona en su forma pseudonimizada (`data/Corpus Tesis - Hoja 1 (pseudonimizado).csv`). Los tiempos se registraron redondeados hacia arriba a múltiplos de 5 s (199/200; 180/200 múltiplos de 10). `R017` = 72 s es la ÚNICA medición exacta (sin redondear). Quién cronometró fue A1 (P5), analista externo a los autores. Corresponde a D3 (b): existe un registro primario, versionado en su forma pseudonimizada; el original con identificadores no se versiona.
+2. Solo se leyó la descripción; NO hubo búsqueda. Se sumó un tiempo de carga FIJO a los 200 casos, ESTIMADO con A1 (P5) desde la experiencia profesional (orden de 10 s; la magnitud exacta no se registró), YA incluido en `tiempo_manual_s`.
+3. La premisa de 2 min 45 s es una estimación a priori GENUINA de los autores (el texto actual de `01:18` ya es correcto; no requiere cambio).
+4. La ventana "junio a agosto" se declara como declaración de los autores, sin registro fechado.
+
+### ANTES/DESPUES (bloque A - tareas 3.1 a 3.3)
+
+| Tarea | Archivo:linea | rg ANTES (comando + salida) | rg DESPUES (comando + salida) |
+|---|---|---|---|
+| 3.1 | `S/04-marco-metodologico.tex:97` | `rg -n "planilla de cronometraje observacional" 04-marco-metodologico.tex` -> `97:...El segundo es una planilla de cronometraje observacional para el flujo manual, completada en vivo por el compañero de par...` (1 coincidencia) | Mismo comando -> 0 coincidencias (exit 1). `rg -n "registro de cronometraje del flujo manual"` -> `97:...El segundo es el registro de cronometraje del flujo manual, llevado en vivo por \texttt{A1}, el analista externo al equipo de autores, en la hoja de campaña... (\texttt{data/Corpus Tesis - Hoja 1 (pseudonimizado).csv})... Ese registro no se conserva en su forma original, pero sí en la pseudonimizada.` Coincide con OQ-01 (1). |
+| 3.2 | `S/04-marco-metodologico.tex:89`, `:115`, `:117`, `:129`; `S/09-conclusiones.tex:27`; `S/01-introduccion.tex:54` | `rg -n "registro primario" 04-marco-metodologico.tex` -> 3 coincidencias preexistentes del brazo automatizado (`:66`, `:79`, `:95`); `rg -n "siete amenazas"` -> `115:Se identificaron y trataron explícitamente siete amenazas...`; `rg -n "la lectura, la comprensión, la búsqueda y la carga del ticket"` -> `89:...el cronometraje incluyó la lectura, la comprensión, la búsqueda y la carga del ticket...` (1 coincidencia) | `rg -c "registro primario"` -> `4` (las 3 preexistentes más la nueva de la primera amenaza en `:117`); `rg -n "siete amenazas"` -> 0 (exit 1); `rg -n "ocho amenazas"` -> `115:...ocho amenazas...`; `rg -n "La octava"` -> `131:La octava, una amenaza a la validez de constructo del tiempo manual...`; `rg -n "la lectura, la comprensión, la búsqueda"` -> 0 (exit 1). `:89` dice "no hubo búsqueda" y "un tiempo fijo de carga del ticket, estimado ... en el orden de 10~s ... ya incluido en tiempo_manual_s". `09:27` y `01:54` acotan la replicación al registro pseudonimizado con resolución de 5~s. |
+| 3.3 | `S/04-marco-metodologico.tex:46`; `S/01-introduccion.tex:18` | `rg -n "recogidos entre junio y agosto" 04-marco-metodologico.tex` -> `46:...recogidos entre junio y agosto, exclusivamente en su entorno operativo diario--- (régimen (a)...` (sin cláusula declarativa) | Mismo comando -> `46:...recogidos entre junio y agosto, exclusivamente en su entorno operativo diario, una ventana que es una declaración de los autores y no consta en un registro fechado--- (régimen (a)...`. `rg -n "2 minutos con 45 segundos\|estimación a priori" 01-introduccion.tex` -> `18:...constituyó una estimación a priori, un parámetro del escenario de referencia fijado por los autores...` (ya correcto, sin cambio; coincide con OQ-01 (3)). |
+
+### Tensión 04:16 (cronometraje mutuo y A1)
+
+`04:16` decía "se cronometraron mutuamente" y "su observador fue T1" (para A1). No hay contradicción: el cronometraje fue mutuo y por turnos, de modo que cuando `T1` registraba, `A1` cronometraba, y cuando `A1` registraba, su observador era `T1`. Se explicitó con "---A1 o T1 según el turno---" y se ajustó "carga completa del ticket" a "registro manual, que combina la lectura medida ... con un tiempo de carga ... estimado", coherente con OQ-01 (2).
+
+### Archivos tocados y residuales
+
+- `S/04-marco-metodologico.tex` (`:16`, `:46`, `:78`, `:89`, `:97`, `:115`, `:117`, `:131`), `S/01-introduccion.tex` (`:54`), `S/09-conclusiones.tex` (`:27`) y `data/README.md` (`:21-23`, `:89`; este último por coherencia con el esquema de `tiempo_manual_s`).
+- `verify_citations.py`: PASS (93 entradas, 93 claves, 0 huérfanas, 0 sin usar).
+- Residuales declarados: quedan menciones de "carga completa del ticket" en `04:46`, `07:284`, `08:116` y `12:149`. No pertenecen a las tareas 3.1 a 3.3 y no se tocaron en esta ronda; el estado preciso del registro manual queda definido en `04:89` y `04:97`.
+- Sin commit, tag ni push. No se modificó el JSON del corpus ni ninguna cifra canónica.
+
