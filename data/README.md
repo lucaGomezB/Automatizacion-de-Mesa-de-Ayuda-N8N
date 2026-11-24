@@ -13,6 +13,8 @@ El corpus de evaluación (200 casos), con descripciones disociadas (genéricas, 
 > (a) incidentes reales del entorno operativo del propio equipo, disociados, y (b)
 > reconstrucciones de tipos de incidente reales sin datos de terceros. La procedencia no está
 > codificada por caso en el corpus.
+>
+> **Superado por la descripción vigente de c-247 (abajo).** Se conserva por trazabilidad.
 
 > **Descripción vigente del corpus (c-247, OQ-01).** La descripción vigente es la de este
 > archivo: 200 casos disociados, mezcla de incidentes reales reportados por los integrantes

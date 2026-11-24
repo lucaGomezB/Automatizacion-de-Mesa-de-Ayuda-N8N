@@ -6903,7 +6903,7 @@ Se detienen `c-228-clasificador-supervisado-sobre-el-corpus-acumulado` (0/46), `
 
 **Alcance y gobernanza.** Gobernanza MEDIUM (prosa); sube a HIGH si viaja en la release `v1.6.1`, porque toca el ejemplar defendido. Sin commit, tag ni push. La recompilación, los derivados, `compilacion.md` y la copia de entrega quedan fuera de alcance (tramo de release). Las tareas operativas 4.1 y 4.2 (re-exportación del CSV) **se cerraron el 2026-11-20**: el coautor re-exportó el CSV con la ventana cerrada (mismo procedimiento), el incremento resultante es la corrida ampliada del 18/11 (no una corrida extra), se reemplazó `evaluation/evidence/billing-gemini-2026-11-17-18-oficial.csv`, se recomputó su SHA-256 (`f860b5cd…`), se regeneró el `resumen.csv` (`636fdd70…`) y se actualizaron `evaluation/evidence/README.md`, el memo `3.47`(h) y la prosa (`07-resultados.tex`); la tesis se recompiló.
 
-## c-247: responder las aclaraciones de procedencia del dictamen v1.6.2 - EN CURSO (2026-11-22)
+## c-247: responder las aclaraciones de procedencia del dictamen v1.6.2 - ARCHIVADO (2026-11-22)
 
 ### Compuertas OQ-01 a OQ-04 (respuestas de autores y director)
 
@@ -7078,7 +7078,7 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 - `docs/Tesis/fuentes/README.md` (nuevo): carpeta para PDFs de terceros (con copyright); el contenido queda ignorado. Introducida al verificar la tarea 5.4 contra el texto completo de Paramesh.
 - `docs/Tesis/v10 (IA)/paper/sections/05-arquitectura.tex` (modificado): lineas "Fuente" de `fig:despliegue` y `fig:er_modelo_datos` (tarea 6.6), omitido en la tabla de impacto del proposal.
 
-## c-248: publicar la release v1.6.3 y la nota de erratum de v1.6.2 - EN CURSO (2026-11-22)
+## c-248: publicar la release v1.6.3 y la nota de erratum de v1.6.2 - ARCHIVADO (2026-11-22)
 
 **Change.** `c-248-publicar-la-release-y-la-nota-de-erratum-de-v1-6-2`.
 
@@ -7219,6 +7219,39 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 - OQ-03 cerrada: `11:32` ya no dice "consentimiento expreso", ordena las transferencias respecto del consentimiento verbal del 2-10 y conserva el pasaje de disociación; `11:36` declara y valora la brecha del artículo 5. El acta T2 se revisó por anexo (§7), no por reescritura, porque está firmada el 2026-11-20. El cuerpo del acta y del instrumento de transferencia conserva el encuadre histórico como registro de lo actuado, con remisión al anexo.
 - Nota de numeración: las referencias `S/11:NN` de este registro son las de `v1.6.3`. El bloque 3.4 a 3.7 insertó en `:18` el párrafo de empleadores reales y desplazó en +2 las líneas siguientes: la declaración de §7.5 quedó en `:42` (era `:40`), el pasaje de transferencia en `:32` (era `:30`) y el párrafo de licitud en `:50` (era `:48`). `:16` no se desplazó.
 - Se commitea en la rama `c-249-aplicar-las-recomendaciones-del-dictamen-v1-6-3`; sin tag ni push. No se modificó el JSON del corpus ni ninguna cifra canónica.
+
+### Grupo 9: coherencia - APLICADO (2026-11-24)
+
+- **9.1 Cifras canónicas.** Presentes y sin cambios: 61,6 (8 menciones), 17,76 (7), 71,2 (16), 73,5 (14), W = 363 (1), 0,6508 (6), 18,7 (3), 43,1 (5), 898,8 (1); el 25,47 figura en su forma LaTeX `25{,}47`. El apply solo re-rotuló y agregó las cifras del JSON de 4.3.
+- **9.2 Nombres.** Las líneas nuevas no agregan nombres de colaboradores ni correspondencia alias-identidad; la única mención es la URL pública del repositorio, preexistente.
+- **9.3 Barrido.** Las once fórmulas del barrido dan 0 coincidencias: planilla observacional, consentimiento expreso, desliz, sustituye como lectura vigente, De ese universo, organizaciones medianas con volúmenes, presentado como escenario de referencia, sería no concluyente, en el campo, dependencia medida y 8 de julio de 2003.
+- **9.4 Coherencia global.** `sha256sum` del corpus `1fd17d7e...`; `v1.6.2` en `e7013127...`; `v1.6.3` en `f8618bdd...`; `verify_citations.py` PASS; Resumen y Abstract en 234 y 232 palabras de prosa; `pytest evaluation/data/campana/analisis/` con 363 en verde y el fallo preexistente declarado; `openspec validate c-249 --strict` válido y `--all --strict` con 91/91.
+
+### Grupo 1: guardas y línea base - CERRADO (2026-11-24)
+
+- **1.1** Artefactos leídos; los desplazamientos de líneas del dictamen quedaron registrados en la nota de numeración.
+- **1.2** Línea base de cifras y conteo de prosa registrados (Resumen 248 y Abstract 246 en la base; 234 y 232 tras el apply).
+- **1.3** Valores inmutables verificados: `e7013127...` (v1.6.2), `f8618bdd...` (v1.6.3) y `1fd17d7e...` (corpus).
+- **1.4** Red de seguridad: `verify_citations.py` PASS; `pytest` de `E/` con 363 en verde y el fallo preexistente; `openspec validate --all --strict` 91/91.
+
+
+### Grupo 8: forma y bibliografía - PARCIAL (2026-11-24)
+
+- **8.1 Flotantes y glosario.** `placeins` agregado al preámbulo y `\FloatBarrier` antes del Anexo F. El glosario se reorganizó en 50 filas de dos columnas (100 entradas), con la primera mitad alfabética a la izquierda y la segunda a la derecha: sin celdas izquierdas vacías y con lectura alfabética por columna. La posición de las figuras 12 a 14 se verifica en la compilación de 10.3.
+- **8.2 Hipótesis.** `01:32` declara que los valores \(p\) reportados son bilaterales y conservadores, e informa el unilateral global \(1{,}54 \times 10^{-32}\). `01:36` define el F1 macro de umbral (excluye las clases de soporte unitario) y fija que la falsación usa la cota superior del intervalo. `01:34` ya no remite al segundo objetivo específico.
+- **8.3 Bibliografía.** `Decision2003_490_CE` corregida a "L 168, 5 de julio de 2003, pp. 19-22". Las cuatro entradas de documentación (n8n, PostgreSQL, Airflow, FastAPI) usan `s. f.` con su fecha de consulta. No se agregó una referencia técnica de Gemini: no hay página oficial verificable para el modelo declarado.
+- **8.4 Tope de páginas.** Pendiente de la compilación de 10.3, que da el total medido para declarar el exceso con su magnitud y fecha.
+
+
+### Grupo 7: consistencia (recomendaciones 7 a 12) - APLICADO (2026-11-24)
+
+- **7.1 Release en el texto.** `S/12-anexos.tex:60` ya no dice que el PDF del tag no imprime el hash: declara que el tag `v1.6.3` apunta al commit que consigna el hash y que ese hash corresponde al commit de contenido, idéntico al del tag salvo esa línea. La Nota de versiones (I.1) no registra `v1.6.2`, `v1.6.3` ni el erratum, conforme a la decisión de OQ-05 (3).
+- **7.2 Registro.** Los encabezados de c-247 (`:6906`) y c-248 (`:7081`) pasaron de "EN CURSO" a "ARCHIVADO (2026-11-22)". La tarea 6.3 del `tasks.md` archivado de c-248 conserva su marca y lleva una enmienda fechada con el movimiento del tag a C4 (`f8618bdd`).
+- **7.3 Corpus y Anexo F.** El Anexo F declara histórica la cadena `metadata.descripcion` y remite a la descripción vigente; el bloque de c-242 de `data/README.md` quedó marcado como superado por el de c-247; §4.4 referencia `sec:anexo-corpus`. El JSON no se editó.
+- **7.4 Marco teórico.** Nueva subsección `subsec:modelo-economico` con el balance neto (`B = dt - rho*r - (e_aut - e_man)*c`) y la exactitud de equilibrio (`a* = 1 - e_man - (dt - rho*r)/c`), formalizada a partir de la definición operativa de `c` y cuantificada en `subsec:balance-neto`. Se agregaron Shapiro-Wilk, Hodges-Lehmann, prueba binomial exacta y rank-biserial a la subsección estadística; `02:20` quedó como inferencia de los autores y `02:12` cita ITIL. Los duplicados con el capítulo 3 y los umbrales y fechas de implementación ya habían salido en el lote 1.
+- **7.5 Estado del arte.** El protocolo declara los conteos por cadena de C1 y C2 y que los de A1 a A4 y B1 no se registraron; ajusta el criterio temporal (2023-2026 para A1 a A4; Paramesh 2019 y Revina 2020 se incorporan por búsqueda dirigida de líneas de base). Zapier, Make y Power Automate quedan como relevamiento propio fechado; `03:28` sin la afirmación de crecimiento; `03:24` como premisa del escenario; `03:90-92` acotada al corpus propio y a estimaciones dentro de la muestra. Paket y Revina ya estaban cerrados por OQ-06.
+- **7.6 Implementación y trabajos futuros.** `06:38` nombra el nodo `code`; la mejora de robustez, los campos vacíos y la fracción de esfuerzo quedan como observaciones del desarrollo sin medición; se retiró la frase de "inteligencia organizacional". Nueva subsección `subsec:medicion-costo-reasignacion` con criterio de éxito y tamaño de muestra propuesto (**mínimo de 30 reasignaciones**, a ratificar por los autores); línea futura sobre medición por régimen o sustitución de las 81 reconstrucciones; el párrafo de priorización (`10:6`) remite a la subsección.
+
 
 ### Grupos 4 y 6: recomputo y reencuadre - APLICADOS (2026-11-24)
 

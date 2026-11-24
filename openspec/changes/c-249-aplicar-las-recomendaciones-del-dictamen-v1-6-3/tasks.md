@@ -17,17 +17,17 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 1. Guardas y linea base
 
-- [ ] 1.1 Leer `proposal.md`, `design.md` (D1-D11, OQ-01 a OQ-06), los dos deltas de `specs/` y
+- [x] 1.1 Leer `proposal.md`, `design.md` (D1-D11, OQ-01 a OQ-06), los dos deltas de `specs/` y
   `D/` completo (veredicto 1 a 7, recomendaciones 1 a 14, Anexos B, C y D). Verificacion:
   `git diff --stat v1.6.3 HEAD -- "docs/Tesis/v10 (IA)" data` vacio (las lineas del dictamen siguen
   vigentes) o, si no lo esta, lista de desplazamientos registrada.
-- [ ] 1.2 Linea base de cifras canonicas y conteos. Verificacion: `rg -c "61,6|17,76|71,2|73,5|W = 363|0,6508|25,47|18,7|43,1|898,8" S/`
+- [x] 1.2 Linea base de cifras canonicas y conteos. Verificacion: `rg -c "61,6|17,76|71,2|73,5|W = 363|0,6508|25,47|18,7|43,1|898,8" S/`
   y el conteo de palabras de prosa del Resumen (248) y del Abstract (246) con la regla de la spec
   (`tesis-document`, "English abstract"), registrados en la seccion c-249.
-- [ ] 1.3 Registrar `git rev-parse v1.6.2^{commit}` (`e7013127...`), `git rev-parse v1.6.3^{commit}`
+- [x] 1.3 Registrar `git rev-parse v1.6.2^{commit}` (`e7013127...`), `git rev-parse v1.6.3^{commit}`
   (`f8618bdd...`) y `sha256sum data/corpus_evaluacion_pseudonimizado.json` (`1fd17d7e...`) como
   valores que el apply MUST NOT cambiar.
-- [ ] 1.4 Red de seguridad: `python "docs/Tesis/v10 (IA)/verify_citations.py"` = PASS;
+- [x] 1.4 Red de seguridad: `python "docs/Tesis/v10 (IA)/verify_citations.py"` = PASS;
   `pytest "docs/Tesis/v10 (IA)" E/` en verde (conteo registrado); `openspec validate --all --strict`
   sin fallos. Si algo falla antes de editar, se reporta como falla preexistente y no se corrige aqui.
 
@@ -213,26 +213,26 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 7. Consistencia (recomendaciones 7 a 12; sin compuerta salvo donde se marca)
 
-- [ ] 7.1 **[GATED OQ-05]** Release en el texto: `S/12-anexos.tex:60` segun la regla elegida
+- [x] 7.1 **[GATED OQ-05]** Release en el texto: `S/12-anexos.tex:60` segun la regla elegida
   (describir que commit apunta el tag y que hash imprime); Nota de versiones `S/12-anexos.tex:235-241`
   con `v1.6.2`, `v1.6.3` y el erratum si OQ-05 (3) lo decide. Verificacion ANTES:
   `rg -n "el PDF compilado en el propio tag no lo imprime" S/12-anexos.tex` devuelve `:60` y
   `rg -n "1\.6\.2|1\.6\.3|erratum" S/12-anexos.tex` en I.1 = 0; DESPUES: texto coherente con la regla
   y la decision de OQ-05 (3).
-- [ ] 7.2 Registro de c-248: encabezado `C/dictamen-correcciones.md:7081` ("EN CURSO" pasa a
+- [x] 7.2 Registro de c-248: encabezado `C/dictamen-correcciones.md:7081` ("EN CURSO" pasa a
   "APLICADO/ARCHIVADO (2026-11-22)", tambien el de c-247 en `:6906` si sigue en curso); nota aditiva
   fechada al pie de la tarea 6.3 de
   `openspec/changes/archive/2026-11-22-c-248-publicar-la-release-y-la-nota-de-erratum-de-v1-6-2/tasks.md`
   ("Enmienda c-249: el tag se movio a C4 `f8618bdd` por decision de los autores; ver
   `dictamen-correcciones.md:7093`"). Verificacion ANTES: `rg -n "EN CURSO" C/dictamen-correcciones.md`
   devuelve `:6906`, `:7081`; DESPUES: 0 en esos encabezados y la nota existe sin desmarcar la tarea.
-- [ ] 7.3 Corpus y Anexo F: `S/12-anexos.tex:145-153` declara historica la cadena
+- [x] 7.3 Corpus y Anexo F: `S/12-anexos.tex:145-153` declara historica la cadena
   `metadata.descripcion` ("200 casos reales", "clasificacion manual") segun D4 (i) de c-247;
   `data/README.md:12` (parrafo de c-242) marcado como superado por el de c-247 (`:17`); referencia
   `\ref{sec:anexo-corpus}` desde §4.4 (`S/04-marco-metodologico.tex:46` o `:48`). El JSON no se edita.
   Verificacion ANTES: `rg -n "anexo-corpus" S/04-marco-metodologico.tex` = 0; DESPUES: >= 1, Anexo F
   con la declaracion y `sha256sum` del JSON igual a 1.3.
-- [ ] 7.4 Marco teorico (rec. 11): subseccion breve del modelo economico (costo de derivacion
+- [x] 7.4 Marco teorico (rec. 11): subseccion breve del modelo economico (costo de derivacion
   erronea, exactitud y costo de equilibrio) con fuente; `S/02-marco-teorico.tex:100` con
   Shapiro-Wilk, Hodges-Lehmann, binomial y tamanos de efecto; quitar duplicados con el cap. 3
   (`02:44-52`/`03:58`, `02:46`/`03:62`, `02:56`/`03:64`, `02:48`/`03:34`); mover a los caps. 4 o 5
@@ -240,7 +240,7 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   "cuatro etapas secuenciales" de `02:12`). Sin claves bib inventadas. Verificacion ANTES:
   `rg -n "equilibrio|Hodges|Desde el 13 de octubre" S/02-marco-teorico.tex`; DESPUES: la subseccion y
   los metodos figuran, las fechas de implementacion salieron del cap. 2 y `verify_citations.py` PASS.
-- [ ] 7.5 Estado del arte (rec. 10): `S/03-estado-del-arte.tex:8` (trabajos anteriores a 2023
+- [x] 7.5 Estado del arte (rec. 10): `S/03-estado-del-arte.tex:8` (trabajos anteriores a 2023
   justificados con la regla registrada en `C/bitacora-busqueda-c-110.md` o criterio ajustado; conteos
   por cadena tomados de la bitacora, declarando los que no se registraron); `:22` (Zapier, Make, Power
   Automate citados o reformulados como observacion propia fechada); `:28` (cita o reformulacion);
@@ -248,7 +248,7 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   propio evaluado dentro de la muestra); **[GATED OQ-06]** `:49` (ficha de Paket) y `:47` (Revina
   1,000). Verificacion ANTES: `rg -n "no negociable|crecimiento considerable|exclusivamente como SaaS|precisamente en esa intersecci.n|no disponibles en el repositorio" S/03-estado-del-arte.tex`;
   DESPUES: 0 de las formulas no respaldadas; Paket y Revina segun OQ-06.
-- [ ] 7.6 Implementacion y trabajos futuros (rec. 12): `S/06-implementacion.tex:62`, `:74`, `:97`
+- [x] 7.6 Implementacion y trabajos futuros (rec. 12): `S/06-implementacion.tex:62`, `:74`, `:97`
   rotulados como observaciones del desarrollo sin medicion o retirados; `:38` ("Function" por nodo
   `code`); subseccion de primer nivel "Medicion del costo de reasignacion" en
   `S/10-recomendaciones.tex` (hoy dentro de `:34`) con criterio de exito y tamano de muestra; linea
@@ -265,13 +265,13 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   celdas izquierdas vacias en mitad de columna (OAuth2, RPO, SaaS, TF-IDF, TwiML, VM, VoIP).
   Verificacion: tras la compilacion de 10.3, las figuras 12 a 14 no caen dentro del Anexo F (paginas
   registradas) y el glosario se lee en orden descendente.
-- [ ] 8.2 Hipotesis: definir "F1 macro de umbral" en `S/01-introduccion.tex:36` (hoy solo en
+- [x] 8.2 Hipotesis: definir "F1 macro de umbral" en `S/01-introduccion.tex:36` (hoy solo en
   `S/04-marco-metodologico.tex:107`); que limite del intervalo decide en `01:36`; p de
   `S/07-resultados.tex:84` alineado con la H1 unilateral segun el requisito vigente "Convencion
   declarada del valor p frente a la hipotesis direccional de tiempos"; `01:34` sin referencia hacia
   adelante al OE2. Verificacion ANTES: `rg -n "de umbral" S/01-introduccion.tex`; DESPUES: definicion
   en la hipotesis y convencion del p declarada.
-- [ ] 8.3 `Bibliography_base.bib`: `Decision2003_490_CE` (`:904-910`) con "DO L 168, 5 de julio de
+- [x] 8.3 `Bibliography_base.bib`: `Decision2003_490_CE` (`:904-910`) con "DO L 168, 5 de julio de
   2003, pp. 19-22"; "s. f." o ano de la version consultada en las entradas de n8n, PostgreSQL,
   Airflow y FastAPI; valorar una referencia tecnica de Gemini 3.6 Flash solo si existe una pagina
   oficial verificable (sin inventar). Verificacion ANTES: `rg -n "8 de julio de 2003" "docs/Tesis/v10 (IA)/Bibliography_base.bib"`
@@ -283,13 +283,13 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 9. Coherencia
 
-- [ ] 9.1 Cifras canonicas intactas: repetir el conteo de 1.2. Verificacion: mismos valores; el diff
+- [x] 9.1 Cifras canonicas intactas: repetir el conteo de 1.2. Verificacion: mismos valores; el diff
   solo re-rotula o agrega cifras del JSON de 4.3.
-- [ ] 9.2 Sin nombres reales ni correspondencia alias-identidad en la prosa nueva. Verificacion:
+- [x] 9.2 Sin nombres reales ni correspondencia alias-identidad en la prosa nueva. Verificacion:
   revision del `git diff` de `S/`, `docs/seguridad/`, `data/README.md`, `C/`.
-- [ ] 9.3 Barrido de residuos: `rg -ni "planilla de cronometraje observacional|consentimiento expreso|desliz|sustituye, como lectura vigente|De ese universo|organizaciones medianas con vol|presentado como escenario de referencia|ser.a no concluyente|en el campo|dependencia medida|8 de julio de 2003" S/ "docs/Tesis/v10 (IA)/Bibliography_base.bib"`
+- [x] 9.3 Barrido de residuos: `rg -ni "planilla de cronometraje observacional|consentimiento expreso|desliz|sustituye, como lectura vigente|De ese universo|organizaciones medianas con vol|presentado como escenario de referencia|ser.a no concluyente|en el campo|dependencia medida|8 de julio de 2003" S/ "docs/Tesis/v10 (IA)/Bibliography_base.bib"`
   = 0 (salvo lo que una respuesta OQ conserve expresamente, registrado).
-- [ ] 9.4 Resumen y Abstract <= 250 palabras de prosa; hash del corpus y tags `v1.6.2`/`v1.6.3`
+- [x] 9.4 Resumen y Abstract <= 250 palabras de prosa; hash del corpus y tags `v1.6.2`/`v1.6.3`
   iguales a 1.3; `verify_citations.py` PASS; `pytest` de 1.4 en verde;
   `openspec validate c-249-aplicar-las-recomendaciones-del-dictamen-v1-6-3 --strict` y
   `openspec validate --all --strict` sin fallos.
