@@ -7096,14 +7096,14 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 
 **Change.** `c-249-aplicar-las-recomendaciones-del-dictamen-v1-6-3`.
 
-**Motivo.** El dictamen CONEAU del 2026-11-23 sobre `v1.6.3` dictó aprobada con observaciones y señaló siete observaciones nuevas, dos de ellas de veracidad. Este registro se abre con el bloque A (recomendaciones 1 a 3 y 7), bloqueado por las compuertas OQ-01 a OQ-03. En esta ronda se registra OQ-01 y se aplican las tareas 3.1, 3.2 y 3.3.
+**Motivo.** El dictamen CONEAU del 2026-11-23 sobre `v1.6.3` dictó aprobada con observaciones y señaló siete observaciones nuevas, dos de ellas de veracidad. Este registro se abre con el bloque A (recomendaciones 1 a 3 y 7), bloqueado por las compuertas OQ-01 a OQ-03. En esta ronda se registran OQ-01 y OQ-02 y se aplican las tareas 3.1 a 3.7.
 
 ### Compuertas OQ-01 a OQ-06 (respuestas de autores y director)
 
 | OQ | Respuesta registrada | Fecha | Responsable |
 |---|---|---|---|
 | OQ-01 | Ver la respuesta literal de las cuatro preguntas, abajo. | 2026-11-24 | autores |
-| OQ-02 | Pendiente. | — | — |
+| OQ-02 | Ver la respuesta literal de las siete preguntas, abajo. | 2026-11-24 | autores |
 | OQ-03 | Pendiente. | — | — |
 | OQ-04 | Pendiente. | — | — |
 | OQ-05 | Pendiente (autores y director). | — | — |
@@ -7116,6 +7116,18 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 3. La premisa de 2 min 45 s es una estimación a priori GENUINA de los autores (el texto actual de `01:18` ya es correcto; no requiere cambio).
 4. La ventana "junio a agosto" se declara como declaración de los autores, sin registro fechado.
 
+**OQ-02 (respuesta literal, 2026-11-24, autores).**
+
+1. (D4) Fórmula única de reportantes: "los integrantes del entorno operativo del propio equipo, los autores y las personas de su círculo" (opción c). Los terceros del círculo (familiares y conocidos) se trataron por disociación: fue lo que efectivamente ocurrió.
+2. Titulares y responsables del tratamiento: son las mismas personas en el régimen (a). La declaración DEBE quedar asentada en §7.5 (`11:40`). Se agregó: "En el origen de ese régimen los titulares de los datos y los responsables del tratamiento son las mismas personas, de modo que no existe un responsable del tratamiento ajeno al grupo". El "en el origen" evita la contradicción con la afirmación, en el mismo párrafo, de que el contenido conservado es disociado.
+3. PII de los originales no versionados (`data/README.md:53`): nombres reales de los sistemas de los empleadores (referidos como `SISTEMA PRINCIPAL` y `SISTEMA SECUNDARIO`) e identificadores de usuario (`ID USUARIO`) de los reportantes.
+4. Descripciones del régimen (a): fueron REESCRITAS por los autores y disociadas a un léxico genérico; no son el texto de origen pseudonimizado.
+5. Empleadores reales: no hizo falta autorización, porque no se tratan ni se transfieren datos personales ni información reservada de sus sistemas.
+6. Fórmula de `01:72`: se acota al escenario narrativo; la afirmación "el corpus no proviene de una organización real" se retira (0 coincidencias).
+7. Recolección: los tres autores.
+
+**Decisión legal asociada: el régimen (a) va como DISOCIADO.** El contenido conservado y transferido no contiene dato personal, de modo que no requiere base de licitud (art. 5, inc. 1, de la Ley 25.326) ni instrumento del artículo 12 para la transferencia internacional. Esta decisión excede lo previsto en el diseño D4, que asumía "pseudonimizado más consentimiento". Efectos en cadena: el capítulo legal deja de fundar la licitud del régimen (a) en el consentimiento (`11:16`, `11:48`), la transferencia internacional deja de necesitar instrumento (`11:30`), la descripción del corpus pasa de "pseudonimizado" a "disociado" y la séptima amenaza (`04:129`) se extiende a los 200 casos. El consentimiento recabado cubre la participación de los colaboradores en el estudio, no el contenido de los regímenes.
+
 ### ANTES/DESPUES (bloque A - tareas 3.1 a 3.3)
 
 | Tarea | Archivo:linea | rg ANTES (comando + salida) | rg DESPUES (comando + salida) |
@@ -7124,14 +7136,27 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 | 3.2 | `S/04-marco-metodologico.tex:89`, `:115`, `:117`, `:129`; `S/09-conclusiones.tex:27`; `S/01-introduccion.tex:54` | `rg -n "registro primario" 04-marco-metodologico.tex` -> 3 coincidencias preexistentes del brazo automatizado (`:66`, `:79`, `:95`); `rg -n "siete amenazas"` -> `115:Se identificaron y trataron explícitamente siete amenazas...`; `rg -n "la lectura, la comprensión, la búsqueda y la carga del ticket"` -> `89:...el cronometraje incluyó la lectura, la comprensión, la búsqueda y la carga del ticket...` (1 coincidencia) | `rg -c "registro primario"` -> `4` (las 3 preexistentes más la nueva de la primera amenaza en `:117`); `rg -n "siete amenazas"` -> 0 (exit 1); `rg -n "ocho amenazas"` -> `115:...ocho amenazas...`; `rg -n "La octava"` -> `131:La octava, una amenaza a la validez de constructo del tiempo manual...`; `rg -n "la lectura, la comprensión, la búsqueda"` -> 0 (exit 1). `:89` dice "no hubo búsqueda" y "un tiempo fijo de carga del ticket, estimado ... en el orden de 10~s ... ya incluido en tiempo_manual_s". `09:27` y `01:54` acotan la replicación al registro pseudonimizado con resolución de 5~s. |
 | 3.3 | `S/04-marco-metodologico.tex:46`; `S/01-introduccion.tex:18` | `rg -n "recogidos entre junio y agosto" 04-marco-metodologico.tex` -> `46:...recogidos entre junio y agosto, exclusivamente en su entorno operativo diario--- (régimen (a)...` (sin cláusula declarativa) | Mismo comando -> `46:...recogidos entre junio y agosto, exclusivamente en su entorno operativo diario, una ventana que es una declaración de los autores y no consta en un registro fechado--- (régimen (a)...`. `rg -n "2 minutos con 45 segundos\|estimación a priori" 01-introduccion.tex` -> `18:...constituyó una estimación a priori, un parámetro del escenario de referencia fijado por los autores...` (ya correcto, sin cambio; coincide con OQ-01 (3)). |
 
+### ANTES/DESPUES (bloque A - tareas 3.4 a 3.7)
+
+| Tarea | Archivo:línea | rg ANTES (comando + salida) | rg DESPUES (comando + salida) |
+|---|---|---|---|
+| 3.4 | `S/04-marco-metodologico.tex:46`; `S/11-aspectos-legales.tex:16`, `:40`, `:48` | `rg -n "reportados por los integrantes del entorno operativo\|propio grupo de desarrollo" S/` -> cuatro coincidencias con dos fórmulas: `04:46`, `11:16`, `11:48` ("reportados por los integrantes del entorno operativo") y `11:40` ("del propio grupo de desarrollo") | Mismo comando -> `11:16`, `11:50`, `01:16` y `04:46` usan la fórmula única "los integrantes del entorno operativo del propio equipo, los autores y las personas de su círculo" o su variante abreviada ("el entorno operativo del propio equipo"); `propio grupo de desarrollo` -> 0 coincidencias. Se agregó en §7.5 (`11:40`) la declaración titulares = responsables. |
+| 3.5 | `S/12-anexos.tex:153`; `S/04-marco-metodologico.tex:46`, `:129`; `S/09-conclusiones.tex:24` | `rg -n "coinciden con el texto de origen" S/12-anexos.tex` -> `153:...sus descripciones no contienen etiquetas y coinciden con el texto de origen...`; `rg -n "se redactaron en tercera persona" S/04-marco-metodologico.tex` -> `46:...Las descripciones del régimen (a) se redactaron en tercera persona...` | `rg -n "coinciden con el texto de origen" S/12-anexos.tex` -> 0 coincidencias (exit 1); `12:153` aclara que por "texto de origen" se entiende el texto disociado fijado en el corpus, no la fuente previa a su reescritura. `04:46` conserva "se redactaron en tercera persona", ahora coherente, y la séptima amenaza (`04:129`) y la fila del OE2 (`09:24`) se extienden a los 200 casos. |
+| 3.6 | `data/README.md:53`; `S/11-aspectos-legales.tex` | `rg -n "contienen PII" data/README.md` -> `54:**pre-pseudonimización**; contienen PII y NUNCA se commitean.`; `rg -n "empleador" S/11-aspectos-legales.tex` -> 0 coincidencias | `rg -n "contienen PII" data/README.md` -> 0 coincidencias (exit 1); el párrafo describe los nombres reales de sistemas y los identificadores de usuario de los reportantes. `rg -n "empleador" S/11-aspectos-legales.tex` -> 1 coincidencia (`11:18`, párrafo de empleadores reales fuera de la validación retirada). |
+| 3.7 | `S/01-introduccion.tex:62`, `:72` | `rg -n "no proviene de una organización real\|evidencia recogida en el entorno" S/01-introduccion.tex` -> 2 coincidencias (`:62` "La evidencia recogida en el entorno operativo... cuantifica el ahorro bruto"; `:72` "...el corpus no proviene de una organización real...") | Mismo comando -> 0 coincidencias (exit 1). `01:62` atribuye el ahorro a la tarea de laboratorio sobre el corpus; `01:16` acota el escenario ("no corresponde a una organización real que haya adoptado el sistema") y usa la fórmula de OQ-02. `rg -n "recolectado en el entorno operativo"` -> 0 coincidencias. |
+
 ### Tensión 04:16 (cronometraje mutuo y A1)
 
 `04:16` decía "se cronometraron mutuamente" y "su observador fue T1" (para A1). No hay contradicción: el cronometraje fue mutuo y por turnos, de modo que cuando `T1` registraba, `A1` cronometraba, y cuando `A1` registraba, su observador era `T1`. Se explicitó con "---A1 o T1 según el turno---" y se ajustó "carga completa del ticket" a "registro manual, que combina la lectura medida ... con un tiempo de carga ... estimado", coherente con OQ-01 (2).
 
 ### Archivos tocados y residuales
 
-- `S/04-marco-metodologico.tex` (`:16`, `:46`, `:78`, `:89`, `:97`, `:115`, `:117`, `:131`), `S/01-introduccion.tex` (`:54`), `S/09-conclusiones.tex` (`:27`) y `data/README.md` (`:21-23`, `:89`; este último por coherencia con el esquema de `tiempo_manual_s`).
-- `verify_citations.py`: PASS (93 entradas, 93 claves, 0 huérfanas, 0 sin usar).
-- Residuales declarados: quedan menciones de "carga completa del ticket" en `04:46`, `07:284`, `08:116` y `12:149`. No pertenecen a las tareas 3.1 a 3.3 y no se tocaron en esta ronda; el estado preciso del registro manual queda definido en `04:89` y `04:97`.
-- Sin commit, tag ni push. No se modificó el JSON del corpus ni ninguna cifra canónica.
+- `S/04-marco-metodologico.tex` (`:16`, `:46`, `:78`, `:89`, `:97`, `:115`, `:117`, `:131`), `S/01-introduccion.tex` (`:54`), `S/09-conclusiones.tex` (`:27`) y `data/README.md` (`:21-23`, `:89`; este último por coherencia con el esquema de `tiempo_manual_s`). Bloque de tareas 3.1 a 3.3, commit `c8ac511`.
+- Bloque de tareas 3.4 a 3.7: `S/04-marco-metodologico.tex` (`:46`), `S/11-aspectos-legales.tex` (`:16`, `:18`, `:25`, `:30`, `:40`, `:48`), `S/09-conclusiones.tex` (`:24`), `S/12-anexos.tex` (`:149`, `:151`, `:153`), `S/01-introduccion.tex` (`:16`, `:62`, `:72`) y `data/README.md` (`:53-60`).
+- `verify_citations.py`: PASS (93 entradas, 93 claves citadas, 169 comandos, 0 huérfanas, 0 sin usar), re-ejecutado después del bloque 3.4 a 3.7.
+- Residuales declarados (bloque 3.1 a 3.3): quedan menciones de "carga completa del ticket" en `04:46`, `07:284`, `08:116` y `12:149`. No pertenecen a las tareas 3.1 a 3.3 y no se tocaron en esa ronda; el estado preciso del registro manual queda definido en `04:89` y `04:97`.
+- Residuales declarados (bloque 3.4 a 3.7): quedan menciones de "pseudonimizado" referidas al corpus en `04:66`, `04:127`, `07:99`, `07:276`, `09:53` y `12:237`. No están entre las líneas que fijan las tareas 3.4 a 3.7 y se reconcilian con la decisión "régimen (a) disociado" en el barrido de la tarea 6.4; las que corresponden al registro de cronometraje (`04:97`) se conservan porque ese registro sí se versiona en su forma pseudonimizada.
+- Pendiente de OQ-03: `11:30` ya no dice "consentimiento expreso" ni funda la transferencia en el artículo 12, porque el bloque 3.4 a 3.7 adelantó la decisión de disociación. Las tareas 3.8 y 3.9 (gated OQ-03) deben reconciliar ese pasaje con el vocabulario del consentimiento verbal del 2-10-2026 y la constancia contemporánea, sin reintroducir el instrumento del artículo 12.
+- Nota de numeración: las referencias `S/11:NN` de este registro son las de `v1.6.3`. El bloque 3.4 a 3.7 insertó en `:18` el párrafo de empleadores reales y desplazó en +2 las líneas siguientes: la declaración de §7.5 quedó en `:42` (era `:40`), el pasaje de transferencia en `:32` (era `:30`) y el párrafo de licitud en `:50` (era `:48`). `:16` no se desplazó.
+- Se commitea en la rama `c-249-aplicar-las-recomendaciones-del-dictamen-v1-6-3`; sin tag ni push. No se modificó el JSON del corpus ni ninguna cifra canónica.
 

@@ -37,7 +37,7 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   `design.md` (que quedo del cronometraje; busqueda y carga del ticket; origen de los 2 min 45 s;
   ventana junio-agosto) con las opciones D3 (a), (b), (c). Registrar respuesta literal, fecha y
   responsable. Verificacion: la fila existe; sin ella, 3.1 a 3.3 quedan bloqueadas.
-- [ ] 2.2 **[COMPUERTA OQ-02]** Presentar las siete preguntas de OQ-02 (reportantes D4 a/b/c;
+- [x] 2.2 **[COMPUERTA OQ-02]** Presentar las siete preguntas de OQ-02 (reportantes D4 a/b/c;
   titulares = responsables; PII de los originales; texto de origen o reescritura; empleadores;
   formula de `01:72`; quien "recolecto" segun c-246 OQ-01). Verificacion: la fila existe; sin
   ella, 3.4 a 3.7 quedan bloqueadas.
@@ -75,23 +75,23 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   45 s, si los autores lo confirman). Verificacion ANTES: `rg -n "recogidos entre junio y agosto" S/04-marco-metodologico.tex`
   devuelve `:46` sin calificacion; DESPUES: la ventana lleva la clausula declarativa y el origen de
   la premisa coincide con OQ-01 (3).
-- [ ] 3.4 **[GATED OQ-02]** Formula unica de reportantes en `S/04-marco-metodologico.tex:46`,
+- [x] 3.4 **[GATED OQ-02]** Formula unica de reportantes en `S/04-marco-metodologico.tex:46`,
   `S/11-aspectos-legales.tex:16`, `:40`, `:48` (D4) y, si corresponde, la declaracion "titulares y
   responsables del tratamiento son las mismas personas" en §7.5. Verificacion ANTES:
   `rg -n "reportados por los integrantes del entorno operativo|propio grupo de desarrollo" S/`
   devuelve las dos formulas (`04:46`, `11:16`, `11:48` frente a `11:40`); DESPUES: una sola formula.
-- [ ] 3.5 **[GATED OQ-02]** "Se redactaron" (`S/04-marco-metodologico.tex:46`) frente a "coinciden
+- [x] 3.5 **[GATED OQ-02]** "Se redactaron" (`S/04-marco-metodologico.tex:46`) frente a "coinciden
   con el texto de origen" (`S/12-anexos.tex:153`); si hubo reescritura, extender la septima amenaza
   (`S/04-marco-metodologico.tex:129`) y la fila del OE2 (`S/09-conclusiones.tex:24`) a los 200
   casos. Verificacion ANTES: `rg -n "coinciden con el texto de origen" S/12-anexos.tex` y
   `rg -n "se redactaron en tercera persona" S/04-marco-metodologico.tex`; DESPUES: descripcion
   coherente en ambos lugares y amenaza ajustada segun OQ-02 (4).
-- [ ] 3.6 **[GATED OQ-02]** (HIGH) `data/README.md:53` (que PII y de quien), coherente con
+- [x] 3.6 **[GATED OQ-02]** (HIGH) `data/README.md:53` (que PII y de quien), coherente con
   `S/11-aspectos-legales.tex:24` y `S/12-anexos.tex:151`; parrafo de empleadores reales en §7.2 o
   §7.5 (`S/11-aspectos-legales.tex`, ademas de `:48`). Verificacion ANTES: `rg -n "contienen PII" data/README.md`
   devuelve `:53`; DESPUES: el parrafo dice que datos y de quien, y `rg -n "empleador" S/11-aspectos-legales.tex`
   >= 1 fuera de la validacion retirada.
-- [ ] 3.7 **[GATED OQ-02]** `S/01-introduccion.tex:72`: retirar o acotar "el corpus no proviene de
+- [x] 3.7 **[GATED OQ-02]** `S/01-introduccion.tex:72`: retirar o acotar "el corpus no proviene de
   una organizacion real" con la formula de OQ-02 (6), coherente con `:16` y `S/12-anexos.tex:239`;
   quitar "recolectado en el entorno operativo" para las 81 reconstrucciones; `:62` ("La evidencia
   recogida en el entorno operativo... cuantifica el ahorro bruto": el ahorro sale de la tarea de
