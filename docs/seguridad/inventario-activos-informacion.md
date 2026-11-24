@@ -24,7 +24,7 @@ proveedores.
 | Catalogos | Estados, sectores y canales de origen | Responsable de seguridad | N1 Publico |
 | Logs de aplicacion | Trazas structlog sin PII (objetivo) | Responsable de seguridad | N2 Interno |
 | Metricas de la guarda de costo | Contadores y alertas de egreso | Responsable de seguridad | N2 Interno |
-| Corpus de evaluacion | Incidentes reales pseudonimizados, fuera de git | DPO | N3 Confidencial (PII) |
+| Corpus de evaluacion | Descripciones disociadas de 200 casos, versionadas en el repositorio publico; los originales con PII no se versionan | DPO | N1 Publico |
 
 ## 3. Activos de software
 

@@ -330,8 +330,7 @@
       \strng{authorfullhashraw}{8b499b5be8914246b406785e1327dbb3}
       \field{sortinit}{A}
       \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
+      \field{labeldatesource}{nodate}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
@@ -340,7 +339,6 @@
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
-      \field{year}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://airflow.apache.org/docs/
@@ -926,7 +924,7 @@
       \field{labeltitlesource}{title}
       \field{day}{30}
       \field{month}{6}
-      \field{note}{Diario Oficial de la Unión Europea, L 168, 8 de julio de 2003. Revisión de vigencia: primera revisión del funcionamiento de las decisiones de adecuación adoptadas al amparo del artículo 25(6) de la Directiva 95/46/CE, Comisión Europea, 15 de enero de 2024 (\url{https://commission.europa.eu/document/f62d70a4-39e3-4372-9d49-e59dc0fda3df_en})}
+      \field{note}{Diario Oficial de la Unión Europea, L 168, 5 de julio de 2003, pp. 19-22. Revisión de vigencia: primera revisión del funcionamiento de las decisiones de adecuación adoptadas al amparo del artículo 25(6) de la Directiva 95/46/CE, Comisión Europea, 15 de enero de 2024 (\url{https://commission.europa.eu/document/f62d70a4-39e3-4372-9d49-e59dc0fda3df_en})}
       \field{title}{Decisión 2003/490/CE de la Comisión, de 30 de junio de 2003, con arreglo a la Directiva 95/46/CE, sobre la protección adecuada de los datos personales en Argentina}
       \field{urlday}{29}
       \field{urlmonth}{10}
@@ -1368,8 +1366,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.6.3)}
-      \field{urlday}{22}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.6.4)}
+      \field{urlday}{24}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
@@ -2662,8 +2660,7 @@
       \strng{authorfullhashraw}{acd3b2db1e89848341fdb6e92bac5377}
       \field{sortinit}{n}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
+      \field{labeldatesource}{nodate}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
@@ -2672,7 +2669,6 @@
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
-      \field{year}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://docs.n8n.io/
@@ -3443,8 +3439,7 @@
       \strng{authorfullhashraw}{f5305ee02dd2a5c6215b53401b4a10b0}
       \field{sortinit}{R}
       \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
+      \field{labeldatesource}{nodate}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
@@ -3453,7 +3448,6 @@
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
-      \field{year}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://fastapi.tiangolo.com/
@@ -3845,8 +3839,7 @@
       \strng{authorfullhashraw}{917cf2b2062aec0c604dbecc106084cd}
       \field{sortinit}{T}
       \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
+      \field{labeldatesource}{nodate}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
@@ -3855,7 +3848,6 @@
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
-      \field{year}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.postgresql.org/docs/15/
@@ -5874,8 +5866,7 @@
       \strng{authorfullhashraw}{8b499b5be8914246b406785e1327dbb3}
       \field{sortinit}{A}
       \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
+      \field{labeldatesource}{nodate}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
@@ -5884,7 +5875,6 @@
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
-      \field{year}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://airflow.apache.org/docs/
@@ -6470,7 +6460,7 @@
       \field{labeltitlesource}{title}
       \field{day}{30}
       \field{month}{6}
-      \field{note}{Diario Oficial de la Unión Europea, L 168, 8 de julio de 2003. Revisión de vigencia: primera revisión del funcionamiento de las decisiones de adecuación adoptadas al amparo del artículo 25(6) de la Directiva 95/46/CE, Comisión Europea, 15 de enero de 2024 (\url{https://commission.europa.eu/document/f62d70a4-39e3-4372-9d49-e59dc0fda3df_en})}
+      \field{note}{Diario Oficial de la Unión Europea, L 168, 5 de julio de 2003, pp. 19-22. Revisión de vigencia: primera revisión del funcionamiento de las decisiones de adecuación adoptadas al amparo del artículo 25(6) de la Directiva 95/46/CE, Comisión Europea, 15 de enero de 2024 (\url{https://commission.europa.eu/document/f62d70a4-39e3-4372-9d49-e59dc0fda3df_en})}
       \field{title}{Decisión 2003/490/CE de la Comisión, de 30 de junio de 2003, con arreglo a la Directiva 95/46/CE, sobre la protección adecuada de los datos personales en Argentina}
       \field{urlday}{29}
       \field{urlmonth}{10}
@@ -6912,8 +6902,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.6.3)}
-      \field{urlday}{22}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.6.4)}
+      \field{urlday}{24}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
@@ -8206,8 +8196,7 @@
       \strng{authorfullhashraw}{acd3b2db1e89848341fdb6e92bac5377}
       \field{sortinit}{n}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
+      \field{labeldatesource}{nodate}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
@@ -8216,7 +8205,6 @@
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
-      \field{year}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://docs.n8n.io/
@@ -8987,8 +8975,7 @@
       \strng{authorfullhashraw}{f5305ee02dd2a5c6215b53401b4a10b0}
       \field{sortinit}{R}
       \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
+      \field{labeldatesource}{nodate}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
@@ -8997,7 +8984,6 @@
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
-      \field{year}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://fastapi.tiangolo.com/
@@ -9389,8 +9375,7 @@
       \strng{authorfullhashraw}{917cf2b2062aec0c604dbecc106084cd}
       \field{sortinit}{T}
       \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
+      \field{labeldatesource}{nodate}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
@@ -9399,7 +9384,6 @@
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
-      \field{year}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.postgresql.org/docs/15/

@@ -1955,7 +1955,7 @@ compilación mediante `\today` y MUST NOT hardcodear el año.
 
 ### Requirement: Presupuesto de páginas preservado
 
-El total de paginas del PDF de la tesis SHALL tender al tope vigente de paginas, que SHALL declararse en un unico lugar: la seccion de presupuesto de paginas de `docs/Tesis/Correcciones/dictamen-correcciones.md`, con su regla de medicion, su valor, su fuente (exigencia de la catedra o decision del equipo) y su fecha. La regla vigente SHALL ser: metrica = **total del PDF**, medido con `pdfinfo main.pdf | grep Pages` o un conteo equivalente de saltos de pagina del PDF; valor = **100 paginas**; fuente = **exigencia de la catedra**, declarada por el autor el 2026-10-27 (G0.1); fecha = 2026-10-27. La metrica superada **cuerpo sin anexos <= 100** (rama (b) del 2026-10-26) MUST NOT usarse para declarar cumplimiento ni presentarse como la regla vigente; el conteo de cuerpo sin anexos SHALL conservarse solo como informacion complementaria del libro mayor. Para la release vigente `v1.2.8` el total medido SHALL consignarse como **118 paginas** (cuerpo 107, anexos 11), con un exceso de **+18 sobre el tope de 100** del total. Cuando el total supere el valor del tope, el exceso SHALL estar declarado y honrado por decision registrada de los autores, con su magnitud y fecha, y SHALL defenderse ante la catedra; un exceso no declarado MUST NOT presentarse como cumplimiento, y una reduccion que no alcance el tope no constituye incumplimiento mientras el exceso quede declarado y honrado. La portada SHALL seguir ocupando exactamente una pagina. Una reduccion para acercarse al tope MUST NOT eliminar contenido cientifico, numeros canonicos, figuras o tablas requeridas, referencias ni correcciones previas, y MUST NOT dejar referencias colgadas (`\ref` o `\autoref` sin destino) ni listados de codigo removidos con referencias en la prosa.
+El total de paginas del PDF de la tesis SHALL tender al tope vigente de paginas, que SHALL declararse en un unico lugar: la seccion de presupuesto de paginas de `docs/Tesis/Correcciones/dictamen-correcciones.md`, con su regla de medicion, su valor, su fuente (exigencia de la catedra o decision del equipo) y su fecha. La regla vigente SHALL ser: metrica = **total del PDF**, medido con `pdfinfo main.pdf | grep Pages` o un conteo equivalente de saltos de pagina del PDF; valor = **100 paginas**; fuente = **exigencia de la catedra**, declarada por el autor el 2026-10-27 (G0.1); fecha = 2026-10-27. La metrica superada **cuerpo sin anexos <= 100** (rama (b) del 2026-10-26) MUST NOT usarse para declarar cumplimiento ni presentarse como la regla vigente; el conteo de cuerpo sin anexos SHALL conservarse solo como informacion complementaria del libro mayor. Para cada release, el total medido SHALL consignarse en el libro mayor con la regla, el valor, la fuente y la fecha; cuando el total supere el tope, ademas con la magnitud del exceso, su fecha y la decision registrada de los autores de sostenerlo. Cuando el total supere el valor del tope, el exceso SHALL estar declarado y honrado por decision registrada de los autores, con su magnitud y fecha, y SHALL defenderse ante la catedra; un exceso no declarado MUST NOT presentarse como cumplimiento, y una reduccion que no alcance el tope no constituye incumplimiento mientras el exceso quede declarado y honrado. La portada SHALL seguir ocupando exactamente una pagina. Una reduccion para acercarse al tope MUST NOT eliminar contenido cientifico, numeros canonicos, figuras o tablas requeridas, referencias ni correcciones previas, y MUST NOT dejar referencias colgadas (`\ref` o `\autoref` sin destino) ni listados de codigo removidos con referencias en la prosa.
 
 #### Scenario: Conteo de páginas sin cambios
 
@@ -1984,10 +1984,9 @@ El total de paginas del PDF de la tesis SHALL tender al tope vigente de paginas,
 
 #### Scenario: Contabilidad de una release sobre el total
 
-- **WHEN** se consigna el resultado de paginas de una release (por ejemplo `v1.2.8`) en el libro mayor o en `CHANGES.md`
-- **THEN** el numero reportado como exceso usa la metrica del total del PDF (118 total, +18 sobre 100)
+- **WHEN** se consigna el resultado de paginas de cualquier release en el libro mayor o en `CHANGES.md`
+- **THEN** el numero reportado usa la metrica del total del PDF
 - **AND** la cuenta por cuerpo sin anexos de la rama (b) no se usa como base del cumplimiento ni se presenta como la regla vigente
-- **AND** la fila de c-169 del libro mayor queda corregida a la metrica del total
 
 #### Scenario: Reduccion sin perdida de contenido ni referencias colgadas
 
@@ -10558,3 +10557,58 @@ La compilacion de una release SHALL verificar que cada figura y tabla flotante q
 - **WHEN** se verifica la posicion de los flotantes en el PDF compilado
 - **THEN** cada figura y tabla queda dentro de su seccion o anexo
 - **AND** el resultado se registra en `docs/Tesis/Correcciones/dictamen-correcciones.md`
+
+### Requirement: Regla escrita de movimiento de tags de release (OQ-05 de c-249)
+
+Antes de crear el tag de la release siguiente a `v1.6.3`, el proyecto SHALL registrar en
+`docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-249) la regla de tags aprobada por
+autores y director, elegida entre: (A) tag inmutable sobre C3, cuyo PDF no imprime hash, con el hash
+consignado en C4; (B) tag creado una sola vez sobre C4, despues de consignar el hash de C3 y
+recompilar, y nunca movido; (C) un tag publicado puede moverse una sola vez, solo antes de difundir
+el ejemplar y con registro fechado; (D) sin PDF versionado en el arbol del tag. La release `v1.6.4`
+SHALL aplicar la regla elegida. Si la regla es incompatible con "Publicacion de una release de
+correccion sin mover tags publicados", el change SHALL agregar un MODIFIED de ese requisito antes de
+archivarse. Los tags `v1.6.2` y `v1.6.3` MUST NOT moverse, borrarse ni recrearse.
+
+#### Scenario: Regla registrada antes del tag
+
+- **WHEN** se compara la fecha de la fila OQ-05 de la seccion c-249 con la del tag `v1.6.4`
+- **THEN** la regla figura con responsables (autores y director) y es anterior a la creacion del tag
+
+#### Scenario: Tags anteriores intactos
+
+- **WHEN** se ejecutan `git rev-parse v1.6.2^{commit}` y `git rev-parse v1.6.3^{commit}` antes y despues del apply
+- **THEN** devuelven `e7013127...` y `f8618bdd...` respectivamente, sin cambios
+
+### Requirement: Trazabilidad de la release en el texto del ejemplar
+
+El parrafo del Anexo B que describe el hash (`12-anexos.tex`, hoy `:60`) SHALL coincidir con el
+estado real del tag de la release que lo contiene: que commit apunta el tag y que commit imprime el
+hash. La Nota de versiones (Anexo I.1) SHALL registrar `v1.6.2`, `v1.6.3` y el erratum del PDF del
+tag `v1.6.2` si asi lo decide OQ-05 de c-249; si no, el registro SHALL declarar la decision.
+`docs/Tesis/v10 (IA)/paper/compilacion.md` SHALL nombrar en "Fuente compilada" el hash del commit
+compilado. El `tasks.md` archivado de c-248 SHALL llevar una nota aditiva fechada que enmiende la
+tarea 6.3 con el estado final del tag `v1.6.3` (C4, `f8618bdd`). La cifra del inventario de uso de
+asistentes de IA (Anexo I.3) SHALL coincidir con `git rev-list --count` sobre la referencia que el
+texto describe.
+
+#### Scenario: Anexo B coherente con el tag
+
+- **WHEN** se lee `sec:anexo-repositorio` en el PDF del tag `v1.6.4` y se compara con `git rev-parse v1.6.4^{commit}`
+- **THEN** el texto describe correctamente que commit apunta el tag y que hash imprime
+- **AND** `rg -n "el PDF compilado en el propio tag no lo imprime" "docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex"` no devuelve coincidencias, salvo que la regla elegida haga verdadera esa frase
+
+#### Scenario: Commit compilado nombrado
+
+- **WHEN** se lee `docs/Tesis/v10 (IA)/paper/compilacion.md`
+- **THEN** la fila "Fuente compilada" contiene un hash de commit y no solo "arbol de trabajo"
+
+#### Scenario: Enmienda de c-248 sin reescribir historia
+
+- **WHEN** se lee `openspec/changes/archive/2026-11-22-c-248-publicar-la-release-y-la-nota-de-erratum-de-v1-6-2/tasks.md`
+- **THEN** la tarea 6.3 conserva su texto y una nota fechada de c-249 declara que el tag se movio a C4
+
+#### Scenario: Conteo del inventario reproducible
+
+- **WHEN** se ejecuta `git rev-list --count` sobre la referencia descrita en el Anexo I.3
+- **THEN** el resultado coincide con la cifra impresa

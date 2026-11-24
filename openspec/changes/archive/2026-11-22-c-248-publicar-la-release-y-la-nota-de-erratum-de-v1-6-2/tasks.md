@@ -73,6 +73,8 @@ nunca squash ni rebase. El change de release NO reescribe el contenido (lo cerro
 - [x] 6.3 Verificar que `v1.6.3` continua apuntando a C3 (C4 no mueve el tag) y que el PDF del arbol del
   tag imprime el hash correcto.
 
+  **Enmienda c-249 (2026-11-24):** el tag se movio a C4 (`f8618bdd`) por decision de los autores, de modo que el PDF del arbol del tag imprime el hash del commit de contenido; ver `dictamen-correcciones.md:7093`. La tarea se conserva marcada como se ejecuto; la enmienda registra el estado final.
+
 ## 7. Cierre
 
 - [x] 7.1 **Merge a `main`** con merge commit (nunca squash/rebase). Verificacion:

@@ -6,20 +6,23 @@ Esta carpeta contiene el corpus de evaluación del clasificador híbrido.
 
 ### `corpus_evaluacion_pseudonimizado.json`
 
-El corpus de evaluación (200 casos), pseudonimizado por el módulo de C-03.
+El corpus de evaluación (200 casos), con descripciones disociadas (genéricas, sin datos personales).
 **SI se versiona** (descripciones genéricas, sin PII residual).
 
 > **Procedencia (c-242).** El corpus de 200 casos es una mezcla cualitativa de dos regímenes:
-> (a) incidentes reales del entorno operativo del propio equipo, pseudonimizados, y (b)
+> (a) incidentes reales del entorno operativo del propio equipo, disociados, y (b)
 > reconstrucciones de tipos de incidente reales sin datos de terceros. La procedencia no está
 > codificada por caso en el corpus.
+>
+> **Superado por la descripción vigente de c-247 (abajo).** Se conserva por trazabilidad.
 
 > **Descripción vigente del corpus (c-247, OQ-01).** La descripción vigente es la de este
-> archivo: 200 casos pseudonimizados, mezcla de incidentes reales reportados por los integrantes
+> archivo: 200 casos disociados, mezcla de incidentes reales reportados por los integrantes
 > del entorno operativo del propio equipo (régimen (a)) y reconstrucciones de descripciones de
 > incidentes reales que no contienen datos personales (régimen (b)). La composición 119/81 es
-> una declaración de los autores, sin registro de procedencia por caso. `tiempo_manual_s` mide
-> la carga completa del ticket. El metadato `descripcion` del JSON congelado conserva una cadena
+> una declaración de los autores, sin registro de procedencia por caso. `tiempo_manual_s` combina
+> la lectura medida de la descripción con un tiempo de carga del ticket estimado (fijo, del orden de
+> 10 s), ya incluido en el valor consignado; no hubo búsqueda. El metadato `descripcion` del JSON congelado conserva una cadena
 > histórica que lo describe como un corpus de casos reales con clasificación manual; esa cadena
 > es histórica y queda superada por esta descripción, y el SHA-256 del archivo no cambia.
 
@@ -50,7 +53,14 @@ defecto junto con cualquier otro sidecar del patrón.
 ## Archivos NO versionados (Ley 25.326)
 
 - `Corpus Tesis.xlsx` y `Corpus Tesis - Hoja 1.csv` — originales
-  **pre-pseudonimización**; contienen PII y NUNCA se commitean.
+  **pre-procesamiento**; contienen datos personales y NUNCA se commitean. Los datos
+  personales de los originales son los nombres reales de los sistemas de los empleadores
+  (referidos aquí como `SISTEMA PRINCIPAL` y `SISTEMA SECUNDARIO`) y los identificadores de
+  usuario (`ID USUARIO`) de las personas que reportaron los incidentes (los integrantes del
+  entorno operativo del propio equipo, los autores y las personas de su círculo). Esos valores
+  no se reproducen ni se versionan; el corpus versionado contiene solo descripciones
+  disociadas, sin datos personales, en consonancia con el capítulo «Consideraciones éticas y
+  aspectos legales» y el Anexo F de la tesis.
 - `corpus_resultados_n8n.json` — sidecar de la ingesta por N8N, pendiente de
   resolver su discrepancia de conteo (4 filas vs 119; OQ2); no se versiona por ahora.
 
@@ -66,7 +76,7 @@ y su andamiaje de generación fueron **eliminados permanentemente** en C-27.
   "casos": [
     {
       "id": "R001",
-      "descripcion": "Texto del incidente (pseudonimizado)",
+      "descripcion": "Texto del incidente (disociado)",
       "canal_origen": "correo",
       "sector_asignado": "Seguridad Informatica",
       "sectores_adicionales": ["Soporte Tecnico Software"],
@@ -82,11 +92,11 @@ y su andamiaje de generación fueron **eliminados permanentemente** en C-27.
 | Campo | Tipo | Requerida | Descripción |
 |-------|------|-----------|-------------|
 | `id` | string | Sí | Identificador único |
-| `descripcion` | string | Sí | Texto del incidente (pseudonimizado) |
+| `descripcion` | string | Sí | Texto del incidente (disociado) |
 | `canal_origen` | string | Sí | Canal de entrada (correo, formulario, llamada) |
 | `sector_asignado` | string | Sí | Sector principal de verdad fundamental |
 | `sectores_adicionales` | array | Sí | Sectores adicionales de verdad (`[]` si no hay) |
-| `tiempo_manual_s` | number | Sí | Segundos de la carga completa del ticket en el flujo manual |
+| `tiempo_manual_s` | number | Sí | Segundos del registro manual: lectura medida más tiempo de carga del ticket estimado |
 | `tiempo_automatizado_s` | number | Sí | Segundos del flujo automatizado |
 
 Valores válidos para los sectores (exactos, sensibles a mayúsculas, **sin tildes**):

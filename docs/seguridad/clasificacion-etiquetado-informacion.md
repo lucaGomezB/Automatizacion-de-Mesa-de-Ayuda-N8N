@@ -74,8 +74,8 @@ original cifrada se trata como N4 y su version pseudonimizada como N3.
   adicional (ver `registro-actividades-tratamiento.md`, tratamiento T2).
 - **Regimenes del corpus de investigación.** El corpus (T2) es una mezcla de dos regímenes:
   el **régimen (a)** son incidentes reales del entorno operativo del propio equipo,
-  pseudonimizados, con datos personales (base de licitud: consentimiento informado del grupo,
-  Ley 25.326, art. 5, inc. 1, y pseudonimización); el **régimen (b)** son reconstrucciones de
+  disociados, sin datos personales (sin base de licitud); el **régimen (b)** son
+  reconstrucciones de
   tipos de incidente reales, sin datos de terceros, sin datos personales y sin base de
   licitud. No se usa una base de empleador.
 

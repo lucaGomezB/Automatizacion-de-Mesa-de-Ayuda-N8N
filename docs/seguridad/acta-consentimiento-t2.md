@@ -4,10 +4,11 @@
 > y del instrumento de transferencia internacional (art. 12). Requisito SGD-012. No es uno de
 > los 11 documentos de gobernanza: es el acta que respalda el tratamiento **T2** (régimen a) y
 > su transferencia.
-> **Estado**: v1.1 — notificación a los integrantes del grupo el 2026-10-01; consentimiento
+> **Estado**: v1.2 — notificación a los integrantes del grupo el 2026-10-01; consentimiento
 > verbal prestado y documentado el 2026-10-02; acta redactada el 2026-11-17 y firmada el
 > 2026-11-20. La confirmación escrita queda en custodia del director, del mismo modo que la
-> de los colaboradores de la campaña (ver §5).
+> de los colaboradores de la campaña (ver §5). El §7 agrega el anexo de revisión del
+> 2026-11-24, que precisa la caracterización jurídica del corpus.
 > **Alcance**: consentimiento del propio grupo para el tratamiento T2 (corpus), régimen (a).
 > **Encuadre**: documento alineado con la Ley 25.326; no constituye certificación ni auditoría.
 
@@ -42,6 +43,12 @@ tratamiento **T2 (corpus de investigación)**. Ese objeto comprende:
 - **Régimen (b):** la otra parte del corpus son reconstrucciones de tipos de incidente sin
   datos de terceros; no contienen datos personales y quedan fuera de este consentimiento.
 
+> **Nota de revisión (2026-11-24).** La caracterización del régimen (a) y del instrumento de
+> transferencia de este apartado corresponde al encuadre vigente al momento de la firma. El §7
+> precisa la caracterización vigente: el contenido conservado y transferido es disociado, sin
+> datos personales, y el consentimiento cubre la participación de los colaboradores en el
+> estudio.
+
 ## 3. Información prestada (deber de información, art. 6)
 
 Se informa a las partes:
@@ -67,6 +74,10 @@ Se informa a las partes:
 - **Procedencia:** el régimen (a) opera con los incidentes reales del propio equipo; el
   régimen (b) son reconstrucciones de tipos de incidente, sin datos de terceros, y no
   integran este consentimiento.
+
+> **Nota de revisión (2026-11-24).** Las referencias a datos pseudonimizados de este apartado
+> se precisan en el §7: el contenido conservado y transferido es disociado, sin datos
+> personales, y el consentimiento cubre la participación de los colaboradores en el estudio.
 
 ## 4. Manifestación
 
@@ -97,3 +108,29 @@ licitud y su instrumento de transferencia son propios y no se activan sin su apr
 Esta acta se referencia desde `registro-actividades-tratamiento.md` (T2) y desde la tesis
 (§7.2, §7.3 y §7.5) una vez que esos documentos se actualicen conforme a este encuadre;
 sustituye la referencia previa a una organización adoptante real.
+
+## 7. Anexo de revisión (2026-11-24)
+
+El cuerpo de esta acta, redactado el 2026-11-17 y firmado el 2026-11-20, describe el régimen
+(a) como incidentes pseudonimizados, los califica como datos personales y funda en este
+consentimiento su base de licitud y el instrumento de transferencia internacional. Con
+posterioridad a la firma, los autores precisaron la caracterización del corpus. Este anexo la
+deja asentada y no altera los hechos que el acta documenta.
+
+1. Las descripciones del régimen (a) que se conservan y se transfieren son disociadas, sin
+   datos personales (art. 2 de la Ley 25.326). Los únicos datos personales existían en los
+   originales no versionados: los nombres reales de los sistemas de los empleadores y los
+   identificadores de usuario de los reportantes. Esos valores no se reproducen, no se
+   versionan y no se transfieren.
+2. En consecuencia, el contenido tratado del régimen (a) no requiere base de licitud y no
+   configura una transferencia internacional de datos personales; no requiere instrumento del
+   artículo 12. La caracterización del cuerpo (§2) corresponde al encuadre vigente al momento
+   de la firma; esta revisión la precisa sin modificar los hechos documentados.
+3. El consentimiento documentado en esta acta cubre la participación de los colaboradores en
+   el estudio. Se prestó verbalmente el 2026-10-02, antes de toda participación y de toda
+   transferencia, y su constancia escrita es este acta. La brecha formal entre el 2026-10-02 y
+   el 2026-11-20 se declara y se valora en el capítulo legal de la tesis.
+4. El régimen (b) son reconstrucciones genéricas elaboradas por uno de los autores, sin datos
+   personales ni de terceros; queda fuera de este consentimiento.
+5. La organización adoptante (T3) mantiene su propio régimen: con datos reales de sus
+   usuarios sí necesita base de licitud e instrumento del artículo 12.

@@ -72,13 +72,13 @@ organizacion adoptante.
   contractuales modelo** (Disposicion DNPDP 60/2016; Resolucion AAIP 198/2023) o normas
   corporativas vinculantes (Resolucion AAIP 159/2018).
 - La **pseudonimizacion** previa mitiga el riesgo, pero **no sustituye** el instrumento.
-- **T2 (corpus, regimen (a))**: el instrumento aplicado es el **consentimiento expreso de los
-  titulares**, prestado el 2026-10-02 y documentado en `acta-consentimiento-t2.md`, y las
-  transferencias de audio del 5 y 6 de octubre y las corridas pagas del 12 y 13 de noviembre
-  son posteriores al consentimiento; no se suscribieron clausulas contractuales modelo. La
-  pseudonimizacion y la minimizacion refuerzan la salvaguarda, pero no sustituyen el
-  instrumento. El regimen (b) no contiene datos personales y no implica transferencia de datos
-  personales.
+- **T2 (corpus, regimen (a))**: el contenido conservado y transferido es **disociado, sin
+  datos personales**; no requiere instrumento del art. 12. En el estudio no se transfirieron
+  datos personales: el audio que cruzo la frontera fue recitado por uno de los autores. No se
+  suscribieron clausulas contractuales modelo. Nota de revision (2026-11-24): el cuerpo
+  original registraba el consentimiento expreso como instrumento; ver el anexo §8 de
+  `instrumento-transferencia-internacional.md` y el §7 del acta T2. El regimen (b) tampoco
+  contiene datos personales.
 - El instrumento y su documentacion se abordan en el change **C-66**; el mecanismo
   (incluida la transcripcion de audio CRUDO previa a la pseudonimizacion en Gemini y el audio
   crudo + numero del llamante en Twilio) se detalla en
@@ -89,9 +89,9 @@ organizacion adoptante.
 
 | | **T1 Piloto/desarrollo** | **T2 Corpus de investigacion** | **T3 Adoptante futuro** |
 |---|---|---|---|
-| Datos | **REALES**: cuentas del grupo y usuarios de prueba cuyos correos/celulares apuntan a contactos del grupo | **Mezcla de dos regimenes**: (a) incidentes reales del entorno del grupo, pseudonimizados; (b) reconstrucciones de tipos de incidente, sin datos de terceros | Datos de produccion de una empresa que despliegue el sistema |
+| Datos | **REALES**: cuentas del grupo y usuarios de prueba cuyos correos/celulares apuntan a contactos del grupo | **Mezcla de dos regimenes**: (a) incidentes reales del entorno del grupo, disociados; (b) reconstrucciones de tipos de incidente, sin datos de terceros | Datos de produccion de una empresa que despliegue el sistema |
 | Responsable | El grupo (responsable directo) | El grupo | Organizacion adoptante (rol funcional generico) |
-| Base de licitud / salvaguarda | **Consentimiento informado** del grupo (`acta-consentimiento-t1.md`) | Regimen (a): **consentimiento informado del grupo** (art. 5, inc. 1) + pseudonimizacion; regimen (b): **sin datos personales, sin base** | Politica y base de licitud propias del adoptante |
+| Base de licitud / salvaguarda | **Consentimiento informado** del grupo (`acta-consentimiento-t1.md`) | Regimen (a): **no requiere (contenido disociado, sin dato personal)**; regimen (b): **sin datos personales, sin base** | Politica y base de licitud propias del adoptante |
 
 ### 5.1 T1 — Piloto/desarrollo
 
@@ -102,11 +102,11 @@ organizacion adoptante.
 
 ### 5.2 T2 — Corpus de investigacion
 
-- **Mezcla de dos regimenes**: el **regimen (a)** son incidentes **reales pseudonimizados**
+- **Mezcla de dos regimenes**: el **regimen (a)** son incidentes **reales disociados**
   del entorno operativo del propio equipo; el **regimen (b)** son reconstrucciones de tipos
   de incidente reales, **sin datos de terceros**.
-- **Base de licitud por regimen**: el regimen (a) se funda en el **consentimiento informado
-  del grupo** (Ley 25.326, art. 5, inc. 1) y en la pseudonimizacion; el regimen (b) no
+- **Base de licitud por regimen**: el regimen (a) **no requiere base de licitud**
+  (contenido disociado, sin dato personal); el regimen (b) no
   contiene datos personales y **no requiere base de licitud**. No se usa una base de
   empleador (art. 5, inc. 2, ap. d): no existe una relacion de empleo.
 - **Aclaracion:** la pseudonimizacion **no** equivale a la **disociacion** (art. 2) porque

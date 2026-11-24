@@ -1,31 +1,31 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {table}{\numberline {1}{\ignorespaces Trabajos académicos previos sobre clasificación de tickets}}{34}{table.caption.2}%
+\contentsline {table}{\numberline {1}{\ignorespaces Trabajos académicos previos sobre clasificación de tickets}}{35}{table.caption.2}%
 \contentsline {table}{\numberline {2}{\ignorespaces Comparación de soluciones para gestión automatizada de mesa de ayuda}}{36}{table.caption.3}%
 \contentsline {table}{\numberline {3}{\ignorespaces Operacionalización de variables del estudio}}{39}{table.caption.4}%
-\contentsline {table}{\numberline {4}{\ignorespaces Procedencia de las cifras por familia: corrida, configuración y artefacto de origen}}{45}{table.caption.7}%
-\contentsline {table}{\numberline {5}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{56}{table.caption.13}%
-\contentsline {table}{\numberline {6}{\ignorespaces Entidades principales del modelo de datos}}{61}{table.caption.16}%
-\contentsline {table}{\numberline {7}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{63}{table.caption.18}%
-\contentsline {table}{\numberline {8}{\ignorespaces Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema}}{83}{table.caption.21}%
-\contentsline {table}{\numberline {9}{\ignorespaces Perfil de alineación con las funciones de NIST CSF 2.0}}{84}{table.caption.22}%
-\contentsline {table}{\numberline {10}{\ignorespaces Síntesis de las cifras primarias del capítulo de resultados (\(n = 200\) salvo indicación)}}{86}{table.caption.23}%
-\contentsline {table}{\numberline {11}{\ignorespaces Estadísticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{87}{table.caption.24}%
-\contentsline {table}{\numberline {12}{\ignorespaces Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}}{87}{table.caption.25}%
-\contentsline {table}{\numberline {13}{\ignorespaces Matriz de confusión del clasificador automático (\(n = 200\)). Filas: sector asignado; columnas: sector predicho principal.}}{89}{table.caption.27}%
-\contentsline {table}{\numberline {14}{\ignorespaces Exactitud estricta y laxa por etapa del pipeline y por canal de origen}}{89}{table.caption.28}%
-\contentsline {table}{\numberline {15}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{91}{table.caption.29}%
-\contentsline {table}{\numberline {16}{\ignorespaces Exactitud por banda de confianza declarada y por etapa del pipeline}}{93}{table.caption.30}%
-\contentsline {table}{\numberline {17}{\ignorespaces Calibración y discriminación de la confianza de la etapa Gemini, dentro de la muestra}}{94}{table.caption.32}%
-\contentsline {table}{\numberline {18}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera, con los aciertos laxos entre los errores estrictos}}{95}{table.caption.33}%
-\contentsline {table}{\numberline {19}{\ignorespaces Tiempo del brazo manual de la campaña complementaria por operador y reducción frente al brazo automatizado de la misma campaña}}{97}{table.caption.36}%
-\contentsline {table}{\numberline {20}{\ignorespaces Latencia, throughput y tasa de error por nivel de concurrencia y por capa}}{99}{table.caption.39}%
-\contentsline {table}{\numberline {21}{\ignorespaces Latencia del tramo compartido con inferencia incluida por nivel de concurrencia y por capa}}{101}{table.caption.40}%
-\contentsline {table}{\numberline {22}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral con el costo medido como cota inferior y el término de revisión y, como sensibilidad al tramo de reanudación no medido, la rejilla de 5, 10 y 15 minutos}}{114}{table.caption.41}%
-\contentsline {table}{\numberline {23}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{118}{table.caption.42}%
-\contentsline {table}{\numberline {24}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{142}{table.caption.50}%
-\contentsline {table}{\numberline {25}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{150}{table.caption.54}%
-\contentsline {table}{\numberline {26}{\ignorespaces Uso de asistentes de IA por ámbito}}{153}{table.caption.55}%
-\contentsline {table}{\numberline {27}{\ignorespaces Costo de la derivación errónea: valores canónicos citados}}{154}{table.caption.57}%
-\contentsline {table}{\numberline {28}{\ignorespaces Balance neto y umbral de equilibrio: valores canónicos citados}}{155}{table.caption.59}%
-\contentsline {table}{\numberline {29}{\ignorespaces Sensibilidad y rango de robustez de la reducción de tiempos (escenarios ya calculados)}}{157}{table.caption.60}%
-\contentsline {table}{\numberline {30}{\ignorespaces Sensibilidad de la exactitud al vocabulario ajustado con el corpus}}{157}{table.caption.61}%
+\contentsline {table}{\numberline {4}{\ignorespaces Procedencia de las cifras por familia: corrida, configuración y artefacto de origen}}{44}{table.caption.7}%
+\contentsline {table}{\numberline {5}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{55}{table.caption.13}%
+\contentsline {table}{\numberline {6}{\ignorespaces Entidades principales del modelo de datos}}{60}{table.caption.16}%
+\contentsline {table}{\numberline {7}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{62}{table.caption.18}%
+\contentsline {table}{\numberline {8}{\ignorespaces Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema}}{80}{table.caption.21}%
+\contentsline {table}{\numberline {9}{\ignorespaces Perfil de alineación con las funciones de NIST CSF 2.0}}{81}{table.caption.22}%
+\contentsline {table}{\numberline {10}{\ignorespaces Síntesis de las cifras primarias del capítulo de resultados (\(n = 200\) salvo indicación)}}{84}{table.caption.23}%
+\contentsline {table}{\numberline {11}{\ignorespaces Estadísticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{85}{table.caption.24}%
+\contentsline {table}{\numberline {12}{\ignorespaces Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}}{85}{table.caption.25}%
+\contentsline {table}{\numberline {13}{\ignorespaces Matriz de confusión del clasificador automático (\(n = 200\)). Filas: sector asignado; columnas: sector predicho principal.}}{87}{table.caption.27}%
+\contentsline {table}{\numberline {14}{\ignorespaces Exactitud estricta y laxa por etapa del pipeline y por canal de origen}}{87}{table.caption.28}%
+\contentsline {table}{\numberline {15}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{89}{table.caption.29}%
+\contentsline {table}{\numberline {16}{\ignorespaces Exactitud por banda de confianza declarada y por etapa del pipeline}}{91}{table.caption.30}%
+\contentsline {table}{\numberline {17}{\ignorespaces Calibración y discriminación de la confianza de la etapa Gemini, dentro de la muestra}}{92}{table.caption.32}%
+\contentsline {table}{\numberline {18}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera, con los aciertos laxos entre los errores estrictos}}{93}{table.caption.33}%
+\contentsline {table}{\numberline {19}{\ignorespaces Tiempo del brazo manual de la campaña complementaria por operador y reducción frente al brazo automatizado de la misma campaña}}{95}{table.caption.36}%
+\contentsline {table}{\numberline {20}{\ignorespaces Latencia, throughput y tasa de error por nivel de concurrencia y por capa}}{97}{table.caption.39}%
+\contentsline {table}{\numberline {21}{\ignorespaces Latencia del tramo compartido con inferencia incluida por nivel de concurrencia y por capa}}{99}{table.caption.40}%
+\contentsline {table}{\numberline {22}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral con el costo medido como cota inferior y el término de revisión y, como sensibilidad al tramo de reanudación no medido, la rejilla de 5, 10 y 15 minutos}}{113}{table.caption.41}%
+\contentsline {table}{\numberline {23}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{117}{table.caption.42}%
+\contentsline {table}{\numberline {24}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{141}{table.caption.50}%
+\contentsline {table}{\numberline {25}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{149}{table.caption.54}%
+\contentsline {table}{\numberline {26}{\ignorespaces Uso de asistentes de IA por ámbito}}{152}{table.caption.55}%
+\contentsline {table}{\numberline {27}{\ignorespaces Costo de la derivación errónea: valores canónicos citados}}{153}{table.caption.57}%
+\contentsline {table}{\numberline {28}{\ignorespaces Balance neto y umbral de equilibrio: valores canónicos citados}}{154}{table.caption.59}%
+\contentsline {table}{\numberline {29}{\ignorespaces Sensibilidad y rango de robustez de la reducción de tiempos (escenarios ya calculados)}}{156}{table.caption.60}%
+\contentsline {table}{\numberline {30}{\ignorespaces Sensibilidad de la exactitud al vocabulario ajustado con el corpus}}{156}{table.caption.61}%
