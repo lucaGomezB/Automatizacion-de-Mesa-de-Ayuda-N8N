@@ -7220,3 +7220,23 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 - Nota de numeración: las referencias `S/11:NN` de este registro son las de `v1.6.3`. El bloque 3.4 a 3.7 insertó en `:18` el párrafo de empleadores reales y desplazó en +2 las líneas siguientes: la declaración de §7.5 quedó en `:42` (era `:40`), el pasaje de transferencia en `:32` (era `:30`) y el párrafo de licitud en `:50` (era `:48`). `:16` no se desplazó.
 - Se commitea en la rama `c-249-aplicar-las-recomendaciones-del-dictamen-v1-6-3`; sin tag ni push. No se modificó el JSON del corpus ni ninguna cifra canónica.
 
+### Grupos 4 y 6: recomputo y reencuadre - APLICADOS (2026-11-24)
+
+**Grupo 4 (recomendaciones 4 y 6; TDD).** Test primero en `evaluation/data/campana/analisis/test_analisis_regimen_c249.py` (14 pruebas; rojo por `ModuleNotFoundError`), después `analisis_regimen_c249.py`. Triangulación: dos o más casos por función (régimen b sin casos, nivel 5 ausente, subconjunto determinístico ausente, cero cambios de derivación, escritura determinista byte a byte). Salidas generadas con `python3 evaluation/data/campana/analisis/analisis_regimen_c249.py`: `.json`, `.md` y `.SHA256SUMS.txt`.
+
+- Controles reproducidos: correo 51/66 = 0,7727 [0,6583; 0,8571]; formulario web 43/53 = 0,8113 [0,6864; 0,8941]; telefonía 53/81 = 0,6543 [0,5459; 0,7488]; régimen (a) 94/119 = 0,7899 [0,7082; 0,8535]; régimen (b) 53/81 = 0,6543; 25/200 = 0,125 [0,0861; 0,1780]; 25/147 = 0,1701 [0,1179; 0,2390]; binomial unilateral p = 0,2796; p95 del nivel 5 de N8N: original 3.660,3724 ms, ampliada 7.545,7313 ms, subconjunto determinístico de la ampliada 5.024,6799 ms. **Coinciden con el dictamen** (94/119, 53/81, [0,708; 0,854], [0,546; 0,749], 3.660,4, 5.024,7, p = 0,28).
+- Hashes de salida: `analisis_regimen_c249.json` `8afda2092d3770626fd1a9f7b1355854451edf71888dcda5525ba9d3e248f5bd`; `analisis_regimen_c249.md` `9b01f3006aa4a31a660ebb545fd3742f666cd5ac3ab5be4eac7e39f289d6bbeb`.
+- Suite del directorio: 363 pruebas en verde. **Fallo preexistente declarado**: `test_analisis_sesgo_corpus_referencia_c219.py::test_puntaje_cuenta_patrones_distintos_y_no_repeticiones` falla por `ValidationError` de `pydantic_settings` con variables del entorno (`n8n_port`, `postgres_*`, `forwarded_allow_ips`), ajeno a este change; no se corrige aquí.
+
+**Grupo 6 (recomendaciones 5 y 6; prosa).** Veinte ediciones en `00-resumen.tex`, `01-introduccion.tex`, `04-marco-metodologico.tex`, `07-resultados.tex`, `08-discusion.tex`, `09-conclusiones.tex` y `10-recomendaciones.tex`.
+
+- 6.1: Resumen y Abstract declaran escenario de referencia, composición 119/81 con las 81 reconstrucciones redactadas por un autor y flujo manual como tarea de laboratorio; el costo de 1 USD queda rotulado sobre el volumen supuesto. Conteo de prosa: 234 palabras alfabéticas en el Resumen y 232 en el Abstract (259 y 257 tokens crudos), bajo el tope de 250.
+- 6.2: `sustituye, como lectura vigente` -> 0; la frase del parámetro de 2:45 queda como premisa del escenario; `laboratorio` presente en `07` y `09`.
+- 6.3: 0 coincidencias de `organizaciones medianas con volúmenes comparables`, `presentado como escenario de referencia` y `curado por los autores en un escenario`; 1 USD rotulado.
+- 6.4: `De ese universo se tomó` -> 0; el corpus se formó por conveniencia; `N` rotulado como universo trimestral supuesto.
+- 6.5: `Estos indicadores justifican` -> premisas del escenario; `en el campo` -> operación real; `dependencia medida` -> dependencia; la doble carga queda como premisa; `01:48` declara 119 reales y 81 reconstrucciones.
+- 6.6: `08:18` incorpora la lectura por régimen (94/119 = 0,790, IC [0,708; 0,854]; 53/81 = 0,654, IC [0,546; 0,749]) y aclara que la diferencia entre canales es también una diferencia entre regímenes; `08:50` declara 81 de 200 (40,5 %) y la ausencia de registro por caso; la autoría se unifica: 119 reescritos por los autores y 81 reconstrucciones redactadas por uno de ellos (`08:50`, `09:25`, `09:54`, `10:26`).
+- 6.7: `07:377` agrega el p95 de 3.660,4 ms de la corrida original y los 5.024,7 ms del subconjunto determinístico de la ampliada; la nota de `tab:carga-inferencia` lo registra.
+- Desvío declarado: en `09:48` se reemplazó "técnicamente viable" por "técnicamente integrable en el flujo de clasificación, pero su exactitud, 73,5 %, no alcanza el criterio de éxito de 0,85", conforme a la recomendación 5.
+
+

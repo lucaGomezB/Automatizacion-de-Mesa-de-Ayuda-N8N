@@ -122,22 +122,22 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 4. Recomputo por regimen y de la sonda (recomendaciones 4 y 6; TDD real)
 
-- [ ] 4.1 RED: escribir `E/test_analisis_regimen_c249.py` (patron de `E/test_analisis_balance_neto_c236.py`)
+- [x] 4.1 RED: escribir `E/test_analisis_regimen_c249.py` (patron de `E/test_analisis_balance_neto_c236.py`)
   con datos sinteticos minimos: exactitud por regimen desde `canal_origen` (telefono = regimen (b)),
   intervalo de Wilson al 95 %, proporciones 25/200 y 25/147 con binomial unilateral frente a 0,15,
   y extraccion del p95 de N8N en el nivel 5 de una corrida y del subconjunto deterministico.
   Verificacion: `pytest E/test_analisis_regimen_c249.py` falla porque el modulo no existe.
-- [ ] 4.2 GREEN y TRIANGULATE: implementar `E/analisis_regimen_c249.py` con el minimo para pasar;
+- [x] 4.2 GREEN y TRIANGULATE: implementar `E/analisis_regimen_c249.py` con el minimo para pasar;
   agregar al menos un segundo caso por comportamiento (p. ej. regimen sin aciertos; nivel ausente).
   Verificacion: `pytest E/test_analisis_regimen_c249.py` en verde con >= 2 casos por funcion.
-- [ ] 4.3 Ejecutar el script sobre `data/corpus_evaluacion_pseudonimizado.json`,
+- [x] 4.3 Ejecutar el script sobre `data/corpus_evaluacion_pseudonimizado.json`,
   `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`,
   `evaluation/data/campana/intervenciones.csv`, `evaluation/evidence/load_test_inferencia_2026-11-17.json`
   y `..._ampliada_2026-11-18.json`; escribir `E/analisis_regimen_c249.{json,md,SHA256SUMS.txt}`.
   Verificacion: el JSON reproduce las cifras canonicas de control (147/200, 53/81, 51/66, 43/53) y
   registra las nuevas; toda diferencia con el dictamen (94/119, 53/81, [0,708; 0,854],
   [0,546; 0,749], 3.660,4 ms, 5.024,7 ms, p = 0,28) se consigna en la seccion c-249.
-- [ ] 4.4 REFACTOR: nombres y constantes; `pytest E/` completo en verde (mismo conteo base de 1.4
+- [x] 4.4 REFACTOR: nombres y constantes; `pytest E/` completo en verde (mismo conteo base de 1.4
   mas los nuevos). Verificacion: suite en verde.
 
 ## 5. Veredictos e hipotesis (recomendacion 4 y 12 en lo que toca a objetivos; gated)
@@ -166,18 +166,18 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 6. Reencuadre y lectura por regimen (recomendaciones 5 y 6; sin compuerta)
 
-- [ ] 6.1 `S/00-resumen.tex:11-15` y `:27-31`: oracion de escenario, composicion 119/81 (81
+- [x] 6.1 `S/00-resumen.tex:11-15` y `:27-31`: oracion de escenario, composicion 119/81 (81
   redactadas por un autor) y tarea de laboratorio; "1~USD trimestral" rotulado "sobre el volumen
   supuesto"; reemplazar, no agregar (D9). Verificacion ANTES: `rg -n "laboratorio|laboratory|escenario|scenario" S/00-resumen.tex`
   = 0 en los parrafos de metodo y resultados; DESPUES: >= 1 en cada bloque y conteo de prosa <= 250
   por bloque (registrado).
-- [ ] 6.2 "Tarea de laboratorio" y fin de la sustitucion: `S/07-resultados.tex:37` ("Este valor
+- [x] 6.2 "Tarea de laboratorio" y fin de la sustitucion: `S/07-resultados.tex:37` ("Este valor
   describe la tarea de laboratorio...; el parametro de 2 minutos 45 segundos es una premisa del
   escenario y no se compara con esta medicion"), `S/01-introduccion.tex:18`, `S/09-conclusiones.tex:6`,
   `:22` (si 5.3 no lo hizo), `:41`. Verificacion ANTES: `rg -n "sustituye, como lectura vigente" S/`
   devuelve `07:37` y `rg -c "laboratorio" S/07-resultados.tex S/08-discusion.tex S/09-conclusiones.tex`
   = 0; DESPUES: 0 y >= 1 en `07` y `09`.
-- [ ] 6.3 Derivados del volumen y extrapolaciones: `S/08-discusion.tex:72` ("32,2 horas-persona"
+- [x] 6.3 Derivados del volumen y extrapolaciones: `S/08-discusion.tex:72` ("32,2 horas-persona"
   sobre el volumen supuesto), `:118` ("1~USD trimestral" rotulado), `:68` ("En este corpus, el
   tiempo de registro se redujo...; su transferencia a otras organizaciones es una hipotesis por
   validar"), `:42` ("con un corpus del entorno operativo de los autores"), `S/09-conclusiones.tex:47`
@@ -185,19 +185,19 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   (el escenario solo dimensiona el problema). Verificacion ANTES:
   `rg -n "organizaciones medianas con vol.menes|presentado como escenario de referencia|t.cnicamente viable|curado por los autores en un escenario|organizaci.n\b" S/08-discusion.tex S/09-conclusiones.tex`;
   DESPUES: 0 coincidencias de esas formulas.
-- [ ] 6.4 Poblacion, universo y muestra: `S/04-marco-metodologico.tex:46` ("El corpus de 200 casos
+- [x] 6.4 Poblacion, universo y muestra: `S/04-marco-metodologico.tex:46` ("El corpus de 200 casos
   se formo por conveniencia con los incidentes disponibles..." en lugar de "De ese universo se tomo";
   coordinar con 3.3, 3.4 y 3.5, que tocan el mismo parrafo), `:50` y `:54` ("N ~ 2.646, supuesto del
   escenario"); `:121` ("en otras organizaciones"). Verificacion ANTES:
   `rg -n "De ese universo se tom.|universo trimestral|otras organizaciones" S/04-marco-metodologico.tex`;
   DESPUES: N rotulado y sin extraccion desde el universo supuesto.
-- [ ] 6.5 Residuos del Anexo B del dictamen no cubiertos arriba: `S/01-introduccion.tex:16` (area de
+- [x] 6.5 Residuos del Anexo B del dictamen no cubiertos arriba: `S/01-introduccion.tex:16` (area de
   operaciones y doble carga como premisas), `:22` ("Estos indicadores justifican"), `:48` (corpus
   con reconstrucciones), `S/10-recomendaciones.tex:6` ("en el campo"), `:14` ("sectores
   responsables"), `:38` ("dependencia medida"). Verificacion ANTES:
   `rg -n "doble carga|indicadores justifican|en el campo|sectores responsables|dependencia medida" S/`;
   DESPUES: 0 que presenten el escenario como operacion o una propiedad como medicion.
-- [ ] 6.6 Lectura por regimen con cifras de `E/analisis_regimen_c249.json`: `S/08-discusion.tex:18`
+- [x] 6.6 Lectura por regimen con cifras de `E/analisis_regimen_c249.json`: `S/08-discusion.tex:18`
   (canal telefonico = regimen (b); exactitud por regimen con Wilson); `:50` (81 de 200, 40,5 %,
   "declaracion de los autores, sin registro de procedencia por caso"); autoria unificada a "un
   autor" en `:50`, `S/09-conclusiones.tex:24`, `:53`, `S/10-recomendaciones.tex:26` conforme al
@@ -205,7 +205,7 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   coautoria, se respeta). Verificacion ANTES: `rg -n "r.gimen" S/08-discusion.tex` sin cifras por
   regimen y `rg -n "redactad[ao]s? por los autores" S/` lista las discordancias; DESPUES: cifras del
   JSON y una sola atribucion.
-- [ ] 6.7 `S/07-resultados.tex:376` (y nota de `tab:carga-inferencia`, `:365`): p95 de la corrida
+- [x] 6.7 `S/07-resultados.tex:376` (y nota de `tab:carga-inferencia`, `:365`): p95 de la corrida
   original en el nivel 5 de N8N y su cumplimiento del techo; subconjunto deterministico de la
   ampliada por encima del techo; la violacion del nivel 5 no es atribuible a la inferencia. Cifras
   del JSON. Verificacion ANTES: `rg -n "3660|3\.660" S/07-resultados.tex` = 0; DESPUES: >= 1 con el
