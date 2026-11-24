@@ -260,7 +260,7 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 8. Forma y bibliografia (recomendaciones 13 y 14)
 
-- [ ] 8.1 Flotantes: `\FloatBarrier` (o `[H]`) antes de `\section{Corpus de validacion}`
+- [x] 8.1 Flotantes: `\FloatBarrier` (o `[H]`) antes de `\section{Corpus de validacion}`
   (`S/12-anexos.tex:145`) y, si se quiere, en los Anexos A y J; glosario `S/00-glosario.tex` sin
   celdas izquierdas vacias en mitad de columna (OAuth2, RPO, SaaS, TF-IDF, TwiML, VM, VoIP).
   Verificacion: tras la compilacion de 10.3, las figuras 12 a 14 no caen dentro del Anexo F (paginas
@@ -276,7 +276,7 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   Airflow y FastAPI; valorar una referencia tecnica de Gemini 3.6 Flash solo si existe una pagina
   oficial verificable (sin inventar). Verificacion ANTES: `rg -n "8 de julio de 2003" "docs/Tesis/v10 (IA)/Bibliography_base.bib"`
   devuelve `:910`; DESPUES: 0, y `verify_citations.py` PASS.
-- [ ] 8.4 **[GATED OQ-06]** Tope de paginas: registrar en la seccion de presupuesto de paginas de
+- [x] 8.4 **[GATED OQ-06]** Tope de paginas: registrar en la seccion de presupuesto de paginas de
   `C/dictamen-correcciones.md` la decision de sostener el exceso (magnitud y fecha) o aplicar una
   reduccion que no elimine contenido cientifico (requisito "Presupuesto de paginas preservado").
   Verificacion: la decision figura con el total medido en 10.3.

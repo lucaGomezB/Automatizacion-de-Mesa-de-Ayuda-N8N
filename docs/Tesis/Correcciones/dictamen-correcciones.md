@@ -7220,6 +7220,15 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 - Nota de numeración: las referencias `S/11:NN` de este registro son las de `v1.6.3`. El bloque 3.4 a 3.7 insertó en `:18` el párrafo de empleadores reales y desplazó en +2 las líneas siguientes: la declaración de §7.5 quedó en `:42` (era `:40`), el pasaje de transferencia en `:32` (era `:30`) y el párrafo de licitud en `:50` (era `:48`). `:16` no se desplazó.
 - Se commitea en la rama `c-249-aplicar-las-recomendaciones-del-dictamen-v1-6-3`; sin tag ni push. No se modificó el JSON del corpus ni ninguna cifra canónica.
 
+### Presupuesto de páginas: declaración del exceso (v1.6.4) - 2026-11-24
+
+- **Regla vigente.** Métrica: total del PDF, medido con `pdfinfo main.pdf | grep Pages`. Valor: **100 páginas**. Fuente: exigencia de la cátedra, declarada por el autor el 2026-10-27 (G0.1). El conteo por cuerpo sin anexos se conserva solo como información complementaria y no se usa como base del cumplimiento.
+- **Total medido (árbol actual, compilación del 2026-11-24).** **157 páginas**: preliminares 10; cuerpo (capítulos 1 a 11) 118; referencias 5; anexos A a K 24. Desglose del cuerpo: cap. 1, 9; cap. 2, 9; cap. 3, 8; cap. 4, 17; cap. 5, 9; cap. 6, 9; cap. 7, 11; cap. 8, 19; cap. 9, 14; cap. 10, 6; cap. 11, 7. Anexo A: 134-139; Anexo E: 143-145; Anexo F: 146-157.
+- **Exceso.** **+57 páginas** sobre el tope de 100. Magnitud y fecha registradas.
+- **Decisión de los autores (2026-11-24).** Sostener el exceso y declararlo, conforme al requisito "Presupuesto de páginas preservado" y a la recomendación 13 del dictamen, que admiten declarar por escrito la renuncia al tope. **Fundamento:** se aplicó una reducción acotada de 3,1 páginas de prosa en los capítulos 2, 4, 5 y 6, sin eliminar contenido científico, números canónicos, figuras ni tablas requeridas; el total se mantiene porque las dos subsecciones nuevas que el dictamen exige (modelo económico y medición del costo de reasignación) y el reflujo de flotantes por sección compensan esa reducción; y los anexos A a K reúnen la evidencia reproducible y la trazabilidad que el propio dictamen valora. Llegar a 100 páginas exigiría eliminar contenido sustantivo, lo que el requisito prohíbe.
+- **Verificación de la compilación.** `main.log` sin errores fatales; 0 referencias indefinidas; 0 referencias duplicadas; biber sin advertencias; figuras 12 a 14 dentro del Anexo E (el Anexo F comienza en la página 146); la tabla de objetivos permanece en el cuerpo (página 117). El total se confirma con la compilación de la release (10.3), que solo cambia portada y versión.
+
+
 ### Grupo 9: coherencia - APLICADO (2026-11-24)
 
 - **9.1 Cifras canónicas.** Presentes y sin cambios: 61,6 (8 menciones), 17,76 (7), 71,2 (16), 73,5 (14), W = 363 (1), 0,6508 (6), 18,7 (3), 43,1 (5), 898,8 (1); el 25,47 figura en su forma LaTeX `25{,}47`. El apply solo re-rotuló y agregó las cifras del JSON de 4.3.
@@ -7240,7 +7249,7 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 - **8.1 Flotantes y glosario.** `placeins` agregado al preámbulo y `\FloatBarrier` antes del Anexo F. El glosario se reorganizó en 50 filas de dos columnas (100 entradas), con la primera mitad alfabética a la izquierda y la segunda a la derecha: sin celdas izquierdas vacías y con lectura alfabética por columna. La posición de las figuras 12 a 14 se verifica en la compilación de 10.3.
 - **8.2 Hipótesis.** `01:32` declara que los valores \(p\) reportados son bilaterales y conservadores, e informa el unilateral global \(1{,}54 \times 10^{-32}\). `01:36` define el F1 macro de umbral (excluye las clases de soporte unitario) y fija que la falsación usa la cota superior del intervalo. `01:34` ya no remite al segundo objetivo específico.
 - **8.3 Bibliografía.** `Decision2003_490_CE` corregida a "L 168, 5 de julio de 2003, pp. 19-22". Las cuatro entradas de documentación (n8n, PostgreSQL, Airflow, FastAPI) usan `s. f.` con su fecha de consulta. No se agregó una referencia técnica de Gemini: no hay página oficial verificable para el modelo declarado.
-- **8.4 Tope de páginas.** Pendiente de la compilación de 10.3, que da el total medido para declarar el exceso con su magnitud y fecha.
+- **8.4 Tope de páginas.** Declarado abajo con el total medido (157 páginas) y la decisión de sostener el exceso.
 
 
 ### Grupo 7: consistencia (recomendaciones 7 a 12) - APLICADO (2026-11-24)
