@@ -3085,6 +3085,16 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+### [C-249] `aplicar-las-recomendaciones-del-dictamen-v1-6-3` — APLICADO/ARCHIVADO (2026-11-24; MEDIUM, HIGH en el capitulo legal y la release)
+
+- **Estado**: aplicado y archivado el 2026-11-24. Publica la release **v1.6.4**: tag anotado sobre el commit de contenido `f05ef2d` (C3); el hash del commit compilado se consigna en `docs/Tesis/v10 (IA)/paper/compilacion.md` (C4, `c64832f`). PDF de 157 paginas; SHA-256 `0c208da82d0b4e349cc0a7e7a0e8731a67f92650ec61bd5f353b57a8da626e71`.
+- **Objetivo**: aplicar las 14 recomendaciones del dictamen CONEAU del 2026-11-23 sobre v1.6.3 y cerrar las seis compuertas OQ-01 a OQ-06.
+- **Specs**: `tesis-document` (regla de tags, trazabilidad de la release, presupuesto de paginas) y `tesis-reencuadre-cuarta-instancia`.
+- **Dependencias**: **despues** de `c-247` y `c-248`. **Governance**: MEDIUM; HIGH en el capitulo legal y la release.
+- **Hallazgos**: el `\FloatBarrier` global empujaba flotantes del cuerpo al anexo (corregido con `placeins[section]`); las entradas `s. f.` generaban advertencias de biber (se quito el campo `year` y APA las imprime solo); la reduccion de prosa medida fue de 3,1 paginas y el total quedo en 157 (exceso de +57 declarado).
+- **Tag**: anotado **`v1.6.4`** -> `f05ef2d` (C3), regla A de OQ-05; el Anexo B no imprime hash y remite a `compilacion.md`.
+- **Leer antes**: ver la seccion c-249 de `docs/Tesis/Correcciones/dictamen-correcciones.md` (compuertas, tablas ANTES/DESPUES, cifras del recomputo y release).
+
 ### [C-248] `publicar-la-release-y-la-nota-de-erratum-de-v1-6-2` — APLICADO/ARCHIVADO (2026-11-22; HIGH)
 
 - **Estado**: aplicado y archivado el 2026-11-22. Publico la release **v1.6.3** — tag anotado sobre el commit de contenido `a318e13187cc451b304737b06cefb88a309c39b9` (C3, cuyo PDF del Anexo B **no imprime hash**); el commit posterior `f8618bd` (C4) consigna el hash en el Anexo B y recompila; merge a `main` con merge commit `efc2593` — y registro la **nota de erratum de `v1.6.2`** (su PDF de tag imprime `17aa6d21`; el tag **no se movio**). Recompilado: **158 paginas**, 0 errores fatales, 0 refs/citas indefinidas, 0 etiquetas duplicadas. Version propagada a portada (fecha 2026-11-22), Anexo B, `Bibliography_base.bib` (`Gomez2026_repositorio`), `README.md` y `knowledge-base/`; Anexo I.3 con el conteo `165 de 1250`. Derivados y copia de entrega regenerados.

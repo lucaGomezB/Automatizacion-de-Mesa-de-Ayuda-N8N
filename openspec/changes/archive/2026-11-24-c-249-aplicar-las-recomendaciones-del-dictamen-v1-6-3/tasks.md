@@ -296,25 +296,25 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 10. Release v1.6.4 (HIGH; gated OQ-05; OK expreso de los autores antes de cada commit y del tag)
 
-- [ ] 10.1 Precondicion: todas las tareas gated de 3, 5, 7 y 8 aplicadas o expresamente diferidas
+- [x] 10.1 Precondicion: todas las tareas gated de 3, 5, 7 y 8 aplicadas o expresamente diferidas
   por los autores (registrado); `git status` sin cambios fuera del alcance. Verificacion: lista de
   tareas abiertas vacia o con su diferimiento registrado.
-- [ ] 10.2 Bump a `v1.6.4` y fecha de la release en `S/00-portada.tex`, Anexo B
+- [x] 10.2 Bump a `v1.6.4` y fecha de la release en `S/00-portada.tex`, Anexo B
   (`sec:anexo-repositorio`), `Bibliography_base.bib` (`Gomez2026_repositorio`), `README.md`,
   `knowledge-base/` y `C/inventario-uso-asistentes-ia.md`; cifra del Anexo I.3 (`S/12-anexos.tex:251`)
   recomputada con `git rev-list --count` sobre la referencia que el texto describe (OQ-05 (4)).
   Verificacion: `rg -n "1\.6\.3" ` sobre esos archivos solo en registros historicos; conteo coincide.
-- [ ] 10.3 Recompilar (Docker `texlive-thesis`, `latexmk main.tex` en `docs/Tesis/v10 (IA)/paper/`).
+- [x] 10.3 Recompilar (Docker `texlive-thesis`, `latexmk main.tex` en `docs/Tesis/v10 (IA)/paper/`).
   Verificacion: `main.log` sin errores fatales; `rg -c "undefined" main.log` = 0 para referencias y
   citas; 0 `multiply defined`; biber sin advertencias; paginas registradas; flotantes de 8.1
   verificados en el PDF (requisito "Verificacion de flotantes en la release").
-- [ ] 10.4 Regenerar `docs/Tesis/v10 (IA)/paper/compilacion.md` con
+- [x] 10.4 Regenerar `docs/Tesis/v10 (IA)/paper/compilacion.md` con
   `C/resumir_registro_compilacion.py --fuente` nombrando el hash del commit compilado (requisito ADDED
   de `tesis-document`); regenerar `docs/Tesis/v10 (IA)/tesis_para_agente.md`
   (`build_tesis_para_agente.py`), `tesis_para_evaluacion.txt`, `tesis_completa_extraida.txt` y la
   copia de entrega `docs/Tesis/tesis_ultima_version.pdf`. Verificacion: SHA-256 de la copia igual al
   de `main.pdf`; `tesis_para_agente.md` contiene "laboratorio" en el Resumen y la lectura por regimen.
-- [ ] 10.5 Commits y tag segun la regla de OQ-05 (D8): C3 de contenido y C4 que consigna el hash,
+- [x] 10.5 Commits y tag segun la regla de OQ-05 (D8): C3 de contenido y C4 que consigna el hash,
   con el tag anotado `v1.6.4` sobre el commit que la regla indique y sin mover ningun tag publicado
   (salvo las opciones B, C o D, cada una con su MODIFIED del requisito vigente agregado a
   `specs/tesis-document/spec.md` antes de archivar; A es la unica compatible). Verificacion:
@@ -326,16 +326,16 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
 
 ## 11. Registro y cierre
 
-- [ ] 11.1 `C/dictamen-correcciones.md`: seccion "c-249: aplicar las recomendaciones del dictamen
+- [x] 11.1 `C/dictamen-correcciones.md`: seccion "c-249: aplicar las recomendaciones del dictamen
   v1.6.3" con la tabla de compuertas OQ-01 a OQ-06, las tablas ANTES/DESPUES por bloque, las cifras
   de 4.3 (y sus diferencias con el dictamen), el resultado de 9.x, la regla de tags y la release
   (`v1.6.4`, commits, SHA-256 del PDF). Verificacion: la seccion existe y el diff del archivo es
   aditivo salvo los encabezados de 7.2.
-- [ ] 11.2 `C/respuestas-tribunal-cuarta-instancia.md`: respuestas afectadas por 3.4, 3.8 y 3.9
+- [x] 11.2 `C/respuestas-tribunal-cuarta-instancia.md`: respuestas afectadas por 3.4, 3.8 y 3.9
   (titularidad, consentimiento, periodo 21-09 a 1-10) alineadas con la version. Verificacion:
   `rg -n "expreso|desliz" C/respuestas-tribunal-cuarta-instancia.md` coherente con `11:30`.
-- [ ] 11.3 `CHANGES.md`: entrada `[C-249]` con estado, objetivo, specs, dependencias (despues de
+- [x] 11.3 `CHANGES.md`: entrada `[C-249]` con estado, objetivo, specs, dependencias (despues de
   c-247 y c-248), gobernanza (MEDIUM; HIGH en el capitulo legal y la release), tag y "Leer antes",
   con el formato de la entrada `[C-248]`. Verificacion: la entrada existe.
-- [ ] 11.4 `openspec validate --all --strict`; archivar el change. Verificacion: valida y el change
+- [x] 11.4 `openspec validate --all --strict`; archivar el change. Verificacion: valida y el change
   queda en `openspec/changes/archive/`.
