@@ -320,7 +320,7 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   `specs/tesis-document/spec.md` antes de archivar; A es la unica compatible). Verificacion:
   `git cat-file -t v1.6.4` = `tag`; `git rev-parse v1.6.4^{commit}` y el hash impreso en el Anexo B
   coinciden con lo que dice `12:60`; `v1.6.2` y `v1.6.3` sin cambios.
-- [ ] 10.6 Publicar rama y tag en `origin` (solo con pedido expreso); merge a `main` con merge commit
+- [x] 10.6 Publicar rama y tag en `origin` (solo con pedido expreso); merge a `main` con merge commit
   (nunca squash ni rebase); `engram sync` del proyecto antes del push, segun la convencion del
   repositorio. Verificacion: `git merge-base --is-ancestor v1.6.4 origin/main` verdadero.
 
