@@ -53,7 +53,7 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   version `v1.6.4`, la Nota de versiones con `v1.6.2`/`v1.6.3`/erratum y la cifra del inventario de
   IA. Verificacion: la fila existe con ambos responsables; sin ella, 7.1 y el grupo 10 quedan
   bloqueados.
-- [ ] 2.6 **[COMPUERTA OQ-06]** Presentar el tope de paginas (declarar y sostener o reducir) y
+- [x] 2.6 **[COMPUERTA OQ-06]** Presentar el tope de paginas (declarar y sostener o reducir) y
   pedir a los autores las cifras de Paket y la relectura de Revina desde sus copias. Verificacion: la
   fila existe; sin ella, 8.4 y la parte de Paket/Revina de 7.5 quedan bloqueadas.
 

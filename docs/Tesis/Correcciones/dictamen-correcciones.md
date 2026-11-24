@@ -7107,7 +7107,7 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 | OQ-03 | Ver la respuesta literal de las cinco preguntas, abajo. | 2026-11-24 | autores |
 | OQ-04 | Ver la respuesta literal de las cinco preguntas, abajo. | 2026-11-24 | autores |
 | OQ-05 | Ver la respuesta literal de las cuatro preguntas, abajo. | 2026-11-24 | autores y director |
-| OQ-06 | Parcial: puntos 2 y 3 resueltos; punto 1 pendiente de decisión. | 2026-11-24 | autores |
+| OQ-06 | Ver la respuesta literal de las tres preguntas, abajo. | 2026-11-24 | autores |
 
 **OQ-01 (respuesta literal, 2026-11-24, autores).**
 
@@ -7159,7 +7159,7 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 
 2. **Paket (2024), cifras transcritas de la copia de los autores.** Copia: `Tesis/fuentes/IT_Service_Desk_Ticket_Classification_via_Large_Language_Models.pdf` (IEEE Xplore, descargada el 2026-11-14). Corpus: 32.095 tickets del 1-11-2023 al 20-05-2024, en turco, de un conglomerado; 172 clases de subproblema y 2 de categoría. Modelado unificado (172 clases): BERT-uncased 58~% de exactitud y 57~% de F1 (el mejor), BERT-cased 54/55, RoBERTa 48/45, RAG 27, one-shot 45. Modelado gradual: categoría (2 clases) 91~% de exactitud y 93~% de F1; subproblema (172 clases) 70~% y 67~%. BERT supera a los LLM no afinados y el rendimiento cae por encima de 70 clases. Se aplicó en `S/03:49`, en lugar de la celda que declaraba las cifras no disponibles.
 3. **Revina (2020), relectura sobre el original.** Copia: `Tesis/fuentes/IT_Ticket_Classification_The_Simpler_the_Better.pdf` (IEEE Access, CC BY 4.0). Data1: 28.243 tickets (2015-2018) con 30 etiquetados; Data2: 4.684 tickets (enero a mayo de 2019) con 60 etiquetados; validación leave-one-out sobre los etiquetados. Tabla 6: el árbol de decisión con rasgos lingüísticos alcanza 1,000 de exactitud y de F1 en Data1; el máximo con TF-IDF en Data1 es 0,433 (árbol de decisión, EcKNN, HFNN, NHBNN y regresión logística). En Data2 el árbol de decisión y naive Bayes alcanzan 1,000 con rasgos lingüísticos, y el máximo con TF-IDF es 0,700. **La fila de la tesis es correcta.** Se agregó la precisión de que en el segundo conjunto naive Bayes también alcanza 1,000 (`S/03:48`).
-1. **Tope de páginas: pendiente.** Auditoría de reducción acotada terminada: ~10,3 páginas verificadas (2,0 en el capítulo 2; 2,7 en el 4; 0,7 en el 5; 0,9 en el 6; ~4,0 en flotantes y anexos), con un techo realista de ~14 páginas. El tope de 100 no se alcanza sin quitar contenido sustantivo. Decisión pendiente: reducción acotada más declaración del exceso, o declaración sola.
+1. **Tope de páginas: reducción acotada más declaración del exceso.** Auditoría: ~10,3 páginas verificadas (2,0 en el capítulo 2; 2,7 en el 4; 0,7 en el 5; 0,9 en el 6; ~4,0 en flotantes y anexos), con un techo realista de ~14. El tope de 100 no se alcanza sin quitar contenido sustantivo. Decisión de los autores (2026-11-24): aplicar la reducción acotada y declarar el exceso restante en el libro mayor de páginas, con su magnitud, su fecha y la decisión de sostenerlo, conforme al requisito "Presupuesto de páginas preservado" y a la recomendación 13 del dictamen. La declaración se redacta al cierre de la release, con el número medido. La generalización del requisito (retiro de la instanciación `v1.2.8`) se registra en el delta de `tesis-document` de este change.
 
 ### Brecha del artículo 5 (texto aprobado, 2026-11-24)
 
