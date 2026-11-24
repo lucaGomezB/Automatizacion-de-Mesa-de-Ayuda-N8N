@@ -51,7 +51,7 @@ art. 6.
 | Directorio de empleados | Nombre, correo, celular, sector | art. 5 inc. 2 apartado d) (relacion contractual), con deber de informacion |
 | Clasificacion automatica | Texto pseudonimizado del incidente | art. 5; con revision humana y trazabilidad |
 | **T1 Piloto/desarrollo** | Datos reales del grupo | **Consentimiento informado** del grupo (`acta-consentimiento-t1.md`) |
-| **T2 Corpus de investigacion** | Incidentes reales pseudonimizados | Pseudonimizacion (ver §4) |
+| **T2 Corpus de investigacion** | Incidentes reales disociados | no requiere (contenido disociado, sin dato personal) |
 | **T3 Adoptante futuro** | Datos de produccion de la empresa adoptante | Base y politica propias del adoptante |
 
 ## 3. Derechos y plazos legales

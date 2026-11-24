@@ -97,21 +97,28 @@ el texto propuesto a los autores antes de escribir. Gobernanza del change: MEDIU
   recogida en el entorno operativo... cuantifica el ahorro bruto": el ahorro sale de la tarea de
   laboratorio). Verificacion ANTES: `rg -n "no proviene de una organizaci.n real|evidencia recogida en el entorno" S/01-introduccion.tex`
   devuelve `:62`, `:72`; DESPUES: formula de OQ-02 y 0 coincidencias de la frase original.
-- [ ] 3.8 **[GATED OQ-03]** (HIGH) `S/11-aspectos-legales.tex:30`: "consentimiento expreso" pasa a
+- [x] 3.8 **[GATED OQ-03]** (HIGH) `S/11-aspectos-legales.tex:30`: "consentimiento expreso" pasa a
   "consentimiento verbal del 2-10-2026, confirmado por escrito el 20-11-2026"; brecha frente al
   art. 5 con el texto aprobado; transferencias ordenadas respecto del consentimiento; corrida del
   2-10 ubicada. Verificacion ANTES: `rg -n "consentimiento expreso|posteriores a la notificaci.n" S/11-aspectos-legales.tex`
   devuelve `:30`; DESPUES: coincide con OQ-03 (1) y (4).
-- [ ] 3.9 **[GATED OQ-03]** (HIGH) `S/11-aspectos-legales.tex:30`: declarar el periodo 21-09 a
+- [x] 3.9 **[GATED OQ-03]** (HIGH) `S/11-aspectos-legales.tex:30`: declarar el periodo 21-09 a
   1-10 (envios a Gemini y naturaleza de los incidentes del dashboard de `S/06-implementacion.tex:111`,
   cuya leyenda se ajusta si corresponde) y reemplazar "fue un desliz de redaccion" por la constancia
   contemporanea o su inexistencia. Verificacion ANTES: `rg -n "desliz" S/11-aspectos-legales.tex`
   devuelve `:30`; DESPUES: 0 coincidencias sin respaldo y la declaracion del periodo figura.
-- [ ] 3.10 **[GATED OQ-03]** (HIGH) `docs/seguridad/acta-consentimiento-t2.md:28-44` (§2) y `:68`
+- [x] 3.10 **[GATED OQ-03]** (HIGH) `docs/seguridad/acta-consentimiento-t2.md:28-44` (§2) y `:68`
   (§3) con el vocabulario de `11:30` (consentimiento verbal, confirmacion escrita; regimen (b) con
   origen y contenido distinguidos); respuesta 7 de `C/respuestas-tribunal-cuarta-instancia.md`
   (`:73-74`) alineada. Verificacion ANTES: `rg -n "de forma expresa|sin datos de terceros|sin$" docs/seguridad/acta-consentimiento-t2.md`;
-  DESPUES: mismo vocabulario en acta, tesis y respuestas.
+  DESPUES: mismo vocabulario en acta, tesis y respuestas. **Desvio aprobado (2026-11-24)**: el acta
+  esta firmada el 2026-11-20, de modo que NO se reescribio su cuerpo; se agrego el anexo §7
+  (revision fechada) y notas de remision en §2 y §3. La tarea se extendio a
+  `instrumento-transferencia-internacional.md` (§8), `registro-actividades-tratamiento.md`,
+  `registro-requisitos-legales.md`, `clasificacion-etiquetado-informacion.md`,
+  `politica-privacidad-runtime.md`, `inventario-activos-informacion.md`,
+  `docs/defensa/respuestas-tribunal.md` y la respuesta 7 de
+  `C/respuestas-tribunal-cuarta-instancia.md`.
 
 ## 4. Recomputo por regimen y de la sonda (recomendaciones 4 y 6; TDD real)
 

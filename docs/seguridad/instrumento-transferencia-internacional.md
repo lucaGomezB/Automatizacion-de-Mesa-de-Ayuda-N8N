@@ -3,7 +3,8 @@
 > **Control mapeado**: ISO/IEC 27002:2022 5.34 (Privacidad y proteccion de PII) y 5.31
 > (Requisitos legales y contractuales), en **alineacion con** ISO/IEC 27701 y el articulo 12
 > de la Ley 25.326; NIST CSF 2.0 GV. Requisito SGD-014.
-> **Estado**: v1 — aprobada por el autor el 2026-10-19 (governance MEDIO).
+> **Estado**: v1.1 — aprobada por el autor el 2026-10-19 (governance MEDIO); el §8 agrega el
+> anexo de revisión del 2026-11-24.
 > **Alcance**: documenta el **mecanismo** de transferencia internacional hacia Gemini
 > (incluida la transcripcion de audio CRUDO previa a la pseudonimizacion) y Twilio (audio
 > crudo y numero del llamante) a Estados Unidos. **NO** suscribe contratos ni clausulas
@@ -104,3 +105,21 @@ Documento de **alineacion** con ISO/IEC 27002:2022 5.34/5.31, ISO/IEC 27701 y la
 Describe el mecanismo y el objetivo/norma, no el estado actual de suscripcion. No constituye
 certificacion ni auditoria. El estado actual (brechas) vive en
 `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`.
+
+## 8. Anexo de revisión (2026-11-24)
+
+Este documento, aprobado el 2026-10-19, describe el mecanismo habilitante para transferir datos
+personales a los Estados Unidos y registra en §6 que el tratamiento T2 se instrumentó con el
+consentimiento expreso de los titulares del 2026-10-02. Con posterioridad, los autores
+precisaron que el contenido del corpus que se conserva y se transfiere es disociado, sin datos
+personales. En consecuencia:
+
+1. La transferencia del contenido del corpus no configura una transferencia internacional de
+   datos personales y no requiere instrumento del artículo 12. El §6 conserva valor como
+   registro de lo actuado bajo el encuadre vigente al momento de la aprobación.
+2. El mecanismo descrito sigue siendo el aplicable a la organización adoptante (T3) cuando
+   opere con datos reales de sus usuarios: allí sí se requiere consentimiento expreso o
+   cláusulas contractuales modelo.
+3. La transcripción de audio crudo (Twilio y Gemini) sigue siendo una transferencia de datos
+   personales cuando el llamante es un tercero; el mecanismo de este documento le aplica sin
+   cambios.

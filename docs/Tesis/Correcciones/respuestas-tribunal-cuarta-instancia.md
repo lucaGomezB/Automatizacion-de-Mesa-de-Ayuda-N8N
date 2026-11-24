@@ -21,9 +21,9 @@ generalización: la evidencia es de laboratorio sobre un corpus curado, no de op
 
 81 de los 200 casos son reconstrucciones (régimen (b)). Lo que se reconstruye es la descripción, no el
 incidente: el autor que recolectó los incidentes redactó, sin asistente de inteligencia artificial, una
-descripción general, sin detalles explícitos y pseudonimizada, de cada llamada telefónica real que recibió en
+descripción general, sin detalles explícitos y disociada, de cada llamada telefónica real que recibió en
 su trabajo. Los otros 119 son incidentes reales del entorno operativo del propio equipo (régimen (a)), de
-correo electrónico (66) y formulario web (53), pseudonimizados.
+correo electrónico (66) y formulario web (53), disociados.
 
 ## 3. Si los autores escribieron parte de los casos y ajustaron las reglas sobre ese mismo corpus, ¿qué parte del 73,5 % de exactitud puede atribuirse al clasificador y no a la forma en que se redactaron los casos?
 
@@ -69,11 +69,17 @@ organización.
 ## 7. ¿Con qué base usaron los incidentes reales que forman parte del corpus?
 
 Los 119 incidentes reales del régimen (a) no provienen de una tercera organización ni de terceros ajenos: son
-incidentes del entorno operativo del propio equipo. La base de licitud es el consentimiento informado del grupo
-(art. 5 inc. 1 de la Ley 25.326), con pseudonimización como refuerzo; notificación el 2026-10-01,
-consentimiento verbal el 2026-10-02, y acta redactada el 2026-11-17 y firmada el 2026-11-20. No se
+incidentes del entorno operativo del propio equipo, reportados por sus integrantes, los autores y las personas de su
+círculo. El contenido que se conserva y se transfiere es disociado: las descripciones se reescribieron en términos
+genéricos y no contienen datos personales, de modo que no requieren base de licitud. Los únicos datos personales
+existían en los originales no versionados ---los nombres reales de los sistemas de los empleadores y los
+identificadores de usuario de los reportantes---, que no se reproducen ni se transfieren. El consentimiento
+informado documentado cubre la participación de los colaboradores en el estudio: notificación el 2026-10-01,
+consentimiento verbal el 2026-10-02, y acta redactada el 2026-11-17 y firmada el 2026-11-20; la brecha formal entre
+la prestación verbal y su constancia escrita se declara y se valora en el capítulo legal. No se
 usó la base de empleador (art. 5 inc. 2 ap. d), que era la afirmación incorrecta de
-versiones anteriores. Las 81 reconstrucciones (régimen (b)) no contienen datos personales y no requieren base.
+versiones anteriores. Las 81 reconstrucciones (régimen (b)) son descripciones genéricas sin datos de terceros y no
+requieren base.
 
 ## 8. En el bloque dentro de la muestra, ¿qué aporta la etapa de reglas frente a un esquema de modelo de lenguaje solo, además del ahorro de llamadas?
 

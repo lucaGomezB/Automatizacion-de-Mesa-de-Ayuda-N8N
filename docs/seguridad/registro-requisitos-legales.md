@@ -27,7 +27,7 @@ tecnica: Direccion Nacional de Proteccion de Datos Personales (DNPDP). Fuente:
 | Ley 25.326 art. 9 | Medidas tecnicas y organizativas de seguridad y confidencialidad | `politica-seguridad-informacion.md`; controles mapeados a C-62 a C-67 |
 | Ley 25.326 art. 10 | Deber de confidencialidad, subsistente tras la relacion | `roles-responsabilidades-seguridad.md`; (O) adoptante |
 | Ley 25.326 arts. 14 y 16 | Acceso: 10 dias corridos; rectificacion/actualizacion/supresion: 5 dias habiles | `politica-privacidad-runtime.md` |
-| Ley 25.326 art. 12 | Transferencias internacionales; EE. UU. no es pais adecuado | ROPA `registro-actividades-tratamiento.md`; `acta-consentimiento-t2.md` (T2: consentimiento del titular como instrumento); change C-66 |
+| Ley 25.326 art. 12 | Transferencias internacionales; EE. UU. no es pais adecuado | ROPA `registro-actividades-tratamiento.md`; `acta-consentimiento-t2.md` (T2: no aplica, contenido disociado); change C-66 |
 | Ley 25.326 arts. 21 y 24 | Inscripcion de bases de datos ante la AAIP | Responsabilidad del **adoptante**; template en ROPA §7 |
 | Ley 25.326 arts. 2 y 11 | Disociacion de datos; no hay regulacion expresa de pseudonimizacion | `politica-privacidad-runtime.md`; ROPA T2 |
 | Resolucion AAIP 4/2019 | Criterios obligatorios; decisiones automatizadas y explicabilidad | `modelado-amenazas-sdlc.md`; revision humana del clasificador |
@@ -71,7 +71,7 @@ tratamiento de **T3** (rol funcional generico). Ver `registro-actividades-tratam
 | Tratamiento | Datos | Responsable | Base de licitud / salvaguarda |
 |-------------|-------|-------------|-------------------------------|
 | **T1 Piloto/desarrollo** | Datos REALES del grupo y usuarios de prueba que apuntan a contactos del grupo | El grupo | **Consentimiento informado** del grupo (`acta-consentimiento-t1.md`) |
-| **T2 Corpus de investigacion** | Mezcla: regimen (a) incidentes reales pseudonimizados del entorno del grupo; regimen (b) reconstrucciones de tipos de incidente, sin datos de terceros | El grupo | Regimen (a): **consentimiento informado del grupo** (art. 5, inc. 1) + pseudonimizacion; la transferencia internacional se funda en el consentimiento expreso documentado en `acta-consentimiento-t2.md`; regimen (b): **sin datos personales, sin base**; no se usa base de empleador |
+| **T2 Corpus de investigacion** | Mezcla: regimen (a) incidentes reales disociados del entorno del grupo; regimen (b) reconstrucciones de tipos de incidente, sin datos de terceros | El grupo | Regimen (a): **no requiere (contenido disociado, sin dato personal)**; la transferencia no involucra datos personales ni requiere instrumento del art. 12; regimen (b): **sin datos personales, sin base**; no se usa base de empleador |
 | **T3 Adoptante futuro** | Datos de produccion de una empresa que despliegue el sistema | Organizacion adoptante | Politica y base de licitud propias del adoptante |
 
 El sistema **no usa datos ficticios** para ocultar su condicion: el regimen (a) es un piloto
