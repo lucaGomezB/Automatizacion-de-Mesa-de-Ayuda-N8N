@@ -244,7 +244,7 @@ registradas en la tabla de decisiones de la sección c-250; NO hay hechos pendie
 
 ## 13. Registro y cierre
 
-- [ ] 13.1 `C/dictamen-correcciones.md`: sección "c-250: atender las observaciones de la quinta
+- [x] 13.1 `C/dictamen-correcciones.md`: sección "c-250: atender las observaciones de la quinta
   instancia" con la tabla de decisiones OQ-01 a OQ-05 (cerradas), las tablas ANTES/DESPUES por
   bloque, las cifras de 4.3 (y sus diferencias con el dictamen), el resultado de 11.x y la release
   (`v1.6.5`, commits, SHA-256 del PDF). Verificación: la sección existe y el diff es aditivo salvo
@@ -253,9 +253,9 @@ registradas en la tabla de decisiones de la sección c-250; NO hay hechos pendie
   respuestas a las 10 preguntas probables del dictamen de quinta instancia (cronología, carga,
   telefonía, IA en las 119, custodio, empleadores), alineadas con la v1.6.5. Verificación: las
   respuestas nuevas citan la versión y no contradicen el capítulo legal.
-- [ ] 13.3 `CHANGES.md`: entrada `[C-250]` con estado, objetivo, specs, dependencias (después de
+- [x] 13.3 `CHANGES.md`: entrada `[C-250]` con estado, objetivo, specs, dependencias (después de
   c-249), gobernanza (MEDIUM; HIGH en el capítulo legal, `docs/seguridad/`, `data/README.md` y el
   release), tag `v1.6.5` y "Leer antes", con el formato de la entrada `[C-249]`. Verificación: la
   entrada existe.
-- [ ] 13.4 `openspec validate --all --strict`; archivar el change. Verificación: valida y el change
+- [x] 13.4 `openspec validate --all --strict`; archivar el change. Verificación: valida y el change
   queda en `openspec/changes/archive/`.

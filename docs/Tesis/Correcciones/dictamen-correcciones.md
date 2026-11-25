@@ -7281,7 +7281,7 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 - 6.7: `07:377` agrega el p95 de 3.660,4 ms de la corrida original y los 5.024,7 ms del subconjunto determinístico de la ampliada; la nota de `tab:carga-inferencia` lo registra.
 - Desvío declarado: en `09:48` se reemplazó "técnicamente viable" por "técnicamente integrable en el flujo de clasificación, pero su exactitud, 73,5 %, no alcanza el criterio de éxito de 0,85", conforme a la recomendación 5.
 
-## c-250: atender las observaciones de la quinta instancia - EN CURSO (2026-11-25)
+## c-250: atender las observaciones de la quinta instancia - ARCHIVADO (2026-11-25)
 
 **Change.** `c-250-atender-las-observaciones-de-la-quinta-instancia`.
 
@@ -7355,11 +7355,11 @@ Cifras de la salida (`analisis_quinta_instancia_c250.json`):
 - **11.3 Barrido.** `rg -ni "en el orden de 10|carga del ticket|persistencia confirmada del ticket|titulares.*mismas personas|corpus propio de la organizaci.n|sin registro primario conservado|empleadores reales|integrantes del entorno operativo|junio a agosto" S/ data/README.md` → 0 en los archivos no-legales; quedan los hits del capítulo legal (`11-aspectos-legales.tex:16,18,46,54`) y de `data/README.md:24,99`, que pertenecen al grupo HIGH (C-05/C-06) y se DRAFTean, no se escriben.
 - **11.4 Coherencia global.** `sha256sum` del corpus y tags iguales a 1.3 (`1fd17d7e...`, `7f8c9d29...`, `6a1ca7f1...`; `v1.6.2` `e7013127`, `v1.6.3` `f8618bdd`, `v1.6.4` `f05ef2d`); `verify_citations.py` PASS (93 entradas, 93 citadas, 161 comandos, 0 huérfanas, 0 sin usar); Resumen y Abstract ≤ 250 palabras de prosa.
 
-### HOLD (pendiente de autores / release)
+### Release v1.6.5 y cierre - APLICADO (2026-11-25)
 
-- **C-05 / C-06 / C-07 legal (HIGH).** Texto DRAFT para `S/11-aspectos-legales.tex` y `data/README.md` sin escribir; a la espera del OK expreso de los autores.
-- **Residual declarado.** `12-anexos.tex:155` conservaba «los originales no versionados sí contenían identificadores»; se corrigió in situ (archivo MEDIUM) a «el corpus fue disociado desde su redacción», aplicando la decisión OQ-03. Las menciones equivalentes del capítulo legal (`11:18`) y de `data/README.md` quedan en el grupo HIGH.
-- **Release v1.6.5 (grupo 12).** Sin bump, sin recompilación, sin commit, sin tag, sin push.
-- **Grupo 13 (respuestas-tribunal, CHANGES.md, archivado).** Pendiente de la release.
+- **C-05 / C-06 / C-07 legal (HIGH).** Aplicados con el OK expreso de los autores: el capítulo legal (`S/11-aspectos-legales.tex`) y `data/README.md` quedaron con el texto definitivo (notificación verbal 2026-09-30, licitud por disociación arts. 2 y 28, procedencia el círculo, deber de confidencialidad art. 10). El reencuadre de procedencia queda en «los autores y las personas de su círculo (familiares y amigos)». Las compuertas OQ-01 a OQ-05 (y OQ-06 por C-03) quedan CERRADAS en la tabla de decisiones, arriba.
+- **Residual declarado.** `12-anexos.tex:155` conservaba «los originales no versionados sí contenían identificadores»; se corrigió in situ (archivo MEDIUM) a «el corpus fue disociado desde su redacción», aplicando la decisión OQ-03. Las menciones equivalentes del capítulo legal (`11:18`) y de `data/README.md` se aplicaron en la release.
+- **Release v1.6.5 (2026-11-25).** Tag anotado `v1.6.5` sobre el commit de contenido C3 `a2f8b42`; C4 `60d4569` consigna el hash en `compilacion.md`. PDF de 159 páginas, 0 errores fatales, 0 referencias indefinidas, 0 definiciones duplicadas, biber sin advertencias; SHA-256 `492f8e787e63da9e2dc537af18935ad55f32bec1e551514249ec6d5afb4cef59`. Sin push: a la espera del pedido expreso (task 12.6 pendiente). No se modificó el JSON del corpus ni ninguna cifra canónica.
+- **Grupo 13 (cierre).** Respuestas del tribunal (13.2), entrada `[C-250]` en `CHANGES.md` (13.3) y archivado del change (13.4) completados.
 
 

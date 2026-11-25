@@ -3095,6 +3095,15 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Tag**: anotado **`v1.6.4`** -> `f05ef2d` (C3), regla A de OQ-05; el Anexo B no imprime hash y remite a `compilacion.md`.
 - **Leer antes**: ver la seccion c-249 de `docs/Tesis/Correcciones/dictamen-correcciones.md` (compuertas, tablas ANTES/DESPUES, cifras del recomputo y release).
 
+### [C-250] `atender-las-observaciones-de-la-quinta-instancia` — APLICADO/ARCHIVADO (2026-11-25; MEDIUM, HIGH en el capitulo legal y la release)
+
+- **Estado**: aplicado y archivado el 2026-11-25. Publica la release **v1.6.5** (version de defensa): tag anotado sobre el commit de contenido `a2f8b42` (C3); el hash del commit compilado se consigna en `docs/Tesis/v10 (IA)/paper/compilacion.md` (C4, `60d4569`). PDF de 159 paginas; 0 errores fatales, 0 referencias indefinidas, 0 definiciones duplicadas, biber sin advertencias; SHA-256 `492f8e787e63da9e2dc537af18935ad55f32bec1e551514249ec6d5afb4cef59`.
+- **Objetivo**: atender las observaciones C-01 a C-07 de la devolucion de quinta instancia (`auditorias/Devolucion_Quinta_Instancia_TFI_v1.6.4_2026-11-25.md`, APTA PARA DEFENSA) y el reencuadre de procedencia (el circulo: familiares y amigos), cerrando las compuertas OQ-01 a OQ-05.
+- **Specs**: `tesis-reencuadre-cuarta-instancia` y `tesis-document` (regla de tags y trazabilidad de la release v1.6.5).
+- **Dependencias**: **despues** de `c-249`. **Governance**: MEDIUM; HIGH en el capitulo legal, `docs/seguridad/`, `data/README.md` y la release.
+- **Tag**: anotado **`v1.6.5`** -> `a2f8b42` (C3); `v1.6.4` y anteriores quedan intactos.
+- **Leer antes**: ver la seccion c-250 de `docs/Tesis/Correcciones/dictamen-correcciones.md` (compuertas OQ-01 a OQ-05 cerradas, tablas ANTES/DESPUES, cifras del recomputo y release).
+
 ### [C-248] `publicar-la-release-y-la-nota-de-erratum-de-v1-6-2` — APLICADO/ARCHIVADO (2026-11-22; HIGH)
 
 - **Estado**: aplicado y archivado el 2026-11-22. Publico la release **v1.6.3** — tag anotado sobre el commit de contenido `a318e13187cc451b304737b06cefb88a309c39b9` (C3, cuyo PDF del Anexo B **no imprime hash**); el commit posterior `f8618bd` (C4) consigna el hash en el Anexo B y recompila; merge a `main` con merge commit `efc2593` — y registro la **nota de erratum de `v1.6.2`** (su PDF de tag imprime `17aa6d21`; el tag **no se movio**). Recompilado: **158 paginas**, 0 errores fatales, 0 refs/citas indefinidas, 0 etiquetas duplicadas. Version propagada a portada (fecha 2026-11-22), Anexo B, `Bibliography_base.bib` (`Gomez2026_repositorio`), `README.md` y `knowledge-base/`; Anexo I.3 con el conteo `165 de 1250`. Derivados y copia de entrega regenerados.
