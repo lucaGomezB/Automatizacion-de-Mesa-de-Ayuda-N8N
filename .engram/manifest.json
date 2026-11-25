@@ -1680,6 +1680,14 @@
       "sessions": 0,
       "memories": 1,
       "prompts": 2
+    },
+    {
+      "id": "0a0ac8c5",
+      "created_by": "Gonzalo",
+      "created_at": "2026-11-25T17:07:59Z",
+      "sessions": 0,
+      "memories": 3,
+      "prompts": 0
     }
   ]
 }
