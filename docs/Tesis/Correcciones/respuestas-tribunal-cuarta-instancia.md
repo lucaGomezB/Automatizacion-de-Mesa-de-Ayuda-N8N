@@ -21,8 +21,7 @@ generalización: la evidencia es de laboratorio sobre un corpus curado, no de op
 
 81 de los 200 casos son reconstrucciones (régimen (b)). Lo que se reconstruye es la descripción, no el
 incidente: el autor que recolectó los incidentes redactó, sin asistente de inteligencia artificial, una
-descripción general, sin detalles explícitos y disociada, de cada llamada telefónica real que recibió en
-su trabajo. Los otros 119 son incidentes reales del entorno operativo del propio equipo (régimen (a)), de
+descripción general, sin detalles explícitos y disociada, de cada llamada telefónica de personas de su círculo (familiares y amigos). Los otros 119 son incidentes reales reportados por los autores y las personas de su círculo (familiares y amigos) (régimen (a)), de
 correo electrónico (66) y formulario web (53), disociados.
 
 ## 3. Si los autores escribieron parte de los casos y ajustaron las reglas sobre ese mismo corpus, ¿qué parte del 73,5 % de exactitud puede atribuirse al clasificador y no a la forma en que se redactaron los casos?
@@ -42,7 +41,7 @@ estimada (séptima amenaza, §4.8).
 
 Fue una medición controlada, una tarea de laboratorio, no la observación de una mesa real en operación. Dos
 operadores (A1, externo al equipo, y T1, autor) procesaron los 200 casos en pares y se cronometraron mutuamente
-el tiempo total de carga, entre junio y agosto de 2026 (media 61,6 s, mediana 50,0 s, desvío 44,9 s, rango
+el tiempo total de clasificación manual, en octubre de 2026 (media 61,6 s, mediana 50,0 s, desvío 44,9 s, rango
 10–300 s; §4.2 en `04-marco-metodologico.tex` y §8 Resultados en `07-resultados.tex`). Se diferencia del
 registro real en una mesa de ayuda en que la tarea fue una medición controlada sobre un corpus curado de 200
 casos (no un flujo entrante real) y en que los operadores sabían que se cronometraba (efecto Hawthorne,
@@ -69,16 +68,12 @@ organización.
 ## 7. ¿Con qué base usaron los incidentes reales que forman parte del corpus?
 
 Los 119 incidentes reales del régimen (a) no provienen de una tercera organización ni de terceros ajenos: son
-incidentes del entorno operativo del propio equipo, reportados por sus integrantes, los autores y las personas de su
-círculo. El contenido que se conserva y se transfiere es disociado: las descripciones se reescribieron en términos
-genéricos y no contienen datos personales, de modo que no requieren base de licitud. Los únicos datos personales
-existían en los originales no versionados ---los nombres reales de los sistemas de los empleadores y los
-identificadores de usuario de los reportantes---, que no se reproducen ni se transfieren. El consentimiento
-informado documentado cubre la participación de los colaboradores en el estudio: notificación el 2026-10-01,
-consentimiento verbal el 2026-10-02, y acta redactada el 2026-11-17 y firmada el 2026-11-20; la brecha formal entre
+incidentes reportados por los autores y las personas de su círculo (familiares y amigos). El contenido que se conserva y se transfiere es disociado: las descripciones se reescribieron en términos
+genéricos y no contienen datos personales, de modo que no requieren base de licitud. No existen originales con identificadores que custodiar ni destruir: el corpus fue disociado desde su redacción, con léxico genérico («sistema principal», «sistema secundario») y sin nombres reales de sistema ni identificadores de usuario. El consentimiento
+informado documentado cubre la participación de los colaboradores en el estudio; la notificación a los integrantes del grupo se realizó de forma verbal el 2026-09-30; el consentimiento de los colaboradores se prestó verbalmente el 2026-10-02, y el acta se redactó el 2026-11-17 y se firmó el 2026-11-20; la brecha formal entre
 la prestación verbal y su constancia escrita se declara y se valora en el capítulo legal. No se
 usó la base de empleador (art. 5 inc. 2 ap. d), que era la afirmación incorrecta de
-versiones anteriores. Las 81 reconstrucciones (régimen (b)) son descripciones genéricas sin datos de terceros y no
+versiones anteriores y que presuponía empleadores inexistentes; el origen real son los autores y las personas de su círculo (familiares y amigos). Las 81 reconstrucciones (régimen (b)) son descripciones genéricas sin datos de terceros y no
 requieren base.
 
 ## 8. En el bloque dentro de la muestra, ¿qué aporta la etapa de reglas frente a un esquema de modelo de lenguaje solo, además del ahorro de llamadas?

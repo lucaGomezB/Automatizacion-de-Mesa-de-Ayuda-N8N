@@ -1,0 +1,56 @@
+{
+  "entradas": {
+    "data/corpus_evaluacion_pseudonimizado.json": "1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb",
+    "data/corpus_resultados_telefonia.json": "7f8c9d293e6aaf2e64a6024fe235b0224d4daa1997c7cd030f90071f05d288cb"
+  },
+  "metodo": {
+    "canales_sin_telefonia": [
+      "correo electrónico",
+      "formulario web"
+    ],
+    "confianza": 0.95,
+    "remuestreos_bootstrap": 2000,
+    "semilla_bootstrap": 20261021
+  },
+  "schema_version": 1,
+  "sin_telefonia": {
+    "diferencia_pareada": {
+      "ic95": [
+        22.7801,
+        33.9751
+      ],
+      "media_s": 27.9415
+    },
+    "media_automatizada_s": 16.1762,
+    "media_manual_s": 44.1176,
+    "n": 119,
+    "reduccion": {
+      "ic95": [
+        0.560756,
+        0.696178
+      ],
+      "puntual": 0.63334
+    },
+    "wilcoxon": {
+      "T": 302.0,
+      "p": 4.471022970158132e-18
+    }
+  },
+  "telefonia": {
+    "duracion_segundos": {
+      "max": 45.0,
+      "media": 7.2593,
+      "mediana": 7.0,
+      "min": 3.0,
+      "n": 81
+    },
+    "n": 81,
+    "t_e2e_s": {
+      "max": 59.15,
+      "media": 20.0883,
+      "mediana": 18.698,
+      "min": 14.027,
+      "n": 81
+    }
+  }
+}

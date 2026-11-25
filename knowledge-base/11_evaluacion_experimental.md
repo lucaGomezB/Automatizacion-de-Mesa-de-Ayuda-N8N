@@ -2,7 +2,7 @@
 
 Síntesis del marco metodológico (tesis §4) y de los resultados vigentes (§7) para reproducir la evaluación.
 
-> **Nota C-27:** el corpus sintético de 200 casos (82 Sistemas / 64 Operaciones / 54 Soporte Técnico) y sus resultados (exactitud 92 %, F1 macro 0,919, Tabla 7, 3×3) fueron **descartados por los revisores y eliminados del repositorio**. Quedan declarados **superados** y se conservan solo como historia; la evaluación se realiza sobre el corpus real JSON multietiqueta y sus resultados vigentes figuran en el bloque «Resultados vigentes (release v1.6.4)» de más abajo.
+> **Nota C-27:** el corpus sintético de 200 casos (82 Sistemas / 64 Operaciones / 54 Soporte Técnico) y sus resultados (exactitud 92 %, F1 macro 0,919, Tabla 7, 3×3) fueron **descartados por los revisores y eliminados del repositorio**. Quedan declarados **superados** y se conservan solo como historia; la evaluación se realiza sobre el corpus real JSON multietiqueta y sus resultados vigentes figuran en el bloque «Resultados vigentes (release v1.6.5)» de más abajo.
 
 > **Nota c-235 (2026-11-16):** la **validación fuera de muestra** (150 textos + 56 de refuerzo, etiquetados por `E3`/`E4` y arbitrados por `E5`; exactitud estricta cruda 0,6893 = 142/206) y todos los análisis que dependían de ella (línea de base clásica, bloque primario del brazo «Gemini solo», calibración y sensibilidad fuera de muestra, sesgo del vocabulario sobre el corpus arbitrado, arbitraje por mayoría) quedan **retirados de la tesis**; no constituyen evidencia de la tesis y su procedencia no se acredita como registro primario de una organización. Se conservan como historia la Runbook y los artefactos del repositorio, rotulados como retirados (remisión: `docs/Tesis/Correcciones/numeros-canonicos.md`, Sección 3.45, y la nota de versiones de la tesis, Anexo I.1). La hipótesis de eficiencia frente al brazo «Gemini solo» queda **sin contraste limpio**. Los resultados vigentes de esta página (corpus de 200 casos y campaña complementaria `E1`/`E2`/`O1`/`O2`) no cambian.
 
@@ -10,9 +10,9 @@ Síntesis del marco metodológico (tesis §4) y de los resultados vigentes (§7)
 >
 > **Nota v1.6.1 (2026-11-19):** la release incorpora la sonda de **latencia del tramo compartido con inferencia incluida** —resultado **ancilar**, no una cifra de capacidad ni de producción (`subsec:latencia-con-inferencia` de la tesis)— y la **declaración de sensibilidad del balance neto al universo** (`B_r` escala linealmente con `N`; `N` es premisa del escenario narrativo, no una medición). Ningún número canónico de esta página cambia.
 
-## Resultados vigentes (release v1.6.4)
+## Resultados vigentes (release v1.6.5)
 
-**Fuente única:** `docs/Tesis/Correcciones/numeros-canonicos.md` (memo de números canónicos, versión de trabajo v10, release `v1.6.4`). Si este bloque y el memo difieren, vale el memo; ningún valor de aquí se define por separado. Corpus: `n = 200` casos, SHA-256 `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (Sección 3.5). Corrida oficial de predicciones: `hybrid-v3` (Sección 3.9). Kappa de Cohen del doble etiquetado (campaña complementaria, `E1`/`E2`): `0,5569` (moderado); el valor `0,87` de versiones anteriores está retirado y no se presenta como evidencia (cf. la nota c-235 y la Sección 3.14 del memo).
+**Fuente única:** `docs/Tesis/Correcciones/numeros-canonicos.md` (memo de números canónicos, versión de trabajo v10, release `v1.6.5`). Si este bloque y el memo difieren, vale el memo; ningún valor de aquí se define por separado. Corpus: `n = 200` casos, SHA-256 `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (Sección 3.5). Corrida oficial de predicciones: `hybrid-v3` (Sección 3.9). Kappa de Cohen del doble etiquetado (campaña complementaria, `E1`/`E2`): `0,5569` (moderado); el valor `0,87` de versiones anteriores está retirado y no se presenta como evidencia (cf. la nota c-235 y la Sección 3.14 del memo).
 
 **Tiempos de registro** (Secciones 3.1 y 3.8; contraste Wilcoxon **bilateral**, conservador frente a `H1` direccional):
 
@@ -90,7 +90,7 @@ El corpus es un documento JSON con `schema_version`, `metadata` (`descripcion`, 
 | Wilcoxon rangos con signo (tiempos pareados) | scipy.stats | comparación manual vs automatizado |
 | Tamaño del efecto rank-biserial | manual: r = 1 − 2W/(n(n+1)) | sobre los tiempos |
 
-> Valores esperados previos (92 % de exactitud; F1 macro 0,919; Sistemas 0,933 · Operaciones 0,906 · Soporte Técnico 0,917) pertenecen al corpus sintético y quedan **superados**; los valores vigentes sobre el corpus real están en «Resultados vigentes (release v1.6.4)».
+> Valores esperados previos (92 % de exactitud; F1 macro 0,919; Sistemas 0,933 · Operaciones 0,906 · Soporte Técnico 0,917) pertenecen al corpus sintético y quedan **superados**; los valores vigentes sobre el corpus real están en «Resultados vigentes (release v1.6.5)».
 
 ## Matriz de confusión primaria (5×5)
 

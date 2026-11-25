@@ -7092,7 +7092,7 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 
 **Movimiento del tag `v1.6.3` (decision de los autores, 2026-11-22).** El tag anotado `v1.6.3` se creo sobre el commit de contenido **C3** (`a318e13187cc451b304737b06cefb88a309c39b9`, cuyo PDF del Anexo B **no imprime hash**, al estilo del erratum de `v1.6.2`) y luego se **movio a C4** (`f8618bd`), cuyo PDF **si** imprime el hash `a318e13` del commit de referencia. El movimiento **MODIFICA de hecho** la regla vigente "no mover tags publicados": se registra como excepcion autorizada por los autores, para que el PDF de la version entregada (el del tag) imprima un hash real y no uno ajeno. `git rev-parse v1.6.3^{commit}` = `f8618bd`; el "commit de referencia" que el Anexo B consigna (`a318e13`) es el commit de contenido, no el del tag (un commit no puede imprimir su propio hash). `v1.6.2` (`e7013127`) no se movio.
 
-## c-249: aplicar las recomendaciones del dictamen v1.6.3 - EN CURSO (2026-11-24)
+## c-249: aplicar las recomendaciones del dictamen v1.6.3 - ARCHIVADO (2026-11-24)
 
 **Change.** `c-249-aplicar-las-recomendaciones-del-dictamen-v1-6-3`.
 
@@ -7280,5 +7280,86 @@ Se declaran tres archivos fuera de la tabla de impacto original del `proposal.md
 - 6.6: `08:18` incorpora la lectura por régimen (94/119 = 0,790, IC [0,708; 0,854]; 53/81 = 0,654, IC [0,546; 0,749]) y aclara que la diferencia entre canales es también una diferencia entre regímenes; `08:50` declara 81 de 200 (40,5 %) y la ausencia de registro por caso; la autoría se unifica: 119 reescritos por los autores y 81 reconstrucciones redactadas por uno de ellos (`08:50`, `09:25`, `09:54`, `10:26`).
 - 6.7: `07:377` agrega el p95 de 3.660,4 ms de la corrida original y los 5.024,7 ms del subconjunto determinístico de la ampliada; la nota de `tab:carga-inferencia` lo registra.
 - Desvío declarado: en `09:48` se reemplazó "técnicamente viable" por "técnicamente integrable en el flujo de clasificación, pero su exactitud, 73,5 %, no alcanza el criterio de éxito de 0,85", conforme a la recomendación 5.
+
+## c-250: atender las observaciones de la quinta instancia - EN CURSO (2026-11-25)
+
+**Change.** `c-250-atender-las-observaciones-de-la-quinta-instancia`.
+
+**Motivo.** El dictamen de quinta instancia (`auditorias/Devolucion_Quinta_Instancia_TFI_v1.6.4_2026-11-25.md`, 2026-11-25) sobre `v1.6.4` dicta **APTA PARA DEFENSA** (7,3/10; proyectada 7,5) y emite siete observaciones nuevas: tres de prioridad alta (C-01 a C-03), tres media (C-04 a C-06) y una baja (C-07). A diferencia de c-249, las cinco compuertas (OQ-01 a OQ-05) ya fueron RESPONDIDAS por el equipo y quedan CERRADAS: este apply las CODIFICA, no las pregunta. En esta ronda se aplican C-01 a C-04, C-07 y el reencuadre de procedencia, más el recomputo TDD de C-03. C-05, C-06 y las partes legales de C-07 quedan en el grupo HIGH (`S/11-aspectos-legales.tex` y `data/README.md`) con texto DRAFT a la espera del OK expreso de los autores; la release `v1.6.5` (grupo 12) queda pendiente.
+
+### Compuertas OQ-01 a OQ-05 (respuestas CERRADAS)
+
+| OQ | Corrección | Decisión registrada (RESUELTA) | Fecha | Responsable |
+|---|---|---|---|---|
+| OQ-01 | C-01 | La clasificación manual del corpus REAL ocurrió en **octubre 2026**, no en junio–agosto. Evidencia fechada: commit `68d06ec` (2026-06-11, corpus sintético) y commit `ea62576` (2026-10-09, corpus real). El 165,3 s del corpus sintético del 3 de julio queda únicamente como histórico en la Nota de versiones. | 2026-11-25 | autores |
+| OQ-02 | C-02 | El componente «~10 s de carga del ticket» NO EXISTE en los datos: `tiempo_manual_s` es clasificación manual (lectura + decisión de sector), sin componente de carga. Se retira el «~10 s»; la sensibilidad de redondeo del Anexo K (−10 s → 51,6 s / 65,6 %) permanece. | 2026-11-25 | autores |
+| OQ-03 | C-05 | No hay originales con identificadores (ni custodia ni fecha de destrucción que declarar): el corpus fue siempre genérico. Notificación verbal el **2026-09-30** (corrige el 01/10). Licitud por disociación (arts. 2 y 28). | 2026-11-25 | autores |
+| OQ-04 | C-06 | No hay empleadores reales: el origen es familiares y amigos (el círculo). No hay aval del director que gestionar. Se agrega el deber de confidencialidad (art. 10). | 2026-11-25 | autores |
+| OQ-05 | C-07 | No se usó IA en la redacción de las 119 descripciones del régimen (a). La atribución de las 81 reconstrucciones queda unificada en «por uno de los autores». «en su domicilio» se aclara como el domicilio de cada analista. | 2026-11-25 | autores |
+| OQ-06 | C-03 | En telefonía el brazo manual y el automatizado procesaron entradas distintas; se distinguen la grabación cruda `duracion_segundos` del `t_e2e_s`, y la sub-hipótesis 1 se informa también sin telefonía (recomputada por pares con intervalo). | 2026-11-25 | autores |
+
+### ANTES/DESPUES (bloque 3: C-01 cronología)
+
+| Tarea | Archivo | rg ANTES | rg DESPUES |
+|---|---|---|---|
+| 3.1 | `S/04-marco-metodologico.tex:14` | `junio a agosto de 2026` (`:14`) | `octubre de 2026, sobre el corpus real` (`:14`); `rg "junio a agosto"` en `04` → 0 |
+| 3.2 | `S/04-marco-metodologico.tex:78` | `Campaña 2026-10 (jun--ago 2026)` y `carga del ticket estimada (par observador)` (`:78`) | `Campaña 2026-10 (oct 2026)` y `clasificación manual (lectura y decisión de sector), por par observador` (`:78`) |
+| 3.3 | `S/04-marco-metodologico.tex:46` (§4.4); `S/06-implementacion.tex:77` | `recogidos entre junio y agosto` y `cronometró entre junio y agosto de 2026` (`04:46`); `junio a agosto de 2026` (`06:77`) | `recogidos en octubre de 2026` y `cronometró en octubre de 2026` (`04:46`); `octubre de 2026` (`06:77`). `rg "junio a agosto|entre junio y agosto|jun--ago"` en `S/` → 0 |
+| 3.4 | barrido | `165,3` solo en la Nota de versiones (`12:241`) | `165,3` solo en la Nota de versiones como histórico/retirado (`12:241` y `12:247`) |
+
+### ANTES/DESPUES (bloque 4 y 5: C-02 retiro del componente de carga y C-03 asimetría)
+
+| Tarea | Archivo | rg ANTES | rg DESPUES |
+|---|---|---|---|
+| 4.5 | `S/04-marco-metodologico.tex:89`, `:131` | `en el orden de 10~s` y `carga del ticket` (`:89`); `del orden de 10~s` y `la carga se estimó` (`:131`) | `:89` «no hubo búsqueda ni registro del incidente en una herramienta... no incluye componente de carga»; `:131` «es la clasificación manual... su registro y su persistencia». `rg "en el orden de 10|carga del ticket"` en `04` → 0 |
+| 4.6 | `S/04-marco-metodologico.tex:31` (Tabla 3) | `Lapso entre la recepción ... y la persistencia confirmada del ticket` (`:31`) | Definición operacional por brazo: manual = clasificación (lectura + decisión); automatizado = E2E (recepción → persistencia). `rg "persistencia confirmada"` en `S/` → 0 |
+| 4.7 | `S/12-anexos.tex:153`; `S/07-resultados.tex:285`; `S/08-discusion.tex:22`, `:116`; `S/01-introduccion.tex:18` | `lectura medida más carga del ticket estimada` (`12:153`); `la carga del ticket ---esta última estimada---` y `carga estimada` (`07:285`); `más una carga del ticket estimada` (`08:22`); `lectura medida más carga estimada` (`08:116`); `midió el tiempo de registro ... con cronometraje en vivo` (`01:18`) | `tiempo de la clasificación manual` (`12:153`); `no incluye la lectura ni la decisión de sector... sin componente de carga` (`07:285`); `sin componente de carga ni de búsqueda` (`08:22`); `que midió la clasificación manual (lectura y decisión de sector)` (`08:116`); `midió la clasificación manual ... con cronometraje en vivo` (`01:18`). `rg "carga del ticket|carga estimada|carga completa"` en `S/` → 0 |
+| 4.8 | `S/12-anexos.tex:351,353,367` | Sensibilidad de redondeo −10 s → 51,6 s / 65,6 % | PERMANECE la sensibilidad de redondeo, sin re-relatarse como «remoción de carga» |
+| 5.1 | `S/07-resultados.tex:60` (§8.1) | sin distinción de constructos | Grabación cruda mediana 7,0 s / media 7,26 s (`duracion_segundos`) vs `t_e2e_s` mediana 18,698 s; el 20,09 s es la media del E2E telefónico |
+| 5.2 | `S/04-marco-metodologico.tex:127` (sexta amenaza) | «proviene de las llamadas del canal telefónico» | Contraste de la asimetría de entrada (descripción completa leída vs paráfrasis recitada con tope 45 s) y de alcance (clasificación pura vs E2E) |
+| 5.3 | `S/07-resultados.tex:10`, `:60`; `S/08-discusion.tex:8` | sin lectura sin telefonía | «correo y formulario: media manual 44,1 s → 16,2 s, 63,3 %, IC 95 % [56,1 %; 69,6 %]» (cifras del JSON 4.3) |
+
+### ANTES/DESPUES (bloque 6 y 9: C-04 estado del registro y reencuadre de procedencia)
+
+| Tarea | Archivo | rg ANTES | rg DESPUES |
+|---|---|---|---|
+| 6.1 | `S/07-resultados.tex:38` | `81 tiempos telefónicos con registro primario y 119 ... sin registro primario conservado` (`:38`) | `81 telefónicos respaldados por corpus_resultados_telefonia.json; 119 de correo y formulario respaldados por corpus_resultados_web_correo.json (118 de 119 con registro versionado; R001 el único sin registro)`; `rg "sin registro primario conservado"` → 0 |
+| 9.1 | `S/01:16,48,72,76`; `S/04:46,129`; `S/08:22,42,50`; `S/09:52` | `integrantes del entorno operativo del propio equipo, los autores y las personas de su círculo` y variantes `entorno operativo` | `los autores y las personas de su círculo (familiares y amigos)` en toda mención de procedencia; `rg "entorno operativo|integrantes del entorno"` en los archivos no-legales → 0 |
+| 9.2 | conservar | escenario ficticio «120 usuarios / 42 diarios» y «organización adoptante» | `rg "120 usuarios|42 diarios|organización adoptante"` sigue presente como dispositivo de dimensionamiento |
+| 9.3 | `S/12-anexos.tex:247` (Nota de versiones) | sin entrada | Registra el reencuadre de procedencia (C-06) y la cronología (C-01) como corrección de veracidad |
+
+### ANTES/DESPUES (bloque 10: C-07 coherencia)
+
+| Tarea | Archivo | rg ANTES | rg DESPUES |
+|---|---|---|---|
+| 10.1 | `S/12-anexos.tex` (Tabla 26) | sin fila de redacción del corpus | Fila «Redacción de las descripciones del corpus → Sin IA» |
+| 10.2 | `S/12-anexos.tex:279` | `recolección de datos ... y el etiquetado de los datos ... de los autores` | Etiquetado atribuido a A1, T1, E1 y E2 |
+| 10.3 | `S/12-anexos.tex:241`; `S/04:46`; `S/09:25`; `S/00-resumen:11,27` | `redactadas por los autores` (`12:241`); `redactada por ese autor` (`04:46`); `las redactó uno de ellos` (`09:25`); `por uno de ellos`/`written by one of them` (Resumen/Abstract) | Reconstrucciones atribuidas uniformemente a «por uno de los autores» / «by one of the authors» |
+| 10.5 | `S/01:62,72,76`; `S/04:46`; `S/08:22,50`; `S/09:52` | `dispositivo de dimensionamiento y no el lugar de recolección` × 8 | 1 sola coincidencia (`01:16`) |
+| 10.6 | `S/09-conclusiones.tex:48`; `S/04:46` | `corpus propio de la organización` (`09:48`); `en su domicilio` (`04:46`) | `corpus acumulado en operación` (`09:48`); `en el domicilio de cada analista` (`04:46`) |
+
+### Grupo 4: recomputo TDD (C-03)
+
+Test primero en `evaluation/data/campana/analisis/test_analisis_quinta_instancia_c250.py` (16 pruebas; ROJO por `ModuleNotFoundError`), después `analisis_quinta_instancia_c250.py` (VERDE). Triangulación: dos o más casos por función (telefonía vacía, grabación sin `t_e2e_s`, canal web vacío, un único par, escritura determinista byte a byte). REFACTOR: p de Wilcoxon conservado como flotante (no redondeado a 0,0) y `_fmt_p` en notación científica. Suite del directorio: 379 en verde, con el fallo preexistente declarado (c-249 ya lo registró: `test_analisis_sesgo_corpus_referencia_c219.py`, `ValidationError` de `pydantic_settings`), ajeno a este change.
+
+Cifras de la salida (`analisis_quinta_instancia_c250.json`):
+
+- Telefonía (81 grabaciones): `duracion_segundos` mediana 7,0 s / media 7,26 s (rango 3–45 s); `t_e2e_s` mediana 18,698 s / media 20,0883 s. Coincide con el dictamen (7,0 / 7,26 / 18,698).
+- Sin telefonía (119 casos correo+formulario): media manual 44,1176 s → media automatizada 16,1762 s; reducción 63,334 %, IC 95 % por pares [56,08 %; 69,62 %]; diferencia pareada media 27,94 s [22,78; 33,98]; Wilcoxon T = 302, p ≈ 4,5e-18. Coincide con el dictamen (≈44,1 → ≈16,2, ≈63,3 %).
+- Hashes de salida: `analisis_quinta_instancia_c250.json` `6b56688ff506a603864aab0278cb557c2739e333ba48f7064827c755e76baee5`; `analisis_quinta_instancia_c250.md` `964db6aa990fe5ae2deea5d10666f59591f66cbf1630294be90a8c4ffb8a8150`.
+
+### Grupo 11: coherencia (2026-11-25)
+
+- **11.1 Cifras canónicas.** Valores intactos: 61,6 / 17,76 / 71,2 / 73,5 / W = 363 / 0,6508 / 87,2 / 20,09 / 77,0. El diff solo re-rotula y agrega las cifras del JSON de 4.3 (44,1 → 16,2, 63,3 %, 7,0 / 7,26 / 18,698) y re-menciona 87,2 / 20,09 / 77,0 (sexta amenaza) y 165,3 (Nota de versiones, histórico).
+- **11.2 Nombres.** Las líneas nuevas no agregan nombres reales ni correspondencia alias-identidad; solo alias (`A1`, `T1`, `E1`, `E2`, `O1`, `O2`).
+- **11.3 Barrido.** `rg -ni "en el orden de 10|carga del ticket|persistencia confirmada del ticket|titulares.*mismas personas|corpus propio de la organizaci.n|sin registro primario conservado|empleadores reales|integrantes del entorno operativo|junio a agosto" S/ data/README.md` → 0 en los archivos no-legales; quedan los hits del capítulo legal (`11-aspectos-legales.tex:16,18,46,54`) y de `data/README.md:24,99`, que pertenecen al grupo HIGH (C-05/C-06) y se DRAFTean, no se escriben.
+- **11.4 Coherencia global.** `sha256sum` del corpus y tags iguales a 1.3 (`1fd17d7e...`, `7f8c9d29...`, `6a1ca7f1...`; `v1.6.2` `e7013127`, `v1.6.3` `f8618bdd`, `v1.6.4` `f05ef2d`); `verify_citations.py` PASS (93 entradas, 93 citadas, 161 comandos, 0 huérfanas, 0 sin usar); Resumen y Abstract ≤ 250 palabras de prosa.
+
+### HOLD (pendiente de autores / release)
+
+- **C-05 / C-06 / C-07 legal (HIGH).** Texto DRAFT para `S/11-aspectos-legales.tex` y `data/README.md` sin escribir; a la espera del OK expreso de los autores.
+- **Residual declarado.** `12-anexos.tex:155` conservaba «los originales no versionados sí contenían identificadores»; se corrigió in situ (archivo MEDIUM) a «el corpus fue disociado desde su redacción», aplicando la decisión OQ-03. Las menciones equivalentes del capítulo legal (`11:18`) y de `data/README.md` quedan en el grupo HIGH.
+- **Release v1.6.5 (grupo 12).** Sin bump, sin recompilación, sin commit, sin tag, sin push.
+- **Grupo 13 (respuestas-tribunal, CHANGES.md, archivado).** Pendiente de la release.
 
 

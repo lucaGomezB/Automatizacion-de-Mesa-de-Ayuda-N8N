@@ -20,9 +20,7 @@ El corpus de evaluación (200 casos), con descripciones disociadas (genéricas, 
 > archivo: 200 casos disociados, mezcla de incidentes reales reportados por los integrantes
 > del entorno operativo del propio equipo (régimen (a)) y reconstrucciones de descripciones de
 > incidentes reales que no contienen datos personales (régimen (b)). La composición 119/81 es
-> una declaración de los autores, sin registro de procedencia por caso. `tiempo_manual_s` combina
-> la lectura medida de la descripción con un tiempo de carga del ticket estimado (fijo, del orden de
-> 10 s), ya incluido en el valor consignado; no hubo búsqueda. El metadato `descripcion` del JSON congelado conserva una cadena
+> una declaración de los autores, sin registro de procedencia por caso. `tiempo_manual_s` es el tiempo de la clasificación manual: la lectura de la descripción y la decisión de sector, sin componente de carga ni de búsqueda. El metadato `descripcion` del JSON congelado conserva una cadena
 > histórica que lo describe como un corpus de casos reales con clasificación manual; esa cadena
 > es histórica y queda superada por esta descripción, y el SHA-256 del archivo no cambia.
 
@@ -53,14 +51,13 @@ defecto junto con cualquier otro sidecar del patrón.
 ## Archivos NO versionados (Ley 25.326)
 
 - `Corpus Tesis.xlsx` y `Corpus Tesis - Hoja 1.csv` — originales
-  **pre-procesamiento**; contienen datos personales y NUNCA se commitean. Los datos
-  personales de los originales son los nombres reales de los sistemas de los empleadores
-  (referidos aquí como `SISTEMA PRINCIPAL` y `SISTEMA SECUNDARIO`) y los identificadores de
-  usuario (`ID USUARIO`) de las personas que reportaron los incidentes (los integrantes del
-  entorno operativo del propio equipo, los autores y las personas de su círculo). Esos valores
-  no se reproducen ni se versionan; el corpus versionado contiene solo descripciones
-  disociadas, sin datos personales, en consonancia con el capítulo «Consideraciones éticas y
-  aspectos legales» y el Anexo F de la tesis.
+  pre-procesamiento; NUNCA se commitean. El corpus fue disociado desde su redacción: las
+  descripciones se redactaron con un léxico genérico («sistema principal», «sistema
+  secundario»), sin nombres reales de sistema ni identificadores de usuario; no existen
+  originales con identificadores que custodiar ni destruir. Los incidentes reales del régimen
+  (a) provienen de los autores y las personas de su círculo (familiares y amigos). El corpus
+  versionado contiene solo descripciones disociadas, sin datos personales, en consonancia con
+  el capítulo «Consideraciones éticas y aspectos legales» y el Anexo F de la tesis.
 - `corpus_resultados_n8n.json` — sidecar de la ingesta por N8N, pendiente de
   resolver su discrepancia de conteo (4 filas vs 119; OQ2); no se versiona por ahora.
 
@@ -96,7 +93,7 @@ y su andamiaje de generación fueron **eliminados permanentemente** en C-27.
 | `canal_origen` | string | Sí | Canal de entrada (correo, formulario, llamada) |
 | `sector_asignado` | string | Sí | Sector principal de verdad fundamental |
 | `sectores_adicionales` | array | Sí | Sectores adicionales de verdad (`[]` si no hay) |
-| `tiempo_manual_s` | number | Sí | Segundos del registro manual: lectura medida más tiempo de carga del ticket estimado |
+| `tiempo_manual_s` | number | Sí | Segundos de la clasificación manual: lectura de la descripción y decisión de sector |
 | `tiempo_automatizado_s` | number | Sí | Segundos del flujo automatizado |
 
 Valores válidos para los sectores (exactos, sensibles a mayúsculas, **sin tildes**):
