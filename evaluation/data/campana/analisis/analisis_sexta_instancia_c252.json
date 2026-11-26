@@ -1,0 +1,35 @@
+{
+  "entradas": {
+    "data/corpus_evaluacion_pseudonimizado.json": "1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb"
+  },
+  "extension_por_canal": {
+    "correo electrónico": {
+      "caracteres_media": 56.651515,
+      "n": 66,
+      "palabras_media": 11.30303
+    },
+    "formulario web": {
+      "caracteres_media": 45.660377,
+      "n": 53,
+      "palabras_media": 9.283019
+    },
+    "llamada telefónica": {
+      "caracteres_media": 57.703704,
+      "n": 81,
+      "palabras_media": 11.790123
+    }
+  },
+  "extension_por_regimen": {
+    "a": {
+      "caracteres_media": 51.756303,
+      "n": 119,
+      "palabras_media": 10.403361
+    },
+    "b": {
+      "caracteres_media": 57.703704,
+      "n": 81,
+      "palabras_media": 11.790123
+    }
+  },
+  "schema_version": 1
+}

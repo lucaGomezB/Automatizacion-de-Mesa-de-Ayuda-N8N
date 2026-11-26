@@ -7410,4 +7410,72 @@ El acta `docs/seguridad/acta-consentimiento-t2.md` §1 conserva la frase stale �
 
 `git diff --stat v1.6.5 HEAD -- "docs/Tesis/v10 (IA)" docs/seguridad` devuelve solo `docs/Tesis/v10 (IA)/paper/compilacion.md` (1 línea, el hash del release v1.6.5 en C4), ajeno a los pasajes editados; los 4 archivos `.tex` del change son idénticos entre `v1.6.5` y `HEAD` antes de este apply.
 
+---
+
+## c-252 - Atender las observaciones de la sexta instancia - APLICADO (parcial) (2026-11-26)
+
+**Change.** `c-252-atender-las-observaciones-de-la-sexta-instancia`.
+
+**Motivo.** El dictamen de sexta instancia (`auditorias/Devolucion_Sexta_Instancia_TFI_v1.6.5_2026-11-26.md`, 2026-11-26) sobre `v1.6.5` dicta **APTA PARA DEFENSA** (7,5/10; quinta instancia 7,3) y emite seis observaciones: tres de prioridad alta (D-01 a D-03), dos media (D-04, D-05) y una baja (D-06). C-03, C-04 y C-05 quedan corregidas; C-07 casi corregida; C-01, C-02 y C-06 quedaron atendidas dentro del reencuadre autorizado pero **sin documentación**, que pasa a D-01, D-02 y D-03. A diferencia de c-250, cuatro decisiones de hecho seguían abiertas y quedaron **RESUELTAS por los autores el 2026-11-26** (OQ-01 a OQ-04); este apply las CODIFICA, no las pregunta. La condición para fijar la fecha es doble: (1) la versión de defensa debe incorporar D-01 a D-03, y (2) el **director debe dar su visto bueno escrito** a esa versión, lo cual **bloquea el grupo de release (10.x)** hasta que ese aval exista. Ninguna observación exige medir latencias ni cambiar código: todo es prosa, documentación y una estadística descriptiva derivada de artefactos versionados.
+
+### Nota de gobernanza (obligatoria)
+
+- El capítulo legal (`S/11-aspectos-legales.tex`) es de gobernanza **HIGH**: las tareas 6.2 (art. 10 y corrección de `11:18`) y 7.4 (corrección de §7.5/`11:46` y de «histórico/retirado») las redacta el orquestador y se muestran a los autores (y al director, por el aval) antes de escribir. Este apply **NO escribe** el capítulo legal: el texto propuesto se devuelve en el informe del apply para revisión.
+- El grupo de release (10.x) es de gobernanza **HIGH** y queda **BLOQUEADO** hasta que D-01 a D-03 estén aplicados y el director dé su visto bueno escrito. Ningún tag `v1.6.6` se publica en este estado.
+- D-01/D-02/D-03/D-04/D-05/D-06 (prosa no-legal en `00`, `01`, `04`, `07`, `08`, `09`, `12`) son de gobernanza **MEDIUM** y se aplican en este tramo.
+
+### Compuertas OQ-01 a OQ-04 (respuestas RESUELTAS, 2026-11-26)
+
+| OQ | Corrección | Decisión registrada (RESUELTA) | Fecha | Responsable |
+|---|---|---|---|---|
+| OQ-01 | D-01 | El orden real fue **automatizado primero (02/10, corrida de 119 correo/formulario)** y **manual después (09/10, posterior al doble etiquetado)**; el flujo manual NO precedió al automatizado. Cronología día por día: 01/10 notificación verbal; 01–02/10 recolección + redacción disociada (simultáneas); 02/10 corrida automatizada (119); 05–06/10 telefonía (81); 06–09/10 doble etiquetado con consenso; 09/10 cronometraje manual por pares (A1/T1) y versionado del corpus (commit `ea62576`). El 165,3 s del 3 de julio es un valor **simulado** del corpus sintético (commit `68d06ec`), no una medición real. | 2026-11-26 | Autores |
+| OQ-02 | D-02 | `tiempo_manual_s` **NUNCA incluyó** el componente «~10 s de carga»: es la clasificación pura (lectura + decisión de sector). La descripción de la v1.6.4 era **inexacta** y la Nota de versiones lo registra. La cifra primaria de la sub-hipótesis 1 **se mantiene en 71,2 %** (no baja a 65,6 %). El `-10 s` del Anexo K es el **escenario adverso C-02**, no «remoción de carga» ni «sensibilidad de redondeo». | 2026-11-26 | Autores |
+| OQ-03 | D-03 | Los incidentes del régimen (a) provienen del **ámbito laboral** de los reportantes del círculo, **disociados de forma irreversible desde la recolección** (nunca se registró un original con identificador). Corresponde citar el deber de confidencialidad del **art. 10** (Ley 25.326) y corregir `11:18` (deja de negar «información de sistemas ajenos»). | 2026-11-26 | Autores |
+| OQ-04 | D-06 | A1 y T1 cronometraron **juntos, en el domicilio de uno de los autores** (no en domicilios distintos): «por pares» es coherente porque estaban físicamente reunidos. La atribución de las 81 reconstrucciones se unifica en «por uno de los autores». | 2026-11-26 | Autores |
+
+`rg -n "OQ-0[1-4] .* RESUELTA"` sobre esta sección devuelve 4 coincidencias.
+
+### Aval del director (condición del tribunal, HIGH, PENDIENTE)
+
+El tribunal reinstala el **visto bueno escrito del director** sobre la procedencia declarada (D-03) y sobre la versión de defensa. Estado al cierre de este apply: **PENDIENTE**. Hasta ese aval, la release `v1.6.6` no se ejecuta y el tag no se publica.
+
+### ANTES/DESPUES (tareas aplicadas)
+
+| Tarea | Archivo:línea | ANTES (defecto) | DESPUÉS (cambio aplicado) |
+|---|---|---|---|
+| 5.1 / D-01 | `04-marco-metodologico.tex:14` (§4.2) | `el flujo manual precedió al automatizado` | Cronología día por día: 01/10 notificación; 01–02/10 recolección + redacción disociada; 02/10 corrida automatizada (119); 05–06/10 telefonía (81); 06–09/10 doble etiquetado; 09/10 cronometraje manual por pares + versionado (`ea62576`). Orden real automatizado primero (02/10), manual después (09/10). |
+| 5.1 / D-01 | `04-marco-metodologico.tex:46` (§4.4) | sin mención del commit `ea62576` | `la fecha del cronometraje manual es ... una declaración de los autores acotada por el commit \texttt{ea62576} (2026-10-09)` |
+| 5.2 / D-01 | `04-marco-metodologico.tex:78` (Tabla 4), `12-anexos.tex:53` (Figura 11) | sin cota del cronometraje | Tabla 4 agrega `cronometraje manual el 09/10, declaración de los autores acotada por el commit \texttt{ea62576}`; Figura 11 declara que la barra manual no se extiende más allá del 09/10 (`ea62576` como cota superior) |
+| 5.3 / D-01 | `12-anexos.tex:241` | `165,3 s` sin declarar quién los midió | `165,3 s` provienen del corpus sintético (simulado), versionado con el commit `68d06ec` (2026-06-11), no de un cronometraje real |
+| 5.4 / D-01 | `04:117` (§4.8 primera amenaza); `08-discusion.tex:22` (§9.1) | `El orden temporal de la campaña (manual antes que automatizado) sesga...` | Cronometraje manual posterior al etiquetado (09/10) → aprendizaje sub-estima el manual y deja la reducción como cota inferior, en dirección conservadora |
+| 4.1–4.4 / D-02 | `12-anexos.tex:249`; `04:127`; `12:354`; `numeros-canonicos.md` | `retirado el componente de carga`; `ya no contempla` | Nota de versiones registra D-02 (nunca se sumó, v1.6.4 inexacta, 71,2 %); `retirado el componente de carga`/`ya no contempla` → 0 coincidencias; cifra primaria fijada en 71,2 % con etiqueta única del `-10 s` (escenario C-02) |
+| 6.1 / D-03 | `04-marco-metodologico.tex:46` (§4.4) | `recogidos en octubre de 2026... (familiares y amigos)` | `provenientes del ámbito laboral de los reportantes y disociados de forma irreversible desde la recolección (nunca se registró un original con identificador)` |
+| 6.3 / D-03 | `01:16`, `01:72`, `01:76`, `08:50`, `09:52` | `del sector servicios y con sede en la provincia de Mendoza` y variantes (`sector servicios, provincia de Mendoza`) | Retiradas; `rg "del sector servicios y con sede en la provincia de Mendoza" S/` queda solo en la aclaración de `12:249` |
+| 6.4 / D-03 | `12-anexos.tex:249` (Nota de versiones) | sin registro | D-03 registrado: ámbito laboral + disociación irreversible + deber de confidencialidad art. 10 + retiro del léxico de organización |
+| 2.3 / D-04 | `04-marco-metodologico.tex:46` (§4.4) y `:127` (§4.8) | sin extensión media | Extensión media por canal/régimen citada de `analisis_sexta_instancia_c252.json`; separación lectura/decisión en los 87,2 s |
+| 3.2 / D-05 | `12-anexos.tex:247` (Nota de versiones) | `se fecha en octubre de 2026 (C-01)` | `se fecha en octubre de 2026, en reemplazo de la ventana «junio a agosto de 2026» de las versiones anteriores (C-01)` |
+| 3.3 / D-05 | `12-anexos.tex:251` (Anexo I.2) | se detenía en la cuarta instancia (19-11) | suma quinta (25/11/2026) y sexta (26/11/2026) |
+| 3.1 / D-05 | `00-resumen.tex`; `07-resultados.tex:57` (Tabla 10) | sin «solo clasificación» ni 63,3 % | Resumen/Abstract + Tabla 10 declaran que el brazo manual midió solo la clasificación (no el registro) e informan el 63,3 % sin telefonía |
+| 7.1 / D-06 | `04-marco-metodologico.tex:46` (§4.4) | `cronometraron por pares, en el domicilio de cada analista` | `cronometraron por pares, juntos y en un único domicilio ---el de uno de los autores---` |
+| 7.2 / D-06 | `12-anexos.tex:149` (Anexo F) | `redactadas por los autores` | `redactadas por uno de los autores` (unificado con §4.4, §10, Resumen/Abstract) |
+| 7.3 / D-06 | `07-resultados.tex:38` (§8.1) | `respaldados por \path{...telefonia.json}` y `respaldados por \path{...web_correo.json}` | fórmula §4.5: `respalda la existencia y la procedencia de los incidentes, no la medición de extremo a extremo` |
+
+### Verificación ANTES/DESPUES
+
+- `rg -n "OQ-0[1-4]" docs/Tesis/Correcciones/dictamen-correcciones.md` → 4 filas RESUELTAS en esta sección.
+- `rg -n "retirado el componente de carga|ya no contempla" S/` → 0.
+- `rg -n "respaldados por" S/07-resultados.tex` → 0.
+- `rg -n "del sector servicios y con sede en la provincia de Mendoza" S/` → solo `12-anexos.tex:249` (aclaración D-03).
+- `rg -n "sector servicios, provincia de Mendoza" S/` → 0.
+- `rg -n "redactadas por (los autores|uno de los autores)|en el domicilio de cada analista" S/` → 0 formas contradictorias.
+- `rg -n "ea62576|68d06ec|165,3" S/` → commits citados y 165,3 s declarado como sintético.
+- `sha256sum data/corpus_evaluacion_pseudonimizado.json` = `1fd17d7e...` (sin cambios).
+- Cifras canónicas intactas: 61,6 / 17,76 / 71,2 / 73,5 / 87,2 / 20,09 / 77,0 / 56,6 / 51,6 / 68,6 / 65,6. La cifra primaria no se mueve (71,2 %).
+
+### Queda pendiente (no bloqueado por este apply, externo)
+
+- **6.2 y 7.4 (HIGH, capítulo legal).** Texto propuesto (art. 10, corrección de `11:18`, corrección de §7.5/`11:46` y «histórico/retirado» sin barra) devuelto en el informe del apply para revisión de autores y director. El apply NO escribe `S/11-aspectos-legales.tex`.
+- **6.5 / grupo 10 (release `v1.6.6`).** Bloqueado por el **visto bueno escrito del director**.
+- **1.1.** Versionado de la transcripción `auditorias/Devolucion_Sexta_Instancia_TFI_v1.6.5_2026-11-26.md` (bloque de metadatos en el formato de la quinta instancia).
+
 

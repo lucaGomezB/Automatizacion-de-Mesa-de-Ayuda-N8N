@@ -341,6 +341,25 @@ cada `tiempo_manual_s`). Procedencia: `evaluation/report.md:251-252` y `:254`;
 | Múltiplos exactos de `5 s` en `tiempo_manual_s`: `199 / 200` | `evaluation/report.md:254`; `evaluation/stats.py::granularidad_manual` | vigente | El único valor que no es múltiplo de `5` es `72 s`. Precisa el instrumento: la planilla manual tiene resolución efectiva de `5 s`. |
 | Múltiplos exactos de `10 s`: `180 / 200` | `evaluation/report.md:254` | vigente | Vincula el escenario de `10 s` con la resolución efectiva de la planilla. |
 
+**Etiqueta única del descuento de `10 s` y cifra primaria (cierre c-252, OQ-02, 2026-11-26).**
+Esta nota fija, en un único lugar y con su justificación, la etiqueta del escenario de descuento de
+`10 s` del Anexo de sensibilidad y la cifra primaria de la sub-hipótesis 1, resolviendo la
+contradicción heredada entre la lectura «sensibilidad de redondeo» (c-250 D4) y la lectura
+«herencia del componente de carga retirado» (c-251 E5):
+
+- **Cifra primaria: `71,2 %`** (no `65,6 %`). El componente «~10 s de carga del ticket» **nunca se
+  sumó** a los valores de `tiempo_manual_s`: la medición es la clasificación pura (lectura de la
+  descripción y decisión de sector), sin componente de carga ni de búsqueda. La descripción de la
+  tarea manual de la v1.6.4, que declaraba una carga estimada «en el orden de 10 s», era
+  **inexacta**; la v1.6.5 la corrige sin cambiar ningún valor. Por eso la cifra primaria de la
+  sub-hipótesis 1 se mantiene en `71,2 %` y no baja al `65,6 %` del descuento.
+- **Etiqueta única del `-10 s`:** es el **escenario adverso C-02** —el que el tribunal pidió
+  cuantificar en la quinta instancia (C-02) cuando la descripción de la tarea manual aún incluía la
+  carga—, no una «remoción de carga» (la carga nunca existió en los datos) ni una «sensibilidad de
+  redondeo» (el redondeo hacia arriba a una resolución de `5 s` queda cubierto por el descuento de
+  `5 s` y por lo demás es `< 5 s` por caso). El valor `65,57 %` (`65,6 %`) de la tabla de arriba es,
+  por lo tanto, una lectura contrafáctica de robustez, no el resultado de retirar un componente real.
+
 **Convención del desvío estándar y diferencias pareadas.**
 
 | Valor canónico | Procedencia (archivo:línea) | Estado | Notas |

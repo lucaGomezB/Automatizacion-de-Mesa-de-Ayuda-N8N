@@ -4,6 +4,8 @@ Documento de respuestas del grupo de autores a dos devoluciones del tribunal. La
 
 **Nota de alcance.** Cada respuesta enuncia la pregunta y la responde de forma autónoma. Las respuestas son del grupo de autores: el documento no se atribuye a un modelo de lenguaje ni a ninguna herramienta de IA. Cada hecho afirmado remite a un artefacto versionado del repositorio o a un insumo escrito de los autores registrado en la trazabilidad del proyecto. Toda cifra de resultado coincide con un valor vigente de `docs/Tesis/Correcciones/numeros-canonicos.md` o se recalcula desde un artefacto versionado. Lo que solo pueden aportar los autores se marca como pendiente y no se presenta como hecho verificado.
 
+Las devoluciones más recientes tienen respuestas en archivos dedicados, bajo `docs/Tesis/Correcciones/`: `respuestas-tribunal-cuarta-instancia.md`, `respuestas-tribunal-quinta-instancia.md` y `respuestas-tribunal-sexta-instancia.md` (esta última responde a las diez preguntas de la Sección 6 de la devolución de sexta instancia del 2026-11-26, sobre la versión `v1.6.5`).
+
 ---
 
 # Primera parte. Devolución de segunda instancia (11-11-2026)
