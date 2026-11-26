@@ -36,8 +36,8 @@ gantt
     Desarrollo (abr-jul)             :cons1, 2026-04-01, 2026-07-31
     Desarrollo (sep-oct)             :cons2, 2026-09-01, 2026-10-31
     section Estudio
-    Campaña manual (jun-ago)         :cm, 2026-06-01, 2026-08-31
-    Campaña automatizada (sep-oct)   :ca, 2026-09-01, 2026-10-31
+    Campaña manual (oct)             :cm, 2026-10-01, 2026-10-31
+    Campaña automatizada (oct)       :ca, 2026-10-01, 2026-10-31
     Campaña complementaria de medición (nov) :cmed, 2026-11-01, 2026-11-30
     section Modelo y corridas
     Integración de gemini-3.6-flash (24/09/2026)  :milestone, m1, 2026-09-24, 0d
@@ -71,8 +71,8 @@ noviembre. `git` y `gh` se ejecutaron desde la raíz del repositorio, en solo le
 | Desarrollo, primer período | abril a julio de 2026 | mes | Primer commit 2026-04-06 (`2785aed`, "Initial commit"); 4 commits en abril, 16 en mayo, 79 en junio y 22 en julio; último commit del período 2026-07-10 | `git log --reverse --date=short --format='%ad %h %s' \| head`; `git log --date=format:'%Y-%m' --format='%ad' \| sort \| uniq -c` |
 | Pausa de actividad | 2026-07-10 a 2026-09-10 (no se dibuja) | día | Sin commits entre esas fechas; 0 commits en agosto | `git log --format='%ad' --date=short \| sort -u` (brecha de 62 días) |
 | Desarrollo, segundo período | septiembre a octubre de 2026 | mes | Primer commit tras la pausa 2026-09-10; 120 commits en septiembre y 338 en octubre (a 2026-10-25); changes c-27..c-124 archivados entre 2026-09-11 y 2026-10-22 | `git log --date=format:'%G-W%V' --format='%ad' \| sort \| uniq -c`; `ls openspec/changes/archive/` |
-| Campaña manual | junio a agosto de 2026 | mes | Confirmación del autor, 2026-10-09 (T6, `docs/Tesis/Correcciones/dictamen-correcciones.md`, grupo "Trazabilidad y existencia de datos experimentales") | `grep -n "Ventana real" docs/Tesis/Correcciones/dictamen-correcciones.md` |
-| Campaña automatizada | septiembre a octubre de 2026 | mes | Confirmación del autor, 2026-10-09 (T6, mismo registro); instrumentación de tiempos de extremo a extremo (c-39, archivado 2026-09-20) y corridas del corpus del 2026-10-02 y 2026-10-06 | Ídem; `ls openspec/changes/archive/ \| grep c-39` |
+| Campaña manual | octubre de 2026 | mes | Corpus real versionado con `ea62576` (2026-10-09); la clasificación manual del corpus real es declaración de los autores sin registro fechado por caso (corrección C-01 de la quinta instancia, c-250) | `git log -1 --date=short --format='%ad %h %s' ea62576` |
+| Campaña automatizada | octubre de 2026 | mes | Corridas del corpus del 2026-10-02 (correo y formulario, c-68) y 2026-10-05/06 (telefonía, c-70); recálculo del tiempo telefónico el 2026-10-19 (`d48254b`, c-77) | `git log -1 --date=short --format='%ad %h %s' d48254b` |
 | Campaña complementaria de medición | noviembre de 2026 | mes | Campaña del programa c-165 a c-168, con sujetos independientes (`E1`, `E2`, `O1`, `O2`); el plan pre-registrado y el registro de sujetos se versionaron el 2026-11-01, las tablas primarias entre el 2026-11-04 y el 2026-11-08 (`intervenciones.csv` exportado el 2026-11-08, `38392c1`) y el análisis de c-167 el 2026-11-08 (`evaluation/data/campana/`) | `git log --date=short --format='%ad %h %s' -- evaluation/data/campana`; `evaluation/data/campana/README.md` |
 | Doble etiquetado `E3`/`E4` de los 150 originales | 2026-11-12 | día | **retirado (c-235)** — Marcas de `doble_etiquetado_arbitrado.csv`: `150` filas de `E3` y `150` de `E4` con fecha 2026-11-12; la primera marca es de `E4` a las 15:01:18 (-03:00) | `cut -d, -f2,7 evaluation/data/campana/doble_etiquetado_arbitrado.csv \| sort \| uniq -c`; commit `ed4b386` (2026-11-11) registra `E3`/`E4` |
 | Arbitraje de `E5` y refuerzo de 56 casos | 2026-11-13 | día | **retirado (c-235)** — Marcas del 13-11-2026 en `doble_etiquetado_arbitrado.csv`: `56` filas de `E3` y `56` de `E4` sobre el refuerzo y `64` de `E5`; commits `854cc9d` (18:50, corpus de 206 casos), `1b62fdb` (19:00, tabla primaria) y `1cf8333` (19:08, clasificación congelada) | `cut -d, -f2,3,7 evaluation/data/campana/doble_etiquetado_arbitrado.csv \| sort \| uniq -c`; `git log --date=iso --format='%ad %h %s' -- evaluation/data/campana` |
@@ -111,8 +111,8 @@ noviembre. `git` y `gh` se ejecutaron desde la raíz del repositorio, en solo le
   es legible con el token local): se declaran como limitación en la fila B9 del Anexo I
   (`docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex`). La figura ubica la construcción en
   los dos períodos de actividad del repositorio.
-- **Campañas.** La campaña manual (junio a agosto de 2026) no es una etapa de
-  construcción; la campaña automatizada (septiembre a octubre de 2026) corresponde a la
+- **Campañas.** La campaña manual (octubre de 2026) no es una etapa de
+  construcción; la campaña automatizada (octubre de 2026) corresponde a la
   etapa de validación experimental. La campaña complementaria de medición (noviembre de
   2026, programa c-165 a c-168) es posterior a las anteriores y resuelve las limitaciones
   de sujetos que la tesis declaraba (c-169).
