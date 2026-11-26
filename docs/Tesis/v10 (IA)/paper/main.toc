@@ -68,7 +68,7 @@
 \contentsline {subsection}{\numberline {7.2}Principios aplicados al tratamiento de datos}{74}{subsection.7.2}%
 \contentsline {subsection}{\numberline {7.3}Transferencia internacional y pseudonimización}{75}{subsection.7.3}%
 \contentsline {subsection}{\numberline {7.4}Seguridad técnica}{78}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Consentimiento, derechos del usuario y supervisión humana}{78}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.5}Consentimiento, derechos del usuario y supervisión humana}{79}{subsection.7.5}%
 \contentsline {subsection}{\numberline {7.6}Cumplimiento normativo y alineación con estándares}{81}{subsection.7.6}%
 \contentsline {subsubsection}{\numberline {7.6.1}Marco de referencia adoptado}{81}{subsubsection.7.6.1}%
 \contentsline {subsubsection}{\numberline {7.6.2}Estado de alineación con ISO/IEC 27002:2022}{82}{subsubsection.7.6.2}%

@@ -7362,4 +7362,52 @@ Cifras de la salida (`analisis_quinta_instancia_c250.json`):
 - **Release v1.6.5 (2026-11-25).** Tag anotado `v1.6.5` sobre el commit de contenido C3 `a2f8b42`; C4 `60d4569` consigna el hash en `compilacion.md`. PDF de 159 páginas, 0 errores fatales, 0 referencias indefinidas, 0 definiciones duplicadas, biber sin advertencias; SHA-256 `492f8e787e63da9e2dc537af18935ad55f32bec1e551514249ec6d5afb4cef59`. Publicado en `origin` (12.6): `main` en `72d9dd5` (fast-forward desde `f2b7516`, con el cierre `fc93b4a` y el sync de engram) y tag `v1.6.5`; `git merge-base --is-ancestor v1.6.5 origin/main` = verdadero. No se modificó el JSON del corpus ni ninguna cifra canónica.
 - **Grupo 13 (cierre).** Respuestas del tribunal (13.2), entrada `[C-250]` en `CHANGES.md` (13.3) y archivado del change (13.4) completados.
 
+---
+
+## c-251 - Errores verificables de la auditoría Gonzalo (nivel 2) - APLICADO (2026-11-25)
+
+**Origen**: change `c-251-corregir-los-errores-verificables-de-la-auditoria-gonzalo`. Cinco errores verificables (objetivos, independientes de la discusión de fondo sobre retractación) detectados por la auditoría independiente de nivel 2 sobre la versión de defensa `v1.6.5`. Tres de prioridad ALTA en el capítulo legal (`S/11-aspectos-legales.tex`): E1 (paráfrasis inexacta del art. 28 de la Ley 25.326), E2 (fecha de notificación contradictoria con el acta firmada) y E3 (frase sobre la v1.6.0 que el tribunal C-05 pidió retirar). Dos de prioridad MEDIA: E4 (inversión del razonamiento de asimetría de alcance en `S/08-discusion.tex`) y E5 (etiqueta incorrecta del `-10 s` del Anexo K en `S/12-anexos.tex` y `S/04-marco-metodologico.tex`). Ninguna cifra canónica cambia: se corrigen redacción, atribución legal, fecha y etiquetas.
+
+Mapa archivo→capítulo: Ch4 = `04-marco-metodologico.tex`, Ch7 (legal) = `11-aspectos-legales.tex`, Ch9 (Discusión) = `08-discusion.tex`, Anexo K = `12-anexos.tex`.
+
+### Nota de gobernanza (obligatoria)
+
+- E1-E3 son de gobernanza ALTA (capítulo legal). La compuerta del propio change pedía aval escrito del director antes de editar. El **autor autorizó aplicar todo el 2026-11-25**; el **aval del director queda PENDIENTE** (se verá en el dictamen). Registro exacto, sin afirmar aprobación del director: **E1-E3 aplicadas por autorización de los autores; aval del director pendiente.**
+- E4-E5 son de gobernanza MEDIA, sin compuerta.
+
+### Tabla de decisiones (OQ-1 y OQ-2)
+
+| Decisión | Contenido | Responsable | Estado |
+|---|---|---|---|
+| OQ-1 | Fecha de notificación a los integrantes del grupo = **2026-10-01** (no 2026-09-30). Fuente: acta firmada `docs/seguridad/acta-consentimiento-t2.md` (cabecera y §4) y la referencia del tribunal C-05 («notificación ... del 01/10»). El capítulo legal decía 2026-09-30 y se unifica a la fecha del acta. El acta NO se edita. | Autores (2026-11-25) | Resuelta |
+| OQ-2 | Redacción legal fiel de los arts. 2/28/11.3.e para la fundamentación de la licitud por disociación. Texto AUTORIZADO por los autores (2026-11-25); aval del director PENDIENTE. | Autores (2026-11-25); director pendiente | Propuesta y autorizada; pendiente aval del director |
+
+Redacción E1 autorizada (transcripta verbatim):
+
+> El artículo 2 de la ley define la disociación como todo tratamiento de datos personales de manera que la información obtenida no pueda asociarse a una persona determinada o determinable. El artículo 28, en su inciso 1, excluye de la aplicación de la ley a las investigaciones científicas en la medida en que los datos recogidos no puedan atribuirse a una persona determinada o determinable y, en su inciso 2, ordena utilizar una técnica de disociación cuando no resulte posible mantener el anonimato. El artículo 11, inciso 3, apartado e, admite además la cesión de los datos sin consentimiento del titular cuando se hubiera aplicado un procedimiento de disociación que torne inidentificables a los titulares. Sobre estas bases se funda aquí la licitud por disociación del corpus, figura complementaria de la pseudonimización.
+
+### Filas ANTES/DESPUES por corrección
+
+| Corrección | Archivo:línea | ANTES (defecto) | DESPUÉS (cambio aplicado) |
+|---|---|---|---|
+| E1 | `11-aspectos-legales.tex:12` | «El artículo 2 de la ley define la disociación como el tratamiento que impide la identificación del titular, y el artículo 28 dispone que los datos disociados no se consideran datos personales a los efectos de la ley; ambos artículos fundamentan aquí la licitud por disociación del corpus...» | Paráfrasis fiel (redacción E1 autorizada transcripta arriba): art. 2 (definición de disociación), art. 28 incs. 1 y 2 (exención de investigación con datos no atribuibles; mandato de disociación) y art. 11.3.e (cesión sin consentimiento cuando media disociación). |
+| E2 | `11-aspectos-legales.tex:32` | «...la notificación ... se realizó de forma verbal el 2026-09-30» | «...se realizó de forma verbal el 2026-10-01» (consistente con el acta y con C-05). |
+| E3 | `11-aspectos-legales.tex:32` | «...esa brecha se valora más adelante en este apartado. La versión v1.6.0 afirmó que no se había recabado el consentimiento de los titulares para la transferencia internacional; esa afirmación no se sostiene, porque el consentimiento verbal se prestó el 2026-10-02, aunque su constancia escrita es posterior.» | Oración final sobre la v1.6.0 retirada; el párrafo cierra en «...esa brecha se valora más adelante en este apartado.». La cronología del consentimiento verbal (2026-10-02) permanece. |
+| E4 | `08-discusion.tex:22` | «...la asimetría del instrumento y del alcance: ... Eso favorece al segundo. Lo debilita el análisis de sensibilidad, que mantiene la reducción por encima del 65~\% aun descontando 10~s por caso.» | Separación instrumento vs alcance. Instrumento (cronómetro humano en vivo, con tiempo de reacción) infla el manual y favorece al automatizado. Alcance (manual sub-contado frente al tramo completo de registro) tira la reducción hacia abajo, en dirección de la octava amenaza, sin estimar su magnitud. El análisis de sensibilidad mantiene la reducción por encima del 65~\%. |
+| E5 | `12-anexos.tex:354` | «...y sitúa la reducción en el 68,6~\% y en el 65,6~\% como cota inferior conservadora.» (sin explicar el origen del −10 s) | Se agrega: el descuento de 5 s se corresponde con el máximo que el redondeo hacia arriba (resolución 5 s) puede inflar cada valor; el de 10 s recoge el escenario adverso del componente de carga que una descripción anterior incluía y que la versión vigente ya no contempla. Valores 56,6/51,6 y 68,6/65,6 intactos. |
+| E5 (2) | `04-marco-metodologico.tex:16` | «...resolución efectiva del instrumento que vincula los descuentos de 5~s y 10~s del análisis de sensibilidad con el procedimiento» | «...resolución efectiva del instrumento: el descuento de 5~s del análisis de sensibilidad se corresponde con ese redondeo, y el de 10~s con el escenario adverso tratado en el Anexo~\ref{sec:anexo-sensibilidad}» |
+
+### Verificación ANTES/DESPUES
+
+- ANTES (defecto presente): 1 hit de cada uno de «artículo 28 dispone que los datos disociados» (`11-aspectos-legales.tex:12`), «2026-09-30» (`11-aspectos-legales.tex:32`), «La versión v1.6.0 afirmó» (`11-aspectos-legales.tex:32`) y «Eso favorece al segundo» (`08-discusion.tex:22`).
+- DESPUÉS: 0 hits de los cuatro patrones. La fecha 2026-10-02 permanece en `11-aspectos-legales.tex` (consentimiento verbal, líneas 32/34/36). Las cifras canónicas (61,6 / 17,76 / 71,2 / 56,6 / 51,6 / 68,6 / 65,6) permanecen sin cambio. El rótulo «mínimo del estimando primario» (`12-anexos.tex:370`) permanece. `git diff --stat` muestra los 4 `.tex` listados y este registro; `docs/seguridad/` y `auditorias/` intactos.
+
+### Nota fuera de alcance (frase stale del acta)
+
+El acta `docs/seguridad/acta-consentimiento-t2.md` §1 conserva la frase stale «propio entorno operativo» (C-06), fuera del alcance de este change. El acta NO se modificó (es evidencia y el change solo la referencia).
+
+### Línea base (tarea 1.1)
+
+`git diff --stat v1.6.5 HEAD -- "docs/Tesis/v10 (IA)" docs/seguridad` devuelve solo `docs/Tesis/v10 (IA)/paper/compilacion.md` (1 línea, el hash del release v1.6.5 en C4), ajeno a los pasajes editados; los 4 archivos `.tex` del change son idénticos entre `v1.6.5` y `HEAD` antes de este apply.
+
 
